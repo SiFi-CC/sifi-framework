@@ -1,8 +1,8 @@
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <MLookupContainer.h>
-#include <MLookupManager.h>
-#include <MLookup.h>
+#include <SLookupContainer.h>
+#include <SLookupManager.h>
+#include <SLookup.h>
 
 class BasicCase : public CPPUNIT_NS::TestFixture
 {
@@ -15,12 +15,12 @@ public:
 
 protected:
     void MyTest();
-    MLookupManager * lm;
+    SLookupManager * lm;
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION( BasicCase );
 
-class TestChannel : public MLookupChannel
+class TestChannel : public SLookupChannel
 {
 public:
     uint sta, lay, str, sub;
@@ -34,21 +34,21 @@ public:
     }
 };
 
-class TestLookupTable : public MLookupTable {
+class TestLookupTable : public SLookupTable {
 public:
     TestLookupTable(const std::string & container, UInt_t addr_min, UInt_t addr_max, UInt_t channels) :
-        MLookupTable(container, addr_min, addr_max, channels) {}
+        SLookupTable(container, addr_min, addr_max, channels) {}
 
-    MLookupChannel * initial() { return new TestChannel(); }
+    SLookupChannel * initial() { return new TestChannel(); }
 };
 
 void BasicCase::setUp()
 {
-    lm = MLookupManager::instance();
+    lm = SLookupManager::instance();
     lm->setSource("lookup.txt");
     lm->parseSource();
 
-    MLookupTable * t = (MLookupTable*) new TestLookupTable("TestLookup", 0x6400, 0x64ff, 49);
+    SLookupTable * t = (SLookupTable*) new TestLookupTable("TestLookup", 0x6400, 0x64ff, 49);
     t->print();
 
 //     TestChannel * tt = (TestChannel*)t->getAddress(0x6400, 0);

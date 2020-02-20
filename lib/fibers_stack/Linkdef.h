@@ -5,14 +5,14 @@
  * Copyright (C) 2017-2018, Rafał Lalik.                                 *
  * All rights reserved.                                                  *
  *                                                                       *
- * For the licensing terms see $MAPTSYS/LICENSE.                         *
- * For the list of contributors see $MAPTSYS/README/CREDITS.             *
+ * For the licensing terms see $SiFiSYS/LICENSE.                         *
+ * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
 #ifdef __CINT__
 
-#pragma link C++ class MFibersStackRaw+;
-#pragma link C++ class MFibersStackCal+;
-#pragma link C++ class MFibersStackCalSim+;
+#pragma link C++ class SFibersStackRaw+;
+#pragma link C++ class SFibersStackCal+;
+#pragma link C++ class SFibersStackCalSim+;
 
 #endif

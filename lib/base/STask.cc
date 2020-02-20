@@ -1,4 +1,4 @@
-// @(#)lib/geant:$Id$
+// @(#)lib/base:$Id$
 // Author: Rafal Lalik  18/11/2017
 
 /*************************************************************************
@@ -9,10 +9,11 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#ifdef __CINT__
+#include "STask.h"
 
-#pragma link C++ class SGeantTrack+;
-#pragma link C++ class SGeantTrack::Point+;
-#pragma link C++ class SGeantFibersRaw+;
+/** \class STask
+\ingroup lib_base
 
-#endif
+A Task abstract interface
+
+*/

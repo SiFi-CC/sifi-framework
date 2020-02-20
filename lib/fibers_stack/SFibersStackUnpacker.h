@@ -1,4 +1,4 @@
-// @(#)lib/geant:$Id$
+// @(#)lib/fibers_stack:$Id$
 // Author: Rafal Lalik  18/11/2017
 
 /*************************************************************************
@@ -9,10 +9,30 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#ifdef __CINT__
+#ifndef SFIBERSSTACKUNPACKER_H
+#define SFIBERSSTACKUNPACKER_H
 
-#pragma link C++ class SGeantTrack+;
-#pragma link C++ class SGeantTrack::Point+;
-#pragma link C++ class SGeantFibersRaw+;
+#include "STask.h"
 
-#endif
+class SCategory;
+class SFibersStackGeomPar;
+
+class SFibersStackUnpacker : public STask
+{
+protected:
+    // members
+    SCategory * catFibersRaw;           ///< fibers raw category
+
+public:
+    // constructor
+    SFibersStackUnpacker();
+    // destructor
+    virtual ~SFibersStackUnpacker();
+
+    // methods
+    bool init();
+    bool execute();
+    bool finalize();
+};
+
+#endif /* SFIBERSSTACKUNPACKER_H */

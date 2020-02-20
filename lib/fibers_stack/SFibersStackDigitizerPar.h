@@ -1,4 +1,4 @@
-// @(#)lib/geant:$Id$
+// @(#)lib/fibers_stack:$Id$
 // Author: Rafal Lalik  18/11/2017
 
 /*************************************************************************
@@ -9,10 +9,21 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#ifdef __CINT__
+#ifndef SFIBERSSTACKDIGITIZERPAR_H
+#define SFIBERSSTACKDIGITIZERPAR_H
 
-#pragma link C++ class SGeantTrack+;
-#pragma link C++ class SGeantTrack::Point+;
-#pragma link C++ class SGeantFibersRaw+;
+#include "SPar.h"
 
-#endif
+class SFibersStackDigitizerPar : public SPar
+{
+protected:
+    // members
+
+public:
+    // methods
+    bool getParams(SParContainer * parcont);
+    bool putParams(SParContainer * parcont) const;
+    void clear();
+};
+
+#endif /* SFIBERSSTACKDIGITIZERPAR_H */

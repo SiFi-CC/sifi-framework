@@ -1,44 +1,46 @@
 #----------------------------------------------------------------------------
 # Setup the project
 #cmake_minimum_required(VERSION 3.4 FATAL_ERROR)
-#project(MAPT-Framework-Library CXX)
+#project(SiFi-Framework-Library CXX)
 
-SET (LIBRARY_NAME MAPT)
+SET (LIBRARY_NAME SiFi)
 
 SET (LIBRARY_HDRS
-    MMAPTManager.h
-    MCategory.h
-    MCategoryIndex.h
-    MCategoryHeader.h
-    MLocator.h
-    MTaskManager.h
-    MTask.h
-    MDetectorManager.h
-    MDetector.h
-    MParManager.h
-    MParContainer.h
-    MPar.h
-    MLookupManager.h
-    MLookupContainer.h
-    MLookup.h
+    SiFiManager.h
+    SCategory.h
+    SCategoryIndex.h
+    SCategoryHeader.h
+    SLocator.h
+    STaskManager.h
+    STask.h
+    SDetectorManager.h
+    SDetector.h
+    SParManager.h
+    SParContainer.h
+    SPar.h
+    SLookupManager.h
+    SLookupContainer.h
+    SLookup.h
+    datasources/SUnpacker.h
 )
 
 SET(LIBRARY_SRCS
-    MMAPTManager.cc
-    MCategory.cc
-    MCategoryIndex.cc
-    MCategoryHeader.cc
-    MLocator.cc
-    MTaskManager.cc
-    MTask.cc
-    MDetectorManager.cc
-    MDetector.cc
-    MParManager.cc
-    MParContainer.cc
-    MPar.cc
-    MLookupManager.cc
-    MLookupContainer.cc
-    MLookup.cc
+    SiFiManager.cc
+    SCategory.cc
+    SCategoryIndex.cc
+    SCategoryHeader.cc
+    SLocator.cc
+    STaskManager.cc
+    STask.cc
+    SDetectorManager.cc
+    SDetector.cc
+    SParManager.cc
+    SParContainer.cc
+    SPar.cc
+    SLookupManager.cc
+    SLookupContainer.cc
+    SLookup.cc
+    datasources/SUnpacker.cc
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})

@@ -3,7 +3,7 @@
 #----------------------------------------------------------------------------
 # Setup the project
 #cmake_minimum_required(VERSION 3.4 FATAL_ERROR)
-#project(MAPT-Framework-Analysis CXX)
+#project(SiFi-Framework-Analysis CXX)
 
 link_directories(${CMAKE_BINARY_DIR}/lib)
 include_directories(${PROJECT_SOURCE_DIR}/lib/base)
@@ -14,7 +14,7 @@ include_directories(${PROJECT_SOURCE_DIR}/lib/tools)
 add_executable(mapt_analysis analysis.cc)
 target_link_libraries(mapt_analysis
     ${ROOT_LIBRARIES}
-    MAPT GeantSim FibersStack Tools)
+    SiFi GeantSim FibersStack Tools)
 
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX

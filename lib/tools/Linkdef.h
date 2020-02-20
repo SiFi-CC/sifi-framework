@@ -5,12 +5,12 @@
  * Copyright (C) 2017-2018, Rafał Lalik.                                 *
  * All rights reserved.                                                  *
  *                                                                       *
- * For the licensing terms see $MAPTSYS/LICENSE.                         *
- * For the list of contributors see $MAPTSYS/README/CREDITS.             *
+ * For the licensing terms see $SiFiSYS/LICENSE.                         *
+ * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
 #ifdef __CINT__
 
-#pragma link C++ class MProgressBar+;
+#pragma link C++ class SProgressBar+;
 
 #endif

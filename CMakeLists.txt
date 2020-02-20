@@ -4,8 +4,8 @@ cmake_policy(PUSH)
 cmake_policy(SET CMP0048 NEW)
 cmake_policy(POP)
 cmake_minimum_required(VERSION 3.4 FATAL_ERROR)
-project(MAPT
-    VERSION 1.9.9
+project(SiFi
+    VERSION 0.0.1
     LANGUAGES CXX
 )
 
@@ -18,12 +18,12 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 # You can set WITH_GEANT4_UIVIS to OFF via the command line or ccmake/cmake-gui
 # to build a batch mode only executable
 #
-option(WITH_GEANT4_UIVIS "Build example with Geant4 UI and Vis drivers" OFF)
-if(WITH_GEANT4_UIVIS)
-  find_package(Geant4 REQUIRED ui_all vis_all)
-else()
-  find_package(Geant4 REQUIRED)
-endif()
+# option(WITH_GEANT4_UIVIS "Build example with Geant4 UI and Vis drivers" OFF)
+# if(WITH_GEANT4_UIVIS)
+#   find_package(Geant4 QUIET ui_all vis_all)
+# else()
+#   find_package(Geant4 QUIET)
+# endif()
 
 add_definitions("-std=c++17")
 
@@ -94,11 +94,11 @@ install(FILES
 	DESTINATION ${CMAKE_INSTALL_CMAKEDIR})
 
 # Add all targets to the build-tree export set
-export(TARGETS MAPT FibersStack GeantSim
+export(TARGETS SiFi FibersStack GeantSim
 	FILE ${CMAKE_PROJECT_NAME}Targets.cmake)
 
 # # Install the export set for use with the install-tree
-# install(TARGETS MAPT Fibers GeantSim
+# install(TARGETS SiFi Fibers GeantSim
 # 	EXPORT ${CMAKE_PROJECT_NAME}Targets
 # 	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 # 	COMPONENT shlib COMPONENT dev)

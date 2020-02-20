@@ -1,4 +1,4 @@
-// @(#)lib/geant:$Id$
+// @(#)lib/base:$Id$
 // Author: Rafal Lalik  18/11/2017
 
 /*************************************************************************
@@ -9,10 +9,27 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#ifdef __CINT__
+#ifndef STASK_H
+#define STASK_H
 
-#pragma link C++ class SGeantTrack+;
-#pragma link C++ class SGeantTrack::Point+;
-#pragma link C++ class SGeantFibersRaw+;
+#include "SiFiManager.h"
 
-#endif
+class STask
+{
+public:
+    // methods
+    /// Initialize task
+    /// \return success
+    virtual bool init() = 0;
+    /// Called when reinitializatoin is required
+    /// \return success
+    virtual bool reinit() { return true; }
+    /// Execute task
+    /// \return success
+    virtual bool execute() = 0;
+    /// Finalize task
+    /// \return success
+    virtual bool finalize() = 0;
+};
+
+#endif /* STASK_H */

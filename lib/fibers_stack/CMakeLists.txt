@@ -1,34 +1,34 @@
 #----------------------------------------------------------------------------
 # Setup the project
 cmake_minimum_required(VERSION 3.4 FATAL_ERROR)
-project(MAPT-Framework-Library CXX)
+project(SiFi-Framework-Library CXX)
 
 SET (LIBRARY_NAME FibersStack)
 
 SET (LIBRARY_HDRS
-    MFibersStackDetector.h
-    MFibersStackGeomPar.h
-    MFibersStackUnpacker.h
-    MFibersStackRaw.h
-    MFibersStackCalibrator.h
-    MFibersStackCalibratorPar.h
-    MFibersStackCal.h
-    MFibersStackDigitizer.h
-    MFibersStackDigitizerPar.h
-    MFibersStackCalSim.h
+    SFibersStackDetector.h
+    SFibersStackGeomPar.h
+    SFibersStackUnpacker.h
+    SFibersStackRaw.h
+    SFibersStackCalibrator.h
+    SFibersStackCalibratorPar.h
+    SFibersStackCal.h
+    SFibersStackDigitizer.h
+    SFibersStackDigitizerPar.h
+    SFibersStackCalSim.h
 )
 
 SET(LIBRARY_SRCS
-    MFibersStackDetector.cc
-    MFibersStackGeomPar.cc
-    MFibersStackUnpacker.cc
-    MFibersStackRaw.cc
-    MFibersStackCalibrator.cc
-    MFibersStackCalibratorPar.cc
-    MFibersStackCal.cc
-    MFibersStackDigitizer.cc
-    MFibersStackDigitizerPar.cc
-    MFibersStackCalSim.cc
+    SFibersStackDetector.cc
+    SFibersStackGeomPar.cc
+    SFibersStackUnpacker.cc
+    SFibersStackRaw.cc
+    SFibersStackCalibrator.cc
+    SFibersStackCalibratorPar.cc
+    SFibersStackCal.cc
+    SFibersStackDigitizer.cc
+    SFibersStackDigitizerPar.cc
+    SFibersStackCalSim.cc
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
@@ -46,7 +46,7 @@ add_library(${LIBRARY_NAME} SHARED
     G__${LIBRARY_NAME}_cc
 )
 
-target_link_libraries(${LIBRARY_NAME} ${ROOT_LIBRARIES} MAPT)
+target_link_libraries(${LIBRARY_NAME} ${ROOT_LIBRARIES} SiFi)
 
 install(TARGETS ${LIBRARY_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(FILES ${LIBRARY_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})

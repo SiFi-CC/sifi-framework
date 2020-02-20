@@ -19,13 +19,13 @@
 #include <TMath.h>
 #include <TH1.h>
 
-// MAPT-Analysis framework includes
-#include "MGeantFibersRaw.h"
-#include "MGeantTrack.h"
+// SiFi-Analysis framework includes
+#include "SGeantFibersRaw.h"
+#include "SGeantTrack.h"
 
-#include "MMAPTManager.h"
+#include "SiFiManager.h"
 
-#include "MProgressBar.h"
+#include "SProgressBar.h"
 
 using namespace std;
 
@@ -40,12 +40,12 @@ int analysis(const std::vector<std::string> & files, const ana_params & pars)
     int events = pars.events;
     TString oname = pars.ofile;
 
-    MMAPTManager * dataManager = MMAPTManager::instance();
+    SiFiManager * dataManager = SiFiManager::instance();
     dataManager->setSimulation(true);
     dataManager->setInputFileNames(files);
     dataManager->open();
-    dataManager->openCategory(MCategory::CatGeantTrack, false);
-    dataManager->openCategory(MCategory::CatGeantFibersRaw, false);
+    dataManager->openCategory(SCategory::CatGeantTrack, false);
+    dataManager->openCategory(SCategory::CatGeantFibersRaw, false);
     dataManager->setOutputFileName(oname.Data());
     dataManager->book(false);
 
@@ -89,16 +89,16 @@ int analysis(const std::vector<std::string> & files, const ana_params & pars)
 
     std::cout << dataManager->getEntries() << " events, analyze " << ev_limit << std::endl;
 
-    MProgressBar pb(ev_limit, 1000, 50);
+    SProgressBar pb(ev_limit, 1000, 50);
 
-    MCategory * catGeantTrack = dataManager->getCategory(MCategory::CatGeantTrack, false);
+    SCategory * catGeantTrack = dataManager->getCategory(SCategory::CatGeantTrack, false);
     if (!catGeantTrack)
     {
 //             std::cerr << "event NULL" << "\n";
 //             return -1;
     }
 
-    MCategory * catGeantFibersRaw = dataManager->getCategory(MCategory::CatGeantFibersRaw, false);
+    SCategory * catGeantFibersRaw = dataManager->getCategory(SCategory::CatGeantFibersRaw, false);
     if (!catGeantFibersRaw)
     {
 //             std::cerr << "event NULL" << "\n";
@@ -122,14 +122,14 @@ int analysis(const std::vector<std::string> & files, const ana_params & pars)
 
         h_acc->Fill(0);
 
-        MLocator loc_track(1);
+        SLocator loc_track(1);
         int sec_num = tracks_num - 1;
         bool prim_stop_in_det = false;
 
         for (int t = 0; t < tracks_num; ++t)
         {
             loc_track[0] = t;
-            MGeantTrack * track = (MGeantTrack*) catGeantTrack->getObject(loc_track);
+            SGeantTrack * track = (SGeantTrack*) catGeantTrack->getObject(loc_track);
 
             if (track->getTrackID() == 1)
             {

@@ -5,19 +5,22 @@
  * Copyright (C) 2017-2018, Rafał Lalik.                                 *
  * All rights reserved.                                                  *
  *                                                                       *
- * For the licensing terms see $MAPTSYS/LICENSE.                         *
- * For the list of contributors see $MAPTSYS/README/CREDITS.             *
+ * For the licensing terms see $SiFiSYS/LICENSE.                         *
+ * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
 #ifdef __CINT__
 
-#pragma link C++ class MLocator+;
-#pragma link C++ class MCategory-;
-#pragma link C++ class MCategoryHeader-;
-#pragma link C++ class MCategoryIndex-;
-#pragma link C++ class MMAPTManager+;
-#pragma link C++ class MDetector+;
-#pragma link C++ class MTask+;
-#pragma link C++ class MTaskManager+;
+#pragma link C++ class SLocator+;
+#pragma link C++ class SCategory-;
+#pragma link C++ class SCategoryHeader-;
+#pragma link C++ class SCategoryIndex-;
+#pragma link C++ class SiFiManager+;
+#pragma link C++ class SDetector+;
+#pragma link C++ class STask+;
+#pragma link C++ class STaskManager+;
+
+// datasources
+#pragma link C++ class SUnpacker+;
 
 #endif

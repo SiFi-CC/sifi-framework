@@ -1,16 +1,16 @@
 #----------------------------------------------------------------------------
 # Setup the project
 cmake_minimum_required(VERSION 3.4 FATAL_ERROR)
-project(MAPT-Framework-Library CXX)
+project(SiFi-Framework-Library CXX)
 
 SET (LIBRARY_NAME Tools)
 
 SET (LIBRARY_HDRS
-    MProgressBar.h
+    SProgressBar.h
 )
 
 SET(LIBRARY_SRCS
-    MProgressBar.cc
+    SProgressBar.cc
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})

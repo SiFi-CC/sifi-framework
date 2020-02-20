@@ -1,18 +1,18 @@
 #----------------------------------------------------------------------------
 # Setup the project
 #cmake_minimum_required(VERSION 3.4 FATAL_ERROR)
-#project(MAPT-Framework-Library CXX)
+#project(SiFi-Framework-Library CXX)
 
 SET (LIBRARY_NAME GeantSim)
 
 SET (LIBRARY_HDRS
-    MGeantFibersRaw.h
-    MGeantTrack.h
+    SGeantFibersRaw.h
+    SGeantTrack.h
 )
 
 SET(LIBRARY_SRCS
-    MGeantFibersRaw.cc
-    MGeantTrack.cc
+    SGeantFibersRaw.cc
+    SGeantTrack.cc
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})

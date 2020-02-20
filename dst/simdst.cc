@@ -16,18 +16,18 @@
 #include <TMath.h>
 #include <TH1.h>
 
-// MAPT-Analysis framework includes
-#include "MGeantTrack.h"
-#include "MGeantFibersRaw.h"
+// SiFi-Analysis framework includes
+#include "SGeantTrack.h"
+#include "SGeantFibersRaw.h"
 
-#include "MMAPTManager.h"
-#include "MDetectorManager.h"
-#include "MTaskManager.h"
-#include "MParManager.h"
+#include "SiFiManager.h"
+#include "SDetectorManager.h"
+#include "STaskManager.h"
+#include "SParManager.h"
 
-#include "MFibersStackDetector.h"
+#include "SFibersStackDetector.h"
 
-#include "MProgressBar.h"
+#include "SProgressBar.h"
 
 using namespace std;
 
@@ -41,7 +41,7 @@ int simdst(const std::string & file, int events = 1000)
         oname.Append("_digi.root");
 
     // Init data manager
-    MMAPTManager * dataManager = MMAPTManager::instance();
+    SiFiManager * dataManager = SiFiManager::instance();
     dataManager->setSimulation(true);
 
     // input files
@@ -60,27 +60,27 @@ int simdst(const std::string & file, int events = 1000)
         ev_limit = events < dataManager->getEntries() ? events : dataManager->getEntries();
     std::cout << dataManager->getEntries() << " events, analyze " << ev_limit << std::endl;
 
-    dataManager->openCategory(MCategory::CatGeantTrack, true);
+    dataManager->openCategory(SCategory::CatGeantTrack, true);
 
     // initialize parameters
-    MParManager * pm = MParManager::instance();
+    SParManager * pm = SParManager::instance();
     pm->setParamSource("params.txt");
     pm->parseSource();
 
     // initialize detectors
-    MDetectorManager * detm = MDetectorManager::instance();
+    SDetectorManager * detm = SDetectorManager::instance();
 
-    detm->addDetector(new MFibersStackDetector("FibersStack"));
+    detm->addDetector(new SFibersStackDetector("FibersStack"));
 
     detm->initTasks();
     detm->initParameterContainers();
     detm->initCategories();
 
     // initialize tasks
-    MTaskManager * tm = MTaskManager::instance();
+    STaskManager * tm = STaskManager::instance();
     tm->initTasks();
 
-    MProgressBar pb(ev_limit);
+    SProgressBar pb(ev_limit);
 
     // go over all events
     for (int i=0 ; i < ev_limit; ++i)
