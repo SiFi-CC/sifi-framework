@@ -39,6 +39,8 @@ bool SFibersStackCalibratorPar::getParams(SParContainer* parcont)
 {
     if (!parcont->fill("fAdcGain", fAdcGain)) return false;
     if (!parcont->fill("fAdcOffset", fAdcOffset)) return false;
+
+    return true;
 }
 
 /** Put parameters
@@ -48,6 +50,7 @@ bool SFibersStackCalibratorPar::getParams(SParContainer* parcont)
  */
 bool SFibersStackCalibratorPar::putParams(SParContainer* parcont) const
 {
+    return true;
 }
 
 /** Print parameters

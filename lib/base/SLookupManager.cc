@@ -34,7 +34,7 @@ the requested parameter containers exists.
 
 extern void trim(std::string &s);
 extern void simplify(std::string & s);
-extern bool isFloat(const string & str);
+extern bool isFloat(const std::string & str);
 
 SLookupManager * SLookupManager::lm = nullptr;
 
@@ -76,7 +76,7 @@ SLookupManager::~SLookupManager()
  */
 bool SLookupManager::parseSource()
 {
-    ifstream ifs(source);
+    std::ifstream ifs(source);
     if (!ifs.is_open())
     {
         std::cerr << "Source " << source << " could not be open!" << std::endl;

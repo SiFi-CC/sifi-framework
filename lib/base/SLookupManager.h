@@ -33,8 +33,6 @@
 
 #include <map>
 
-#include "SiFiManager.h"
-
 class SLookupContainer;
 class SLookup;
 

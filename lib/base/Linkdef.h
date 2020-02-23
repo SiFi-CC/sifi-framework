@@ -15,12 +15,18 @@
 #pragma link C++ class SCategory-;
 #pragma link C++ class SCategoryHeader-;
 #pragma link C++ class SCategoryIndex-;
-#pragma link C++ class SiFiManager+;
 #pragma link C++ class SDetector+;
 #pragma link C++ class STask+;
 #pragma link C++ class STaskManager+;
 
-// datasources
-#pragma link C++ class SUnpacker+;
+#pragma link C++ class SiFi;
 
+// datasources
+#pragma link C++ class SDDSamples;
+
+// util
+#pragma link C++ class SRootFileHeader+;
+
+// event
+#pragma link C++ class SEvent+;
 #endif

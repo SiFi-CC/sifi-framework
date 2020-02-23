@@ -12,7 +12,6 @@
 #ifndef SPAR_H
 #define SPAR_H
 
-#include "SiFiManager.h"
 
 class SParContainer;
 

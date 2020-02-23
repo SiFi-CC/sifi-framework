@@ -9,37 +9,42 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#ifndef SiFiMANAGER_H
-#define SiFiMANAGER_H
+#ifndef SiFi_H
+#define SiFi_H
 
-using namespace std;
+#define PR(x) std::cout << "++DEBUG: " << #x << " = |" << x << "| (" << __FILE__ << ", " << __LINE__ << ")\n";
 
-#include <string>
-#include <fstream>
-#include <map>
+#include "SCategory.h"
+#include "SDataSource.h"
+#include "SEvent.h"
+#include "SRootFileHeader.h"
 
 #include "TROOT.h"
 #include "TChain.h"
 #include "TFile.h"
 #include "TTree.h"
 
-#include "SCategory.h"
+#include <string>
+#include <fstream>
+#include <map>
 
-class SiFiManager: public TObject
+class SiFi
 {
 protected:
     // members
     TFile* outputFile;                          ///< Pointer to output file
     TTree* outputTree;                          ///< Pointer to output tree
-    string outputTreeTitle;                     ///< Output tree title
-    string outputTreeName;                      ///< Output tree name
-    string outputFileName;                      ///< Output file name
-    TChain* inputTree;                          ///< Pointer to input tree
-    string inputTreeTitle;                      ///< Input tree title
-    string inputTreeName;                       ///< Input tree name
-    std::vector<std::string> inputFiles;        ///< Input file name
+    std::string outputTreeTitle;                ///< Output tree title
+    std::string outputTreeName;                 ///< Output tree name
+    std::string outputFileName;                 ///< Output file name
+    SRootFileHeader fileHeader;                 ///< Root File Header
+    TTree* inputTree;                          ///< Pointer to input tree
+    std::string inputTreeTitle;                 ///< Input tree title
+    std::string inputTreeName;                  ///< Input tree name
+    std::vector<SDataSource *> inputSources;    ///< Input file name
     int numberOfEntries;                        ///< Number of input entries
     int currentEntry;                           ///< Current input entry number
+    SEvent * event;
 
     /// Ctaegory info
     struct CategoryInfo
@@ -62,24 +67,24 @@ protected:
 
     typedef std::map<SCategory::Cat, SCategory *> CatMap;
     CatMap categories;              ///< Map of categories
-    static SiFiManager * mm;       ///< Instance of the SiFiManager
+    static SiFi * mm;       ///< Instance of the SiFi
     bool sim;                       ///< Simulation run
     bool branches_set;              ///< Has branches set
 
 private:
     // constructor
-    SiFiManager();
-    SiFiManager(SiFiManager const &) {}   ///< Copy constructor
+    SiFi();
+    SiFi(SiFi const &) {}   ///< Copy constructor
     /// Assignment operator
     /// \return this object
-    SiFiManager & operator=(SiFiManager const &) { return *this; }
+    SiFi & operator=(SiFi const &) { return *this; }
 
 public:
     // instance method
-    static SiFiManager * instance();
+    static SiFi * instance();
 
     // destructor
-    virtual ~SiFiManager() {};
+    virtual ~SiFi() {};
 
     // methods
     void print() const;
@@ -89,6 +94,8 @@ public:
     bool save();
     Int_t fill();
     bool open();
+
+    void loop(long entries);
 
     void getEntry(int i);
     Long64_t getEntries();
@@ -102,30 +109,33 @@ public:
 
     SCategory * buildCategory(SCategory::Cat cat, bool persistent = true);
     SCategory * getCategory(SCategory::Cat cat, bool persistent = true);
-    SCategory * openCategory(SCategory::Cat cat, bool persistent = true);
+    SCategory * getCategory(SCategory::Cat cat, const char * name, bool persistent);
+//    SCategory * openCategory(SCategory::Cat cat, bool persistent = true);
 
     /// Set output file name
     /// \param file file name
     void setOutputFileName(const std::string & file) { outputFileName = file; }
-    void setInputFileName(const std::string & file);
-    void addInputFileName(const std::string & file);
-    void setInputFileNames(const std::vector<std::string> & files);
-    void addInputFileNames(const std::vector<std::string> & files);
 
+    void addSource(SDataSource * data) { inputSources.push_back(data); }
     /// Get entry number
     /// \return entry number
     int getEntryNumber() { return currentEntry; }
 
     /// Get input tree
     /// \return input tree
-    TChain * getTree() const { return inputTree; }
+    TTree * getTree() const { return inputTree; }
+    void setTree(TTree * t) { inputTree = t; }
+
+    SEvent * getCurrentEvent() const { return event; }
+    void setEvent(SEvent * e);
+
+    static int getCategoryIndex(SCategory::Cat cat, int simulation) {
+        return (cat * 2) + (int)simulation; }
 
 private:
     void initBranches();
-
-    ClassDef(SiFiManager, 1);
 };
 
-extern SiFiManager * mapt();
+extern SiFi * sifi();
 
-#endif /* DATAMANAGER_H */
+#endif /* SIFI_H */

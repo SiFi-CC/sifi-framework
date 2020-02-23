@@ -23,7 +23,7 @@
 #include "SGeantFibersRaw.h"
 #include "SGeantTrack.h"
 
-#include "SiFiManager.h"
+#include "SiFi.h"
 
 #include "SProgressBar.h"
 
@@ -34,7 +34,7 @@ struct ana_params
     int events;
     string ofile;
 };
-
+/*
 int analysis(const std::vector<std::string> & files, const ana_params & pars)
 {
     int events = pars.events;
@@ -369,7 +369,7 @@ int analysis(const std::vector<std::string> & files, const ana_params & pars)
 
     return 0;
 }
-
+*/
 int main(int argc,char** argv)
 {
     ana_params ap;
@@ -415,8 +415,8 @@ int main(int argc,char** argv)
         ++optind;
     }
 
-    int status = analysis(files, ap);
-    std::cout << "Analysis with status " << status << std::endl;
+//     int status = analysis(files, ap);
+//     std::cout << "Analysis with status " << status << std::endl;
 
     return 0;
 }

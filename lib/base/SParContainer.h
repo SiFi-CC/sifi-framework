@@ -19,8 +19,6 @@
 #include <vector>
 #include <map>
 
-#include "SiFiManager.h"
-
 typedef std::pair<std::string, std::vector<std::string> > TypeDataField;
 typedef std::map<std::string, TypeDataField> ParMap;
 

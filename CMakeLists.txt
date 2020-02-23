@@ -42,8 +42,16 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 #----------------------------------------------------------------------------
 # Setup include directory for this project
-include_directories(${PROJECT_SOURCE_DIR}/lib)
-
+include_directories(
+    lib/base/
+    lib/base/datasources/
+    lib/base/datastruct/
+    lib/base/event/
+    lib/base/util/
+    lib/geant/
+    lib/fibers_stack/
+    lib/tools/
+)
 # Link directories for libgeometry.so
 link_directories(${PROJECT_SOURCE_DIR}/geometry/build)
 include_directories(${PROJECT_SOURCE_DIR}/geometry/include)

@@ -19,8 +19,6 @@
 #include <vector>
 #include <map>
 
-#include "SiFiManager.h"
-
 typedef std::vector<std::string> LookupVector;
 
 class SLookupContainer

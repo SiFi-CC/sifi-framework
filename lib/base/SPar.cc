@@ -25,9 +25,9 @@ SParContainer. The getParam() method reads content of the SParContainer and
 fills variables inside the SPar object. The putParam method allows to update
 parameters in the container and write to param file.
 
-\sa MFibersStackCalibratorPar
-\sa MFibersStackDigitizerPar
-\sa MFibersStackGeomPar
+\sa SFibersStackCalibratorPar
+\sa SFibersStackDigitizerPar
+\sa SFibersStackGeomPar
 */
 
 /** Default constructor

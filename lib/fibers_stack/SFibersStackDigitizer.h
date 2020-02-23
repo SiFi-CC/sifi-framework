@@ -14,6 +14,8 @@
 
 #include "STask.h"
 
+#include <Rtypes.h>
+
 #include <vector>
 
 class SCategory;

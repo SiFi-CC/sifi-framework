@@ -9,23 +9,23 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#include <iostream>
-
 #include "SFibersStackDigitizer.h"
 #include "SFibersStackDigitizerPar.h"
 #include "SFibersStackGeomPar.h"
 #include "SGeantFibersRaw.h"
 #include "SFibersStackCalSim.h"
-
 #include "SParManager.h"
 #include "SCategory.h"
+#include "SiFi.h"
+
+#include <iostream>
 
 /** \class SFibersStackDigitizer
 \ingroup lib_fibers_stack
 
 A digitizer task.
 
-\sa MTask
+\sa STask
 */
 
 /** Constructor
@@ -41,19 +41,19 @@ SFibersStackDigitizer::~SFibersStackDigitizer()
 }
 
 /** Init task
- * \sa MTask::init()
+ * \sa STask::init()
  * \return success
  */
 bool SFibersStackDigitizer::init()
 {
-    catGeantFibersRaw = mapt()->getCategory(SCategory::CatGeantFibersRaw);
+    catGeantFibersRaw = sifi()->getCategory(SCategory::CatGeantFibersRaw);
     if (!catGeantFibersRaw)
     {
         std::cerr << "No CatGeantFibersRaw category" << "\n";
         return false;
     }
 
-    catFibersCalSim = mapt()->buildCategory(SCategory::CatFibersStackCal);
+    catFibersCalSim = sifi()->buildCategory(SCategory::CatFibersStackCal);
     if (!catFibersCalSim)
     {
         std::cerr << "No CatFibersStackCal category" << "\n";
@@ -84,7 +84,7 @@ bool SFibersStackDigitizer::init()
 }
 
 /** Execute task
- * \sa MTask::execute()
+ * \sa STask::execute()
  * \return success
  */
 bool SFibersStackDigitizer::execute()
@@ -149,7 +149,7 @@ bool SFibersStackDigitizer::execute()
 }
 
 /** Finalize task
- * \sa MTask::finalize()
+ * \sa STask::finalize()
  * \return success
  */
 bool SFibersStackDigitizer::finalize()

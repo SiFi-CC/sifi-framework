@@ -9,13 +9,14 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#include <iostream>
+#include "SCategory.h"
+#include "SiFi.h"
 
 #include <TBuffer.h>
 #include <TClass.h>
 #include <TClonesArray.h>
 
-#include "SCategory.h"
+#include <iostream>
 
 /** \class SCategory
 \ingroup lib_base
@@ -28,7 +29,9 @@ A Category abstract interface
 TObject * pNullSCategoryPtr = nullptr;
 
 /// Default consructor
-SCategory::SCategory() : data(nullptr)
+SCategory::SCategory()
+    : TObject()
+    , data(nullptr)
 {
     header.clear();
     index.clear();
@@ -40,7 +43,9 @@ SCategory::SCategory() : data(nullptr)
  * \param sizes array of sizes of dimensions
  * \param simulation set tru if category for simulation data
  */
-SCategory::SCategory(const char * name, size_t dim, size_t * sizes, bool simulation) : data(nullptr)
+SCategory::SCategory(const char * name, size_t dim, size_t * sizes, bool simulation)
+    : TObject()
+    , data(nullptr)
 {
     header.clear();
     index.clear();
@@ -80,6 +85,7 @@ void SCategory::setup(const char * name, size_t dim, size_t * sizes, bool simula
         header.data_size *= sizes[i];
     }
 
+    if (data) delete data;
     data = new TClonesArray(name, header.data_size);
 
     printf("Category %s created with linear size of %ld\n", name, header.data_size);
@@ -171,7 +177,7 @@ void SCategory::print() const
 {
     printf("Category: %s  length=%ld  sim=%d\n", header.name.Data(), header.data_size, header.simulation);
     printf("  index: objects=%ld  compressed=%d\n", index.size(), index.isCompressed());
-    printf("  %d objects in the category:\n", data->GetEntries());
+    printf("  %d objects in the category:\n", data ? data->GetEntries() : 0);
 }
 
 /**
@@ -182,7 +188,7 @@ void SCategory::compress()
 {
     if (!header.writable)   return;
 
-    data->Compress();
+    if (data) data->Compress();
     index.compress();
 }
 
@@ -218,9 +224,9 @@ int SCategory::loc2pos(const SLocator& loc)
     size_t pos = 0;
 
     for (size_t i = 0; i < header.dim; ++i)
-    {//printf("[%d] loc_at=%d   dim_siz=%d\n", i, loc.at(i), header.dim_sizes[i]);
+    {
         pos += loc.at(i) * header.dim_offsets[i];
-    }//printf("pos=%d\n", pos);
+    }
     return pos;
 }
 
@@ -234,7 +240,7 @@ void SCategory::Streamer(TBuffer &R__b)
         TObject::Streamer(R__b);
         header.Streamer(R__b);
         index.Streamer(R__b);
-        R__b.ReadString(clase,200);
+        R__b.ReadString(clase, 200);
         if ( data && strcmp(clase,data->GetClass()->GetName())==0)
             data->Clear();
         else {
@@ -254,6 +260,3 @@ void SCategory::Streamer(TBuffer &R__b)
         R__b << entries;
     }
 }
-
-
-ClassImp(SCategory);

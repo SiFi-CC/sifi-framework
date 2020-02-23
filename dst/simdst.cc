@@ -20,7 +20,7 @@
 #include "SGeantTrack.h"
 #include "SGeantFibersRaw.h"
 
-#include "SiFiManager.h"
+#include "SiFi.h"
 #include "SDetectorManager.h"
 #include "STaskManager.h"
 #include "SParManager.h"
@@ -30,7 +30,7 @@
 #include "SProgressBar.h"
 
 using namespace std;
-
+/*
 int simdst(const std::string & file, int events = 1000)
 {
     TString oname = file;
@@ -45,7 +45,7 @@ int simdst(const std::string & file, int events = 1000)
     dataManager->setSimulation(true);
 
     // input files
-    dataManager->setInputFileName(file);
+//     dataManager->setInputFileName(file);
     dataManager->open();
 
     // output files
@@ -101,7 +101,7 @@ int simdst(const std::string & file, int events = 1000)
 
     return 0;
 }
-
+*/
 int main(int argc,char** argv)
 {
     int events = 10000;
@@ -134,9 +134,9 @@ int main(int argc,char** argv)
     while (optind < argc)
     {
         std::cout << "Digitize " << argv[optind] << std::endl;
-        int status = simdst(argv[optind], events);
+//         int status = simdst(argv[optind], events);
         std::string f = argv[optind];
-        digi_status.push_back({f, status});
+//         digi_status.push_back({f, status});
         ++optind;
     }
 

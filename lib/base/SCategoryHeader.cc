@@ -65,5 +65,3 @@ void SCategoryHeader::Streamer(TBuffer &R__b)
         R__b << writable;
     }
 }
-
-ClassImp(SCategoryHeader);

@@ -163,5 +163,3 @@ void SGeantTrack::Clear(Option_t* opt)
 {
     clear();
 }
-
-ClassImp(SGeantTrack);

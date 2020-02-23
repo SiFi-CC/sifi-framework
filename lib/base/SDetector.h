@@ -12,11 +12,11 @@
 #ifndef SDETECTOR_H
 #define SDETECTOR_H
 
-#include <TNamed.h>
-
-#include "SiFiManager.h"
+#include "SiFi.h"
 #include "STaskManager.h"
 #include "SParManager.h"
+
+#include <TNamed.h>
 
 class STask;
 
@@ -62,7 +62,7 @@ public:
 
     /// Is it a simulation run
     /// \return simulation run flag
-    bool isSimulation() const { return SiFiManager::instance()->isSimulation(); }
+    bool isSimulation() const { return SiFi::instance()->isSimulation(); }
 
 private:
     ClassDef(SDetector, 1);

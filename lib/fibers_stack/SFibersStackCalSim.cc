@@ -47,5 +47,3 @@ void SFibersStackCalSim::print() const
 {
     SFibersStackCal::print();
 }
-
-ClassImp(SFibersStackCalSim);

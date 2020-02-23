@@ -14,6 +14,8 @@
 
 #include "SPar.h"
 
+#include <Rtypes.h>
+
 class SFibersStackCalibratorPar : public SPar
 {
 private:

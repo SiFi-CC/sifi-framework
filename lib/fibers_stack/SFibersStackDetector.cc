@@ -18,12 +18,14 @@
 #include "SFibersStackUnpacker.h"
 #include "SFibersStackDigitizer.h"
 
+#include "SiFi.h"
+
 /** \class SFibersStackDetector
 \ingroup lib_fibers_stack
 
 An organizer class for the detector
 
-\sa MDetector
+\sa SDetector
 */
 
 /** Constructor
@@ -55,7 +57,7 @@ SFibersStackDetector::~SFibersStackDetector()
 
 /** Init tasks
  *
- * \sa MPar::initTasks()
+ * \sa SPar::initTasks()
  * \return success
  */
 bool SFibersStackDetector::initTasks()
@@ -64,17 +66,17 @@ bool SFibersStackDetector::initTasks()
     {
         addTask(new SFibersStackDigitizer(), 0);
     }
-    else
-    {
-        addTask(new SFibersStackUnpacker(), 0);
-    }
+//     else
+//     {
+//         addTask(new SFibersStackUnpacker(), 0);
+//     }
 
     return true;
 }
 
 /** Init containers
  *
- * \sa MPar::initCategories()
+ * \sa SPar::initCategories()
  * \return success
  */
 bool SFibersStackDetector::initContainers()
@@ -95,13 +97,13 @@ bool SFibersStackDetector::initContainers()
 
 /** Init categries
  *
- * \sa MPar::initCategories()
+ * \sa SPar::initCategories()
  * \return success
  */
 bool SFibersStackDetector::initCategories()
 {
     size_t sizes[3];
-    SiFiManager * dm = SiFiManager::instance();
+    SiFi * dm = SiFi::instance();
 
     sizes[0] = modules;
     sizes[1] = layers;
@@ -117,7 +119,7 @@ bool SFibersStackDetector::initCategories()
     }
     else
     {
-        if (!dm->registerCategory(SCategory::CatFibersStackRaw, "SFibersStackRaw", 3, sizes, true)) return false;
+        if (!dm->registerCategory(SCategory::CatFibersStackRaw, "SFibersStackRaw", 3, sizes, false)) return false;
         if (!dm->registerCategory(SCategory::CatFibersStackCal, "SFibersStackCal", 3, sizes, false)) return false;
     }
 

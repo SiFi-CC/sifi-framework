@@ -14,8 +14,6 @@
 
 #include <map>
 
-#include "SiFiManager.h"
-
 class STask;
 
 class STaskManager

@@ -12,9 +12,6 @@
 #ifndef SGEANTTRACK_H
 #define SGEANTTRACK_H
 
-using namespace std;
-
-//#include "globals.h"
 #include <string>
 #include <fstream>
 #include "TObject.h"
@@ -44,13 +41,13 @@ protected:
     Point start;                        ///< start point
     Point stop;                         ///< stop point
     Bool_t scattering;                  ///< was scattering
-    std::vector<string> processes;      ///< processes
+    std::vector<std::string> processes; ///< processes
     Long_t g4Id;                        ///< Geant ID
     Bool_t stopInDetector;              ///< stop in detector
     std::vector<Int_t> secondariesID;   ///< secondaries PID
     Int_t trackID;                      ///< track ID
     Int_t parentID;                     ///< parent ID
-    string generationProcess;           ///< generation process
+    std::string generationProcess;      ///< generation process
     Bool_t inAcceptance;                ///< in acceptance
 
     Bool_t proc_arr[ATREST+1];          ///< process list
@@ -153,10 +150,10 @@ public:
 
     /// Get processes
     /// \return processes
-    std::vector<string> getProcesses() const { return processes; }
+    std::vector<std::string> getProcesses() const { return processes; }
     /// Set processes
     /// \param v vector of processes
-    void setProcesses(const std::vector<string> & v) { processes = v; }
+    void setProcesses(const std::vector<std::string> & v) { processes = v; }
 
     /// Get Geant4 ID
     /// \return Geant4 ID
@@ -187,7 +184,7 @@ public:
 
     /// Get generation process
     /// \return generation process
-    string getGenerationProcess() const { return generationProcess; }
+    std::string getGenerationProcess() const { return generationProcess; }
     /// Set generation process
     /// \param p generation process
     void setGenerationProcess(const std::string & p) { generationProcess = p; }

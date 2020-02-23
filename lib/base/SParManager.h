@@ -31,9 +31,9 @@
 
 #define SPARMANAGER_H
 
+#include <iostream>
 #include <map>
-
-#include "SiFiManager.h"
+#include <vector>
 
 class SParContainer;
 class SPar;

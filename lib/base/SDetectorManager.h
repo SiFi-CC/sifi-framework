@@ -14,8 +14,6 @@
 
 #include <vector>
 
-#include "SiFiManager.h"
-
 class SDetector;
 
 class SDetectorManager

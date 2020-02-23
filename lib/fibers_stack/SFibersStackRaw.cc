@@ -53,5 +53,3 @@ void SFibersStackRaw::print() const
 {
     printf("fiber m,l,f=%d,%d,%d  u,y=%f,%f  ADC=%f\n", module, layer, fiber, u, y, adc);
 }
-
-ClassImp(SFibersStackRaw);

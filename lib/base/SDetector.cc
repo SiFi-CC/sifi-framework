@@ -45,5 +45,3 @@ void SDetector::addTask(STask * task, Int_t step)
     if (task_mask & (1 << step))
         STaskManager::instance()->addTask(task, step);
 }
-
-ClassImp(SDetector);

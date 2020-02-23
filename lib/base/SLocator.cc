@@ -42,5 +42,3 @@ void SLocator::print() const
         printf("  %ld", addr[i]);
     putchar('\n');
 }
-
-ClassImp(SLocator);

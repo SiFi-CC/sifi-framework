@@ -145,6 +145,7 @@ bool SFibersStackGeomPar::getParams(SParContainer* parcont)
  */
 bool SFibersStackGeomPar::putParams(SParContainer* parcont) const
 {
+    return true;
 }
 
 /** Print parameters

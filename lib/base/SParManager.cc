@@ -9,18 +9,16 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
+#include "SParManager.h"
+#include "SParContainer.h"
+#include "SPar.h"
+
 #include <algorithm> 
 #include <cctype>
 #include <fstream>
 #include <iostream>
 #include <locale>
 #include <sstream>
-
-#include "SPar.h"
-
-#include "SParManager.h"
-#include "SParContainer.h"
-#include "SPar.h"
 
 /** \class SParManager
 \ingroup lib_base
@@ -119,11 +117,11 @@ void simplify(std::string & s)
  * \param str string
  * \return is float
  */
-bool isFloat(const string & str)
+bool isFloat(const std::string & str)
 {
     std::istringstream iss(str);
     float f;
-    iss >> noskipws >> f;
+    iss >> std::noskipws >> f;
     return iss.eof() && !iss.fail();
 }
 
@@ -167,7 +165,7 @@ SParManager::~SParManager()
  */
 bool SParManager::parseSource()
 {
-    ifstream ifs(source);
+    std::ifstream ifs(source);
     size_t length = 0;
     if (ifs)
     {

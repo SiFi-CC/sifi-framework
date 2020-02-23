@@ -12,8 +12,6 @@
 #ifndef STASK_H
 #define STASK_H
 
-#include "SiFiManager.h"
-
 class STask
 {
 public:

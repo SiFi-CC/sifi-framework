@@ -55,5 +55,3 @@ void SGeantFibersRaw::Clear(Option_t* opt)
 void SGeantFibersRaw::print() const
 {
 }
-
-ClassImp(SGeantFibersRaw);

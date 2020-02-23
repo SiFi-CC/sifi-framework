@@ -9,13 +9,13 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#include <iostream>
-
 #include "SFibersStackUnpacker.h"
 #include "SFibersStackRaw.h"
-
 #include "SParManager.h"
 #include "SCategory.h"
+#include "SiFi.h"
+
+#include <iostream>
 
 /** \class SFibersStackUnpacker
 \ingroup lib_fibers_stack
@@ -43,7 +43,7 @@ SFibersStackUnpacker::~SFibersStackUnpacker()
  */
 bool SFibersStackUnpacker::init()
 {
-    catFibersRaw = mapt()->buildCategory(SCategory::CatFibersStackRaw);
+    catFibersRaw = sifi()->buildCategory(SCategory::CatFibersStackRaw);
     if (!catFibersRaw)
     {
         std::cerr << "No CatFibersStackRaw category" << "\n";

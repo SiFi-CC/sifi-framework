@@ -9,15 +9,15 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#include <iostream>
-
 #include "SFibersStackCalibrator.h"
 #include "SFibersStackCalibratorPar.h"
 #include "SFibersStackRaw.h"
 #include "SFibersStackCal.h"
-
 #include "SParManager.h"
 #include "SCategory.h"
+#include "SiFi.h"
+
+#include <iostream>
 
 /** \class SFibersStackCalibrator
 \ingroup lib_fibers_stack
@@ -43,13 +43,13 @@ SFibersStackCalibrator::~SFibersStackCalibrator()
 
 /** Init task
  *
- * \sa MTask::init()
+ * \sa STask::init()
  * \return success
  */
 bool SFibersStackCalibrator::init()
 {
     // get Raw category
-    catFibersRaw = mapt()->getCategory(SCategory::CatFibersStackRaw);
+    catFibersRaw = sifi()->getCategory(SCategory::CatFibersStackRaw);
     if (!catFibersRaw)
     {
         std::cerr << "No CatFibersStackRaw category" << "\n";
@@ -57,7 +57,7 @@ bool SFibersStackCalibrator::init()
     }
 
     // create Cal category
-    catFibersCal = mapt()->buildCategory(SCategory::CatFibersStackCal);
+    catFibersCal = sifi()->buildCategory(SCategory::CatFibersStackCal);
     if (!catFibersCal)
     {
         std::cerr << "No CatFibersStackCal category" << "\n";
@@ -77,7 +77,7 @@ bool SFibersStackCalibrator::init()
 
 /** Execute task
  *
- * \sa MTask::execute()
+ * \sa STask::execute()
  * \return success
  */
 bool SFibersStackCalibrator::execute()
@@ -134,7 +134,7 @@ bool SFibersStackCalibrator::execute()
 
 /** Finalize task
  *
- * \sa MTask::finalize()
+ * \sa STask::finalize()
  * \return success
  */
 bool SFibersStackCalibrator::finalize()

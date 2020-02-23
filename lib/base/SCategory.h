@@ -34,13 +34,16 @@ public:
         // simulations
         CatGeantTrack,          ///< geant track
         CatGeantFibersRaw,      ///< fibers hit
+        // helpers
+        CatDDSamples,
         // fibers
         CatFibersStackRaw,      ///< fibers stack raw data
         CatFibersStackCal,      ///< gibers cal data
         CatFiberTrack,          ///< fibers track
         // tracks
         // Limit 
-        CatLimitDoNotUse        ///< holds size of the category list
+        CatLimitDoNotUse,       ///< holds size of the category list
+        CatNone,                ///< Clear category list in SLoop
     };
 
     // constructors
@@ -63,6 +66,8 @@ public:
     /// Returns number of entries in the category
     /// \return number of entries
     Int_t getEntries() const { return data->GetEntries(); }
+
+    Bool_t IsFolder() const { return kTRUE; }
 
     void compress();
 

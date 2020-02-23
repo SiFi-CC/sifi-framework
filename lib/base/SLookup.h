@@ -12,8 +12,6 @@
 #ifndef SLOOKUP_H
 #define SLOOKUP_H
 
-#include "SiFiManager.h"
-
 class SLookupContainer;
 class SLookupTable;
 

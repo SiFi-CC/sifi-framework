@@ -9,52 +9,55 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#include "SiFiManager.h"
-
+#include "SiFi.h"
 #include "SCategory.h"
+#include "STaskManager.h"
+
+#include <TString.h>
 
 #include <iostream>
 
-/** \class SiFiManager
+/** \class SiFi
 \ingroup lib_base
 
 Access point to load, read and write data.
 
-The main class of the SiFi Framework. The SiFiManager is responsible for
+The main class of the SiFi Framework. The SiFi is responsible for
 managing all data operations. It loads a root tree from specified file.
 */
 
 SCategory * gNullSCategoryPtr = 0;
 
-SiFiManager * SiFiManager::mm = nullptr;
+SiFi * SiFi::mm = nullptr;
 
 /** Returns instance of the Detector Manager class.
  *
  * \return manager instance
  */
-SiFiManager * SiFiManager::instance()
+SiFi * SiFi::instance()
 {
     if (!mm)
-        mm = new SiFiManager;
+        mm = new SiFi;
 
     return mm;
 }
 
 /** Shortcut
- * \return SiFiManager instance
+ * \return SiFi instance
  */
-SiFiManager * mapt()
+SiFi * sifi()
 {
-    return SiFiManager::instance();
+    return SiFi::instance();
 }
 
 /** Default constructor
  */
-SiFiManager::SiFiManager() :
-    outputFile(nullptr), outputTree(nullptr), outputTreeTitle("M"),
-    outputTreeName("M"), outputFileName("output.root"),
-    inputTree(nullptr), inputTreeTitle("M"), inputTreeName("M"),
-    numberOfEntries(-1), currentEntry(-1), branches_set(false)
+SiFi::SiFi() :
+    outputFile(nullptr), outputTree(nullptr), outputTreeTitle("S"),
+    outputTreeName("S"), outputFileName("output.root"),
+    inputTree(nullptr), inputTreeTitle("S"), inputTreeName("S"),
+    numberOfEntries(-1), currentEntry(-1), event(nullptr),
+    sim(false), branches_set(false)
 {
 }
 
@@ -62,7 +65,7 @@ SiFiManager::SiFiManager() :
  *
  * \param simulation is simulation run
  */
-void SiFiManager::setSimulation(bool simulation)
+void SiFi::setSimulation(bool simulation)
 {
     sim = simulation;
     if (sim)
@@ -74,44 +77,44 @@ void SiFiManager::setSimulation(bool simulation)
     }
 }
 
-/** Set single input file.
- *\param file file name
- */
-void SiFiManager::setInputFileName(const std::string& file)
-{
-    inputFiles.clear();
-    inputFiles.push_back(file);
-}
-
-/** Add single input file to the list.
- * \param file file name
- */
-void SiFiManager::addInputFileName(const std::string& file)
-{
-    inputFiles.push_back(file);
-}
-
-/** Set multiple input files to the list.
- * \param files file names
- */
-void SiFiManager::setInputFileNames(const std::vector<std::string> & files)
-{
-    inputFiles = files;
-}
-
-/** Add multiple input files to the list.
- * \param files file names
- */
-void SiFiManager::addInputFileNames(const std::vector<std::string> & files)
-{
-    inputFiles.insert(inputFiles.end(), files.begin(), files.end());
-}
-
+// /** Set single input file.
+//  *\param file file name
+//  */
+// void SiFi::setInputFileName(const std::string& file)
+// {
+//     inputFiles.clear();
+//     inputFiles.push_back(file);
+// }
+// 
+// /** Add single input file to the list.
+//  * \param file file name
+//  */
+// void SiFi::addInputFileName(const std::string& file)
+// {
+//     inputFiles.push_back(file);
+// }
+// 
+// /** Set multiple input files to the list.
+//  * \param files file names
+//  */
+// void SiFi::setInputFileNames(const std::vector<std::string> & files)
+// {
+//     inputFiles = files;
+// }
+// 
+// /** Add multiple input files to the list.
+//  * \param files file names
+//  */
+// void SiFi::addInputFileNames(const std::vector<std::string> & files)
+// {
+//     inputFiles.insert(inputFiles.end(), files.begin(), files.end());
+// }
+// 
 /** Creates a new file and an empty root tree with output categories.
  * \param with_tree create output tree
  * \return true if success
  */
-bool SiFiManager::book(bool with_tree)
+bool SiFi::book(bool with_tree)
 {
     // Create file and open it
     outputFile = new TFile(outputFileName.c_str(), "RECREATE");
@@ -120,7 +123,7 @@ bool SiFiManager::book(bool with_tree)
 
     if (!outputFile->IsOpen())
     {
-        std::cerr  << "[Error] in SiFiManager: could not create " <<
+        std::cerr  << "[Error] in SiFi: could not create " <<
         outputFileName.c_str() << std::endl;
         return false;
     }
@@ -134,13 +137,18 @@ bool SiFiManager::book(bool with_tree)
 /** Writes the tree to file and close it.
  * \return success
  */
-bool SiFiManager::save()
+bool SiFi::save()
 {
     if (outputFile)
     {
         outputFile->cd();
         if (outputTree)
             outputTree->Write();        // Writing the tree to the file
+        fileHeader.Write("FileHeader");
+
+        if (event)
+            event->Write("Event");
+
         outputFile->Close();        // and closing the tree (and the file)
         return true;
     }
@@ -151,7 +159,7 @@ bool SiFiManager::save()
 /** Fills the current event into the tree.
  * \return status of Fill() method
  */
-Int_t SiFiManager::fill()
+Int_t SiFi::fill()
 {
     if (!branches_set)
         initBranches();
@@ -162,9 +170,11 @@ Int_t SiFiManager::fill()
         it->second->compress();
     }
 
+    if (!outputTree)
+        return -1;
+
     // fill tree
     Int_t status = outputTree->Fill();
-//     printf("Fill status = %d\n", status);
 
     return status;
 }
@@ -172,7 +182,7 @@ Int_t SiFiManager::fill()
 /** Opens a file and loads the root tree.
  * \return success
  */
-bool SiFiManager::open()
+bool SiFi::open()
 {
     if (inputTree)
         delete inputTree;
@@ -181,18 +191,19 @@ bool SiFiManager::open()
 
     if (inputTree == 0)
     {
-        std::cerr << "[Error] in SiFiManager: cannot open ROOT file" << "\n";
+        std::cerr << "[Error] in SiFi: cannot open ROOT file" << "\n";
         return false;
     }
 
-    for (uint i = 0; i < inputFiles.size(); ++i)
+    for (uint i = 0; i < inputSources.size(); ++i)
     {
-        printf("Add file %s\n", inputFiles[i].c_str());
-        inputTree->Add(inputFiles[i].c_str());
+//         printf("Add file %s\n", inputFiles[i].c_str());
+//         inputTree->Add(inputFiles[i].c_str());
+        inputSources[i]->open();
     }
 
     if (!inputTree) {
-        std::cerr << "[Error] in SiFiManager open: openTree == NULL" << "\n";
+        std::cerr << "[Error] in SiFi open: openTree == NULL" << "\n";
         return false;
     }
 
@@ -205,7 +216,7 @@ bool SiFiManager::open()
 
 /** Register category.
  *
- * Every category must be registered first before using i (reading or writing).
+ * Every category must be registered first before using it (reading or writing).
  * The detector related categories should be registerd inside
  * MDetector::initCategories() method.
  *
@@ -216,9 +227,9 @@ bool SiFiManager::open()
  * \param simulation simulation run
  * \return success
  */
-bool SiFiManager::registerCategory(SCategory::Cat cat, std::string name, size_t dim, size_t * sizes, bool simulation)
+bool SiFi::registerCategory(SCategory::Cat cat, std::string name, size_t dim, size_t * sizes, bool simulation)
 {
-    int pos = cat * (1+(int)simulation);
+    int pos = getCategoryIndex(cat, simulation);
 
     if (cinfovec[pos].registered == true)
         return false;
@@ -235,7 +246,6 @@ bool SiFiManager::registerCategory(SCategory::Cat cat, std::string name, size_t 
 
     cinfovec[pos] = cinfo;
 
-//     printf("Register category %d with name=%s\n", cat, cinfo.name.c_str());
     return true;
 }
 
@@ -245,7 +255,7 @@ bool SiFiManager::registerCategory(SCategory::Cat cat, std::string name, size_t 
  * persistent, will be written to output tree. The persistent input category
  * will be rewritten to output tree.
  */
-void SiFiManager::initBranches()
+void SiFi::initBranches()
 {
     size_t limit = SCategory::CatLimitDoNotUse * 2;
     for (size_t i = 0; i < limit; ++i)
@@ -266,12 +276,12 @@ void SiFiManager::initBranches()
  * \param persistent set category persistent
  * \return pointer to category object
  */
-SCategory * SiFiManager::buildCategory(SCategory::Cat cat, bool persistent)
+SCategory * SiFi::buildCategory(SCategory::Cat cat, bool persistent)
 {
     if (!outputTree)
         return gNullSCategoryPtr;
 
-    int pos = cat * (1+(int)sim);
+    int pos = getCategoryIndex(cat, sim);
 
     CategoryInfo cinfo = cinfovec[pos];
     if (cinfo.registered == false)
@@ -286,6 +296,7 @@ SCategory * SiFiManager::buildCategory(SCategory::Cat cat, bool persistent)
     {
         categories[cat] = cat_ptr;
         cinfovec[pos] = cinfo;
+        fileHeader.catName[cat] = cinfo.name;
         return cat_ptr;
     }
 
@@ -300,17 +311,35 @@ SCategory * SiFiManager::buildCategory(SCategory::Cat cat, bool persistent)
  * \param persistent set category persistent
  * \return pointer to category object
  */
-SCategory * SiFiManager::getCategory(SCategory::Cat cat, bool persistent)
+SCategory * SiFi::getCategory(SCategory::Cat cat, bool persistent)
 {
-    int pos = cat * (1+(int)sim);
+    int pos = getCategoryIndex(cat, sim);
     CategoryInfo cinfo = cinfovec[pos];
     if (cinfo.registered == false)
         return gNullSCategoryPtr;
     if (cinfo.ptr)
         return cinfo.ptr;
-    SCategory * c = openCategory(cat, persistent);
+    SCategory * c = 0;//openCategory(cat, persistent);
     if (c)
         return c;
+
+    return gNullSCategoryPtr;
+}
+
+SCategory * SiFi::getCategory(SCategory::Cat cat, const char * name, bool persistent)
+{
+    TBranch * br = inputTree->GetBranch(Form("%s.",name));
+    if(!br)
+    {
+//         Error("setInput()","Branch not found : %s !",Form("%s.",catname.Data()));
+//         return kFALSE;
+    }
+    else
+    {
+//         chain->SetBranchAddress(Form("%s.", name), &categories[cat]);
+//         chain->SetBranchStatus (Form("%s.", name),1);
+//         chain->SetBranchStatus (Form("%s.*", name),1);
+    }
 
     return gNullSCategoryPtr;
 }
@@ -321,47 +350,47 @@ SCategory * SiFiManager::getCategory(SCategory::Cat cat, bool persistent)
  * \param persistent set category persistent
  * \return pointer to category object
  */
-SCategory * SiFiManager::openCategory(SCategory::Cat cat, bool persistent)
-{
-    if (!inputTree)
-        return gNullSCategoryPtr;
-
-    int pos = cat * (1+(int)sim);
-
-    CategoryInfo cinfo = cinfovec[pos];
-    if (cinfo.registered == false)
-    {
-        fprintf(stderr, "Category %s (%d) not registered!\n", cinfo.name.c_str(), cat);
-        return gNullSCategoryPtr;
-    }
-
-    if (categories[cat])
-            return categories[cat];
-
-    SCategory ** cat_ptr = new SCategory*;
-    *cat_ptr = new SCategory;
-
-    TBranch ** br = new TBranch*;
-
-    Int_t res = inputTree->SetBranchAddress(cinfo.name.c_str(), &*cat_ptr, br);
-    if (!br)
-    {
-        fprintf(stderr, "Category %s (%d) does not exists!\n", cinfo.name.c_str(), cat);
-        return gNullSCategoryPtr;
-    }
-
-    cinfo.persistent = persistent;
-    if (*cat_ptr)
-    {
-        cinfo.ptr = *cat_ptr;
-        cinfovec[pos] = cinfo;
-
-        categories[cat] = *cat_ptr;
-        return *cat_ptr;
-    }
-    else
-        return gNullSCategoryPtr;
-}
+// SCategory * SiFi::openCategory(SCategory::Cat cat, bool persistent)
+// {
+//     if (!inputTree)
+//         return gNullSCategoryPtr;
+// 
+//     int pos = getCategoryIndex(cat, sim);
+// 
+//     CategoryInfo cinfo = cinfovec[pos];
+//     if (cinfo.registered == false)
+//     {
+//         fprintf(stderr, "Category %s (%d) not registered!\n", cinfo.name.c_str(), cat);
+//         return gNullSCategoryPtr;
+//     }
+// 
+//     if (categories[cat])
+//             return categories[cat];
+// 
+//     SCategory ** cat_ptr = new SCategory*;
+//     *cat_ptr = new SCategory;
+// 
+//     TBranch ** br = new TBranch*;
+// 
+//     Int_t res = inputTree->SetBranchAddress(cinfo.name.c_str(), &*cat_ptr, br);
+//     if (!br)
+//     {
+//         fprintf(stderr, "Category %s (%d) does not exists!\n", cinfo.name.c_str(), cat);
+//         return gNullSCategoryPtr;
+//     }
+// 
+//     cinfo.persistent = persistent;
+//     if (*cat_ptr)
+//     {
+//         cinfo.ptr = *cat_ptr;
+//         cinfovec[pos] = cinfo;
+// 
+//         categories[cat] = *cat_ptr;
+//         return *cat_ptr;
+//     }
+//     else
+//         return gNullSCategoryPtr;
+// }
 
 /** Reads entry of the current tree.
  *
@@ -369,11 +398,11 @@ SCategory * SiFiManager::openCategory(SCategory::Cat cat, bool persistent)
  *
  * \param i event number
  */
-void SiFiManager::getEntry(int i)
+void SiFi::getEntry(int i)
 {
     if (!inputTree)
     {
-        std::cerr << "[Warning] in SiFiManager: no input tree is opened. cannot get any entry." << "\n";
+        std::cerr << "[Warning] in SiFi: no input tree is opened. cannot get any entry." << "\n";
         return;
     }
 
@@ -388,11 +417,11 @@ void SiFiManager::getEntry(int i)
  *
  * \return number of entries
  */
-Long64_t SiFiManager::getEntries()
+Long64_t SiFi::getEntries()
 {
     if (!inputTree)
     {
-        std::cerr << "[Warning] in SiFiManager: no input tree is opened. cannot get any entry." << "\n";
+        std::cerr << "[Warning] in SiFi: no input tree is opened. cannot get any entry." << "\n";
         return -1;
     }
     numberOfEntries = inputTree->GetEntries();
@@ -401,7 +430,7 @@ Long64_t SiFiManager::getEntries()
 
 /** Print info about the categories.
  */
-void SiFiManager::print() const
+void SiFi::print() const
 {
     outputFile->cd();
     printf("There are %ld categories in the output tree\n", categories.size());
@@ -413,7 +442,7 @@ void SiFiManager::print() const
 
 /** Clear all categories.
  */
-void SiFiManager::clear()
+void SiFi::clear()
 {
     for (CatMap::const_iterator it = categories.begin(); it != categories.end(); ++it)
     {
@@ -423,7 +452,7 @@ void SiFiManager::clear()
 
 /** Constructor
  */
-SiFiManager::CategoryInfo::CategoryInfo()
+SiFi::CategoryInfo::CategoryInfo()
 {
     registered = false;
     persistent = false;
@@ -432,7 +461,7 @@ SiFiManager::CategoryInfo::CategoryInfo()
 
 /** Copy constructor
  */
-SiFiManager::CategoryInfo::CategoryInfo(SiFiManager::CategoryInfo& ci)
+SiFi::CategoryInfo::CategoryInfo(SiFi::CategoryInfo& ci)
 {
     registered = ci.registered;
     cat = ci.cat;
@@ -445,4 +474,36 @@ SiFiManager::CategoryInfo::CategoryInfo(SiFiManager::CategoryInfo& ci)
     ptr = ci.ptr;
 }
 
-ClassImp(SiFiManager);
+void SiFi::loop(long entries)
+{
+    for (uint s = 0; s < inputSources.size(); ++s)
+    {
+        bool rc = inputSources[s]->open();
+        if (!rc) abort();
+    }
+
+    STaskManager * tm = STaskManager::instance();
+
+    // go over all events
+    for (long i = 0 ; i < entries; ++i)
+    {
+        clear();
+
+        for (uint s = 0; s < inputSources.size(); ++s)
+        {
+            inputSources[s]->readCurrentEvent();
+        }
+
+        //         ++pb;
+        getEntry(i);
+        tm->runTasks();
+        fill();
+    }
+}
+
+void SiFi::setEvent(SEvent* e)
+{
+    if (event)
+        delete event;
+    event = e;
+}

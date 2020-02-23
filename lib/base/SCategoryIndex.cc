@@ -122,5 +122,3 @@ void SCategoryIndex::Streamer(TBuffer &R__b)
         R__b << compressed;
     }
 }
-
-ClassImp(SCategoryIndex);

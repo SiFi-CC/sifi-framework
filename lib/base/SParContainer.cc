@@ -9,10 +9,11 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
+#include "SParContainer.h"
+
 #include <iostream>
 #include <sstream>
-
-#include "SParContainer.h"
+#include <string>
 
 /** \class SParContainer
 \ingroup lib_base
@@ -26,9 +27,9 @@ SParContainer. The getParam() method reads content of the SParContainer and
 fills variables inside the SPar object. The putParam method allows to update
 parameters in the container and write to param file.
 
-\sa MFibersStackCalibratorPar
-\sa MFibersStackDigitizerPar
-\sa MFibersStackGeomPar
+\sa SFibersStackCalibratorPar
+\sa SFibersStackDigitizerPar
+\sa SFibersStackGeomPar
 */
 
 /** Constructor
@@ -252,7 +253,7 @@ bool SParContainer::fill(const std::string & name, TArrayI& val)
     }
 
     for (int i = 0; i < it->second.second.size(); ++i)
-        val[i] = stoi(it->second.second[i].c_str());
+        val[i] = std::stoi(it->second.second[i].c_str());
 
     return true;
 }
@@ -279,7 +280,7 @@ bool SParContainer::fill(const std::string & name, TArrayF& val)
     }
 
     for (int i = 0; i < it->second.second.size(); ++i)
-        val[i] = stof(it->second.second[i].c_str());
+        val[i] = std::stof(it->second.second[i].c_str());
 
     return true;
 }
@@ -306,7 +307,7 @@ bool SParContainer::fill(const std::string & name, TArrayD& val)
     }
 
     for (int i = 0; i < it->second.second.size(); ++i)
-        val[i] = stod(it->second.second[i].c_str());
+        val[i] = std::stod(it->second.second[i].c_str());
 
     return true;
 }
@@ -338,4 +339,5 @@ void SParContainer::print()
 bool SParContainer::initParam(const std::string& name, const std::string& type, const std::vector<std::string> & values)
 {
     parameters[name] = TypeDataField(type, values);
+    return true;
 }

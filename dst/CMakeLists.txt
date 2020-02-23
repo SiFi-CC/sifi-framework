@@ -6,17 +6,16 @@ project(SiFi-Framework-DST CXX)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib)
 
 link_directories(${PROJECT_SOURCE_DIR}/../lib)
-include_directories(${PROJECT_SOURCE_DIR}/../lib/base)
-include_directories(${PROJECT_SOURCE_DIR}/../lib/geant)
-include_directories(${PROJECT_SOURCE_DIR}/../lib/fibers_stack)
-include_directories(${PROJECT_SOURCE_DIR}/../lib/tools)
 
-add_executable(mapt_simdst simdst.cc)
-target_link_libraries(mapt_simdst ${ROOT_LIBRARIES})
+add_executable(sifi_simdst simdst.cc)
+target_link_libraries(sifi_simdst ${ROOT_LIBRARIES})
+target_link_libraries(sifi_simdst SiFi GeantSim FibersStack Tools)
 
-target_link_libraries(mapt_simdst SiFi GeantSim FibersStack Tools)
+add_executable(sifi_dst dst.cc)
+target_link_libraries(sifi_dst ${ROOT_LIBRARIES})
+target_link_libraries(sifi_dst SiFi GeantSim FibersStack Tools)
 
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
-install(TARGETS mapt_simdst DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS sifi_simdst DESTINATION ${CMAKE_INSTALL_BINDIR})

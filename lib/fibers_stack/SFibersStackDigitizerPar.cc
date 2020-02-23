@@ -18,12 +18,12 @@
 
 A container for Fibers Stack Digitizer parameters
 
-\sa MPar
+\sa SPar
 
 */
 
 /** Get parameters
- * \sa MPar::getParams()
+ * \sa SPar::getParams()
  * \param parcont pointer to container object
  * \return success
  */
@@ -33,7 +33,7 @@ bool SFibersStackDigitizerPar::getParams(SParContainer* parcont)
 }
 
 /** Put parameters
- * \sa MPar::putParams()
+ * \sa SPar::putParams()
  * \param parcont pointer to container object
  * \return success
  */
