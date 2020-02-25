@@ -10,8 +10,11 @@ project(SiFi
 )
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+list(APPEND CMAKE_MODULE_PATH
+    ${CMAKE_SOURCE_DIR}/Modules
+    $ENV{ROOTSYS}
+    ${CMAKE_SOURCE_DIR}/cmake-scripts
+)
 
 #----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
@@ -25,7 +28,13 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 #   find_package(Geant4 QUIET)
 # endif()
 
-add_definitions("-std=c++17")
+include(c++-standards)
+include(code-coverage)
+include(sanitizers)
+
+cxx_17()
+# add_code_coverage()
+add_code_coverage_all_targets()
 
 # Root
 find_package(ROOT QUIET REQUIRED COMPONENTS Core)
@@ -70,6 +79,7 @@ if(BUILD_PYTHON_WRAPPER)
 add_subdirectory(python)
 endif()
 
+enable_testing()
 add_subdirectory(tests)
 
 # Export the package for use from the build-tree
