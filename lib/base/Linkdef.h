@@ -9,7 +9,7 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#ifdef __CINT__
+#ifdef __CLING__
 
 #pragma link C++ class SLocator+;
 #pragma link C++ class SCategory-;
@@ -22,7 +22,8 @@
 #pragma link C++ class SiFi;
 
 // datasources
-#pragma link C++ class SDDSamples;
+#pragma link C++ class DDSignal+;
+#pragma link C++ class SDDSamples+;
 
 // util
 #pragma link C++ class SRootFileHeader+;

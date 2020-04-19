@@ -24,8 +24,8 @@ void SDataSource::addUnpacker(SUnpacker * unpacker, uint16_t address)
     }
 
     printf("Add unpacker: 0x%x\n", address);
-    if (address != 0x0000)
-        special_addr = address;
+//     if (address != 0x0000)
+//         special_addr = address;
 
     unpackers[address] = unpacker;
 }

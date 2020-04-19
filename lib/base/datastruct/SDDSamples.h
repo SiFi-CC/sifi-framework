@@ -14,17 +14,59 @@
 
 #include <TObject.h>
 
+class DDSignal
+{
+  public:
+    Float_t fAmp;    ///< Amplitude [mV]
+    Float_t fT0;     ///< Time T0 [ns]
+    Float_t fTOT;    ///< Time over threshold [ns]
+    Float_t fCharge; ///< Uncalibrated charge [a.u.]
+    Float_t fPE;     ///< Calibrated charge [P.E.] or [keV]
+    Float_t fBL;
+    Float_t fBL_sigma;
+    Int_t fPileUp;
+
+  public:
+    DDSignal();
+
+    /// Sets signal amplitude in mV
+    void SetAmplitude(Float_t amp) { fAmp = amp; };
+    /// Sets time T0 in ns
+    void SetT0(Float_t t0) { fT0 = t0; }
+    /// Sets time over threshold in mV
+    void SetTOT(Float_t tot) { fTOT = tot; };
+    /// Sets uncalibrated charge, i.e. signal integral
+    void SetCharge(Float_t charge) { fCharge = charge; };
+    /// Sets value of charge calibrated to PE or keV
+    void SetPE(Float_t cal) { fPE = cal; };
+    /// Returns signal amplitude in mV
+    Float_t GetAmplitude(void) { return fAmp; };
+    /// Returns time T0 in ns
+    Float_t GetT0(void) { return fT0; };
+    /// Retursns time over threshold in ns
+    Float_t GetTOT(void) { return fTOT; };
+    /// Returns uncalibrated charge, i.e. signal integral
+    Float_t GetCharge(void) { return fCharge; };
+    /// Returns value of calibrated charge in PE or keV
+    Float_t GetPE(void) { return fPE; };
+
+    void Clear(void);
+    void Print(void);
+};
+
 class SDDSamples : public TObject
 {
-protected:
+  protected:
     // members
-    Int_t module;       ///< address - module
-    Int_t layer;        ///< address - layer
-    Int_t fiber;        ///< address - fiber
+    Int_t module; ///< address - module
+    Int_t layer;  ///< address - layer
+    Int_t fiber;  ///< address - fiber
 
-    Float_t samples[1024];          ///< u-coord in the lab system
+    Float_t samples[1024];
 
-public:
+    DDSignal signal;
+
+  public:
     // constructor
     SDDSamples();
 
@@ -39,23 +81,34 @@ public:
     /// \param m module
     /// \param l layer
     /// \param f fiber
-    void setAddress(Int_t m, Int_t l, Int_t f) { module = m; layer = l; fiber = f; }
+    void setAddress(Int_t m, Int_t l, Int_t f)
+    {
+        module = m;
+        layer = l;
+        fiber = f;
+    }
     /// Get address
     /// \param m module
     /// \param l layer
     /// \param f fiber
-    void getAddress(Int_t & m, Int_t & l, Int_t & f) const { m = module; l = layer; f = fiber; }
+    void getAddress(Int_t& m, Int_t& l, Int_t& f) const
+    {
+        m = module;
+        l = layer;
+        f = fiber;
+    }
 
     /// Set coordinate along fibers
     /// \param samples samples
     /// \param length number of samples
-    void fillSamples(Float_t * samples, size_t length);
+    void fillSamples(Float_t* samples, size_t length);
 
-    Float_t * getSamples() { return samples; }
+    Float_t* getSamples() { return samples; }
+    DDSignal* getSignal() { return &signal; }
 
     void print() const;
 
-    ClassDef(SDDSamples, 1);   // container for fibers stack raw data
+    ClassDef(SDDSamples, 1); // container for fibers stack raw data
 };
 
 #endif /* SDDSAMPLES_H */

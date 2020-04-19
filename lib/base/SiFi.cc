@@ -232,7 +232,7 @@ bool SiFi::registerCategory(SCategory::Cat cat, std::string name, size_t dim, si
     int pos = getCategoryIndex(cat, simulation);
 
     if (cinfovec[pos].registered == true)
-        return false;
+        return true;
 
     CategoryInfo cinfo;
     cinfo.registered = true;
@@ -280,6 +280,9 @@ SCategory * SiFi::buildCategory(SCategory::Cat cat, bool persistent)
 {
     if (!outputTree)
         return gNullSCategoryPtr;
+
+    if (categories[cat])
+        return categories[cat];
 
     int pos = getCategoryIndex(cat, sim);
 
@@ -479,26 +482,33 @@ void SiFi::loop(long entries)
     for (uint s = 0; s < inputSources.size(); ++s)
     {
         bool rc = inputSources[s]->open();
+        if (!rc) printf("Could not open source %d\n", s);
         if (!rc) abort();
     }
 
     STaskManager * tm = STaskManager::instance();
 
     // go over all events
-    for (long i = 0 ; i < entries; ++i)
+    ulong i;
+    for (i = 0 ; i < entries; ++i)
     {
         clear();
+        bool flag = false;
 
         for (uint s = 0; s < inputSources.size(); ++s)
         {
-            inputSources[s]->readCurrentEvent();
+            flag = inputSources[s]->readCurrentEvent();
+            if (!flag) break;
         }
+
+        if (!flag) break;
 
         //         ++pb;
         getEntry(i);
         tm->runTasks();
         fill();
     }
+    printf("*** SiFi finished after %lu events\n", i);
 }
 
 void SiFi::setEvent(SEvent* e)

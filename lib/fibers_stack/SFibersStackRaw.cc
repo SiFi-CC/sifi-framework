@@ -45,11 +45,12 @@ void SFibersStackRaw::Clear(Option_t* opt)
     u = 0;
     y = 0;
     adc = 0.0;
+    time = 0.0;
 }
 
 /** Print category
  */
 void SFibersStackRaw::print() const
 {
-    printf("fiber m,l,f=%d,%d,%d  u,y=%f,%f  ADC=%f\n", module, layer, fiber, u, y, adc);
+    printf("fiber m,l,f=%d,%d,%d  u,y=%f,%f  ADC=%f  Time=%f\n", module, layer, fiber, u, y, adc, time);
 }

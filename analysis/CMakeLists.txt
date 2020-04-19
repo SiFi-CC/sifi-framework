@@ -15,4 +15,4 @@ target_link_libraries(mapt_analysis
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
-install(TARGETS mapt_analysis DESTINATION ${CMAKE_INSTALL_BINDIR})
+# install(TARGETS mapt_analysis DESTINATION ${CMAKE_INSTALL_BINDIR})

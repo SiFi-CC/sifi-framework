@@ -34,8 +34,10 @@ bool SFileSource::open()
     if (special_addr != 0x0000)
     {
         bool res = unpackers[special_addr]->init();
-        if (!res)
+        if (!res) {
+            printf("Special unpacker 0x%x not initalized\n", special_addr);
             abort();
+        }
     }
     else
     {
@@ -43,8 +45,10 @@ bool SFileSource::open()
         for (; iter != unpackers.end(); ++iter)
         {
             bool res = iter->second->init();
-            if (!res)
+            if (!res) {
+                printf("Unpacker 0x%x not initalized\n", iter->first);
                 abort();
+            }
         }
     }
     return true;
@@ -52,7 +56,7 @@ bool SFileSource::open()
 
 bool SFileSource::close()
 {
-    printf("%d Unpackers legth: %d\n", __LINE__, unpackers.size());
+    printf("%d Unpackers legth: %lu\n", __LINE__, unpackers.size());
     if (special_addr != 0x0000)
     {
         unpackers[special_addr]->finalize();
@@ -77,6 +81,9 @@ bool SFileSource::readCurrentEvent()
     istream.read((char*)&buffer, buffer_size);
     bool flag = istream.good();
 
+    if (!flag)
+        return false;
+
     if (special_addr != 0x0000)
     {
         unpackers[special_addr]->execute(0, 0, buffer, buffer_size);
@@ -87,9 +94,6 @@ bool SFileSource::readCurrentEvent()
         for (; iter != unpackers.end(); ++iter)
             iter->second->execute(0, 0, buffer, buffer_size);
     }
-
-    if (flag)
-        return false;
 
     return true;
 }

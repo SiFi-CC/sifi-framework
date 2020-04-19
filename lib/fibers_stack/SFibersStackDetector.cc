@@ -18,6 +18,8 @@
 #include "SFibersStackUnpacker.h"
 #include "SFibersStackDigitizer.h"
 
+#include "SFibersStackDDUnpackerPar.h"
+
 #include "SiFi.h"
 
 /** \class SFibersStackDetector
@@ -89,6 +91,7 @@ bool SFibersStackDetector::initContainers()
     }
     else
     {
+        pm()->addParameterContainer("SFibersStackDDUnpackerPar",  new SFibersStackDDUnpackerPar());
         pm()->addParameterContainer("SFibersStackCalibratorPar",  new SFibersStackCalibratorPar());
     }
 

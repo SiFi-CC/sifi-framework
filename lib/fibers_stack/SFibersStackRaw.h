@@ -26,6 +26,7 @@ protected:
     Float_t y;          ///< y-coord in the lab system
 
     Float_t adc;        ///< adc value
+    Float_t time;       ///< time value
 
 public:
     // constructor
@@ -56,8 +57,11 @@ public:
     /// \param _y longnitudal coordinate
     void setY(Float_t _y) { y = _y; }
     /// Set ADC value
-    /// \param e adc
-    void setADC(Float_t e) { adc = e; }
+    /// \param a adc
+    void setADC(Float_t a) { adc = a; }
+    /// Set Time value
+    /// \param t time
+    void setTime(Float_t t) { time = t; }
 
     /// Get cooridnate along fibers
     /// \return transverse coordinate
@@ -68,6 +72,9 @@ public:
     /// Get ADC value
     /// \return adc
     Float_t getADC() const { return adc; }
+    /// Get Time value
+    /// \return time
+    Float_t getTime() const { return time; }
 
     void print() const;
 
