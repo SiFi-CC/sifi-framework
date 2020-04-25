@@ -9,64 +9,44 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#ifndef SLOOKUP_H
-#define SLOOKUP_H
+#ifndef SCALCONTAINER_H
+#define SCALCONTAINER_H
 
-#include "SParManager.h"
+#include "SLookup.h"
 
-#include <Rtypes.h>
+#include <TArrayI.h>
+#include <TArrayF.h>
+#include <TArrayD.h>
 
-#include <stdint.h>
+#include <vector>
+#include <unordered_map>
+#include <map>
 
-class SLookupTable;
-
-struct SLookupChannel
+struct SCalPar
 {
-    uint8_t m, l, s;
+    float par0, par1, par2;
     virtual uint read(const char * data);
     virtual uint write(char * data, size_t n) const;
-    virtual void print(const char * prefix = 0) const;
-    virtual uint64_t quick_hash() const;
-    virtual void fromHash(uint64_t hash);
+    virtual void print(const char * prefix = 0);
 };
 
-class SLookupBoard
-{
-private:
-    UInt_t addr, nchan;
-    SLookupChannel ** channels;
-
-public:
-    SLookupBoard(UInt_t addr, UInt_t nchan);
-    virtual ~SLookupBoard();
-
-    void setChannel(UInt_t chan, SLookupChannel * c) { channels[chan] = c; }
-    SLookupChannel * getChannel(UInt_t chan) { return channels[chan]; }
-
-    virtual void print();
-};
-
-class SLookupTable
+class SCalContainer
 {
 protected:
     std::string container;
-    uint a_min, a_max, channels;
+    typedef std::map<size_t, SCalPar> map_type;
+    map_type calpars;
     bool is_init;
-
-    SLookupBoard ** boards;
 
 public:
     // constructor
-    SLookupTable(const std::string & container, UInt_t addr_min, UInt_t addr_max, UInt_t channels = 49);
+    SCalContainer(const std::string & container);
     // destructor
-    virtual ~SLookupTable();
+    virtual ~SCalContainer();
 
     virtual SLookupChannel * createChannel() const { return new SLookupChannel; }
 
-    SLookupChannel * getAddress(UInt_t addr, UInt_t chan) {
-        if (!is_init) fromContainer();
-        return boards[addr-a_min]->getChannel(chan);
-    }
+    SCalPar & getPar(const SLookupChannel * channel);
 
     virtual void print();
 
@@ -77,4 +57,4 @@ protected:
     friend void SParManager::writeContainers(std::vector<std::string> conts) const;
 };
 
-#endif /* SLOOKUP_H */
+#endif /* SCALCONTAINER_H */

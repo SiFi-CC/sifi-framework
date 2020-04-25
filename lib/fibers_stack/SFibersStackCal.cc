@@ -20,36 +20,6 @@ A container for Fibers Stack Calibrated data
 
 /** Default constructor
  */
-SFibersStackCal::SFibersStackCal() : TObject()
+SFibersStackCal::SFibersStackCal() : SFibersStackRaw()
 {
-    Clear();
-}
-
-/** Default destructor
- */
-SFibersStackCal::~SFibersStackCal()
-{
-
-}
-
-/** Clear object.
- * Parameter options are ignored, for ROOT compatibility.
- * \param opt options
- */
-void SFibersStackCal::Clear(Option_t * opt)
-{
-    module = -1;
-    layer = -1;
-    fiber = -1;
-
-    u = 0;
-    y = 0;
-    e_dep = 0.0;
-}
-
-/** Print object.
- */
-void SFibersStackCal::print() const
-{
-    printf("fiber m,l,f=%d,%d,%d  u,y=%f,%f  Eloss=%f\n", module, layer, fiber, u, y, e_dep);
 }

@@ -9,6 +9,7 @@ SET (LIBRARY_HDRS
     SFibersStackDetector.h
     SFibersStackGeomPar.h
     SFibersStackUnpacker.h
+    SFibersStackLookup.h
     SFibersStackDDUnpacker.h
     SFibersStackDDUnpackerPar.h
     SFibersStackRaw.h
@@ -24,6 +25,7 @@ SET(LIBRARY_SRCS
     SFibersStackDetector.cc
     SFibersStackGeomPar.cc
     SFibersStackUnpacker.cc
+    SFibersStackLookup.cc
     SFibersStackDDUnpacker.cc
     SFibersStackDDUnpackerPar.cc
     SFibersStackRaw.cc

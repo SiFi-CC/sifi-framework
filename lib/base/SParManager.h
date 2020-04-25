@@ -35,8 +35,28 @@
 #include <map>
 #include <vector>
 
-class SParContainer;
 class SPar;
+class SParContainer;
+class SCalContainer;
+class SLookupTable;
+
+void trim(std::string &s);
+void simplify(std::string & s);
+bool isFloat(const std::string & str);
+
+struct SContainer {
+    std::string name;
+    std::vector<std::string> lines;
+    enum WhatNext { WNContainer, WNContainerOrParam, WNParam, WNParamCont };
+
+    void print() {
+        printf("Container Table [%s]\n", name.c_str());
+        for (auto line: lines)
+        {
+            printf("%s\n", line.c_str());
+        }
+    }
+};
 
 class SParManager
 {
@@ -44,8 +64,11 @@ protected:
     std::string source;             ///< Parameters source file
     std::string destination;        ///< Parameters destination file
 
-    std::map<std::string, SParContainer *> containers;  ///< Containers
-    std::map<std::string, SPar *> parconts;             ///< Parameters
+    std::map<std::string, SContainer *> containers;  ///< Containers
+    std::map<std::string, SParContainer *> par_containers;      ///< Par Containers
+    std::map<std::string, SCalContainer *> cal_containers;      ///< Par Containers
+    std::map<std::string, SLookupTable *> lu_containers;    ///< Lookup Containers
+    std::map<std::string, SPar *> parconts;          ///< Parameters
 
     static SParManager * pm;        ///< Instance of the SParManager
 
@@ -75,17 +98,20 @@ public:
 
     bool parseSource();
     void writeDestination() const;
+    void writeContainers(std::vector<std::string> conts) const;
+
+    SContainer * getContainer(const std::string & cont_name);
 
     bool addParameterContainer(const std::string & cont_name, SPar * parcont);
     SPar * getParameterContainer(const std::string & cont_name);
 
+    bool addLookupContainer(const std::string & cont_name, SLookupTable * lucont);
+    SLookupTable * getLookupContainer(const std::string & cont_name);
+
+    bool addCalibrationContainer(const std::string & cont_name, SCalContainer * calcont);
+    SCalContainer * getCalibrationContainer(const std::string & cont_name);
+
     void print() const;
-
-private:
-    /// Parser stepes
-    enum WhatNext { WNContainer, WNContainerOrParam, WNParam, WNParamCont };
-    WhatNext parseValues(const std::string & str, std::vector<std::string> & values);
-
 };
 
 extern SParManager * pm();

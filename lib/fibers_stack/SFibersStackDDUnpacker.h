@@ -20,6 +20,7 @@
 class SCategory;
 class SFibersStackGeomPar;
 class SFibersStackDDUnpackerPar;
+class SFibersStackLookupTable;
 
 class SFibersStackDDUnpacker : public SDDUnpacker
 {
@@ -28,6 +29,7 @@ protected:
     SCategory * catDDSamples;           ///< fibers raw category
     SCategory * catFibersRaw;           ///< fibers raw category
     SFibersStackDDUnpackerPar * pDDUnpackerPar; ///< calibrator parameters
+    SFibersStackLookupTable * pLookUp;
 
 public:
     // constructor

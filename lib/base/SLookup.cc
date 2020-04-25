@@ -9,12 +9,14 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
+#include "SLookup.h"
+#include "SParManager.h"
+
 #include <cstdio>
 #include <iostream>
+#include <cassert>
 
-#include "SLookupManager.h"
-#include "SLookupContainer.h"
-#include "SLookup.h"
+#include <inttypes.h>
 
 /** \class SLookup
 \ingroup lib_base
@@ -33,15 +35,41 @@ parameters in the container and write to param file.
 \sa SFibersStackGeomPar
 */
 
-void SLookupChannel::setAddress(const char* address)
+uint SLookupChannel::read(const char* data)
 {
-    sscanf(address, "%*s %*s %d %d %d\n", &m, &l, &s);
+    uint n;
+    int cnt = sscanf(data, "%2" SCNu8 "%2" SCNu8 "%2" SCNu8, &m, &l, &s, &n);
+    assert(cnt == 3);
+    return n;
 }
 
-void SLookupChannel::print(const char * prefix)
+uint SLookupChannel::write(char* data, size_t n) const
 {
-    printf("%s %d %d %d\n", prefix, m, l, s);
+    uint cnt = snprintf(data, n, "%d %d %d", m, l, s);
+    if (n < 0) return n;
+    if (n < cnt) return 0;
+    return cnt;
 }
+
+void SLookupChannel::print(const char * prefix) const
+{
+    printf("%s %d %d %d", prefix, m, l, s);
+    if (prefix[0] != '\0') putchar('\n');
+}
+
+uint64_t SLookupChannel::quick_hash() const
+{
+    uint64_t h = (uint64_t)m << 40 | (uint64_t)l << 48 | (uint64_t)s << 56;
+    return h;
+}
+
+void SLookupChannel::fromHash(uint64_t hash)
+{
+    m = uint8_t(hash >> 40 & 0xff);
+    l = uint8_t(hash >> 48 & 0xff);
+    s = uint8_t(hash >> 56 & 0xff);
+}
+
 
 SLookupBoard::SLookupBoard(UInt_t addr, UInt_t nchan) :
     addr(addr), nchan(nchan)
@@ -62,7 +90,7 @@ void SLookupBoard::print()
     for (uint i = 0; i < nchan; ++i)
     {
         sprintf(p, "0x%x  %2d  ", addr, i);
-        channels[i]->print(p);
+        if (channels[i]) channels[i]->print(p);
     }
 }
 
@@ -75,18 +103,19 @@ SLookupTable::SLookupTable(const std::string& container, UInt_t addr_min, UInt_t
     memset(boards, 0, sizeof(SLookupBoard*) * nboards);
 }
 
-void SLookupTable::init()
+void SLookupTable::fromContainer()
 {
-    SLookupContainer * lc = lm()->getLookupContainer(container);
+    SContainer * lc = pm()->getContainer(container);
+    if (!lc) throw "No lookup container.";
 
-    const LookupVector & lv = lc->getLines();
+    const std::vector<std::string> & lv = lc->lines;
 
     size_t n = lv.size();
-    for (uint i = 0; i < n; ++i)
+    for (auto line: lv)
     {
-        uint addr, chan;
+        uint addr, chan, len;
         char address[1024];
-        sscanf(lv[i].c_str(), "%x %x %s", &addr, &chan, address);
+        sscanf(line.c_str(), "%x %d%n %[!\n]", &addr, &chan, &len, address);
         if (addr < a_min or addr > a_max)
         {
             std::cerr << "Can't add board " << addr << " inside (0x" << std::hex << a_min << ", 0x" << a_max << std::dec << "), skipping." << std::endl;
@@ -94,16 +123,43 @@ void SLookupTable::init()
         }
         uint idx = addr - a_min;
         if (boards[idx] == 0)
-        {
             boards[idx] = new SLookupBoard(addr, channels);
-            for (int i = 0; i < channels; ++i)
-                boards[idx]->setChannel(i, initial());
-        }
 
-        boards[idx]->setAddress(chan, lv[i].c_str());
+        boards[idx]->setChannel(chan, createChannel());
+        boards[idx]->getChannel(chan)->read(line.c_str() + len);
     }
 
     is_init = true;
+}
+
+void SLookupTable::toContainer() const
+{
+    SContainer * sc = pm()->getContainer(container);
+    if (!sc) throw "No lookup container.";
+
+    sc->lines.clear();
+
+    const int len = 1024;
+    char buff[len];
+
+    for (uint addr = a_min; addr < a_max; ++addr) {
+        uint idx = addr - a_min;
+        if (boards[idx])
+        {
+            for (uint c = 0; c < channels; ++c) {
+                SLookupChannel * chan = boards[idx]->getChannel(c);
+                if (chan) {
+                    snprintf(buff, len, "  %#x  %3d\t\t", addr, c);
+                    std::string s;
+                    s.reserve(128);
+                    s += buff;
+                    chan->write(buff, len);
+                    s += buff;
+                    sc->lines.push_back(s);
+                }
+            }
+        }
+    }
 }
 
 SLookupTable::~SLookupTable()
@@ -113,7 +169,7 @@ SLookupTable::~SLookupTable()
 
 void SLookupTable::print()
 {
-    if (!is_init) init();
+    if (!is_init) fromContainer();
 
     printf("[%s]\n", container.c_str());
     size_t nboards = a_max - a_min + 1;

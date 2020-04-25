@@ -62,9 +62,11 @@ class SDDSamples : public TObject
     Int_t layer;  ///< address - layer
     Int_t fiber;  ///< address - fiber
 
-    Float_t samples[1024];
+    Float_t samples_l[1024];
+    Float_t samples_r[1024];
 
-    DDSignal signal;
+    DDSignal signal_l;
+    DDSignal signal_r;
 
   public:
     // constructor
@@ -101,10 +103,13 @@ class SDDSamples : public TObject
     /// Set coordinate along fibers
     /// \param samples samples
     /// \param length number of samples
-    void fillSamples(Float_t* samples, size_t length);
+    void fillSamplesL(Float_t* samples_l, size_t length);
+    void fillSamplesR(Float_t* samples_r, size_t length);
 
-    Float_t* getSamples() { return samples; }
-    DDSignal* getSignal() { return &signal; }
+    Float_t* getSamplesL() { return samples_l; }
+    Float_t* getSamplesR() { return samples_r; }
+    DDSignal* getSignalL() { return &signal_l; }
+    DDSignal* getSignalR() { return &signal_r; }
 
     void print() const;
 

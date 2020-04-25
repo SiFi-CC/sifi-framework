@@ -95,7 +95,10 @@ bool SFibersStackUnpacker::execute()
         pRaw->setAddress(mod, lay, fib);
         pRaw->setU(u);
         pRaw->setY(y);
-        pRaw->setADC(adc);
+        pRaw->setADCL(adc);
+        pRaw->setADCR(adc);
+        pRaw->setTimeL(0);
+        pRaw->setTimeR(0);
     }
 
     return true;

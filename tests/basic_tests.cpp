@@ -1,7 +1,6 @@
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <SLookupContainer.h>
-#include <SLookupManager.h>
+#include <SParManager.h>
 #include <SLookup.h>
 
 class BasicCase : public CPPUNIT_NS::TestFixture
@@ -15,7 +14,7 @@ public:
 
 protected:
     void MyTest();
-    SLookupManager * lm;
+    SParManager * pm;
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION( BasicCase );
@@ -39,14 +38,14 @@ public:
     TestLookupTable(const std::string & container, UInt_t addr_min, UInt_t addr_max, UInt_t channels) :
         SLookupTable(container, addr_min, addr_max, channels) {}
 
-    SLookupChannel * initial() { return new TestChannel(); }
+    SLookupChannel * createChannel() { return new TestChannel(); }
 };
 
 void BasicCase::setUp()
 {
-    lm = SLookupManager::instance();
-    lm->setSource("lookup.txt");
-    lm->parseSource();
+    pm = SParManager::instance();
+    pm->setParamSource("lookup.txt");
+    pm->parseSource();
 
     SLookupTable * t = (SLookupTable*) new TestLookupTable("TestLookup", 0x6400, 0x64ff, 49);
     t->print();

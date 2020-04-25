@@ -12,29 +12,16 @@
 #ifndef SFIBERSSTACKCALIBRATORPAR_H
 #define SFIBERSSTACKCALIBRATORPAR_H
 
-#include "SPar.h"
+#include "SCalContainer.h"
+#include "SFibersStackLookup.h"
 
 #include <Rtypes.h>
 
-class SFibersStackCalibratorPar : public SPar
+class SFibersStackCalibratorPar : public SCalContainer
 {
-private:
-    // members
-    Float_t fAdcGain;           ///< ADC gain
-    Float_t fAdcOffset;         ///< ADC offset (bias)
-
 public:
-    bool getParams(SParContainer * parcont);
-    bool putParams(SParContainer * parcont) const;
-    void clear();
-    void print() const;
+    SFibersStackCalibratorPar(const std::string & container): SCalContainer(container) {};
 
-    /// Return ADC gain
-    /// \return gain
-    Int_t getAdcGain() const { return fAdcGain; }
-    /// Return ADC offset
-    /// \return offset
-    Int_t getAdcOffset() const { return fAdcOffset; }
+    SLookupChannel * createChannel() const override { return new SFibersStackChannel; }
 };
-
 #endif /* SFIBERSSTACKCALIBRATORPAR_H */

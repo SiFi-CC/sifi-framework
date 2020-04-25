@@ -30,6 +30,7 @@
 
 #include "SFibersStackDDUnpacker.h"
 #include "SFibersStackDetector.h"
+#include "SFibersStackLookup.h"
 
 #include "SProgressBar.h"
 
@@ -138,6 +139,8 @@ int main(int argc, char** argv)
     detm->initParameterContainers();
     detm->initCategories();
 
+    pm->addLookupContainer("SFibersStackDDLookupTable", new SFibersStackLookupTable("SFibersStackDDLookupTable", 0x1000, 0x1fff, 32));
+
     // initialize tasks
     STaskManager* tm = STaskManager::instance();
     tm->initTasks();
@@ -149,6 +152,9 @@ int main(int argc, char** argv)
     tm->finalizeTasks();
 
     dataManager->save();
+
+    pm->setParamDest("p.txt");
+    pm->writeDestination();
 
     return 0;
 }

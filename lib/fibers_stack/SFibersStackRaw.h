@@ -25,15 +25,15 @@ protected:
     Float_t u;          ///< u-coord in the lab system
     Float_t y;          ///< y-coord in the lab system
 
-    Float_t adc;        ///< adc value
-    Float_t time;       ///< time value
+    Float_t adc_l;      ///< adc value
+    Float_t time_l;     ///< time value
+
+    Float_t adc_r;      ///< adc value
+    Float_t time_r;     ///< time value
 
 public:
     // constructor
     SFibersStackRaw();
-
-    // destructor
-    ~SFibersStackRaw();
 
     // inherited from ROOT
     virtual void Clear(Option_t* opt = "");
@@ -58,10 +58,22 @@ public:
     void setY(Float_t _y) { y = _y; }
     /// Set ADC value
     /// \param a adc
-    void setADC(Float_t a) { adc = a; }
+    void setADC(Float_t al, Float_t ar) { adc_l = al; adc_r = ar; }
     /// Set Time value
     /// \param t time
-    void setTime(Float_t t) { time = t; }
+    void setTime(Float_t tl, Float_t tr) { time_l = tl; time_r = tr; }
+    /// Set ADC value
+    /// \param a adc
+    void setADCL(Float_t a) { adc_l = a; }
+    /// Set Time value
+    /// \param t time
+    void setTimeL(Float_t t) { time_l = t; }
+    /// Set ADC value
+    /// \param a adc
+    void setADCR(Float_t a) { adc_r = a; }
+    /// Set Time value
+    /// \param t time
+    void setTimeR(Float_t t) { time_r = t; }
 
     /// Get cooridnate along fibers
     /// \return transverse coordinate
@@ -71,10 +83,16 @@ public:
     Float_t getY() const { return y; }
     /// Get ADC value
     /// \return adc
-    Float_t getADC() const { return adc; }
+    Float_t getADCL() const { return adc_l; }
     /// Get Time value
     /// \return time
-    Float_t getTime() const { return time; }
+    Float_t getTimeL() const { return time_l; }
+    /// Get ADC value
+    /// \return adc
+    Float_t getADCR() const { return adc_r; }
+    /// Get Time value
+    /// \return time
+    Float_t getTimeR() const { return time_r; }
 
     void print() const;
 

@@ -16,9 +16,12 @@
 #include "SFibersStackDigitizerPar.h"
 
 #include "SFibersStackUnpacker.h"
+#include "SFibersStackCalibrator.h"
 #include "SFibersStackDigitizer.h"
 
 #include "SFibersStackDDUnpackerPar.h"
+
+#include "SCalContainer.h"
 
 #include "SiFi.h"
 
@@ -68,10 +71,11 @@ bool SFibersStackDetector::initTasks()
     {
         addTask(new SFibersStackDigitizer(), 0);
     }
-//     else
-//     {
-//         addTask(new SFibersStackUnpacker(), 0);
-//     }
+    else
+    {
+        addTask(new SFibersStackUnpacker(), 0);
+        addTask(new SFibersStackCalibrator(), 1);
+    }
 
     return true;
 }
@@ -92,7 +96,8 @@ bool SFibersStackDetector::initContainers()
     else
     {
         pm()->addParameterContainer("SFibersStackDDUnpackerPar",  new SFibersStackDDUnpackerPar());
-        pm()->addParameterContainer("SFibersStackCalibratorPar",  new SFibersStackCalibratorPar());
+        pm()->addCalibrationContainer("SFibersStackCalibratorPar",
+                                      new SFibersStackCalibratorPar("SFibersStackCalibratorPar"));
     }
 
     return true;

@@ -12,6 +12,8 @@
 #ifndef SPARCONTAINER_H
 #define SPARCONTAINER_H
 
+#include "SParManager.h"
+
 #include <TArrayI.h>
 #include <TArrayF.h>
 #include <TArrayD.h>
@@ -52,6 +54,8 @@ public:
     virtual bool fill(const std::string & name, TArrayD & val);
 
     bool initParam(const std::string & name, const std::string & type, const std::vector<std::string> & values);
+    bool fromContainer();
+    void toContainer() const;
 
     void print();
 
@@ -60,6 +64,10 @@ protected:
     /// Set line split
     /// \param n number of values per line
     void setLineSplit(size_t n) { line_split = n; }
+
+private:
+    /// Parser steps
+    SContainer::WhatNext parseValues(const std::string & str, std::vector<std::string> & values);
 };
 
 #endif /* SPARCONTAINER_H */

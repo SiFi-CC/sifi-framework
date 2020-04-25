@@ -10,9 +10,10 @@
  *************************************************************************/
 
 #include "SFibersStackDDUnpacker.h"
+#include "SFibersStackDDUnpackerPar.h"
+#include "SFibersStackLookup.h"
 #include "SCategory.h"
 #include "SDDSamples.h"
-#include "SFibersStackDDUnpackerPar.h"
 #include "SFibersStackRaw.h"
 #include "SParManager.h"
 #include "SiFi.h"
@@ -149,8 +150,11 @@ bool SFibersStackDDUnpacker::init()
                   << std::endl;
         exit(EXIT_FAILURE);
     }
-
     pDDUnpackerPar->print();
+
+    pLookUp = (SFibersStackLookupTable*)pm()->getLookupContainer("SFibersStackDDLookupTable");
+    pLookUp->print();
+
     return true;
 }
 
@@ -162,10 +166,12 @@ bool SFibersStackDDUnpacker::decode(float* data, size_t length)
     Int_t intmode = pDDUnpackerPar->getIntMode();
     Int_t deadtime = pDDUnpackerPar->getDeadTime();
 
+    SFibersStackChannel * lc = (SFibersStackChannel *) pLookUp->getAddress(getAddress(), channel);
     SLocator loc(3);
-    loc[0] = 0;       // mod;
-    loc[1] = 0;       // lay;
-    loc[2] = channel; // fib;
+    loc[0] = lc->m;     // mod;
+    loc[1] = lc->l;     // lay;
+    loc[2] = lc->s;     // fib;
+    char side = lc->side;
 
     SDDSamples* pSamples = (SDDSamples*)catDDSamples->getObject(loc);
     if (!pSamples)
@@ -175,8 +181,6 @@ bool SFibersStackDDUnpacker::decode(float* data, size_t length)
     }
 
     pSamples->setAddress(loc[0], loc[1], loc[2]);
-
-    if (pSamples) pSamples->fillSamples(data, length);
 
     // copy samples
     Float_t samples[1024];
@@ -222,16 +226,11 @@ bool SFibersStackDDUnpacker::decode(float* data, size_t length)
 
     Int_t _tmax = tmax;
     Int_t _len = intmode <= 0 ? _tmax - _t0 : intmode;
+
+    if (_len+_t0 >= 1024) _len = 1024 - _t0 - 1;
+
     Float_t charge = std::accumulate(samples + _t0, samples + _t0 + _len, 0);
     if (pol == 0) charge = -charge;
-
-    pSamples->getSignal()->SetAmplitude(ampl / adc_to_mv);
-    pSamples->getSignal()->SetT0(t0 /** sample_to_ns*/);
-    pSamples->getSignal()->SetTOT(tot /** sample_to_ns*/);
-    pSamples->getSignal()->SetCharge(charge / adc_to_mv);
-    pSamples->getSignal()->fBL = bl;
-    pSamples->getSignal()->fBL_sigma = bl_sigma;
-    pSamples->getSignal()->fPileUp = pileup;
 
     SFibersStackRaw* pRaw = (SFibersStackRaw*)catFibersRaw->getObject(loc);
     if (!pRaw)
@@ -241,8 +240,32 @@ bool SFibersStackDDUnpacker::decode(float* data, size_t length)
     }
 
     pRaw->setAddress(loc[0], loc[1], loc[2]);
-    pRaw->setADC(charge / adc_to_mv);
-    pRaw->setTime(t0);
+    if (side == 'l') {
+        if (pSamples) pSamples->fillSamplesL(data, length);
+        pSamples->getSignalL()->SetAmplitude(ampl / adc_to_mv);
+        pSamples->getSignalL()->SetT0(t0 /** sample_to_ns*/);
+        pSamples->getSignalL()->SetTOT(tot /** sample_to_ns*/);
+        pSamples->getSignalL()->SetCharge(charge / adc_to_mv);
+        pSamples->getSignalL()->fBL = bl;
+        pSamples->getSignalL()->fBL_sigma = bl_sigma;
+        pSamples->getSignalL()->fPileUp = pileup;
+
+        pRaw->setADCL(charge / adc_to_mv);
+        pRaw->setTimeL(t0);
+    }
+    if (side == 'r') {
+        if (pSamples) pSamples->fillSamplesR(data, length);
+        pSamples->getSignalR()->SetAmplitude(ampl / adc_to_mv);
+        pSamples->getSignalR()->SetT0(t0 /** sample_to_ns*/);
+        pSamples->getSignalR()->SetTOT(tot /** sample_to_ns*/);
+        pSamples->getSignalR()->SetCharge(charge / adc_to_mv);
+        pSamples->getSignalR()->fBL = bl;
+        pSamples->getSignalR()->fBL_sigma = bl_sigma;
+        pSamples->getSignalR()->fPileUp = pileup;
+
+        pRaw->setADCR(charge / adc_to_mv);
+        pRaw->setTimeR(t0);
+    }
 
     return true;
 }

@@ -14,6 +14,7 @@
 #include "SFibersStackRaw.h"
 #include "SFibersStackCal.h"
 #include "SParManager.h"
+#include "SCalContainer.h"
 #include "SCategory.h"
 #include "SiFi.h"
 
@@ -65,7 +66,7 @@ bool SFibersStackCalibrator::init()
     }
 
     // get calibrator parameters
-    pCalibratorPar = (SFibersStackCalibratorPar*) pm()->getParameterContainer("SFibersStackCalibratorPar");
+    pCalibratorPar = (SCalContainer*) pm()->getCalibrationContainer("SFibersStackCalibratorPar");
     if (!pCalibratorPar)
     {
         std::cerr << "Parameter container 'SFibersStackCalibratorPar' was not obtained!" << std::endl;
@@ -84,9 +85,6 @@ bool SFibersStackCalibrator::execute()
 {
     int size = catFibersRaw->getEntries();
 
-    Float_t adc_gain = pCalibratorPar->getAdcGain();
-    Float_t adc_offset = pCalibratorPar->getAdcOffset();
-
     for (int i = 0; i < size; ++i)
     {
         SFibersStackRaw * pRaw = (SFibersStackRaw *)catFibersRaw->getObject(i);
@@ -101,15 +99,32 @@ bool SFibersStackCalibrator::execute()
         Int_t fib = 0;
         pRaw->getAddress(mod, lay, fib);
 
+        SFibersStackChannel chan_l;
+        chan_l.m = mod;
+        chan_l.l = lay;
+        chan_l.s = fib;
+        chan_l.side = 'l';
+        SFibersStackChannel chan_r = chan_l;
+        chan_r.side = 'r';
+
+        SCalPar & cp_l = pCalibratorPar->getPar(&chan_l);
+        SCalPar & cp_r = pCalibratorPar->getPar(&chan_r);
+
         // calc laboratory coordinates from digi data
         Float_t u = pRaw->getU();
         Float_t y = pRaw->getY();
-        Float_t adc = pRaw->getADC();
+        Float_t adc_l = pRaw->getADCL();
+        Float_t adc_r = pRaw->getADCR();
+        Float_t time_l = pRaw->getTimeL();
+        Float_t time_r = pRaw->getTimeR();
 
         // do your magic here with u, y and adc
         Float_t lab_u = u;
         Float_t lab_y = y;
-        Float_t energy = adc_gain * adc + adc_offset;
+        Float_t energy_l = cp_l.par0 * adc_l + cp_l.par1;
+        Float_t energy_r = cp_r.par0 * adc_r + cp_r.par1;
+        time_l += cp_l.par2;
+        time_r += cp_r.par2;
 
         SLocator loc(3);
         loc[0] = mod;
@@ -126,7 +141,8 @@ bool SFibersStackCalibrator::execute()
         pCal->setAddress(mod, lay, fib);
         pCal->setU(lab_u);
         pCal->setY(lab_y);
-        pCal->setEnergyDeposition(energy);
+        pCal->setADC(energy_l, energy_r);
+        pCal->setTime(time_l, time_r);
     }
 
     return true;

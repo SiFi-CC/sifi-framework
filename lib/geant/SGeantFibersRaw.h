@@ -28,6 +28,10 @@ protected:
     Double_t kineticEnergy;                 ///< kinetic energy
     Int_t opticalPhotonCount;               ///< number of photons
     Int_t fiberHits;                        ///< number of fibers hits
+    Float_t light_l;                        ///< light left
+    Float_t light_r;                        ///< light right
+    Float_t time_l;                         ///< time left
+    Float_t time_r;                         ///< time right
 
 public:
     // constrructor
@@ -89,6 +93,32 @@ public:
     /// Get kinetic energy
     /// \return kinetic energy
     Double_t getKineticEnergy() const { return kineticEnergy; }
+
+    /// Set light on the left side
+    /// \param l kinetic energy
+    void setLightL(Float_t l) { light_l = l; }
+    /// Get light on the left side
+    /// \return light
+    Double_t getLightL() const { return light_l; }
+    /// Set light on the left side
+    /// \param l kinetic energy
+    void setLightR(Float_t r) { light_r = r; }
+    /// Get light on the right side
+    /// \return light
+    Double_t getLightR() const { return light_r; }
+
+    /// Set time on the left side
+    /// \param l kinetic energy
+    void setTimeL(Float_t l) { time_l = l; }
+    /// Get time on the left side
+    /// \return time
+    Double_t getTimeL() const { return time_l; }
+    /// Set time on the left side
+    /// \param l kinetic energy
+    void setTimeR(Float_t r) { time_r = r; }
+    /// Get time on the right side
+    /// \return time
+    Double_t getTimeR() const { return time_r; }
 
     void print() const;
 

@@ -15,6 +15,7 @@
 #include "STask.h"
 
 class SCategory;
+class SCalContainer;
 class SFibersStackCalibratorPar;
 
 class SFibersStackCalibrator : public STask
@@ -23,7 +24,7 @@ protected:
     // members
     SCategory * catFibersRaw;                   ///< fibers raw category
     SCategory * catFibersCal;                   ///< fibers cal category
-    SFibersStackCalibratorPar * pCalibratorPar; ///< calibrator parameters
+    SCalContainer * pCalibratorPar; ///< calibrator parameters
 
 public:
     // constructor

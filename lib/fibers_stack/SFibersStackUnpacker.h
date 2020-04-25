@@ -30,9 +30,9 @@ public:
     virtual ~SFibersStackUnpacker();
 
     // methods
-    bool init();
-    bool execute();
-    bool finalize();
+    bool init() override;
+    bool execute() override;
+    bool finalize() override;
 };
 
 #endif /* SFIBERSSTACKUNPACKER_H */

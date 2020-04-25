@@ -11,6 +11,8 @@
 
 #include "SParContainer.h"
 
+#include "SParManager.h"
+
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -35,7 +37,7 @@ parameters in the container and write to param file.
 /** Constructor
  * \param container container name
  */
-SParContainer::SParContainer(const std::string& container) : container(container)
+SParContainer::SParContainer(const std::string& container) : container(container), line_split(8)
 {
 }
 
@@ -162,7 +164,7 @@ bool SParContainer::fill(const std::string & name, Int_t& val)
 
     if (it == parameters.end())
     {
-        std::cerr << "Parameter name " << name << " doesn't exists in the container!" << std::endl;
+        std::cerr << "Parameter name " << name << " doesn't exists in " << container << "!" << std::endl;
         return false;
     }
     if (it->second.first != "Int_t")
@@ -189,7 +191,7 @@ bool SParContainer::fill(const std::string & name, Float_t& val)
 
     if (it == parameters.end())
     {
-        std::cerr << "Parameter name " << name << " doesn't exists in the container!" << std::endl;
+        std::cerr << "Parameter name " << name << " doesn't exists in " << container << "!" << std::endl;
         return false;
     }
     if (it->second.first != "Float_t")
@@ -216,7 +218,7 @@ bool SParContainer::fill(const std::string & name, Double_t& val)
 
     if (it == parameters.end())
     {
-        std::cerr << "Parameter name " << name << " doesn't exists in the container!" << std::endl;
+        std::cerr << "Parameter name " << name << " doesn't exists in " << container << "!" << std::endl;
         return false;
     }
     if (it->second.first != "Double_t")
@@ -243,7 +245,7 @@ bool SParContainer::fill(const std::string & name, TArrayI& val)
 
     if (it == parameters.end())
     {
-        std::cerr << "Parameter name " << name << " doesn't exists in the container!" << std::endl;
+        std::cerr << "Parameter name " << name << " doesn't exists in " << container << "!" << std::endl;
         return false;
     }
     if (it->second.first != "Int_t")
@@ -270,7 +272,7 @@ bool SParContainer::fill(const std::string & name, TArrayF& val)
 
     if (it == parameters.end())
     {
-        std::cerr << "Parameter name " << name << " doesn't exists in the container!" << std::endl;
+        std::cerr << "Parameter name " << name << " doesn't exists in " << container << "!" << std::endl;
         return false;
     }
     if (it->second.first != "Float_t")
@@ -297,7 +299,7 @@ bool SParContainer::fill(const std::string & name, TArrayD& val)
 
     if (it == parameters.end())
     {
-        std::cerr << "Parameter name " << name << " doesn't exists in the container!" << std::endl;
+        std::cerr << "Parameter name " << name << " doesn't exists in " << container << "!" << std::endl;
         return false;
     }
     if (it->second.first != "Double_t")
@@ -340,4 +342,159 @@ bool SParContainer::initParam(const std::string& name, const std::string& type, 
 {
     parameters[name] = TypeDataField(type, values);
     return true;
+}
+
+bool SParContainer::fromContainer() {
+    SContainer * sc = pm()->getContainer(container);
+    if (!sc) throw "No parameter container.";
+
+    SContainer::WhatNext wn = SContainer::WNParam;
+    std::string param_name;
+    std::string type_name;
+    std::vector<std::string> values;
+
+    for (auto line : sc->lines) {
+        trim(line);
+        simplify(line);
+
+        size_t pos = 0, pos2 = 0;
+
+        // check if comment or empty line
+        if (line[0] == '#' or (line.length() == 0 and wn != SContainer::WNParamCont))
+        {
+            continue;
+        }
+        else
+        {
+            if (wn == SContainer::WNParam)
+            {
+                // find parameter name ended with :
+                pos = line.find_first_of(':', 1);
+                param_name = line.substr(0, pos);
+                trim(param_name);
+
+                // prepare other variables
+                type_name.clear();
+                values.clear();
+
+                // find type name
+                pos = line.find_first_not_of(' ', pos+1);
+
+                // type name must be in the same line like param name
+                if (line[pos] == '\\')
+                {
+                    std::cerr << "No type name detected in the param name line:" << std::endl << line << std::endl;
+                    return false;
+                }
+                pos2 = line.find_first_of(' ', pos+1);
+
+                type_name = line.substr(pos, pos2-pos);
+                if (type_name != "Int_t" and type_name != "Float_t" and type_name != "Double_t")
+                {
+                    std::cerr << "Invalid param type '" << type_name << "' in line:" << std::endl << line << std::endl;
+                    return false;
+                }
+
+                wn = SContainer::WNParamCont;
+            }
+
+            if (wn == SContainer::WNParamCont)
+            {
+                wn = parseValues(line.substr(pos2, -1), values);
+                if (wn == SContainer::WNParam)
+                {
+                    if (values.size() == 0)
+                    {
+                        std::cerr << "No values given in line:" << std::endl << line << std::endl;
+                        return false;
+                    }
+                    else
+                    {
+                        initParam(param_name, type_name, values);
+                    }
+                }
+            }
+        }
+    }
+
+    return true;
+}
+
+
+void SParContainer::toContainer() const {
+    SContainer * sc = pm()->getContainer(container);
+    if (!sc) throw "No parameter container.";
+
+    sc->lines.clear();
+
+    const size_t len = 1024;
+    char buff[len];
+    for (const auto & p : parameters) {
+        snprintf(buff, len, "%s: %s ", p.first.c_str(), p.second.first.c_str());
+        std::string s(buff);
+        const TypeDataField & df = p.second;
+        size_t len_d = df.second.size();
+
+        if (len_d <= line_split) {
+            for (const auto & pd : df.second) {
+                s += "  ";
+                s += pd;
+            }
+            sc->lines.push_back(s);
+        } else {
+            size_t cnt = 0;
+            for (const auto & pd : df.second) {
+                if (cnt % line_split == 0) {
+                    s += " \\";
+                    sc->lines.push_back(s);
+                    s.clear();
+                }
+                s += "  ";
+                s += pd;
+                ++cnt;
+            }
+            sc->lines.push_back(s);
+        }
+    }
+}
+
+/** Parse single value.
+ *
+ * \param str string with values
+ * \param values vector to store values
+ * \return next parsing step
+ */
+SContainer::WhatNext SParContainer::parseValues(const std::string & str, std::vector<std::string> & values)
+{
+    size_t pos = 0, pos2 = 0;
+
+    while(1)
+    {
+        pos = str.find_first_not_of(' ', pos2);
+
+        // if new line detected
+        if (str[pos] == '\\')
+        {
+            return SContainer::WNParamCont;
+        }
+
+        // if end of line
+        if (pos == str.npos)
+        {
+            break;
+        }
+
+        pos2 = str.find_first_of(' ', pos+1);
+        std::string match = str.substr(pos, pos2-pos);
+        if (isFloat(match))
+        {
+            values.push_back(match);
+        }
+        else
+        {
+            std::cerr << "Value is not a number:" << std::endl << str << std::endl;
+            exit(EXIT_FAILURE);
+        }
+    }
+    return SContainer::WNParam;
 }

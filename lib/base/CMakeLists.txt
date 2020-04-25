@@ -19,8 +19,7 @@ SET (LIBRARY_HDRS
     SParManager.h
     SParContainer.h
     SPar.h
-    SLookupManager.h
-    SLookupContainer.h
+    SCalContainer.h
     SLookup.h
 
     event/SEvent.h
@@ -52,8 +51,7 @@ SET(LIBRARY_SRCS
     SParManager.cc
     SParContainer.cc
     SPar.cc
-    SLookupManager.cc
-    SLookupContainer.cc
+    SCalContainer.cc
     SLookup.cc
 
     event/SEvent.cc

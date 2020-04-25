@@ -12,6 +12,8 @@
 #include "SParManager.h"
 #include "SParContainer.h"
 #include "SPar.h"
+#include "SCalContainer.h"
+#include "SLookup.h"
 
 #include <algorithm> 
 #include <cctype>
@@ -176,12 +178,10 @@ bool SParManager::parseSource()
 
     char * cbuff = new char[length];
 
-    WhatNext wn = WNContainer;
+    SContainer::WhatNext wn = SContainer::WNContainer;
 
     std::string cont_name;
-    std::string param_name;
-    std::string type_name;
-    std::vector<std::string> values;
+    SContainer * cont = nullptr;
 
     while(!ifs.eof())
     {
@@ -194,24 +194,23 @@ bool SParManager::parseSource()
         size_t pos = 0, pos2 = 0;
 
         // check if comment or empty line
-        if (str[0] == '#' or (str.length() == 0 and wn != WNParamCont))
+        if (str[0] == '#' or (str.length() == 0 and wn != SContainer::WNParamCont))
         {
             continue;
         }
         // if container mark found, check whether it should be there, e.g. container after param new line is forbidden
         else if (str[0] == '[')
         {
-            if (wn == WNContainer or wn == WNContainerOrParam)
+            if (wn == SContainer::WNContainer or wn == SContainer::WNContainerOrParam)
             {
                 pos = str.find_first_of(']', 1);
                 cont_name = str.substr(1, pos-1);
-//                 printf("Found container %s\n", cont_name.c_str());
 
-                containers.insert(std::pair<std::string, SParContainer *>(cont_name, new SParContainer(cont_name)));
+                cont = new SContainer;
+                cont->name = cont_name;
+                containers.insert(std::pair<std::string, SContainer *>(cont_name, cont));
 
-                param_name.clear();
-
-                wn = WNContainerOrParam;
+                wn = SContainer::WNContainerOrParam;
                 continue;
             }
             else
@@ -222,108 +221,21 @@ bool SParManager::parseSource()
         }
         else
         {
-            // check if container name
-            if (wn == WNContainer)
+            // check if container name is found
+            if (wn == SContainer::WNContainer)
             {
                 std::cerr << "Expected container name here: " << std::endl << str << std::endl;
                 return false;
             }
-            else if (wn == WNParam or wn == WNContainerOrParam)
+            else if (wn == SContainer::WNParam or wn == SContainer::WNContainerOrParam)
             {
-                // find parameter name ended with :
-                pos = str.find_first_of(':', 1);
-                param_name = str.substr(0, pos);
-                trim(param_name);
-
-                // prepare other variables
-                type_name.clear();
-                values.clear();
-
-                // find type name
-                pos = str.find_first_not_of(' ', pos+1);
-
-                // type name must be in the same line like param name
-                if (str[pos] == '\\')
-                {
-                    std::cerr << "No type name detected in the param name line:" << std::endl << str << std::endl;
-                    return false;
-                }
-                pos2 = str.find_first_of(' ', pos+1);
-
-                type_name = str.substr(pos, pos2-pos);
-                if (type_name != "Int_t" and type_name != "Float_t" and type_name != "Double_t")
-                {
-                    std::cerr << "Invalid param type '" << type_name << "' in line:" << std::endl << str << std::endl;
-                    return false;
-                }
-
-//                 printf("Found param=%s with type=%s\n", param_name.c_str(), type_name.c_str());
-
-                wn = WNParamCont;
-            }
-
-            if (wn == WNParamCont)
-            {
-//                 printf("Search for values in %s\n", str.substr(pos2, -1).c_str());
-                wn = parseValues(str.substr(pos2, -1), values);
-                if (wn == WNContainerOrParam)
-                {
-                    if (values.size() == 0)
-                    {
-                        std::cerr << "No values given in line:" << std::endl << str << std::endl;
-                        return false;
-                    }
-                    else
-                    {
-                        containers[cont_name]->initParam(param_name, type_name, values);
-                    }
-                }
+                cont->lines.push_back(str);
+                wn = SContainer::WNContainerOrParam;
             }
         }
     }
 
     return true;
-}
-
-/** Parse single value.
- *
- * \param str string with values
- * \param values vector to store values
- * \return next parsing step
- */
-SParManager::WhatNext SParManager::parseValues(const std::string & str, std::vector<std::string> & values)
-{
-    size_t pos = 0, pos2 = 0;
-
-    while(1)
-    {
-        pos = str.find_first_not_of(' ', pos2);
-//         printf("Found %c at %d\n", str[pos], pos);
-        // if new line detected
-        if (str[pos] == '\\')
-        {
-            return WNParamCont;
-        }
-
-        // if end of line
-        if (pos == str.npos)
-        {
-            break;
-        }
-
-        pos2 = str.find_first_of(' ', pos+1);
-        std::string match = str.substr(pos, pos2-pos);
-        if (isFloat(match))
-        {
-            values.push_back(match);
-        }
-        else
-        {
-            std::cerr << "Value is not a number:" << std::endl << str << std::endl;
-            exit(EXIT_FAILURE);
-        }
-    }
-    return WNContainerOrParam;
 }
 
 /** Write params to destination.
@@ -332,15 +244,65 @@ SParManager::WhatNext SParManager::parseValues(const std::string & str, std::vec
  */
 void SParManager::writeDestination() const
 {
+    std::vector<std::string> names;
+    for (const auto &c : containers)
+        names.push_back(c.first);
+
+    writeContainers(names);
 }
+
+void SParManager::writeContainers(std::vector<std::string> conts) const
+{
+    for (const auto & pc : par_containers)
+        pc.second->toContainer();
+
+    for (const auto & cc : cal_containers)
+        cc.second->toContainer();
+
+    for (const auto & lc : lu_containers)
+        lc.second->toContainer();
+
+    if (!destination.size()) {
+        std::cerr << "Destination file name is empty!" << std::endl;
+        abort();
+    }
+
+    std::ofstream ofs(destination);
+    if (ofs.is_open()) {
+        for (const auto &c : containers) {
+            ofs << "[" << c.first << "]" << std::endl;
+            for (const auto & l : c.second->lines)
+                ofs << l << std::endl;
+        }
+    }
+    ofs.close();
+}
+
 
 /** Print containers
  */
 void SParManager::print() const
 {
-     std::map<std::string, SParContainer *>::const_iterator it = containers.begin();
-     for (; it != containers.end(); ++it)
-         it->second->print();
+    std::map<std::string, SParContainer *>::const_iterator par_it = par_containers.begin();
+    for (; par_it != par_containers.end(); ++par_it)
+        par_it->second->print();
+}
+
+/** Get parameter container by name.
+ *
+ * \param cont_name container name
+ * \return pointer to container
+ */
+SContainer * SParManager::getContainer(const std::string& cont_name)
+{
+    SContainer * cont = containers[cont_name];
+    if (!cont)
+    {
+        std::cerr << "Container " << cont_name << " doesn't exists!" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    return cont;
 }
 
 /** Add new parameter container.
@@ -351,11 +313,19 @@ void SParManager::print() const
  */
 bool SParManager::addParameterContainer(const std::string& cont_name, SPar* parcont)
 {
-    SParContainer * pc = containers[cont_name];
-    if (!pc)
+    SContainer * cont = containers[cont_name];
+    if (!cont)
     {
         std::cerr << "Container " << cont_name << " doesn't exists!" << std::endl;
         exit(EXIT_FAILURE);
+    }
+
+    SParContainer * pc = par_containers[cont_name];
+    if (!pc) {
+        pc = new SParContainer(cont_name);
+        par_containers[cont_name] = pc;
+
+        pc->fromContainer();
     }
 
     parcont->clear();
@@ -378,4 +348,46 @@ bool SParManager::addParameterContainer(const std::string& cont_name, SPar* parc
 SPar * SParManager::getParameterContainer(const std::string& cont_name)
 {
     return parconts[cont_name];
+}
+
+bool SParManager::addLookupContainer(const std::string& cont_name, SLookupTable* lucont)
+{
+    SContainer * cont = containers[cont_name];
+    if (!cont)
+    {
+        std::cerr << "Container " << cont_name << " doesn't exists!" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    if (lucont) {
+        lu_containers[cont_name] = lucont;
+    }
+
+    return true;
+}
+
+SLookupTable * SParManager::getLookupContainer(const std::string& cont_name)
+{
+    return lu_containers[cont_name];
+}
+
+bool SParManager::addCalibrationContainer(const std::string& cont_name, SCalContainer* calcont)
+{
+    SContainer * cont = containers[cont_name];
+    if (!cont)
+    {
+        std::cerr << "Container " << cont_name << " doesn't exists!" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    if (calcont) {
+        cal_containers[cont_name] = calcont;
+    }
+
+    return true;
+}
+
+SCalContainer * SParManager::getCalibrationContainer(const std::string& cont_name)
+{
+    return cal_containers[cont_name];
 }

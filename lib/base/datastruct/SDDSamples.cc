@@ -37,13 +37,20 @@ void SDDSamples::Clear(Option_t* opt) {
     layer = -1;
     fiber = -1;
 
-    memset(samples, 0, 1024 * sizeof(float));
-    signal.Clear();
+    memset(samples_l, 0, 1024 * sizeof(float));
+    memset(samples_r, 0, 1024 * sizeof(float));
+    signal_l.Clear();
+    signal_r.Clear();
 }
 
-void SDDSamples::fillSamples(float* samples, size_t length) {
+void SDDSamples::fillSamplesL(float* samples, size_t length) {
     size_t limit = length <= 1024 ? length : 1024;
-    memcpy(this->samples, samples, limit * sizeof(float));
+    memcpy(this->samples_l, samples, limit * sizeof(float));
+}
+
+void SDDSamples::fillSamplesR(float* samples, size_t length) {
+    size_t limit = length <= 1024 ? length : 1024;
+    memcpy(this->samples_r, samples, limit * sizeof(float));
 }
 
 /** Print category
@@ -52,7 +59,10 @@ void SDDSamples::print() const {
     printf("fiber m,l,f=%d,%d,%d\n", module, layer, fiber);
     printf("samples:");
     for (int i = 0; i < 1024; ++i)
-        printf(" %f", samples[i]);
+        printf(" %f", samples_l[i]);
+    printf("\n");
+    for (int i = 0; i < 1024; ++i)
+        printf(" %f", samples_r[i]);
     printf("\n");
 }
 
