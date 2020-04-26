@@ -28,7 +28,7 @@ public:
         sscanf(address, "%*s %*s %d %d %d %d\n", &sta, &lay, &str, &sub);
     }
 
-    void print(const char * prefix) {
+    void print(const char * prefix) const override {
         printf("%s %d  %d  %d  %d\n", prefix, sta, lay, str, sub);
     }
 };
@@ -38,7 +38,7 @@ public:
     TestLookupTable(const std::string & container, UInt_t addr_min, UInt_t addr_max, UInt_t channels) :
         SLookupTable(container, addr_min, addr_max, channels) {}
 
-    SLookupChannel * createChannel() { return new TestChannel(); }
+    SLookupChannel * createChannel() const override { return new TestChannel(); }
 };
 
 void BasicCase::setUp()

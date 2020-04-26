@@ -43,9 +43,8 @@ void SGeantFibersRaw::clear()
 
 /** Clear object
  * Parameter options are ignored, for ROOT compatibility.
- * \param opt options
  */
-void SGeantFibersRaw::Clear(Option_t* opt)
+void SGeantFibersRaw::Clear(Option_t* /*opt*/)
 {
     clear();
 }

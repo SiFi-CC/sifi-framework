@@ -64,7 +64,7 @@ bool SFibersStackDDUnpackerPar::getParams(SParContainer* parcont)
  * \param parcont pointer to container object
  * \return success
  */
-bool SFibersStackDDUnpackerPar::putParams(SParContainer* parcont) const
+bool SFibersStackDDUnpackerPar::putParams(SParContainer* /*parcont*/) const
 {
     return true;
 }

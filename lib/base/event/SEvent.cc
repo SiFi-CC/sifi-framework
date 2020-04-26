@@ -31,9 +31,8 @@ SEvent::~SEvent()
 
 void SEvent::addCategory(SCategory::Cat cat, SCategory* address)
 {
-    int pos = SiFi::getCategoryIndex(cat, sifi()->isSimulation());PR(categories->At(pos));
+    int pos = SiFi::getCategoryIndex(cat, sifi()->isSimulation());
     if (!categories->At(pos))
-//         delete categories->At(pos);
         categories->AddAt(address, pos);
 }
 

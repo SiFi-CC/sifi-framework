@@ -97,12 +97,11 @@ Float_t FindTMax(Float_t* samples, size_t len, Float_t threshold, Int_t _t0,
 
 /** Constructor
  */
-SFibersStackDDUnpacker::SFibersStackDDUnpacker(uint16_t address,
-                                               uint8_t channel)
-    : SDDUnpacker(address)
+SFibersStackDDUnpacker::SFibersStackDDUnpacker()
+    : SDDUnpacker()
     , catDDSamples(nullptr), catFibersRaw(nullptr)
     , pDDUnpackerPar(nullptr), pLookUp(nullptr)
-    , channel(channel), lookup_name(), lookup_table(nullptr)
+    , lookup_name(), lookup_table(nullptr)
 {
 }
 
@@ -161,15 +160,18 @@ bool SFibersStackDDUnpacker::init()
     return true;
 }
 
-bool SFibersStackDDUnpacker::decode(float* data, size_t length)
+bool SFibersStackDDUnpacker::decode(uint16_t address, float* data, size_t length)
 {
+    uint16_t fake_address = address & 0xfff0;
+    uint8_t channel = address & 0x0f;
+
     Float_t thr = pDDUnpackerPar->getThreshold(channel);
     Int_t pol = pDDUnpackerPar->getPolarity();
     Int_t anamode = pDDUnpackerPar->getAnaMode();
     Int_t intmode = pDDUnpackerPar->getIntMode();
     Int_t deadtime = pDDUnpackerPar->getDeadTime();
 
-    SFibersStackChannel * lc = dynamic_cast<SFibersStackChannel *>(pLookUp->getAddress(getAddress(), channel));
+    SFibersStackChannel * lc = dynamic_cast<SFibersStackChannel *>(pLookUp->getAddress(fake_address, channel));
     SLocator loc(3);
     loc[0] = lc->m;     // mod;
     loc[1] = lc->l;     // lay;

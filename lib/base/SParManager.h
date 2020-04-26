@@ -63,11 +63,11 @@ protected:
     std::string source;             ///< Parameters source file
     std::string destination;        ///< Parameters destination file
 
-    std::map<std::string, SContainer *> containers;  ///< Containers
-    std::map<std::string, SParContainer *> par_containers;      ///< Par Containers
-    std::map<std::string, SCalContainer *> cal_containers;      ///< Par Containers
+    std::map<std::string, SContainer *> containers;         ///< Containers
+    std::map<std::string, SParContainer *> par_containers;  ///< Par Containers
+    std::map<std::string, SCalContainer *> cal_containers;  ///< Par Containers
     std::map<std::string, SLookupTable *> lu_containers;    ///< Lookup Containers
-    std::map<std::string, SPar *> parconts;          ///< Parameters
+    std::map<std::string, SPar *> parconts;                 ///< Parameters
 
     static SParManager * pm;        ///< Instance of the SParManager
 

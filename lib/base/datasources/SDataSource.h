@@ -30,13 +30,12 @@ public:
     virtual bool close() = 0;
     virtual bool readCurrentEvent() = 0;
 
-    void addUnpacker(SUnpacker * unpacker, uint16_t address = 0x0000);
+    void addUnpacker(SUnpacker * unpacker, const std::vector<uint16_t> & address);
 
 private:
 
 protected:
     std::map<uint16_t, SUnpacker *> unpackers;
-    uint16_t special_addr;
 };
 
 #endif /* SDATASOURCE_H */

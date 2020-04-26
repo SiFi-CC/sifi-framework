@@ -159,7 +159,7 @@ void SGeantTrack::print() const
  * Parameter options are ignored, for ROOT compatibility.
  * \param opt options
  */
-void SGeantTrack::Clear(Option_t* opt)
+void SGeantTrack::Clear(Option_t* /*opt*/)
 {
     clear();
 }

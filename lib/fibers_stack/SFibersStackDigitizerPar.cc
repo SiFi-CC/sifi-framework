@@ -27,7 +27,7 @@ A container for Fibers Stack Digitizer parameters
  * \param parcont pointer to container object
  * \return success
  */
-bool SFibersStackDigitizerPar::getParams(SParContainer* parcont)
+bool SFibersStackDigitizerPar::getParams(SParContainer* /*parcont*/)
 {
     return true;
 }
@@ -37,7 +37,7 @@ bool SFibersStackDigitizerPar::getParams(SParContainer* parcont)
  * \param parcont pointer to container object
  * \return success
  */
-bool SFibersStackDigitizerPar::putParams(SParContainer* parcont) const
+bool SFibersStackDigitizerPar::putParams(SParContainer* /*parcont*/) const
 {
     return true;
 }

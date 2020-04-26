@@ -17,6 +17,7 @@
 #include <TClonesArray.h>
 
 #include <iostream>
+#include <cstring>
 
 /** \class SCategory
 \ingroup lib_base
@@ -242,7 +243,7 @@ void SCategory::Streamer(TBuffer &R__b)
         header.Streamer(R__b);
         index.Streamer(R__b);
         R__b.ReadString(clase, 200);
-        if ( data && strcmp(clase,data->GetClass()->GetName())==0)
+        if ( data && strcmp(clase, data->GetClass()->GetName())==0)
             data->Clear();
         else {
             delete data;
@@ -255,7 +256,7 @@ void SCategory::Streamer(TBuffer &R__b)
         TObject::Streamer(R__b);
         header.Streamer(R__b);
         index.Streamer(R__b);
-        strcpy(clase, data->GetClass()->GetName());
+        strlcpy(clase, data->GetClass()->GetName(), 200);
         R__b.WriteString(clase);
         data->Streamer(R__b);
         R__b << entries;

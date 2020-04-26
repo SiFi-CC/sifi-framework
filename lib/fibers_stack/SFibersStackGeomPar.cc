@@ -143,7 +143,7 @@ bool SFibersStackGeomPar::getParams(SParContainer* parcont)
  * \param parcont pointer to container object
  * \return success
  */
-bool SFibersStackGeomPar::putParams(SParContainer* parcont) const
+bool SFibersStackGeomPar::putParams(SParContainer* /*parcont*/) const
 {
     return true;
 }

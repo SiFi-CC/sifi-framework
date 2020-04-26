@@ -33,7 +33,10 @@ public:
     virtual bool readCurrentEvent() override;
     virtual void setInput(const std::string & i, size_t buffer);
 
+    virtual void forceUnpacker(uint16_t address) { unpacker = address; }
+
 private:
+    uint16_t unpacker;
     std::string input;
     std::ifstream istream;
     size_t buffer_size;

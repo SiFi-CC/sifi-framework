@@ -34,7 +34,7 @@ SFibersStackCalSim::~SFibersStackCalSim()
  * Parameter options are ignored, for ROOT compatibility.
  * \param opt options
  */
-void SFibersStackCalSim::Clear(Option_t * opt)
+void SFibersStackCalSim::Clear(Option_t * /*opt*/)
 {
     T = 0.0;
     E = 0.0;

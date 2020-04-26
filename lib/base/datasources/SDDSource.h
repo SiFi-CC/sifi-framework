@@ -9,9 +9,36 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#include <iostream>
+#ifndef SDDSOURCE_H
+#define SDDSOURCE_H
 
-#include <TClass.h>
+#include "SDataSource.h"
+
+#include <TArrayI.h>
 #include <TClonesArray.h>
+#include <TObject.h>
+#include <TString.h>
 
-#include "SUnpacker.h"
+#include <cstddef>
+#include <string>
+#include <fstream>
+
+class SDDSource : public SDataSource
+{
+public:
+    explicit SDDSource(uint16_t address);
+
+    virtual bool open() override;
+    virtual bool close() override;
+    virtual bool readCurrentEvent() override;
+    virtual void setInput(const std::string & i, size_t buffer);
+
+private:
+    uint16_t unpacker;
+
+    std::string input;
+    std::ifstream istream;
+    size_t buffer_size;
+};
+
+#endif /* SDDSOURCE_H */

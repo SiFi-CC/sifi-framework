@@ -95,7 +95,6 @@ void SCategoryIndex::compress()
 void SCategoryIndex::Streamer(TBuffer &R__b)
 {
     // Stream an object of class HLinearCategory.
-    Char_t clase[200];
     if (R__b.IsReading())
     {
         TObject::Streamer(R__b);

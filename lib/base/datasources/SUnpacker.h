@@ -24,7 +24,6 @@
 class SUnpacker
 {
 public:
-    SUnpacker(uint16_t address);
     // methods
     /// Initialize task
     /// \return success
@@ -34,16 +33,11 @@ public:
     virtual bool reinit() { return true; }
     /// Execute task
     /// \return success
-    virtual bool execute(unsigned long event, unsigned long seq_number,
+    virtual bool execute(unsigned long event, unsigned long seq_number, uint16_t address,
         void * buffer, size_t length) = 0;
     /// Finalize task
     /// \return success
     virtual bool finalize() { return true; };
-
-    uint16_t getAddress() const { return addr; }
-
-protected:
-    uint16_t addr;
 };
 
 #endif /* SUNPACKER_H */

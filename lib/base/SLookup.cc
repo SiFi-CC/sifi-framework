@@ -38,7 +38,7 @@ parameters in the container and write to param file.
 uint SLookupChannel::read(const char* data)
 {
     uint n;
-    int cnt = sscanf(data, "%2" SCNu8 "%2" SCNu8 "%2" SCNu8, &m, &l, &s, &n);
+    int cnt = sscanf(data, "%2" SCNu8 "%2" SCNu8 "%2" SCNu8 "%n", &m, &l, &s, &n);
     assert(cnt == 3);
     return n;
 }
@@ -110,7 +110,6 @@ void SLookupTable::fromContainer()
 
     const std::vector<std::string> & lv = lc->lines;
 
-    size_t n = lv.size();
     for (auto line: lv)
     {
         uint addr, chan, len;

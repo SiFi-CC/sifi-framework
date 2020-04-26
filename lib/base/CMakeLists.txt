@@ -26,6 +26,7 @@ SET (LIBRARY_HDRS
 
     datasources/SDataSource.h
     datasources/SFileSource.h
+    datasources/SDDSource.h
     datasources/SRootSource.h
 
     datasources/SUnpacker.h
@@ -58,6 +59,7 @@ SET(LIBRARY_SRCS
 
     datasources/SDataSource.cc
     datasources/SFileSource.cc
+    datasources/SDDSource.cc
     datasources/SRootSource.cc
 
     datasources/SUnpacker.cc

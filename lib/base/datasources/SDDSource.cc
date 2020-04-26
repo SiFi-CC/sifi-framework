@@ -9,23 +9,23 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#include "SFileSource.h"
+#include "SDDSource.h"
 #include "SUnpacker.h"
 
 #include <iostream>
 #include <map>
 
-SFileSource::SFileSource() : SDataSource()
-    , unpacker(0x0000), input(), istream(), buffer_size(0)
+SDDSource::SDDSource(uint16_t address) : SDataSource()
+    , unpacker(address), input(), istream(), buffer_size(0)
 {
 }
 
-bool SFileSource::open()
+bool SDDSource::open()
 {
     printf("File name = |%s|\n", input.c_str());
     istream.open(input.c_str(), std::ios::binary);
     if (!istream.is_open()) {
-        std::cerr << "##### Error in SFileSource::open()! Could not open input file!" << std::endl;
+        std::cerr << "##### Error in SDDSource::open()! Could not open input file!" << std::endl;
         std::cerr << input << std::endl;
         return false;
     }
@@ -36,7 +36,7 @@ bool SFileSource::open()
     if (unpacker != 0x0000)
     {
         if (!unpackers[unpacker]) abort();
-
+    
         bool res = unpackers[unpacker]->init();
         if (!res) {
             printf("Forced unpacker %#x not initalized\n", unpacker);
@@ -58,7 +58,7 @@ bool SFileSource::open()
     return true;
 }
 
-bool SFileSource::close()
+bool SDDSource::close()
 {
     if (unpacker != 0x0000)
     {
@@ -78,7 +78,7 @@ bool SFileSource::close()
     return true;
 }
 
-bool SFileSource::readCurrentEvent()
+bool SDDSource::readCurrentEvent()
 {
     if (unpackers.size() == 0)
         return false;
@@ -105,7 +105,7 @@ bool SFileSource::readCurrentEvent()
     return true;
 }
 
-void SFileSource::setInput(const std::string& i, size_t buffer) {
+void SDDSource::setInput(const std::string& i, size_t buffer) {
     input = i;
     buffer_size = buffer;
 }

@@ -26,7 +26,7 @@
 #include "STaskManager.h"
 #include "SiFi.h"
 
-#include "SFileSource.h"
+#include "SDDSource.h"
 
 #include "SFibersStackDDUnpacker.h"
 #include "SFibersStackDetector.h"
@@ -59,6 +59,8 @@ int main(int argc, char** argv)
         }
     }
 
+    SFibersStackDDUnpacker* unp = new SFibersStackDDUnpacker();
+
     while (optind < argc)
     {
         std::string inpstr(argv[optind]);
@@ -74,30 +76,11 @@ int main(int argc, char** argv)
             std::string name =
                 inpstr.substr(pos2 + 1, inpstr.length() - pos2 - 1);
 
-            int n2 = std::count(saddr.begin(), saddr.end(), '-');
-            uint16_t addr;
-            uint8_t chan;
+            uint16_t addr = std::stoi(saddr, nullptr, 16);
 
-            if (n2 >= 1)
-            {
-                int p3 = saddr.find('-');
-                addr = std::stoi(saddr.substr(0, p3), nullptr, 16);
-                if (n2 == 1)
-                {
-                    chan = std::stoi(saddr.substr(p3 + 1, saddr.length() - p3));
-                }
-            }
-            else
-            {
-                addr = std::stoi(saddr, nullptr, 16);
-                chan = 0;
-            }
-
-            SFileSource* source = new SFileSource();
-            SFibersStackDDUnpacker* unp =
-                new SFibersStackDDUnpacker(addr, chan);
+            SDDSource* source = new SDDSource(addr);
             unp->setDataLen(1024);
-            source->addUnpacker(unp, addr);
+            source->addUnpacker(unp, {addr});
             source->setInput(name, 1024 * sizeof(float));
             sifi()->addSource(source);
         }
@@ -149,6 +132,8 @@ int main(int argc, char** argv)
 
     pm()->setParamDest("p.txt");
     pm()->writeDestination();
+
+    delete unp;
 
     return 0;
 }

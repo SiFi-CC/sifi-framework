@@ -20,7 +20,7 @@
 
 #include <inttypes.h>
 
-class SLookupChannel;
+struct SLookupChannel;
 class SLookupTable;
 
 struct SFibersStackChannel : public SLookupChannel

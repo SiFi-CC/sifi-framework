@@ -33,17 +33,16 @@ protected:
 
 public:
     // constructor
-    SFibersStackDDUnpacker(uint16_t address, uint8_t channel);
+    SFibersStackDDUnpacker();
     // destructor
     virtual ~SFibersStackDDUnpacker();
 
     virtual bool init() override;
 protected:
     // methods
-    bool decode(float * data, size_t length) override;
+    bool decode(uint16_t address, float * data, size_t length) override;
 
 private:
-    uint8_t channel;
     std::string lookup_name;
     SLookupTable * lookup_table;
 };

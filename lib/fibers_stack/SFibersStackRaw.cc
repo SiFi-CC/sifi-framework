@@ -27,7 +27,7 @@ SFibersStackRaw::SFibersStackRaw() : TObject() {}
  * Parameter options are ignored, for ROOT compatibility.
  * \param opt options
  */
-void SFibersStackRaw::Clear(Option_t* opt)
+void SFibersStackRaw::Clear(Option_t* /*opt*/)
 {
     module = -1;
     layer = -1;

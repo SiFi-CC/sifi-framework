@@ -36,7 +36,7 @@ SProgressBar::SProgressBar(ulong limit, uint point_width, uint bar_width)
 
 /** Close bar line
  */
-void SProgressBar::close()
+void SProgressBar::close() const
 {
     if (cnt_current >= cnt_limit)
         return;

@@ -192,7 +192,7 @@ bool SParManager::parseSource()
         trim(str);
         simplify(str);
 
-        size_t pos = 0, pos2 = 0;
+        size_t pos = 0;
 
         // check if comment or empty line
         if (str[0] == '#' or (str.length() == 0 and wn != WNParamCont))
@@ -217,6 +217,7 @@ bool SParManager::parseSource()
             else
             {
                 std::cerr << "Didn't expected container here: " << std::endl << str << std::endl;
+                delete [] cbuff;
                 return false;
             }
         }
@@ -226,6 +227,7 @@ bool SParManager::parseSource()
             if (wn == WNContainer)
             {
                 std::cerr << "Expected container name here: " << std::endl << str << std::endl;
+                delete [] cbuff;
                 return false;
             }
             else if (wn == WNParam or wn == WNContainerOrParam)
@@ -236,6 +238,7 @@ bool SParManager::parseSource()
         }
     }
 
+    delete [] cbuff;
     return true;
 }
 
@@ -273,9 +276,9 @@ void SParManager::writeContainers(const std::vector<std::string> & conts) const
 
     std::ofstream ofs(destination);
     if (ofs.is_open()) {
-        for (const auto &c : containers) {
-            ofs << "[" << c.first << "]" << std::endl;
-            for (const auto & l : c.second->lines)
+        for (auto &c : conts) {
+            ofs << "[" << c << "]" << std::endl;
+            for (const auto & l : containers.at(c)->lines)
                 ofs << l << std::endl;
         }
     }

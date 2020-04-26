@@ -15,6 +15,8 @@
 class STask
 {
 public:
+    virtual ~STask() {}
+
     // methods
     /// Initialize task
     /// \return success

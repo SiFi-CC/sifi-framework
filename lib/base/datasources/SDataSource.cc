@@ -15,17 +15,15 @@
 #include <iostream>
 #include <map>
 
-void SDataSource::addUnpacker(SUnpacker * unpacker, uint16_t address)
+void SDataSource::addUnpacker(SUnpacker * unpacker, const std::vector<uint16_t> & address)
 {
-    if (unpackers[unpacker->getAddress()] != nullptr)
-    {
-        std::cerr << "Unpacker already exists" << std::endl;
-        abort();
+    for (auto addr : address) {
+        printf("Add unpacker: 0x%x\n", addr);
+        if (unpackers[addr] != nullptr)
+        {
+            std::cerr << "Unpacker already exists" << std::endl;
+            abort();
+        }
+        unpackers[addr] = unpacker;
     }
-
-    printf("Add unpacker: 0x%x\n", address);
-//     if (address != 0x0000)
-//         special_addr = address;
-
-    unpackers[address] = unpacker;
 }

@@ -31,7 +31,7 @@ void SCategoryHeader::clear()
 void SCategoryHeader::Streamer(TBuffer &R__b)
 {
     // Stream an object of class HLinearCategory.
-    Char_t clase[200];
+//     Char_t clase[200];
     if (R__b.IsReading())
     {
         TObject::Streamer(R__b);

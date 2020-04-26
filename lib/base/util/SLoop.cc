@@ -33,8 +33,8 @@ SLoop::SLoop::SLoop()
     , current_tree(nullptr)
     , current_event(0)
     , event(nullptr)
-    , tree_cache_size(8000)
     , fileHeader(nullptr)
+    , tree_cache_size(8000)
 {
     chain = new TChain("S");
 

@@ -37,7 +37,7 @@ public:
     virtual ~SProgressBar() { close(); }
 
     // methods
-    void close();
+    void close() const;
     void setProgress(int current_location);
 
     SProgressBar & operator++();

@@ -26,8 +26,7 @@
 class SDDUnpacker : public SUnpacker
 {
 public:
-    SDDUnpacker(uint16_t address);
-    virtual ~SDDUnpacker();
+    SDDUnpacker();
 
     // methods
     /// Initialize task
@@ -38,13 +37,13 @@ public:
     virtual bool reinit() override;
     /// Execute task
     /// \return success
-    virtual bool execute(unsigned long event, unsigned long seq_number,
+    virtual bool execute(unsigned long event, unsigned long seq_number, uint16_t address,
         void * buffer, size_t length) override;
 
     void setDataLen(size_t length) { data_length = length;}
 
 protected:
-    virtual bool decode(float * data, size_t length) = 0;
+    virtual bool decode(uint16_t address, float * data, size_t length) = 0;
 
 private:
     size_t data_length;

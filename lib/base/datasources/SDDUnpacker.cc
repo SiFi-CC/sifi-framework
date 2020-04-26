@@ -16,16 +16,9 @@
 
 #include "SDDUnpacker.h"
 
-SDDUnpacker::SDDUnpacker(uint16_t address)
-    : SUnpacker(address)
-    , data_length(0)
+SDDUnpacker::SDDUnpacker() : data_length(0)
 {
 }
-
-SDDUnpacker::~SDDUnpacker()
-{
-}
-
 
 bool SDDUnpacker::init()
 {
@@ -43,8 +36,8 @@ bool SDDUnpacker::reinit()
     return init();
 }
 
-bool SDDUnpacker::execute(unsigned long event, unsigned long seq_number,
-                          void * buffer, size_t length)
+bool SDDUnpacker::execute(unsigned long /*event*/, unsigned long /*seq_number*/,
+                          uint16_t address, void * buffer, size_t length)
 {
     if (length != data_length * sizeof(float))
      {
@@ -64,5 +57,5 @@ bool SDDUnpacker::execute(unsigned long event, unsigned long seq_number,
 //             return false;
 //     }
 
-    return decode((float *)buffer, data_length);
+    return decode(address, (float *)buffer, data_length);
 }
