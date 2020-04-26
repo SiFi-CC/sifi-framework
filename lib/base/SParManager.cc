@@ -24,6 +24,7 @@
 #include <sstream>
 
 /** \class SParManager
+
 \ingroup lib_base
 
 Parameters Manager class. Stores and dumps all parameters used by the framework.

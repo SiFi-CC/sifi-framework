@@ -36,16 +36,23 @@
 
 int main(int argc, char** argv)
 {
-    int events = 10000;
+    int events = 1000000;
+
+    std::string output("test.root");
+    std::string params_file("params.txt");
 
     while (1)
     {
         static struct option long_options[] = {
-            {"events", required_argument, 0, 'e'}, {0, 0, 0, 0}};
+            {"events", required_argument, 0, 'e'},
+            {"output", required_argument, 0, 'o'},
+            {"params_file", required_argument, 0, 'p'},
+            {0, 0, 0, 0}
+        };
 
         int option_index = 0;
 
-        int c = getopt_long(argc, argv, "e:", long_options, &option_index);
+        int c = getopt_long(argc, argv, "e:o:p:", long_options, &option_index);
 
         if (c == -1) { break; }
 
@@ -53,6 +60,12 @@ int main(int argc, char** argv)
         {
             case 'e':
                 events = atoi(optarg);
+                break;
+            case 'o':
+                output = optarg;
+                break;
+            case 'p':
+                params_file = optarg;
                 break;
             default:
                 break;
@@ -89,7 +102,7 @@ int main(int argc, char** argv)
     }
 
     // output files
-    sifi()->setOutputFileName("test.root");
+    sifi()->setOutputFileName(output);
     sifi()->book();
 
     // how many events to proceed
@@ -105,7 +118,7 @@ int main(int argc, char** argv)
     sifi()->getCategory(SCategory::CatGeantTrack, true);
 
     // initialize parameters
-    pm()->setParamSource("params.txt");
+    pm()->setParamSource(params_file);
     pm()->parseSource();
 
     // initialize detectors
@@ -130,8 +143,8 @@ int main(int argc, char** argv)
 
     sifi()->save();
 
-    pm()->setParamDest("p.txt");
-    pm()->writeDestination();
+//     pm()->setParamDest("p.txt");
+//     pm()->writeDestination();
 
     delete unp;
 

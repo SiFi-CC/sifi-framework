@@ -232,33 +232,33 @@ int SCategory::loc2pos(const SLocator& loc)
     return pos;
 }
 
-void SCategory::Streamer(TBuffer &R__b)
-{
-    // Stream an object of class HLinearCategory.
-    Char_t clase[200];
-    if (R__b.IsReading())
-    {
-        /*Version_t R__v = */R__b.ReadVersion();
-        TObject::Streamer(R__b);
-        header.Streamer(R__b);
-        index.Streamer(R__b);
-        R__b.ReadString(clase, 200);
-        if ( data && strcmp(clase, data->GetClass()->GetName())==0)
-            data->Clear();
-        else {
-            delete data;
-            data = new TClonesArray(clase);
-        }
-        data->Streamer(R__b);
-        R__b >> entries;
-    } else {
-        R__b.WriteVersion(SCategory::IsA());
-        TObject::Streamer(R__b);
-        header.Streamer(R__b);
-        index.Streamer(R__b);
-        strlcpy(clase, data->GetClass()->GetName(), 200);
-        R__b.WriteString(clase);
-        data->Streamer(R__b);
-        R__b << entries;
-    }
-}
+// void SCategory::Streamer(TBuffer &R__b)
+// {
+//     // Stream an object of class HLinearCategory.
+//     Char_t clase[200];
+//     if (R__b.IsReading())
+//     {
+//         /*Version_t R__v = */R__b.ReadVersion();
+//         TObject::Streamer(R__b);
+//         header.Streamer(R__b);
+//         index.Streamer(R__b);
+//         R__b.ReadString(clase, 200);
+//         if ( data && strcmp(clase, data->GetClass()->GetName())==0)
+//             data->Clear();
+//         else {
+//             delete data;
+//             data = new TClonesArray(clase);
+//         }
+//         data->Streamer(R__b);
+//         R__b >> entries;
+//     } else {
+//         R__b.WriteVersion(SCategory::IsA());
+//         TObject::Streamer(R__b);
+//         header.Streamer(R__b);
+//         index.Streamer(R__b);
+//         strlcpy(clase, data->GetClass()->GetName(), 200);
+//         R__b.WriteString(clase);
+//         data->Streamer(R__b);
+//         R__b << entries;
+//     }
+// }

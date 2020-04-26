@@ -25,7 +25,8 @@ protected:
     // members
     SCategoryHeader header;     ///< header information
     SCategoryIndex index;       ///< index information
-    TClonesArray * data;        ///< data
+    /// holds category data
+    TClonesArray * data;        //-> data
     ULong_t entries;            ///< number of entries
 
 public:
@@ -67,7 +68,7 @@ public:
     /// \return number of entries
     Int_t getEntries() const { return data->GetEntries(); }
 
-    Bool_t IsFolder() const { return kTRUE; }
+    Bool_t IsFolder() const override { return kTRUE; }
 
     void compress();
 
@@ -81,7 +82,7 @@ private:
     int loc2pos(const SLocator & loc);
 
 private:
-    ClassDef(SCategory, 1);
+    ClassDefOverride(SCategory, 1);
 };
 
 #endif /* SCATEGORY_H */

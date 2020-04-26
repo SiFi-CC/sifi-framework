@@ -12,9 +12,9 @@
 #ifdef __CLING__
 
 #pragma link C++ class SLocator+;
-#pragma link C++ class SCategory-;
-#pragma link C++ class SCategoryHeader-;
-#pragma link C++ class SCategoryIndex-;
+#pragma link C++ class SCategory+;
+#pragma link C++ class SCategoryHeader+;
+#pragma link C++ class SCategoryIndex+;
 #pragma link C++ class SDetector+;
 #pragma link C++ class STask+;
 #pragma link C++ class STaskManager+;

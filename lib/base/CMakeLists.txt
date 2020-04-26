@@ -7,9 +7,6 @@ SET (LIBRARY_NAME SiFi)
 
 SET (LIBRARY_HDRS
     SiFi.h
-    SCategory.h
-    SCategoryIndex.h
-    SCategoryHeader.h
     SCategoryManager.h
     SLocator.h
     STaskManager.h
@@ -17,22 +14,25 @@ SET (LIBRARY_HDRS
     SDetectorManager.h
     SDetector.h
     SParManager.h
-    SParContainer.h
-    SPar.h
-    SCalContainer.h
-    SLookup.h
 
     event/SEvent.h
 
     datasources/SDataSource.h
-    datasources/SFileSource.h
     datasources/SDDSource.h
+    datasources/SFileSource.h
     datasources/SRootSource.h
 
     datasources/SUnpacker.h
     datasources/SDDUnpacker.h
 
+    datastruct/SCalContainer.h
+    datastruct/SCategory.h
+    datastruct/SCategoryHeader.h
+    datastruct/SCategoryIndex.h
     datastruct/SDDSamples.h
+    datastruct/SLookup.h
+    datastruct/SPar.h
+    datastruct/SParContainer.h
 
     util/SLoop.h
     util/SRootFileHeader.h
@@ -40,9 +40,7 @@ SET (LIBRARY_HDRS
 
 SET(LIBRARY_SRCS
     SiFi.cc
-    SCategory.cc
-    SCategoryIndex.cc
-    SCategoryHeader.cc
+
     SCategoryManager.cc
     SLocator.cc
     STaskManager.cc
@@ -50,10 +48,6 @@ SET(LIBRARY_SRCS
     SDetectorManager.cc
     SDetector.cc
     SParManager.cc
-    SParContainer.cc
-    SPar.cc
-    SCalContainer.cc
-    SLookup.cc
 
     event/SEvent.cc
 
@@ -61,11 +55,17 @@ SET(LIBRARY_SRCS
     datasources/SFileSource.cc
     datasources/SDDSource.cc
     datasources/SRootSource.cc
-
     datasources/SUnpacker.cc
     datasources/SDDUnpacker.cc
 
+    datastruct/SCalContainer.cc
+    datastruct/SCategory.cc
+    datastruct/SCategoryHeader.cc
+    datastruct/SCategoryIndex.cc
     datastruct/SDDSamples.cc
+    datastruct/SLookup.cc
+    datastruct/SPar.cc
+    datastruct/SParContainer.cc
 
     util/SLoop.cc
     util/SRootFileHeader.cc

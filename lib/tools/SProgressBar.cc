@@ -30,19 +30,22 @@ SProgressBar::SProgressBar(ulong limit, uint point_width, uint bar_width)
     , point_width(point_width), bar_width(bar_width)
     , new_bar(true), new_bar_line(true)
     , line_prefix("==> Processing data ")
+    , running(true)
     , bar_p('.'), alarm_p('!')
 {
 }
 
 /** Close bar line
  */
-void SProgressBar::close() const
+void SProgressBar::finish()
 {
-    if (cnt_current >= cnt_limit)
+    if (cnt_current > cnt_limit or !running)
         return;
 
     double num_percent = 100.0*(cnt_current)/cnt_limit;
     std::cout << " " << cnt_current << " (" << num_percent << "%)" << "\n" << std::flush;
+
+    running = false;
 }
 
 /** Set current progress status
@@ -106,4 +109,6 @@ void SProgressBar::render()
     }
 
     cnt_previous = cnt_current;
+    if (cnt_current == cnt_limit)
+        finish();
 }

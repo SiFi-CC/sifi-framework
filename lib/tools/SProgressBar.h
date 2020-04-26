@@ -25,6 +25,7 @@ protected:
     uint bar_width;             ///< width of a bar
     bool new_bar;               ///< make new bar
     bool new_bar_line;          ///< make new bar line
+    bool running;
 
     std::string line_prefix;    ///< line prefix
     char bar_p;                 ///< ???
@@ -33,11 +34,10 @@ protected:
 public:
     // constructor
     explicit SProgressBar(ulong limit, uint point_width = 500, uint bar_width = 20);
-    // destructor
-    virtual ~SProgressBar() { close(); }
 
     // methods
-    void close() const;
+    void reset() { running = true; };
+    void finish();
     void setProgress(int current_location);
 
     SProgressBar & operator++();
