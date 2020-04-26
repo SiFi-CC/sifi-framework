@@ -1,0 +1,10 @@
+*:/home/rafal/projects/sifi/sifi-framework/.obsolete/*
+*:/home/rafal/projects/sifi/sifi-framework/build/*
+*:/home/rafal/projects/sifi/sifi-framework/cmake-scripts/*
+*:/home/rafal/projects/sifi/sifi-framework/event_display/*
+*:/home/rafal/projects/sifi/sifi-framework/geometry/*
+*:/home/rafal/projects/sifi/sifi-framework/particle_filter/*
+*:/home/rafal/projects/sifi/sifi-framework/python/*
+*:/home/rafal/projects/sifi/sifi-framework/simulation/*
+*:/home/rafal/projects/sifi/sifi-framework/template_app/*
+*:/usr/lib/root/*

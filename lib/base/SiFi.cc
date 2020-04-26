@@ -12,6 +12,7 @@
 #include "SiFi.h"
 #include "SCategory.h"
 #include "STaskManager.h"
+#include "SProgressBar.h"
 
 #include <TString.h>
 
@@ -57,6 +58,7 @@ SiFi::SiFi() :
     outputTreeName("S"), outputFileName("output.root"),
     inputTree(nullptr), inputTreeTitle("S"), inputTreeName("S"),
     numberOfEntries(-1), currentEntry(-1), event(nullptr),
+    cinfovec(),
     sim(false), branches_set(false)
 {
 }
@@ -227,7 +229,7 @@ bool SiFi::open()
  * \param simulation simulation run
  * \return success
  */
-bool SiFi::registerCategory(SCategory::Cat cat, std::string name, size_t dim, size_t * sizes, bool simulation)
+bool SiFi::registerCategory(SCategory::Cat cat, const std::string & name, size_t dim, size_t * sizes, bool simulation)
 {
     int pos = getCategoryIndex(cat, simulation);
 
@@ -293,7 +295,6 @@ SCategory * SiFi::buildCategory(SCategory::Cat cat, bool persistent)
     cinfo.persistent = persistent;
     SCategory * cat_ptr = new SCategory(cinfo.name.c_str(), cinfo.dim, cinfo.sizes, cinfo.simulation);
     cinfo.ptr = cat_ptr;
-    cat_ptr->print();
 
     if (cat_ptr)
     {
@@ -314,7 +315,7 @@ SCategory * SiFi::buildCategory(SCategory::Cat cat, bool persistent)
  * \param persistent set category persistent
  * \return pointer to category object
  */
-SCategory * SiFi::getCategory(SCategory::Cat cat, bool persistent)
+SCategory * SiFi::getCategory(SCategory::Cat cat, bool /*persistent*/)
 {
     int pos = getCategoryIndex(cat, sim);
     CategoryInfo cinfo = cinfovec[pos];
@@ -322,27 +323,10 @@ SCategory * SiFi::getCategory(SCategory::Cat cat, bool persistent)
         return gNullSCategoryPtr;
     if (cinfo.ptr)
         return cinfo.ptr;
-    SCategory * c = 0;//openCategory(cat, persistent);
-    if (c)
-        return c;
-
-    return gNullSCategoryPtr;
-}
-
-SCategory * SiFi::getCategory(SCategory::Cat cat, const char * name, bool persistent)
-{
-    TBranch * br = inputTree->GetBranch(Form("%s.",name));
-    if(!br)
-    {
-//         Error("setInput()","Branch not found : %s !",Form("%s.",catname.Data()));
-//         return kFALSE;
-    }
-    else
-    {
-//         chain->SetBranchAddress(Form("%s.", name), &categories[cat]);
-//         chain->SetBranchStatus (Form("%s.", name),1);
-//         chain->SetBranchStatus (Form("%s.*", name),1);
-    }
+    // TODO do wee need to optn category if not exists?
+//     SCategory * c = 0;//openCategory(cat, persistent);
+//     if (c)
+//         return c;
 
     return gNullSCategoryPtr;
 }
@@ -405,7 +389,7 @@ void SiFi::getEntry(int i)
 {
     if (!inputTree)
     {
-        std::cerr << "[Warning] in SiFi: no input tree is opened. cannot get any entry." << "\n";
+        std::cerr << "[Warning] in SiFi: no input tree is opened. Cannot get any entry." << "\n";
         return;
     }
 
@@ -424,7 +408,7 @@ Long64_t SiFi::getEntries()
 {
     if (!inputTree)
     {
-        std::cerr << "[Warning] in SiFi: no input tree is opened. cannot get any entry." << "\n";
+        std::cerr << "[Warning] in SiFi: no input tree is opened. Cannot get any entry." << "\n";
         return -1;
     }
     numberOfEntries = inputTree->GetEntries();
@@ -436,7 +420,7 @@ Long64_t SiFi::getEntries()
 void SiFi::print() const
 {
     outputFile->cd();
-    printf("There are %ld categories in the output tree\n", categories.size());
+    printf("There are %zu categories in the output tree\n", categories.size());
     for (CatMap::const_iterator it = categories.begin(); it != categories.end(); ++it)
     {
         it->second->print();
@@ -453,40 +437,20 @@ void SiFi::clear()
     }
 }
 
-/** Constructor
- */
-SiFi::CategoryInfo::CategoryInfo()
+void SiFi::loop(long entries, bool show_progress_bar)
 {
-    registered = false;
-    persistent = false;
-    ptr = nullptr;
-}
-
-/** Copy constructor
- */
-SiFi::CategoryInfo::CategoryInfo(SiFi::CategoryInfo& ci)
-{
-    registered = ci.registered;
-    cat = ci.cat;
-    name = ci.name;
-    simulation = ci.simulation;
-    dim = ci.dim;
-    for (int i = 0; i < 16; ++i)
-        sizes[i] = ci.sizes[i];
-    persistent = ci.persistent;
-    ptr = ci.ptr;
-}
-
-void SiFi::loop(long entries)
-{
-    for (uint s = 0; s < inputSources.size(); ++s)
+    for (ulong s = 0; s < inputSources.size(); ++s)
     {
         bool rc = inputSources[s]->open();
-        if (!rc) printf("Could not open source %d\n", s);
-        if (!rc) abort();
+        if (!rc) {
+            printf("Could not open source %zu\n", s);
+            abort();
+        }
     }
 
     STaskManager * tm = STaskManager::instance();
+
+    SProgressBar pb(entries);
 
     // go over all events
     ulong i;
@@ -503,7 +467,9 @@ void SiFi::loop(long entries)
 
         if (!flag) break;
 
-        //         ++pb;
+        if (show_progress_bar)
+            ++pb;
+
         getEntry(i);
         tm->runTasks();
         fill();

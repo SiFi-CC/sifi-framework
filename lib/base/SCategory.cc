@@ -32,6 +32,7 @@ TObject * pNullSCategoryPtr = nullptr;
 SCategory::SCategory()
     : TObject()
     , data(nullptr)
+    , entries(0)
 {
     header.clear();
     index.clear();
@@ -45,7 +46,7 @@ SCategory::SCategory()
  */
 SCategory::SCategory(const char * name, size_t dim, size_t * sizes, bool simulation)
     : TObject()
-    , data(nullptr)
+    , data(nullptr), entries(0)
 {
     header.clear();
     index.clear();
@@ -88,7 +89,7 @@ void SCategory::setup(const char * name, size_t dim, size_t * sizes, bool simula
     if (data) delete data;
     data = new TClonesArray(name, header.data_size);
 
-    printf("Category %s created with linear size of %ld\n", name, header.data_size);
+    printf("Category %s created with linear size of %lu\n", name, header.data_size);
 }
 
 /** Returns the object at the address from n locator.
@@ -175,8 +176,8 @@ TObject * SCategory::getObject(Int_t i)
  */
 void SCategory::print() const
 {
-    printf("Category: %s  length=%ld  sim=%d\n", header.name.Data(), header.data_size, header.simulation);
-    printf("  index: objects=%ld  compressed=%d\n", index.size(), index.isCompressed());
+    printf("Category: %s  length=%lu  sim=%d\n", header.name.Data(), header.data_size, header.simulation);
+    printf("  index: objects=%zu  compressed=%d\n", index.size(), index.isCompressed());
     printf("  %d objects in the category:\n", data ? data->GetEntries() : 0);
 }
 
@@ -236,7 +237,7 @@ void SCategory::Streamer(TBuffer &R__b)
     Char_t clase[200];
     if (R__b.IsReading())
     {
-        Version_t R__v = R__b.ReadVersion();
+        /*Version_t R__v = */R__b.ReadVersion();
         TObject::Streamer(R__b);
         header.Streamer(R__b);
         index.Streamer(R__b);

@@ -28,15 +28,10 @@ class SFileSource : public SDataSource
 public:
     SFileSource();
 
-    virtual bool open();
-    virtual bool close();
-    virtual bool readCurrentEvent();
-
-    virtual void setInput(const std::string & i, size_t buffer)
-    {
-        input = i;
-        buffer_size = buffer;
-    }
+    virtual bool open() override;
+    virtual bool close() override;
+    virtual bool readCurrentEvent() override;
+    virtual void setInput(const std::string & i, size_t buffer);
 
 private:
     std::string input;

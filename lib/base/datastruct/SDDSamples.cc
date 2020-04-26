@@ -22,17 +22,13 @@ A container for Fibers Stack Raw data
 
 /** Constructor
  */
-SDDSamples::SDDSamples() : TObject() { Clear(); }
-
-/** Destructor
- */
-SDDSamples::~SDDSamples() {}
+SDDSamples::SDDSamples() : TObject() {}
 
 /** Clear object
  * Parameter options are ignored, for ROOT compatibility.
  * \param opt options
  */
-void SDDSamples::Clear(Option_t* opt) {
+void SDDSamples::Clear(Option_t* /*opt*/) {
     module = -1;
     layer = -1;
     fiber = -1;
@@ -86,7 +82,7 @@ void DDSignal::Clear(void) {
 }
 //------------------------------------------------------------------
 /// Prints details of the DDSignal class object.
-void DDSignal::Print(void) {
+void DDSignal::Print(void) const {
     std::cout << "\n\n------------------------------------------------"
               << std::endl;
     std::cout << "This is Print() for DDSignalBase class object" << std::endl;

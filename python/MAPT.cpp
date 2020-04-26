@@ -33,8 +33,9 @@
 
 #include <iostream>
 
-MAPT::MAPT() :
-    dataManager(nullptr), detm(nullptr), catGeantTrack(nullptr), catGeantFibersRaw(nullptr)
+MAPT::MAPT()
+    : dataManager(nullptr), detm(nullptr), catGeantTrack(nullptr)
+    , catGeantFibersRaw(nullptr), catFibersStackCalSim(nullptr)
 {
 }
 

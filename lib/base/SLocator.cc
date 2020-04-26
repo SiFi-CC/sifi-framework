@@ -37,8 +37,8 @@ output.
  */
 void SLocator::print() const
 {
-    printf("Locator: n=%ld => ", dim);
+    printf("Locator: n=%zu => ", dim);
     for (int i = 0; i < dim; ++i)
-        printf("  %ld", addr[i]);
+        printf("  %zu", addr[i]);
     putchar('\n');
 }

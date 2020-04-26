@@ -56,7 +56,6 @@ bool SFileSource::open()
 
 bool SFileSource::close()
 {
-    printf("%d Unpackers legth: %lu\n", __LINE__, unpackers.size());
     if (special_addr != 0x0000)
     {
         unpackers[special_addr]->finalize();
@@ -96,4 +95,9 @@ bool SFileSource::readCurrentEvent()
     }
 
     return true;
+}
+
+void SFileSource::setInput(const std::string& i, size_t buffer) {
+    input = i;
+    buffer_size = buffer;
 }

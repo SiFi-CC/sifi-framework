@@ -28,14 +28,12 @@ private:
     std::size_t dim;                ///< dimension of the locator
     std::vector<size_t> addr;       ///< cooridnates of the locator
 
-private:
-    // constructor
-    SLocator() {}
 public:
+    SLocator() = delete;
     // constructor
     /// Constructor
     /// \param N dimension of the locator
-    SLocator(std::size_t N) : dim(N), addr(N) {}
+    explicit SLocator(std::size_t N) : dim(N), addr(N) {}
     //destructor
     virtual ~SLocator() {}
 

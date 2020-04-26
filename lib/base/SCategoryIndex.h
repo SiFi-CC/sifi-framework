@@ -42,7 +42,7 @@ public:
     void clear();
     void compress();
 
-    ClassDef(SCategoryIndex, 1);
+    ClassDefOverride(SCategoryIndex, 1);
 };
 
 #endif /* SCATEGORYINDEX_H */

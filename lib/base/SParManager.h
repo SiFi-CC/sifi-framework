@@ -47,7 +47,6 @@ bool isFloat(const std::string & str);
 struct SContainer {
     std::string name;
     std::vector<std::string> lines;
-    enum WhatNext { WNContainer, WNContainerOrParam, WNParam, WNParamCont };
 
     void print() {
         printf("Container Table [%s]\n", name.c_str());
@@ -75,12 +74,12 @@ protected:
 private:
     // constructors
     SParManager();
-    SParManager(SParManager const &) {}
+    SParManager(SParManager const &) = delete;
 
     // methods
     /// Assignment operator
     /// \return this object
-    SParManager & operator=(SParManager const &) { return *this; }
+    SParManager & operator=(SParManager const &) = delete;
 
 public:
     // instance method
@@ -98,7 +97,7 @@ public:
 
     bool parseSource();
     void writeDestination() const;
-    void writeContainers(std::vector<std::string> conts) const;
+    void writeContainers(const std::vector<std::string> & conts) const;
 
     SContainer * getContainer(const std::string & cont_name);
 

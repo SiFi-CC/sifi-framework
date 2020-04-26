@@ -40,9 +40,7 @@ protected:
 
 public:
     // constructor
-    SCalContainer(const std::string & container);
-    // destructor
-    virtual ~SCalContainer();
+    explicit SCalContainer(const std::string & container);
 
     virtual SLookupChannel * createChannel() const { return new SLookupChannel; }
 
@@ -53,8 +51,7 @@ public:
 protected:
     void fromContainer();
     void toContainer() const;
-    friend void SParManager::writeDestination() const;
-    friend void SParManager::writeContainers(std::vector<std::string> conts) const;
+    friend void SParManager::writeContainers(const std::vector<std::string> & conts) const;
 };
 
 #endif /* SCALCONTAINER_H */

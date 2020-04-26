@@ -33,9 +33,9 @@ public:
     virtual ~SFibersStackCalibrator();
 
     // methods
-    bool init();
-    bool execute();
-    bool finalize();
+    bool init() override;
+    bool execute() override;
+    bool finalize() override;
 };
 
 #endif /* SFIBERSSTACKCALIBRATOR_H */

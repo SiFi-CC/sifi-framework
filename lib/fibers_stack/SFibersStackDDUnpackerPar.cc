@@ -82,7 +82,7 @@ void SFibersStackDDUnpackerPar::print() const
     printf(" deadtime = %d\n", nDeadTime);
 }
 
-Float_t SFibersStackDDUnpackerPar::getThreshold(Int_t chan)
+Float_t SFibersStackDDUnpackerPar::getThreshold(Int_t chan) const
 {
     if (chan < 0 or chan > 15) abort();
     return fThreshold[chan];

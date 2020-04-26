@@ -29,7 +29,7 @@ public:
     ~SFibersStackCalSim();
 
     // inherited from ROOT
-    virtual void Clear(Option_t* opt = "");
+    virtual void Clear(Option_t* opt = "") override;
 
     // methods
     /// Set kinetic energy
@@ -56,7 +56,7 @@ public:
     void print() const;
 
 private:
-    ClassDef(SFibersStackCalSim, 1);
+    ClassDefOverride(SFibersStackCalSim, 1);
 };
 
 #endif /* SFIBERSSTACKCALSIM_H */

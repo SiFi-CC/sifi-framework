@@ -25,20 +25,24 @@ Display progress of the analysis.
  * \param point_width width of the point
  * \param bar_width width of teh bar
  */
-SProgressBar::SProgressBar(long int cnt_limit, int point_width, int bar_width) :
-    cnt_current(0), cnt_previous(0), cnt_limit(cnt_limit),
-    point_width(point_width), bar_width(bar_width),
-    new_bar(true), new_bar_line(true),
-    bar_p('.'), alarm_p('!')
+SProgressBar::SProgressBar(ulong limit, uint point_width, uint bar_width)
+    : cnt_current(0), cnt_previous(0), cnt_limit(limit)
+    , point_width(point_width), bar_width(bar_width)
+    , new_bar(true), new_bar_line(true)
+    , line_prefix("==> Processing data ")
+    , bar_p('.'), alarm_p('!')
 {
-    line_prefix = "==> Processing data ";
 }
 
 /** Close bar line
  */
 void SProgressBar::close()
 {
-    std::cout << std::endl;
+    if (cnt_current >= cnt_limit)
+        return;
+
+    double num_percent = 100.0*(cnt_current)/cnt_limit;
+    std::cout << " " << cnt_current << " (" << num_percent << "%)" << "\n" << std::flush;
 }
 
 /** Set current progress status

@@ -29,8 +29,8 @@ uint SFibersStackChannel::read(const char * address) {
 uint SFibersStackChannel::write(char* data, size_t n) const
 {
     uint cnt = snprintf(data, n, "%3d  %3d  %3d   %c", m, l, s, side);
-    if (n < 0) return n;
-    if (n < cnt) return 0;
+    if (cnt < 0) return cnt;
+    if (cnt < n) return 0;
     return cnt;
 }
 

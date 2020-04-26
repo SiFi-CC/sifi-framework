@@ -28,14 +28,14 @@ class SFibersStackDDUnpackerPar : public SPar
     Int_t nDeadTime;    ///< fDeadTime
 
   public:
-    bool getParams(SParContainer* parcont);
-    bool putParams(SParContainer* parcont) const;
-    void clear();
-    void print() const;
+    bool getParams(SParContainer* parcont) override;
+    bool putParams(SParContainer* parcont) const override;
+    void clear() override;
+    void print() const override;
 
     /// Return Threshold
     /// \return threshold
-    Float_t getThreshold(Int_t chan);
+    Float_t getThreshold(Int_t chan) const;
     /// Return Polarity
     /// \return polarity
     Int_t getPolarity() const { return nPolarity; }

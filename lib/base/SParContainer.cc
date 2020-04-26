@@ -34,6 +34,52 @@ parameters in the container and write to param file.
 \sa SFibersStackGeomPar
 */
 
+namespace {
+
+enum WhatNext { WNContainer, WNContainerOrParam, WNParam, WNParamCont };
+
+/** Parse single value.
+ *
+ * \param str string with values
+ * \param values vector to store values
+ * \return next parsing step
+ */
+WhatNext parseValues(const std::string & str, std::vector<std::string> & values)
+{
+    size_t pos2 = 0;
+    while(true)
+    {
+        size_t pos = str.find_first_not_of(' ', pos2);
+
+        // if new line detected
+        if (str[pos] == '\\')
+        {
+            return WNParamCont;
+        }
+
+        // if end of line
+        if (pos == str.npos)
+        {
+            break;
+        }
+
+        pos2 = str.find_first_of(' ', pos+1);
+        std::string match = str.substr(pos, pos2-pos);
+        if (isFloat(match))
+        {
+            values.push_back(match);
+        }
+        else
+        {
+            std::cerr << "Value is not a number:" << std::endl << str << std::endl;
+            exit(EXIT_FAILURE);
+        }
+    }
+    return WNParam;
+}
+
+};
+
 /** Constructor
  * \param container container name
  */
@@ -348,7 +394,7 @@ bool SParContainer::fromContainer() {
     SContainer * sc = pm()->getContainer(container);
     if (!sc) throw "No parameter container.";
 
-    SContainer::WhatNext wn = SContainer::WNParam;
+    WhatNext wn = WNParam;
     std::string param_name;
     std::string type_name;
     std::vector<std::string> values;
@@ -357,19 +403,18 @@ bool SParContainer::fromContainer() {
         trim(line);
         simplify(line);
 
-        size_t pos = 0, pos2 = 0;
-
-        // check if comment or empty line
-        if (line[0] == '#' or (line.length() == 0 and wn != SContainer::WNParamCont))
+        // skip comment or empty line
+        if (line[0] == '#' or (line.length() == 0 and wn != WNParamCont))
         {
             continue;
         }
         else
         {
-            if (wn == SContainer::WNParam)
+            size_t pos2 = 0;
+            if (wn == WNParam)
             {
                 // find parameter name ended with :
-                pos = line.find_first_of(':', 1);
+                size_t pos = line.find_first_of(':', 1);
                 param_name = line.substr(0, pos);
                 trim(param_name);
 
@@ -395,13 +440,13 @@ bool SParContainer::fromContainer() {
                     return false;
                 }
 
-                wn = SContainer::WNParamCont;
+                wn = WNParamCont;
             }
 
-            if (wn == SContainer::WNParamCont)
+            if (wn == WNParamCont)
             {
-                wn = parseValues(line.substr(pos2, -1), values);
-                if (wn == SContainer::WNParam)
+                wn = ::parseValues(line.substr(pos2, -1), values);
+                if (wn == WNParam)
                 {
                     if (values.size() == 0)
                     {
@@ -456,45 +501,4 @@ void SParContainer::toContainer() const {
             sc->lines.push_back(s);
         }
     }
-}
-
-/** Parse single value.
- *
- * \param str string with values
- * \param values vector to store values
- * \return next parsing step
- */
-SContainer::WhatNext SParContainer::parseValues(const std::string & str, std::vector<std::string> & values)
-{
-    size_t pos = 0, pos2 = 0;
-
-    while(1)
-    {
-        pos = str.find_first_not_of(' ', pos2);
-
-        // if new line detected
-        if (str[pos] == '\\')
-        {
-            return SContainer::WNParamCont;
-        }
-
-        // if end of line
-        if (pos == str.npos)
-        {
-            break;
-        }
-
-        pos2 = str.find_first_of(' ', pos+1);
-        std::string match = str.substr(pos, pos2-pos);
-        if (isFloat(match))
-        {
-            values.push_back(match);
-        }
-        else
-        {
-            std::cerr << "Value is not a number:" << std::endl << str << std::endl;
-            exit(EXIT_FAILURE);
-        }
-    }
-    return SContainer::WNParam;
 }

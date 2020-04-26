@@ -29,7 +29,6 @@
 
 #include "SProgressBar.h"
 
-using namespace std;
 /*
 int simdst(const std::string & file, int events = 1000)
 {
@@ -105,7 +104,7 @@ int simdst(const std::string & file, int events = 1000)
 int main(int argc,char** argv)
 {
     int events = 10000;
-    int c;
+
     while(1)
     {
         static struct option long_options[] = {
@@ -115,7 +114,7 @@ int main(int argc,char** argv)
 
         int option_index = 0;
 
-        c = getopt_long(argc, argv, "e:", long_options, &option_index);
+        int c = getopt_long(argc, argv, "e:", long_options, &option_index);
 
         if (c == -1)
             break;
@@ -130,7 +129,7 @@ int main(int argc,char** argv)
         }
     }
 
-    std:vector< std::pair<std::string, int> > digi_status;
+    std::vector< std::pair<std::string, int> > digi_status;
     while (optind < argc)
     {
         std::cout << "Digitize " << argv[optind] << std::endl;

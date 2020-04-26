@@ -376,7 +376,6 @@ int main(int argc,char** argv)
     ap.events = 10000;
     ap.ofile = "output.root";
 
-    int c;
     while(1)
     {
         static struct option long_options[] = {
@@ -387,7 +386,7 @@ int main(int argc,char** argv)
 
         int option_index = 0;
 
-        c = getopt_long(argc, argv, "e:o:", long_options, &option_index);
+        int c = getopt_long(argc, argv, "e:o:", long_options, &option_index);
 
         if (c == -1)
             break;

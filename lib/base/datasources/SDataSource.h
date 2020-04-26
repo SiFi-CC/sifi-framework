@@ -26,8 +26,6 @@ class SUnpacker;
 class SDataSource
 {
 public:
-    SDataSource() {}
-
     virtual bool open() = 0;
     virtual bool close() = 0;
     virtual bool readCurrentEvent() = 0;

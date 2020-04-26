@@ -30,7 +30,10 @@ A digitizer task.
 
 /** Constructor
  */
-SFibersStackDigitizer::SFibersStackDigitizer() : STask(), catGeantFibersRaw(nullptr), pDigiPar(nullptr), pGeomPar(nullptr)
+SFibersStackDigitizer::SFibersStackDigitizer()
+    : STask()
+    , catGeantFibersRaw(nullptr), catFibersCalSim(nullptr)
+    , pDigiPar(nullptr), pGeomPar(nullptr)
 {
 }
 
@@ -60,7 +63,7 @@ bool SFibersStackDigitizer::init()
         return false;
     }
 
-    pGeomPar = (SFibersStackGeomPar*) pm()->getParameterContainer("SFibersStackGeomPar");
+    pGeomPar = dynamic_cast<SFibersStackGeomPar*>(pm()->getParameterContainer("SFibersStackGeomPar"));
     if (!pGeomPar)
     {
         std::cerr << "Parameter container 'SFibersStackGeomPar' was not obtained!" << std::endl;
@@ -93,7 +96,7 @@ bool SFibersStackDigitizer::execute()
 
     for (int i = 0; i < size; ++i)
     {
-        SGeantFibersRaw * pHit = (SGeantFibersRaw *)catGeantFibersRaw->getObject(i);
+        SGeantFibersRaw * pHit = dynamic_cast<SGeantFibersRaw *>(catGeantFibersRaw->getObject(i));
         if (!pHit)
         {
             printf("Hit doesnt exists!\n");
@@ -129,11 +132,12 @@ bool SFibersStackDigitizer::execute()
         loc[1] = lay;
         loc[2] = fib;
 
-        SFibersStackCalSim * pCal = (SFibersStackCalSim *) catFibersCalSim->getObject(loc);
+        SFibersStackCalSim * pCal = dynamic_cast<SFibersStackCalSim *>(catFibersCalSim->getObject(loc));
         if (!pCal)
         {
-            pCal = (SFibersStackCalSim *) catFibersCalSim->getSlot(loc);
-            pCal = new (pCal) SFibersStackCalSim;
+            pCal = dynamic_cast<SFibersStackCalSim *>(catFibersCalSim->getSlot(loc));
+            new (pCal) SFibersStackCalSim;
+            pCal->Clear();
         }
 
         pCal->setAddress(mod, lay, fib);

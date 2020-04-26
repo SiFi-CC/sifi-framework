@@ -32,17 +32,14 @@ public:
     // methods
     /// Initialize task
     /// \return success
-    virtual bool init();
+    virtual bool init() override;
     /// Called when reinitializatoin is required
     /// \return success
-    virtual bool reinit();
+    virtual bool reinit() override;
     /// Execute task
     /// \return success
     virtual bool execute(unsigned long event, unsigned long seq_number,
-        void * buffer, size_t length);
-    /// Finalize task
-    /// \return success
-    virtual bool finalize() { return true; }
+        void * buffer, size_t length) override;
 
     void setDataLen(size_t length) { data_length = length;}
 

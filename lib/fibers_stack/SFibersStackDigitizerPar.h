@@ -21,9 +21,9 @@ protected:
 
 public:
     // methods
-    bool getParams(SParContainer * parcont);
-    bool putParams(SParContainer * parcont) const;
-    void clear();
+    bool getParams(SParContainer * parcont) override;
+    bool putParams(SParContainer * parcont) const override;
+    void clear() override;
 };
 
 #endif /* SFIBERSSTACKDIGITIZERPAR_H */

@@ -27,14 +27,15 @@ protected:
 private:
     // constructors
     STaskManager();
+
+public:
     /// Copy constructor
-    STaskManager(STaskManager const &) {}
+    STaskManager(STaskManager const &) = delete;
     // methods
     /// Assignment operator
     /// \return this object
-    STaskManager & operator=(STaskManager const &) { return *this; }
+    STaskManager & operator=(STaskManager const &) = delete;
 
-public:
     // instance method
     static STaskManager * instance();
     //destructor

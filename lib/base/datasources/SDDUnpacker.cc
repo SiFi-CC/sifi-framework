@@ -65,5 +65,4 @@ bool SDDUnpacker::execute(unsigned long event, unsigned long seq_number,
 //     }
 
     return decode((float *)buffer, data_length);
-    return true;
 }

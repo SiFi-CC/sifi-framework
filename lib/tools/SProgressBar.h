@@ -18,23 +18,23 @@ class SProgressBar
 {
 protected:
     // members
-    long int cnt_current;      ///< current counter
-    long int cnt_previous;     ///< previous counter
-    long int cnt_limit;        ///< counter limit
-    int point_width;           ///< width of a point
-    int bar_width;             ///< width of a bar
-    bool new_bar;              ///< make new bar
-    bool new_bar_line;         ///< make new bar line
+    long cnt_current;           ///< current counter
+    long cnt_previous;          ///< previous counter
+    long cnt_limit;             ///< counter limit
+    uint point_width;           ///< width of a point
+    uint bar_width;             ///< width of a bar
+    bool new_bar;               ///< make new bar
+    bool new_bar_line;          ///< make new bar line
 
-    std::string line_prefix;   ///< line prefix
-    char bar_p;                ///< ???
-    char alarm_p;              ///< ???
+    std::string line_prefix;    ///< line prefix
+    char bar_p;                 ///< ???
+    char alarm_p;               ///< ???
 
 public:
     // constructor
-    SProgressBar(long int limit, int point_width = 500, int bar_width = 20);
+    explicit SProgressBar(ulong limit, uint point_width = 500, uint bar_width = 20);
     // destructor
-    virtual ~SProgressBar() {}
+    virtual ~SProgressBar() { close(); }
 
     // methods
     void close();

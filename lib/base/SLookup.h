@@ -38,6 +38,9 @@ private:
 
 public:
     SLookupBoard(UInt_t addr, UInt_t nchan);
+    SLookupBoard(const SLookupBoard &) = delete;
+    SLookupBoard & operator=(const SLookupBoard &) = delete;
+
     virtual ~SLookupBoard();
 
     void setChannel(UInt_t chan, SLookupChannel * c) { channels[chan] = c; }
@@ -58,6 +61,9 @@ protected:
 public:
     // constructor
     SLookupTable(const std::string & container, UInt_t addr_min, UInt_t addr_max, UInt_t channels = 49);
+    SLookupTable(const SLookupTable &) = delete;
+    SLookupTable & operator=(const SLookupTable &) = delete;
+
     // destructor
     virtual ~SLookupTable();
 
@@ -73,8 +79,7 @@ public:
 protected:
     void fromContainer();
     void toContainer() const;
-    friend void SParManager::writeDestination() const;
-    friend void SParManager::writeContainers(std::vector<std::string> conts) const;
+    friend void SParManager::writeContainers(const std::vector<std::string> & conts) const;
 };
 
 #endif /* SLOOKUP_H */

@@ -99,10 +99,10 @@ Double_t SGeantTrack::getRange(const TVector3 & ref) const
     TVector3 sto = TVector3(stop.x, stop.y, stop.z) - ref;
 
     TVector3 psta = TVector3(start.px, start.py, start.pz);
-    TVector3 psto = TVector3(stop.px, stop.py, stop.pz);
+//     TVector3 psto = TVector3(stop.px, stop.py, stop.pz);
 
     psta *= 1.0/psta.Mag();
-    psto *= 1.0/psto.Mag();
+//     psto *= 1.0/psto.Mag();
 
     Double_t t = 0.0;
 
@@ -147,7 +147,7 @@ void SGeantTrack::print() const
         printf("%s,", processes[i].c_str());
     printf("\n");
     printf("  PID=%ld  stop in det=%d\n", g4Id, stopInDetector);
-    printf("  num of sec=%ld\n", secondariesID.size());
+    printf("  num of sec=%zu\n", secondariesID.size());
     //   std::vector<Int_t> secondaries_ID;
     //   Int_t particle_ID;
     //   string generationProcess;

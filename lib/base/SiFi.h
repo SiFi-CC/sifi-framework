@@ -49,9 +49,6 @@ protected:
     /// Ctaegory info
     struct CategoryInfo
     {
-        CategoryInfo();
-        CategoryInfo(CategoryInfo & ci);
-
         bool registered = false;    ///< Category is registered
         bool persistent = false;    ///< Category is persistent
         SCategory::Cat cat;         ///< Category ID
@@ -67,19 +64,18 @@ protected:
 
     typedef std::map<SCategory::Cat, SCategory *> CatMap;
     CatMap categories;              ///< Map of categories
-    static SiFi * mm;       ///< Instance of the SiFi
+    static SiFi * mm;               ///< Instance of the SiFi
     bool sim;                       ///< Simulation run
     bool branches_set;              ///< Has branches set
 
 private:
     // constructor
     SiFi();
-    SiFi(SiFi const &) {}   ///< Copy constructor
-    /// Assignment operator
-    /// \return this object
-    SiFi & operator=(SiFi const &) { return *this; }
 
 public:
+    SiFi(SiFi const &) = delete;
+    SiFi & operator=(SiFi const &) = delete;
+
     // instance method
     static SiFi * instance();
 
@@ -95,7 +91,7 @@ public:
     Int_t fill();
     bool open();
 
-    void loop(long entries);
+    void loop(long entries, bool show_progress_bar = true);
 
     void getEntry(int i);
     Long64_t getEntries();
@@ -105,12 +101,10 @@ public:
     /// \return is simulation
     bool isSimulation() const { return sim; }
 
-    bool registerCategory(SCategory::Cat cat, std::string name, size_t dim, size_t * sizes, bool simulation);
+    bool registerCategory(SCategory::Cat cat, const std::string & name, size_t dim, size_t * sizes, bool simulation);
 
     SCategory * buildCategory(SCategory::Cat cat, bool persistent = true);
     SCategory * getCategory(SCategory::Cat cat, bool persistent = true);
-    SCategory * getCategory(SCategory::Cat cat, const char * name, bool persistent);
-//    SCategory * openCategory(SCategory::Cat cat, bool persistent = true);
 
     /// Set output file name
     /// \param file file name
@@ -119,7 +113,7 @@ public:
     void addSource(SDataSource * data) { inputSources.push_back(data); }
     /// Get entry number
     /// \return entry number
-    int getEntryNumber() { return currentEntry; }
+    int getEntryNumber() const { return currentEntry; }
 
     /// Get input tree
     /// \return input tree

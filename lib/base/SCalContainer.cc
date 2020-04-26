@@ -45,9 +45,9 @@ uint SCalPar::read(const char* data)
 
 uint SCalPar::write(char* data, size_t n) const
 {
-    uint cnt = snprintf(data, n, "%7.6g %7.6g %7.6g", par0, par1, par2);
-    if (n < 0) return n;
-    if (n < cnt) return 0;
+    int cnt = snprintf(data, n, "%7.6g %7.6g %7.6g", par0, par1, par2);
+    if (cnt < 0) return cnt;
+    if (cnt < n) return 0;
     return cnt;
 }
 
@@ -94,7 +94,7 @@ void SCalContainer::toContainer() const
 
     for (auto calpar: calpars)
     {
-        SLookupChannel * chan = (SLookupChannel *) createChannel();
+        SLookupChannel * chan = dynamic_cast<SLookupChannel *>(createChannel());
         chan->fromHash(calpar.first);
         chan->write(buff, len);
         std::string s("  ");
@@ -104,10 +104,6 @@ void SCalContainer::toContainer() const
         s += buff;
         sc->lines.push_back(s);
     }
-}
-
-SCalContainer::~SCalContainer()
-{
 }
 
 SCalPar& SCalContainer::getPar(const SLookupChannel * channel) {

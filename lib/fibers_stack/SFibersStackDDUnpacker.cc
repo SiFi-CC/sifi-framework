@@ -99,7 +99,10 @@ Float_t FindTMax(Float_t* samples, size_t len, Float_t threshold, Int_t _t0,
  */
 SFibersStackDDUnpacker::SFibersStackDDUnpacker(uint16_t address,
                                                uint8_t channel)
-    : SDDUnpacker(address), channel(channel), catDDSamples(nullptr)
+    : SDDUnpacker(address)
+    , catDDSamples(nullptr), catFibersRaw(nullptr)
+    , pDDUnpackerPar(nullptr), pLookUp(nullptr)
+    , channel(channel), lookup_name(), lookup_table(nullptr)
 {
 }
 
@@ -141,8 +144,8 @@ bool SFibersStackDDUnpacker::init()
     }
 
     // get calibrator parameters
-    pDDUnpackerPar = (SFibersStackDDUnpackerPar*)pm()->getParameterContainer(
-        "SFibersStackDDUnpackerPar");
+    pDDUnpackerPar = dynamic_cast<SFibersStackDDUnpackerPar*>(pm()->getParameterContainer(
+        "SFibersStackDDUnpackerPar"));
     if (!pDDUnpackerPar)
     {
         std::cerr << "Parameter container 'SFibersStackDDUnpackerPar' was not "
@@ -152,7 +155,7 @@ bool SFibersStackDDUnpacker::init()
     }
     pDDUnpackerPar->print();
 
-    pLookUp = (SFibersStackLookupTable*)pm()->getLookupContainer("SFibersStackDDLookupTable");
+    pLookUp = dynamic_cast<SFibersStackLookupTable*>(pm()->getLookupContainer("SFibersStackDDLookupTable"));
     pLookUp->print();
 
     return true;
@@ -166,18 +169,19 @@ bool SFibersStackDDUnpacker::decode(float* data, size_t length)
     Int_t intmode = pDDUnpackerPar->getIntMode();
     Int_t deadtime = pDDUnpackerPar->getDeadTime();
 
-    SFibersStackChannel * lc = (SFibersStackChannel *) pLookUp->getAddress(getAddress(), channel);
+    SFibersStackChannel * lc = dynamic_cast<SFibersStackChannel *>(pLookUp->getAddress(getAddress(), channel));
     SLocator loc(3);
     loc[0] = lc->m;     // mod;
     loc[1] = lc->l;     // lay;
     loc[2] = lc->s;     // fib;
     char side = lc->side;
 
-    SDDSamples* pSamples = (SDDSamples*)catDDSamples->getObject(loc);
+    SDDSamples* pSamples = dynamic_cast<SDDSamples*>(catDDSamples->getObject(loc));
     if (!pSamples)
     {
-        pSamples = (SDDSamples*)catDDSamples->getSlot(loc);
-        pSamples = new (pSamples) SDDSamples;
+        pSamples = reinterpret_cast<SDDSamples*>(catDDSamples->getSlot(loc));
+        new (pSamples) SDDSamples;
+        pSamples->Clear();
     }
 
     pSamples->setAddress(loc[0], loc[1], loc[2]);
@@ -198,8 +202,11 @@ bool SFibersStackDDUnpacker::decode(float* data, size_t length)
     }
     bl_sigma = sqrt(bl_sigma / 50.);
 
-    for (auto& s : samples)
-        s -= bl;
+//     for (auto& s : samples)
+//         s -= bl;
+
+    std::transform(samples, samples+length, samples,
+        [bl](float f) { return f - bl; });
 
     Float_t threshold = 0;
     Float_t ampl = 0;
@@ -232,16 +239,16 @@ bool SFibersStackDDUnpacker::decode(float* data, size_t length)
     Float_t charge = std::accumulate(samples + _t0, samples + _t0 + _len, 0);
     if (pol == 0) charge = -charge;
 
-    SFibersStackRaw* pRaw = (SFibersStackRaw*)catFibersRaw->getObject(loc);
+    SFibersStackRaw* pRaw = dynamic_cast<SFibersStackRaw*>(catFibersRaw->getObject(loc));
     if (!pRaw)
     {
-        pRaw = (SFibersStackRaw*)catFibersRaw->getSlot(loc);
-        pRaw = new (pRaw) SFibersStackRaw;
+        pRaw = reinterpret_cast<SFibersStackRaw*>(catFibersRaw->getSlot(loc));
+        new (pRaw) SFibersStackRaw;
     }
 
     pRaw->setAddress(loc[0], loc[1], loc[2]);
     if (side == 'l') {
-        if (pSamples) pSamples->fillSamplesL(data, length);
+        pSamples->fillSamplesL(data, length);
         pSamples->getSignalL()->SetAmplitude(ampl / adc_to_mv);
         pSamples->getSignalL()->SetT0(t0 /** sample_to_ns*/);
         pSamples->getSignalL()->SetTOT(tot /** sample_to_ns*/);
@@ -254,7 +261,7 @@ bool SFibersStackDDUnpacker::decode(float* data, size_t length)
         pRaw->setTimeL(t0);
     }
     if (side == 'r') {
-        if (pSamples) pSamples->fillSamplesR(data, length);
+        pSamples->fillSamplesR(data, length);
         pSamples->getSignalR()->SetAmplitude(ampl / adc_to_mv);
         pSamples->getSignalR()->SetT0(t0 /** sample_to_ns*/);
         pSamples->getSignalR()->SetTOT(tot /** sample_to_ns*/);

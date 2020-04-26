@@ -28,20 +28,12 @@ class SRootSource : public SDataSource
 public:
     SRootSource();
 
-    virtual bool open();
-    virtual bool close();
-    virtual bool readCurrentEvent();
-
-    virtual void setInput(const std::string & i, size_t buffer)
-    {
-        input = i;
-        buffer_size = buffer;
-    }
+    virtual bool open() override;
+    virtual bool close() override;
+    virtual bool readCurrentEvent() override;
 
 private:
     std::string input;
-    std::ifstream istream;
-    size_t buffer_size;
 };
 
 #endif /* SROOTSOURCE_H */

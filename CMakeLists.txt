@@ -37,13 +37,7 @@ include(tools)
 
 file(GLOB_RECURSE FFILES *.[hc] *.[hc]pp)
 clang_format(format ${FFILES})
-
-clang_tidy(-format-style=file -checks=* -header-filter='${CMAKE_SOURCE_DIR}/*')
 include_what_you_use(-Xiwyu)
-cppcheck(
-  --enable=warning,performance,portability,missingInclude
-  --template="[{severity}][{id}] {message} {callstack} \(On {file}:{line}\)"
-  --suppress=missingIncludeSystem --quiet --verbose --force)
 
 build_docs(TARGET_NAME doc DOXYFILE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in PROCESS_DOXYFILE)
 

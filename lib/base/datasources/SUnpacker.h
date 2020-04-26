@@ -28,7 +28,7 @@ public:
     // methods
     /// Initialize task
     /// \return success
-    virtual bool init() = 0;
+    virtual bool init() { return true; };
     /// Called when reinitializatoin is required
     /// \return success
     virtual bool reinit() { return true; }
@@ -38,7 +38,7 @@ public:
         void * buffer, size_t length) = 0;
     /// Finalize task
     /// \return success
-    virtual bool finalize() = 0;
+    virtual bool finalize() { return true; };
 
     uint16_t getAddress() const { return addr; }
 

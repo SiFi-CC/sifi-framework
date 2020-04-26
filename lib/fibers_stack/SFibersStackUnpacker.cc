@@ -85,11 +85,12 @@ bool SFibersStackUnpacker::execute()
         loc[1] = lay;
         loc[2] = fib;
 
-        SFibersStackRaw * pRaw = (SFibersStackRaw *) catFibersRaw->getObject(loc);
+        SFibersStackRaw * pRaw = dynamic_cast<SFibersStackRaw *>(catFibersRaw->getObject(loc));
         if (!pRaw)
         {
-            pRaw = (SFibersStackRaw *) catFibersRaw->getSlot(loc);
-            pRaw = new (pRaw) SFibersStackRaw;
+            pRaw = dynamic_cast<SFibersStackRaw *>(catFibersRaw->getSlot(loc));
+            new (pRaw) SFibersStackRaw;
+            pRaw->Clear();
         }
 
         pRaw->setAddress(mod, lay, fib);

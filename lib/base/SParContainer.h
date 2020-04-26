@@ -34,7 +34,7 @@ protected:
 
 public:
     // constructor
-    SParContainer(const std::string & container);
+    explicit SParContainer(const std::string & container);
     // destructor
     virtual ~SParContainer() {}
 
@@ -64,10 +64,6 @@ protected:
     /// Set line split
     /// \param n number of values per line
     void setLineSplit(size_t n) { line_split = n; }
-
-private:
-    /// Parser steps
-    SContainer::WhatNext parseValues(const std::string & str, std::vector<std::string> & values);
 };
 
 #endif /* SPARCONTAINER_H */

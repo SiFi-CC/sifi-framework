@@ -38,14 +38,12 @@ public:
 public:
     // constructor
     SCategoryHeader() : TObject() { clear(); }
-    // Destructor
-    virtual ~SCategoryHeader() {}
 
     /// Clears all members
     void clear();
 
 private:
-    ClassDef(SCategoryHeader,1);
+    ClassDefOverride(SCategoryHeader,1);
 };
 
 #endif /* SCATEGORYHEADER_H */

@@ -47,7 +47,7 @@ void BasicCase::setUp()
     pm->setParamSource("lookup.txt");
     pm->parseSource();
 
-    SLookupTable * t = (SLookupTable*) new TestLookupTable("TestLookup", 0x6400, 0x64ff, 49);
+    SLookupTable * t = reinterpret_cast<SLookupTable*>(new TestLookupTable("TestLookup", 0x6400, 0x64ff, 49));
     t->print();
 
 //     TestChannel * tt = (TestChannel*)t->getAddress(0x6400, 0);
@@ -56,5 +56,5 @@ void BasicCase::setUp()
 
 void BasicCase::MyTest()
 {
-    float fnum = 2.00001f;
+//     float fnum = 2.00001f;
 }

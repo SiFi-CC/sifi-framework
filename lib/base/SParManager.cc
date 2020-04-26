@@ -15,7 +15,8 @@
 #include "SCalContainer.h"
 #include "SLookup.h"
 
-#include <algorithm> 
+#include <algorithm>
+#include <iterator>
 #include <cctype>
 #include <fstream>
 #include <iostream>
@@ -178,7 +179,7 @@ bool SParManager::parseSource()
 
     char * cbuff = new char[length];
 
-    SContainer::WhatNext wn = SContainer::WNContainer;
+    enum WhatNext { WNContainer, WNContainerOrParam, WNParam, WNParamCont } wn = WNContainer;
 
     std::string cont_name;
     SContainer * cont = nullptr;
@@ -194,14 +195,14 @@ bool SParManager::parseSource()
         size_t pos = 0, pos2 = 0;
 
         // check if comment or empty line
-        if (str[0] == '#' or (str.length() == 0 and wn != SContainer::WNParamCont))
+        if (str[0] == '#' or (str.length() == 0 and wn != WNParamCont))
         {
             continue;
         }
         // if container mark found, check whether it should be there, e.g. container after param new line is forbidden
         else if (str[0] == '[')
         {
-            if (wn == SContainer::WNContainer or wn == SContainer::WNContainerOrParam)
+            if (wn == WNContainer or wn == WNContainerOrParam)
             {
                 pos = str.find_first_of(']', 1);
                 cont_name = str.substr(1, pos-1);
@@ -210,7 +211,7 @@ bool SParManager::parseSource()
                 cont->name = cont_name;
                 containers.insert(std::pair<std::string, SContainer *>(cont_name, cont));
 
-                wn = SContainer::WNContainerOrParam;
+                wn = WNContainerOrParam;
                 continue;
             }
             else
@@ -222,15 +223,15 @@ bool SParManager::parseSource()
         else
         {
             // check if container name is found
-            if (wn == SContainer::WNContainer)
+            if (wn == WNContainer)
             {
                 std::cerr << "Expected container name here: " << std::endl << str << std::endl;
                 return false;
             }
-            else if (wn == SContainer::WNParam or wn == SContainer::WNContainerOrParam)
+            else if (wn == WNParam or wn == WNContainerOrParam)
             {
                 cont->lines.push_back(str);
-                wn = SContainer::WNContainerOrParam;
+                wn = WNContainerOrParam;
             }
         }
     }
@@ -245,13 +246,16 @@ bool SParManager::parseSource()
 void SParManager::writeDestination() const
 {
     std::vector<std::string> names;
-    for (const auto &c : containers)
-        names.push_back(c.first);
+    names.reserve(containers.size());
+
+    std::transform(containers.begin(), containers.end(),
+        std::back_inserter(names), [](std::pair<std::string, SContainer *> const & e) {
+            return e.first; });
 
     writeContainers(names);
 }
 
-void SParManager::writeContainers(std::vector<std::string> conts) const
+void SParManager::writeContainers(const std::vector<std::string> & conts) const
 {
     for (const auto & pc : par_containers)
         pc.second->toContainer();

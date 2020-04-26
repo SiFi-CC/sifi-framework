@@ -27,13 +27,11 @@ private:
 private:
     // constructors
     SDetectorManager() {}
-    SDetectorManager(SDetectorManager const &) {}
-
-    /// Assignment operator
-    /// \return this object
-    SDetectorManager & operator=(SDetectorManager const &) { return *this; }
 
 public:
+    SDetectorManager(SDetectorManager const &) = delete;
+    SDetectorManager & operator=(SDetectorManager const &) = delete;
+
     // instance method
     static SDetectorManager * instance();
     // destructor

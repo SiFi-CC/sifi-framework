@@ -66,7 +66,7 @@ bool SFibersStackCalibrator::init()
     }
 
     // get calibrator parameters
-    pCalibratorPar = (SCalContainer*) pm()->getCalibrationContainer("SFibersStackCalibratorPar");
+    pCalibratorPar = dynamic_cast<SCalContainer*>(pm()->getCalibrationContainer("SFibersStackCalibratorPar"));
     if (!pCalibratorPar)
     {
         std::cerr << "Parameter container 'SFibersStackCalibratorPar' was not obtained!" << std::endl;
@@ -87,7 +87,7 @@ bool SFibersStackCalibrator::execute()
 
     for (int i = 0; i < size; ++i)
     {
-        SFibersStackRaw * pRaw = (SFibersStackRaw *)catFibersRaw->getObject(i);
+        SFibersStackRaw * pRaw = dynamic_cast<SFibersStackRaw *>(catFibersRaw->getObject(i));
         if (!pRaw)
         {
             printf("Hit doesnt exists!\n");
@@ -131,11 +131,12 @@ bool SFibersStackCalibrator::execute()
         loc[1] = lay;
         loc[2] = fib;
 
-        SFibersStackCal * pCal = (SFibersStackCal *) catFibersCal->getObject(loc);
+        SFibersStackCal * pCal = dynamic_cast<SFibersStackCal *>(catFibersCal->getObject(loc));
         if (!pCal)
         {
-            pCal = (SFibersStackCal *) catFibersCal->getSlot(loc);
-            pCal = new (pCal) SFibersStackCal;
+            pCal = reinterpret_cast<SFibersStackCal *>(catFibersCal->getSlot(loc));
+            new (pCal) SFibersStackCal;
+            pCal->Clear();
         }
 
         pCal->setAddress(mod, lay, fib);

@@ -26,11 +26,9 @@ protected:
     // members
     UInt_t task_mask;       ///< mask on tasks
 
-private:
-    // constructor
-    SDetector() {};
-
 public:
+    // constructor
+    SDetector() = delete;
     // constructor
     SDetector(const std::string & name);
     // destructor

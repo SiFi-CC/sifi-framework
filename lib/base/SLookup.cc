@@ -46,8 +46,8 @@ uint SLookupChannel::read(const char* data)
 uint SLookupChannel::write(char* data, size_t n) const
 {
     uint cnt = snprintf(data, n, "%d %d %d", m, l, s);
-    if (n < 0) return n;
-    if (n < cnt) return 0;
+    if (cnt < 0) return cnt;
+    if (cnt < n) return 0;
     return cnt;
 }
 
@@ -114,8 +114,7 @@ void SLookupTable::fromContainer()
     for (auto line: lv)
     {
         uint addr, chan, len;
-        char address[1024];
-        sscanf(line.c_str(), "%x %d%n %[!\n]", &addr, &chan, &len, address);
+        sscanf(line.c_str(), "%x %d%n", &addr, &chan, &len);
         if (addr < a_min or addr > a_max)
         {
             std::cerr << "Can't add board " << addr << " inside (0x" << std::hex << a_min << ", 0x" << a_max << std::dec << "), skipping." << std::endl;

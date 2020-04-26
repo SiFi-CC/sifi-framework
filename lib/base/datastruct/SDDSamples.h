@@ -40,18 +40,18 @@ class DDSignal
     /// Sets value of charge calibrated to PE or keV
     void SetPE(Float_t cal) { fPE = cal; };
     /// Returns signal amplitude in mV
-    Float_t GetAmplitude(void) { return fAmp; };
+    Float_t GetAmplitude(void) const { return fAmp; };
     /// Returns time T0 in ns
-    Float_t GetT0(void) { return fT0; };
+    Float_t GetT0(void) const { return fT0; };
     /// Retursns time over threshold in ns
-    Float_t GetTOT(void) { return fTOT; };
+    Float_t GetTOT(void) const { return fTOT; };
     /// Returns uncalibrated charge, i.e. signal integral
-    Float_t GetCharge(void) { return fCharge; };
+    Float_t GetCharge(void) const { return fCharge; };
     /// Returns value of calibrated charge in PE or keV
-    Float_t GetPE(void) { return fPE; };
+    Float_t GetPE(void) const { return fPE; };
 
     void Clear(void);
-    void Print(void);
+    void Print(void) const;
 };
 
 class SDDSamples : public TObject
@@ -71,9 +71,6 @@ class SDDSamples : public TObject
   public:
     // constructor
     SDDSamples();
-
-    // destructor
-    ~SDDSamples();
 
     // inherited from ROOT
     virtual void Clear(Option_t* opt = "");

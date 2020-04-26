@@ -37,7 +37,7 @@
 int main(int argc, char** argv)
 {
     int events = 10000;
-    int c;
+
     while (1)
     {
         static struct option long_options[] = {
@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 
         int option_index = 0;
 
-        c = getopt_long(argc, argv, "e:", long_options, &option_index);
+        int c = getopt_long(argc, argv, "e:", long_options, &option_index);
 
         if (c == -1) { break; }
 
@@ -59,10 +59,6 @@ int main(int argc, char** argv)
         }
     }
 
-    // Init data manager
-    SiFi* dataManager = SiFi::instance();
-
-    std::vector<std::pair<std::string, int>> digi_status;
     while (optind < argc)
     {
         std::string inpstr(argv[optind]);
@@ -110,25 +106,24 @@ int main(int argc, char** argv)
     }
 
     // output files
-    dataManager->setOutputFileName("test.root");
-    dataManager->book();
+    sifi()->setOutputFileName("test.root");
+    sifi()->book();
 
     // how many events to proceed
     int ev_limit = 0;
-    if (events < 0) { ev_limit = dataManager->getEntries(); }
+    if (events < 0) { ev_limit = sifi()->getEntries(); }
     else
-        ev_limit = events < dataManager->getEntries()
+        ev_limit = events < sifi()->getEntries()
                        ? events
-                       : dataManager->getEntries();
-    std::cout << dataManager->getEntries() << " events, analyze " << ev_limit
+                       : sifi()->getEntries();
+    std::cout << sifi()->getEntries() << " events, analyze " << ev_limit
               << std::endl;
 
-    dataManager->getCategory(SCategory::CatGeantTrack, true);
+    sifi()->getCategory(SCategory::CatGeantTrack, true);
 
     // initialize parameters
-    SParManager* pm = SParManager::instance();
-    pm->setParamSource("params.txt");
-    pm->parseSource();
+    pm()->setParamSource("params.txt");
+    pm()->parseSource();
 
     // initialize detectors
     SDetectorManager* detm = SDetectorManager::instance();
@@ -139,22 +134,21 @@ int main(int argc, char** argv)
     detm->initParameterContainers();
     detm->initCategories();
 
-    pm->addLookupContainer("SFibersStackDDLookupTable", new SFibersStackLookupTable("SFibersStackDDLookupTable", 0x1000, 0x1fff, 32));
+    pm()->addLookupContainer("SFibersStackDDLookupTable", new SFibersStackLookupTable("SFibersStackDDLookupTable", 0x1000, 0x1fff, 32));
 
     // initialize tasks
     STaskManager* tm = STaskManager::instance();
     tm->initTasks();
 
-    SProgressBar pb(ev_limit);
-
-    dataManager->loop(/*ev_limit*/ events);
+    sifi()->setTree(new TTree());
+    sifi()->loop(/*ev_limit*/ events);
 
     tm->finalizeTasks();
 
-    dataManager->save();
+    sifi()->save();
 
-    pm->setParamDest("p.txt");
-    pm->writeDestination();
+    pm()->setParamDest("p.txt");
+    pm()->writeDestination();
 
     return 0;
 }

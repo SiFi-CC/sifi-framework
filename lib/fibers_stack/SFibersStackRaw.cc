@@ -20,10 +20,7 @@ A container for Fibers Stack Raw data
 
 /** Constructor
  */
-SFibersStackRaw::SFibersStackRaw() : TObject()
-{
-    Clear();
-}
+SFibersStackRaw::SFibersStackRaw() : TObject() {}
 
 
 /** Clear object

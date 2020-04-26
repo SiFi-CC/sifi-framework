@@ -29,4 +29,3 @@ void SDataSource::addUnpacker(SUnpacker * unpacker, uint16_t address)
 
     unpackers[address] = unpacker;
 }
-

@@ -40,7 +40,7 @@ void SEvent::addCategory(SCategory::Cat cat, SCategory* address)
 SCategory * SEvent::getCategory(SCategory::Cat cat)
 {
     int pos = SiFi::getCategoryIndex(cat, sifi()->isSimulation());
-    return (SCategory *)categories->At(pos);
+    return dynamic_cast<SCategory *>(categories->At(pos));
 }
 
 void SEvent::clearCategories()
@@ -49,6 +49,6 @@ void SEvent::clearCategories()
     for (uint i = 0; i < n; ++i)
     {
         if (categories->At(i))
-            ((SCategory *)categories->At(i))->clear();
+            dynamic_cast<SCategory *>(categories->At(i))->clear();
     }
 }
