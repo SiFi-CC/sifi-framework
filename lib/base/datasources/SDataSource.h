@@ -12,6 +12,8 @@
 #ifndef SDATASOURCE_H
 #define SDATASOURCE_H
 
+#include "sifi_export.h"
+
 #include <TArrayI.h>
 #include <TClonesArray.h>
 #include <TObject.h>
@@ -29,7 +31,7 @@ class SUnpacker;
  * a respective unpacker is called. If unpacker is missing, the program is
  * aborted. To ignore the address, nullptr object can be passed.
  */
-class SDataSource
+class SIFI_EXPORT SDataSource
 {
 public:
     /// Open the source

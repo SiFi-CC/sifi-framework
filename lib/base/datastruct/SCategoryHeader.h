@@ -12,6 +12,8 @@
 #ifndef SCATEGORYHEADER_H
 #define SCATEGORYHEADER_H
 
+#include "sifi_export.h"
+
 #include <TArrayI.h>
 #include <TObject.h>
 #include <TString.h>

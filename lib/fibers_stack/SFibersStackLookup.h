@@ -12,6 +12,8 @@
 #ifndef SFIBERSSTACKLOOKUP_H
 #define SFIBERSSTACKLOOKUP_H
 
+#include "sifi_export.h"
+
 #include "SLookup.h"
 
 #include <stdint.h>
@@ -23,7 +25,7 @@
 struct SLookupChannel;
 class SLookupTable;
 
-struct SFibersStackChannel : public SLookupChannel
+struct SIFI_EXPORT SFibersStackChannel : public SLookupChannel
 {
     char side;
     virtual uint read(const char * address) override;
@@ -33,7 +35,7 @@ struct SFibersStackChannel : public SLookupChannel
     virtual void fromHash(uint64_t hash) override;
 };
 
-class SFibersStackLookupTable : public SLookupTable
+class SIFI_EXPORT SFibersStackLookupTable : public SLookupTable
 {
 public:
     SFibersStackLookupTable(const std::string & container, UInt_t addr_min, UInt_t addr_max, UInt_t channels = 49):

@@ -12,6 +12,8 @@
 #ifndef SCATEGORY_H
 #define SCATEGORY_H
 
+#include "sifi_export.h"
+
 #include <TClonesArray.h>
 #include <TObject.h>
 
@@ -19,7 +21,7 @@
 #include "SCategoryIndex.h"
 #include "SLocator.h"
 
-class SCategory : public TObject
+class SIFI_EXPORT SCategory : public TObject
 {
 protected:
     // members

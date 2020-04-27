@@ -12,9 +12,11 @@
 #ifndef SFIBERSSTACKRAW_H
 #define SFIBERSSTACKRAW_H
 
+#include "sifi_export.h"
+
 #include <TObject.h>
 
-class SFibersStackRaw : public TObject
+class SIFI_EXPORT SFibersStackRaw : public TObject
 {
 protected:
     // members

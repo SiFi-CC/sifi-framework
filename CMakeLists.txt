@@ -12,9 +12,53 @@ project(SiFi
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 list(APPEND CMAKE_MODULE_PATH
     ${CMAKE_SOURCE_DIR}/Modules
+    ${CMAKE_SOURCE_DIR}
     $ENV{ROOTSYS}
     ${CMAKE_SOURCE_DIR}/cmake-scripts
 )
+
+#-------------------------------------------------------------------------------
+##### HELPER file
+include(helpers)
+
+#-------------------------------------------------------------------------------
+##### Symbols export control
+# Export the package for use from the build-tree
+# (this registers the build-tree with a global CMake-registry)
+export(PACKAGE ${CMAKE_PROJECT_NAME})
+string(TOUPPER "${PROJECT_NAME}" CAPS_PROJECT_NAME)
+
+##### set paths
+if(WIN32 AND NOT CYGWIN)
+    set(DEF_CMAKE_INSTALL_CMAKEDIR cmake)
+else()
+    if(CMAKE_SIZEOF_VOID_P EQUAL "8")
+        set(DEF_CMAKE_INSTALL_LIBDIR lib64)
+    else()
+        set(DEF_CMAKE_INSTALL_LIBDIR lib)
+    endif()
+    set(DEF_CMAKE_INSTALL_CMAKEDIR ${DEF_CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME})
+endif()
+set(CMAKE_INSTALL_LIBDIR ${DEF_CMAKE_INSTALL_LIBDIR}/sifi CACHE PATH "Object code libraries" FORCE)
+set(CMAKE_INSTALL_CMAKEDIR ${DEF_CMAKE_INSTALL_CMAKEDIR} CACHE PATH "Installation directory for CMake files" FORCE)
+
+# use, i.e. don't skip the full RPATH for the build tree
+# SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+
+# when building, don't use the install RPATH already
+# (but later on when installing)
+# SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+
+# the RPATH to be used when installing
+SET(CMAKE_INSTALL_RPATH $ORIGIN/../$LIB/sifi)
+
+# don't add the automatically determined parts of the RPATH
+# which point to directories outside the build tree to the install RPATH
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
+
+
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
 
 #----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
@@ -70,6 +114,7 @@ include_directories(
     lib/geant/
     lib/fibers_stack/
     lib/tools/
+    ${CMAKE_BINARY_DIR}
 )
 # Link directories for libgeometry.so
 # link_directories(${PROJECT_SOURCE_DIR}/geometry/build)
@@ -92,47 +137,48 @@ endif()
 enable_testing()
 add_subdirectory(tests)
 
-# Export the package for use from the build-tree
-# (this registers the build-tree with a global CMake-registry)
-export(PACKAGE ${CMAKE_PROJECT_NAME})
-string(TOUPPER "${PROJECT_NAME}" CAPS_PROJECT_NAME)
 
-include(GNUInstallDirs)
+include(GenerateExportHeader)
+generate_export_header(SiFi)
 
-##### set paths
-if(WIN32 AND NOT CYGWIN)
-	set(DEF_CMAKE_INSTALL_CMAKEDIR cmake)
-else()
-	set(DEF_CMAKE_INSTALL_CMAKEDIR ${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME})
-endif()
-set(CMAKE_INSTALL_CMAKEDIR ${DEF_CMAKE_INSTALL_CMAKEDIR} CACHE PATH "Installation directory for CMake files")
+# keep all targets here
+set(PROJECT_TARGETS SiFi FibersStack Geant Tools)
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file(Config.cmake.in ${CMAKE_PROJECT_NAME}Config.cmake
-	INSTALL_DESTINATION ${CMAKE_INSTALL_CMAKEDIR}
-	PATH_VARS CMAKE_INSTALL_INCLUDEDIR CMAKE_INSTALL_LIBDIR CMAKE_INSTALL_BINDIR)
+    INSTALL_DESTINATION ${CMAKE_INSTALL_CMAKEDIR}
+    PATH_VARS CMAKE_INSTALL_INCLUDEDIR CMAKE_INSTALL_LIBDIR CMAKE_INSTALL_BINDIR)
 
 write_basic_package_version_file(${CMAKE_PROJECT_NAME}ConfigVersion.cmake
-	VERSION ${PROJECT_VERSION}
-	COMPATIBILITY SameMajorVersion)
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion)
 
-install(FILES 
-	${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}Config.cmake
-	${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}ConfigVersion.cmake
-	DESTINATION ${CMAKE_INSTALL_CMAKEDIR})
+install(
+FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}Config.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}ConfigVersion.cmake
+    DESTINATION ${CMAKE_INSTALL_CMAKEDIR}
+FILES
+    ${CMAKE_BINARY_DIR}/sifi_export.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sifi
+)
 
 # Add all targets to the build-tree export set
-export(TARGETS SiFi FibersStack GeantSim Tools
-	FILE ${CMAKE_PROJECT_NAME}Targets.cmake)
+export(TARGETS ${PROJECT_TARGETS}
+    FILE ${CMAKE_PROJECT_NAME}Targets.cmake)
 
 # # Install the export set for use with the install-tree
 # install(TARGETS SiFi Fibers GeantSim
-# 	EXPORT ${CMAKE_PROJECT_NAME}Targets
-# 	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-# 	COMPONENT shlib COMPONENT dev)
+#     EXPORT ${CMAKE_PROJECT_NAME}Targets
+#     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#     COMPONENT shlib COMPONENT dev)
 
 install(EXPORT ${CMAKE_PROJECT_NAME}Targets
-	DESTINATION ${CMAKE_INSTALL_CMAKEDIR} COMPONENT dev)
+    DESTINATION ${CMAKE_INSTALL_CMAKEDIR} COMPONENT dev)
+
+include(GenerateExportHeader)
+foreach(TRG ${TARGETS})
+    generate_export_header(${TRG})
+endforeach()
 
 message("")
 message("Add to your profile")

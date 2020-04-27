@@ -12,6 +12,8 @@
 #ifndef SLOCATOR_H
 #define SLOCATOR_H
 
+#include "sifi_export.h"
+
 #include <cstddef>
 #include <string>
 #include <map>
@@ -21,7 +23,7 @@
 #include <TObject.h>
 #include <TString.h>
 
-class SLocator
+class SIFI_EXPORT SLocator
 {
 private:
     // members

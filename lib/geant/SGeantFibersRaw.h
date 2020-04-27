@@ -12,9 +12,11 @@
 #ifndef SGEANTFIBERSRAW_H
 #define SGEANTFIBERSRAW_H
 
+#include "sifi_export.h"
+
 #include "TObject.h"
 
-class SGeantFibersRaw : public TObject
+class SIFI_EXPORT SGeantFibersRaw : public TObject
 {
 protected:
     // members

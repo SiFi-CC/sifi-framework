@@ -17,7 +17,6 @@
  *
  */
 
-#ifndef SPARMANAGER_H
 // @(#)lib/base:$Id$
 // Author: Rafal Lalik  18/11/2017
 
@@ -29,7 +28,10 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
+#ifndef SPARMANAGER_H
 #define SPARMANAGER_H
+
+#include "sifi_export.h"
 
 #include <iostream>
 #include <map>
@@ -44,7 +46,7 @@ void trim(std::string &s);
 void simplify(std::string & s);
 bool isFloat(const std::string & str);
 
-struct SContainer {
+struct SIFI_EXPORT SContainer {
     std::string name;
     std::vector<std::string> lines;
 
@@ -57,7 +59,7 @@ struct SContainer {
     }
 };
 
-class SParManager
+class SIFI_EXPORT SParManager
 {
 protected:
     std::string source;             ///< Parameters source file
@@ -113,6 +115,6 @@ public:
     void print() const;
 };
 
-extern SParManager * pm();
+extern SIFI_EXPORT SParManager * pm();
 
 #endif /* SPARMANAGER_H */

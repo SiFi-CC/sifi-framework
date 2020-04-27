@@ -12,6 +12,8 @@
 #ifndef MDDUNPACKER_H
 #define MDDUNPACKER_H
 
+#include "sifi_export.h"
+
 #include "SUnpacker.h"
 
 #include <cstddef>
@@ -23,7 +25,7 @@
 #include <TObject.h>
 #include <TString.h>
 
-class SDDUnpacker : public SUnpacker
+class SIFI_EXPORT SDDUnpacker : public SUnpacker
 {
 public:
     SDDUnpacker();

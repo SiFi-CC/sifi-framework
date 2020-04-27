@@ -12,6 +12,8 @@
 #ifndef SDDSOURCE_H
 #define SDDSOURCE_H
 
+#include "sifi_export.h"
+
 #include "SDataSource.h"
 
 #include <TArrayI.h>
@@ -23,7 +25,7 @@
 #include <string>
 #include <fstream>
 
-class SDDSource : public SDataSource
+class SIFI_EXPORT SDDSource : public SDataSource
 {
 public:
     explicit SDDSource(uint16_t address);

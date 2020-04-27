@@ -12,15 +12,17 @@
 #ifndef SLOOKUP_H
 #define SLOOKUP_H
 
+#include "sifi_export.h"
+
 #include "SParManager.h"
 
 #include <Rtypes.h>
 
-#include <stdint.h>
+#include <cstdint>
 
 class SLookupTable;
 
-struct SLookupChannel
+struct SIFI_EXPORT SLookupChannel
 {
     uint8_t m, l, s;
     virtual uint read(const char * data);
@@ -49,7 +51,7 @@ public:
     virtual void print();
 };
 
-class SLookupTable
+class SIFI_EXPORT SLookupTable
 {
 protected:
     std::string container;

@@ -12,6 +12,8 @@
 #ifndef SCALCONTAINER_H
 #define SCALCONTAINER_H
 
+#include "sifi_export.h"
+
 #include "SLookup.h"
 
 #include <TArrayI.h>
@@ -22,7 +24,7 @@
 #include <unordered_map>
 #include <map>
 
-struct SCalPar
+struct SIFI_EXPORT SCalPar
 {
     float par0, par1, par2;
     virtual uint read(const char * data);
@@ -30,7 +32,7 @@ struct SCalPar
     virtual void print(const char * prefix = 0);
 };
 
-class SCalContainer
+class SIFI_EXPORT SCalContainer
 {
 protected:
     std::string container;

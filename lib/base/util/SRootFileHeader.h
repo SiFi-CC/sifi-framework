@@ -12,6 +12,8 @@
 #ifndef SROOTFILEHEADER_H
 #define SROOTFILEHEADER_H
 
+#include "sifi_export.h"
+
 #include "SCategory.h"
 
 #include <TArrayI.h>

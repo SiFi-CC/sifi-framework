@@ -12,6 +12,8 @@
 #ifndef SFIBERSSTACKDDUNPACKER_H
 #define SFIBERSSTACKDDUNPACKER_H
 
+#include "sifi_export.h"
+
 #include "SDDUnpacker.h"
 #include "SLookup.h"
 
@@ -22,7 +24,7 @@ class SFibersStackGeomPar;
 class SFibersStackDDUnpackerPar;
 class SFibersStackLookupTable;
 
-class SFibersStackDDUnpacker : public SDDUnpacker
+class SIFI_EXPORT SFibersStackDDUnpacker : public SDDUnpacker
 {
 protected:
     // members

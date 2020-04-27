@@ -12,6 +12,8 @@
 #ifndef SDETECTOR_H
 #define SDETECTOR_H
 
+#include "sifi_export.h"
+
 #include "SiFi.h"
 #include "STaskManager.h"
 #include "SParManager.h"
@@ -20,7 +22,7 @@
 
 class STask;
 
-class SDetector : public TNamed
+class SIFI_EXPORT SDetector : public TNamed
 {
 protected:
     // members

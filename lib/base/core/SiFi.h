@@ -14,6 +14,8 @@
 
 #define PR(x) std::cout << "++DEBUG: " << #x << " = |" << x << "| (" << __FILE__ << ", " << __LINE__ << ")\n";
 
+#include "sifi_export.h"
+
 #include "SCategory.h"
 #include "SDataSource.h"
 #include "SEvent.h"
@@ -77,7 +79,7 @@ public:
     SiFi & operator=(SiFi const &) = delete;
 
     // instance method
-    static SiFi * instance();
+    SIFI_EXPORT static SiFi * instance();
 
     // destructor
     virtual ~SiFi() {};
@@ -86,25 +88,25 @@ public:
     void print() const;
     void clear();
 
-    bool book(bool with_tree = true);
-    bool save();
+    SIFI_EXPORT bool book(bool with_tree = true);
+    SIFI_EXPORT bool save();
     Int_t fill();
     bool open();
 
-    void loop(long entries, bool show_progress_bar = true);
+    SIFI_EXPORT void loop(long entries, bool show_progress_bar = true);
 
     void getEntry(int i);
-    Long64_t getEntries();
+    SIFI_EXPORT Long64_t getEntries();
 
     void setSimulation(bool simulation);
     /// Check if simulation run
     /// \return is simulation
     bool isSimulation() const { return sim; }
 
-    bool registerCategory(SCategory::Cat cat, const std::string & name, size_t dim, size_t * sizes, bool simulation);
+    SIFI_EXPORT bool registerCategory(SCategory::Cat cat, const std::string & name, size_t dim, size_t * sizes, bool simulation);
 
-    SCategory * buildCategory(SCategory::Cat cat, bool persistent = true);
-    SCategory * getCategory(SCategory::Cat cat, bool persistent = true);
+    SIFI_EXPORT SCategory * buildCategory(SCategory::Cat cat, bool persistent = true);
+    SIFI_EXPORT SCategory * getCategory(SCategory::Cat cat, bool persistent = true);
 
     /// Set output file name
     /// \param file file name
@@ -127,9 +129,9 @@ public:
         return (cat * 2) + (int)simulation; }
 
 private:
-    void initBranches();
+    SIFI_NO_EXPORT void initBranches();
 };
 
-extern SiFi * sifi();
+extern SIFI_EXPORT SiFi * sifi();
 
 #endif /* SIFI_H */

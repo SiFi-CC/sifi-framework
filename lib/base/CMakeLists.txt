@@ -1,91 +1,66 @@
 #----------------------------------------------------------------------------
 
-SET (LIBRARY_NAME SiFi)
+SIFI_GENERATE_LIBRARY(
+    TARGET SiFi
+    SOURCES
+        core/SiFi.cc
+        core/SCategoryManager.cc
+        core/STaskManager.cc
+        core/STask.cc
+        core/SDetectorManager.cc
+        core/SDetector.cc
+        core/SParManager.cc
 
-SET (LIBRARY_HDRS
-    core/SiFi.h
-    core/SCategoryManager.h
-    core/STaskManager.h
-    core/STask.h
-    core/SDetectorManager.h
-    core/SDetector.h
-    core/SParManager.h
+        event/SEvent.cc
 
-    event/SEvent.h
+        datasources/SDataSource.cc
+        datasources/SFileSource.cc
+        datasources/SDDSource.cc
+        datasources/SRootSource.cc
+        datasources/SUnpacker.cc
+        datasources/SDDUnpacker.cc
 
-    datasources/SDataSource.h
-    datasources/SDDSource.h
-    datasources/SFileSource.h
-    datasources/SRootSource.h
+        datastruct/SCalContainer.cc
+        datastruct/SCategory.cc
+        datastruct/SCategoryHeader.cc
+        datastruct/SCategoryIndex.cc
+        datastruct/SDDSamples.cc
+        datastruct/SLocator.cc
+        datastruct/SLookup.cc
+        datastruct/SPar.cc
+        datastruct/SParContainer.cc
 
-    datasources/SUnpacker.h
-    datasources/SDDUnpacker.h
+        util/SLoop.cc
+        util/SRootFileHeader.cc
+    HEADERS
+        core/SiFi.h
+        core/SCategoryManager.h
+        core/STaskManager.h
+        core/STask.h
+        core/SDetectorManager.h
+        core/SDetector.h
+        core/SParManager.h
 
-    datastruct/SCalContainer.h
-    datastruct/SCategory.h
-    datastruct/SCategoryHeader.h
-    datastruct/SCategoryIndex.h
-    datastruct/SDDSamples.h
-    datastruct/SLocator.h
-    datastruct/SLookup.h
-    datastruct/SPar.h
-    datastruct/SParContainer.h
+        event/SEvent.h
 
-    util/SLoop.h
-    util/SRootFileHeader.h
+        datasources/SDataSource.h
+        datasources/SDDSource.h
+        datasources/SFileSource.h
+        datasources/SRootSource.h
+
+        datasources/SUnpacker.h
+        datasources/SDDUnpacker.h
+
+        datastruct/SCalContainer.h
+        datastruct/SCategory.h
+        datastruct/SCategoryHeader.h
+        datastruct/SCategoryIndex.h
+        datastruct/SDDSamples.h
+        datastruct/SLocator.h
+        datastruct/SLookup.h
+        datastruct/SPar.h
+        datastruct/SParContainer.h
+
+        util/SLoop.h
+        util/SRootFileHeader.h
 )
-
-SET(LIBRARY_SRCS
-    core/SiFi.cc
-    core/SCategoryManager.cc
-    core/STaskManager.cc
-    core/STask.cc
-    core/SDetectorManager.cc
-    core/SDetector.cc
-    core/SParManager.cc
-
-    event/SEvent.cc
-
-    datasources/SDataSource.cc
-    datasources/SFileSource.cc
-    datasources/SDDSource.cc
-    datasources/SRootSource.cc
-    datasources/SUnpacker.cc
-    datasources/SDDUnpacker.cc
-
-    datastruct/SCalContainer.cc
-    datastruct/SCategory.cc
-    datastruct/SCategoryHeader.cc
-    datastruct/SCategoryIndex.cc
-    datastruct/SDDSamples.cc
-    datastruct/SLocator.cc
-    datastruct/SLookup.cc
-    datastruct/SPar.cc
-    datastruct/SParContainer.cc
-
-    util/SLoop.cc
-    util/SRootFileHeader.cc
-)
-
-ROOT_GENERATE_DICTIONARY(G__${LIBRARY_NAME}_cc
-    ${LIBRARY_HDRS}
-    LINKDEF Linkdef.h
-)
-
-# ROOT_GENERATE_ROOTMAP(${LIBRARY_NAME} LINKDEF ${CMAKE_CURRENT_SOURCE_DIR}/Linkdef.h)
-
-add_library(${LIBRARY_NAME} SHARED
-    ${LIBRARY_SRCS}
-    G__${LIBRARY_NAME}_cc
-)
-
-target_link_libraries(${LIBRARY_NAME} ${ROOT_LIBRARIES})
-
-install(TARGETS ${LIBRARY_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(FILES ${LIBRARY_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-
-# Install the export set for use with the install-tree
-install(TARGETS ${LIBRARY_NAME}
-	EXPORT ${CMAKE_PROJECT_NAME}Targets
-	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	COMPONENT shlib COMPONENT dev)

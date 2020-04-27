@@ -12,6 +12,8 @@
 #ifndef SLOOP_H
 #define SLOOP_H
 
+#include "sifi_export.h"
+
 #include "SCategory.h"
 
 #include <initializer_list>

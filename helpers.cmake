@@ -1,0 +1,34 @@
+
+function(SIFI_GENERATE_LIBRARY)
+    cmake_parse_arguments(ARG "" "TARGET" "SOURCES;HEADERS;LIBRARIES;" ${ARGN})
+
+ROOT_GENERATE_DICTIONARY(G__${ARG_TARGET}_cc
+    ${ARG_HEADERS}
+    LINKDEF Linkdef.h
+)
+
+# ROOT_GENERATE_ROOTMAP(${ARG_TARGET} LINKDEF ${CMAKE_CURRENT_SOURCE_DIR}/Linkdef.h)
+
+add_library(${ARG_TARGET} SHARED
+    ${ARG_SOURCES}
+    G__${ARG_TARGET}_cc
+)
+
+target_link_libraries(${ARG_TARGET} ${ROOT_LIBRARIES})
+install(FILES
+    ${ARG_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sifi
+)
+
+set_target_properties(${ARG_TARGET}
+    PROPERTIES
+        SOVERSION ${PROJECT_VERSION_MAJOR}
+        VERSION ${PROJECT_VERSION}
+)
+
+# Install the export set for use with the install-tree
+install(TARGETS ${ARG_TARGET}
+    EXPORT ${CMAKE_PROJECT_NAME}Targets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    COMPONENT shlib COMPONENT dev)
+
+endfunction(SIFI_GENERATE_LIBRARY)

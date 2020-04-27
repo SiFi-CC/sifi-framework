@@ -12,11 +12,13 @@
 #ifndef STASKMANAGER_H
 #define STASKMANAGER_H
 
+#include "sifi_export.h"
+
 #include <map>
 
 class STask;
 
-class STaskManager
+class SIFI_EXPORT STaskManager
 {
 protected:
     // members

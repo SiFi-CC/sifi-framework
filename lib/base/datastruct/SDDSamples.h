@@ -12,9 +12,11 @@
 #ifndef SDDSAMPLES_H
 #define SDDSAMPLES_H
 
+#include "sifi_export.h"
+
 #include <TObject.h>
 
-class DDSignal
+class SIFI_EXPORT DDSignal
 {
   public:
     Float_t fAmp;    ///< Amplitude [mV]
@@ -54,7 +56,7 @@ class DDSignal
     void Print(void) const;
 };
 
-class SDDSamples : public TObject
+class SIFI_EXPORT SDDSamples : public TObject
 {
   protected:
     // members

@@ -12,9 +12,12 @@
 #ifndef SCATEGORYINDEX_H
 #define SCATEGORYINDEX_H
 
-#include <map>
+#include "sifi_export.h"
 
 #include <TObject.h>
+
+#include <map>
+
 
 class SCategoryIndex : public TObject
 {

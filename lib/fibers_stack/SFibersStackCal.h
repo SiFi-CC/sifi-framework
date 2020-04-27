@@ -12,8 +12,9 @@
 #ifndef SFIBERSSTACKCAL_H
 #define SFIBERSSTACKCAL_H
 
-#include <SFibersStackRaw.h>
+#include "sifi_export.h"
 
+#include <SFibersStackRaw.h>
 
 class SFibersStackCal : public SFibersStackRaw
 {

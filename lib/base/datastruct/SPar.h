@@ -12,10 +12,11 @@
 #ifndef SPAR_H
 #define SPAR_H
 
+#include "sifi_export.h"
 
 class SParContainer;
 
-class SPar
+class SIFI_EXPORT SPar
 {
     friend class SParManager;       ///< MParManager is friend
 protected:

@@ -12,6 +12,8 @@
 #ifndef SPARCONTAINER_H
 #define SPARCONTAINER_H
 
+#include "sifi_export.h"
+
 #include "SParManager.h"
 
 #include <TArrayI.h>

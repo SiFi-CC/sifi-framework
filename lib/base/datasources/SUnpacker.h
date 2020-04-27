@@ -12,6 +12,8 @@
 #ifndef SUNPACKER_H
 #define SUNPACKER_H
 
+#include "sifi_export.h"
+
 #include <cstddef>
 #include <string>
 #include <map>

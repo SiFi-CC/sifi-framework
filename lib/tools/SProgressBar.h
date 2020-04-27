@@ -12,9 +12,11 @@
 #ifndef SPROGRESSBAR_H
 #define SPROGRESSBAR_H
 
+#include "sifi_export.h"
+
 #include <string>
 
-class SProgressBar
+class SIFI_EXPORT SProgressBar
 {
 protected:
     // members

@@ -12,6 +12,8 @@
 #ifndef SROOTSOURCE_H
 #define SROOTSOURCE_H
 
+#include "sifi_export.h"
+
 #include "SDataSource.h"
 
 #include <TArrayI.h>
@@ -23,7 +25,7 @@
 #include <string>
 #include <fstream>
 
-class SRootSource : public SDataSource
+class  SRootSource : public SDataSource
 {
 public:
     SRootSource();

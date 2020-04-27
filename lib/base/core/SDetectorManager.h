@@ -12,11 +12,13 @@
 #ifndef SDETECTORMANAGER_H
 #define SDETECTORMANAGER_H
 
+#include "sifi_export.h"
+
 #include <vector>
 
 class SDetector;
 
-class SDetectorManager
+class SIFI_EXPORT SDetectorManager
 {
 private:
     // members

@@ -12,6 +12,8 @@
 #ifndef SFILESOURCE_H
 #define SFILESOURCE_H
 
+#include "sifi_export.h"
+
 #include "SDataSource.h"
 
 #include <TArrayI.h>

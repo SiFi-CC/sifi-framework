@@ -12,6 +12,8 @@
 #ifndef SEVENT_H
 #define SEVENT_H
 
+#include "sifi_export.h"
+
 #include "SCategory.h"
 
 #include <TObject.h>

@@ -12,9 +12,11 @@
 #ifndef SFIBERSSTACKDETECTOR_H
 #define SFIBERSSTACKDETECTOR_H
 
+#include "sifi_export.h"
+
 #include "SDetector.h"
 
-class SFibersStackDetector : public SDetector
+class SIFI_EXPORT SFibersStackDetector : public SDetector
 {
 protected:
     // members
