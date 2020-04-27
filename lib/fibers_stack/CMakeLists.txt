@@ -1,7 +1,4 @@
 #----------------------------------------------------------------------------
-# Setup the project
-cmake_minimum_required(VERSION 3.4 FATAL_ERROR)
-project(SiFi-Framework-Library CXX)
 
 SET (LIBRARY_NAME FibersStack)
 
@@ -55,7 +52,7 @@ install(TARGETS ${LIBRARY_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(FILES ${LIBRARY_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 # Install the export set for use with the install-tree
-install(TARGETS ${LIBRRAY_NAME}
+install(TARGETS ${LIBRARY_NAME}
 	EXPORT ${CMAKE_PROJECT_NAME}Targets
 	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 	COMPONENT shlib COMPONENT dev)

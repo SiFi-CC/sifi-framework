@@ -3,9 +3,9 @@
 cmake_policy(PUSH)
 cmake_policy(SET CMP0048 NEW)
 cmake_policy(POP)
-cmake_minimum_required(VERSION 3.4 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
 project(SiFi
-    VERSION 0.0.1
+    VERSION 0.1.0
     LANGUAGES CXX
 )
 
@@ -72,15 +72,15 @@ include_directories(
     lib/tools/
 )
 # Link directories for libgeometry.so
-link_directories(${PROJECT_SOURCE_DIR}/geometry/build)
-include_directories(${PROJECT_SOURCE_DIR}/geometry/include)
+# link_directories(${PROJECT_SOURCE_DIR}/geometry/build)
+# include_directories(${PROJECT_SOURCE_DIR}/geometry/include)
 
 #----------------------------------------------------------------------------
 add_subdirectory(lib)
 # add_subdirectory(geometry)
 # add_subdirectory(simulation)
 # add_subdirectory(event_display)
-add_subdirectory(analysis)
+# add_subdirectory(analysis)
 add_subdirectory(dst)
 #add_subdirectory(particle_filter)
 
@@ -122,7 +122,7 @@ install(FILES
 	DESTINATION ${CMAKE_INSTALL_CMAKEDIR})
 
 # Add all targets to the build-tree export set
-export(TARGETS SiFi FibersStack GeantSim
+export(TARGETS SiFi FibersStack GeantSim Tools
 	FILE ${CMAKE_PROJECT_NAME}Targets.cmake)
 
 # # Install the export set for use with the install-tree

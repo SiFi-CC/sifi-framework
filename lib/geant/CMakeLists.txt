@@ -1,7 +1,4 @@
 #----------------------------------------------------------------------------
-# Setup the project
-#cmake_minimum_required(VERSION 3.4 FATAL_ERROR)
-#project(SiFi-Framework-Library CXX)
 
 SET (LIBRARY_NAME GeantSim)
 
