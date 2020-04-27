@@ -15,8 +15,6 @@ SET(LIBRARY_SRCS
     SGeantTrack.cc
 )
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
 ROOT_GENERATE_DICTIONARY(G__${LIBRARY_NAME}_cc
     ${LIBRARY_HDRS}
     LINKDEF Linkdef.h

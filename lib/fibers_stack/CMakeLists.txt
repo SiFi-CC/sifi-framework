@@ -37,9 +37,6 @@ SET(LIBRARY_SRCS
     SFibersStackCalSim.cc
 )
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-link_directories(${CMAKE_BINARY_DIR})
-
 ROOT_GENERATE_DICTIONARY(G__${LIBRARY_NAME}_cc
     ${LIBRARY_HDRS}
     LINKDEF Linkdef.h
@@ -52,7 +49,7 @@ add_library(${LIBRARY_NAME} SHARED
     G__${LIBRARY_NAME}_cc
 )
 
-target_link_libraries(${LIBRARY_NAME} ${ROOT_LIBRARIES} SiFi)
+target_link_libraries(${LIBRARY_NAME} ${ROOT_LIBRARIES})
 
 install(TARGETS ${LIBRARY_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(FILES ${LIBRARY_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})

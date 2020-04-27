@@ -24,7 +24,6 @@
 class SUnpacker
 {
 public:
-    // methods
     /// Initialize task
     /// \return success
     virtual bool init() { return true; };
@@ -32,6 +31,11 @@ public:
     /// \return success
     virtual bool reinit() { return true; }
     /// Execute task
+    /// \param event global event number
+    /// \param seq_number sequence number (par file)
+    /// \param address address of subevent
+    /// \param buffer data buffer
+    /// \param length size of teh buffer in bytes (uint8_t)
     /// \return success
     virtual bool execute(unsigned long event, unsigned long seq_number, uint16_t address,
         void * buffer, size_t length) = 0;

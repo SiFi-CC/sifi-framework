@@ -15,6 +15,10 @@
 #include <iostream>
 #include <map>
 
+/** Add an unpacker fo source
+ * \param unpacker the unpacker object
+ * \param address addresses which the unpacker must handle
+ */
 void SDataSource::addUnpacker(SUnpacker * unpacker, const std::vector<uint16_t> & address)
 {
     for (auto addr : address) {

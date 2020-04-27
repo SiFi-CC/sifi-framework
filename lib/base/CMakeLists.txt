@@ -6,14 +6,13 @@
 SET (LIBRARY_NAME SiFi)
 
 SET (LIBRARY_HDRS
-    SiFi.h
-    SCategoryManager.h
-    SLocator.h
-    STaskManager.h
-    STask.h
-    SDetectorManager.h
-    SDetector.h
-    SParManager.h
+    core/SiFi.h
+    core/SCategoryManager.h
+    core/STaskManager.h
+    core/STask.h
+    core/SDetectorManager.h
+    core/SDetector.h
+    core/SParManager.h
 
     event/SEvent.h
 
@@ -30,6 +29,7 @@ SET (LIBRARY_HDRS
     datastruct/SCategoryHeader.h
     datastruct/SCategoryIndex.h
     datastruct/SDDSamples.h
+    datastruct/SLocator.h
     datastruct/SLookup.h
     datastruct/SPar.h
     datastruct/SParContainer.h
@@ -39,15 +39,13 @@ SET (LIBRARY_HDRS
 )
 
 SET(LIBRARY_SRCS
-    SiFi.cc
-
-    SCategoryManager.cc
-    SLocator.cc
-    STaskManager.cc
-    STask.cc
-    SDetectorManager.cc
-    SDetector.cc
-    SParManager.cc
+    core/SiFi.cc
+    core/SCategoryManager.cc
+    core/STaskManager.cc
+    core/STask.cc
+    core/SDetectorManager.cc
+    core/SDetector.cc
+    core/SParManager.cc
 
     event/SEvent.cc
 
@@ -63,6 +61,7 @@ SET(LIBRARY_SRCS
     datastruct/SCategoryHeader.cc
     datastruct/SCategoryIndex.cc
     datastruct/SDDSamples.cc
+    datastruct/SLocator.cc
     datastruct/SLookup.cc
     datastruct/SPar.cc
     datastruct/SParContainer.cc
@@ -70,8 +69,6 @@ SET(LIBRARY_SRCS
     util/SLoop.cc
     util/SRootFileHeader.cc
 )
-
-link_directories(${CMAKE_BINARY_DIR})
 
 ROOT_GENERATE_DICTIONARY(G__${LIBRARY_NAME}_cc
     ${LIBRARY_HDRS}

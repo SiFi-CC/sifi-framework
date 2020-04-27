@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------------
 # Setup the project
-cmake_minimum_required(VERSION 3.4 FATAL_ERROR)
-project(SiFi-Framework-Library CXX)
+#cmake_minimum_required(VERSION 3.4 FATAL_ERROR)
+#project(SiFi-Framework-Library CXX)
 
 SET (LIBRARY_NAME Tools)
 
@@ -12,9 +12,6 @@ SET (LIBRARY_HDRS
 SET(LIBRARY_SRCS
     SProgressBar.cc
 )
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-link_directories(${CMAKE_BINARY_DIR})
 
 ROOT_GENERATE_DICTIONARY(G__${LIBRARY_NAME}_cc
     ${LIBRARY_HDRS}

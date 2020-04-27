@@ -1,21 +1,19 @@
-SiFi Framework Documentation
-==============================
+# SiFi Framework Documentation
 
 The SiFi Framework contains all the libraries and applications,
 which build the basis for the data analysis of the SiFi-CC detector.
 This includes the simulation, the event display, the geometry representation of
 the detector and the data structure.
 
-Preparing the framework
------------------------
+## Preparing the framework
 
-## Requirements
+### Requirements
 
 * c++17
 * root-6
 * geant4
 
-## Getting source
+### Getting source
 
 Get the source from the project git page:
 
@@ -23,7 +21,7 @@ Get the source from the project git page:
     cd sifi-framework
     git submodule init --recursive
 
-## Compilation and installation
+### Compilation and installation
 
 We assume the working directory is `sifi-framework` of the git repository.
 
@@ -33,7 +31,7 @@ We assume the working directory is `sifi-framework` of the git repository.
     make
     make install
 
-# The framework
+## The framework
 
 The framework is divided into three main components:
 
@@ -41,15 +39,15 @@ The framework is divided into three main components:
 2. Data category
 3. Parameter containers
 
-## Processing tasks
+### Processing tasks
 
 They read data from one category, process, and store in the other. One task can read more categories, and write to multiple categories. The tasks are executed in predefined order.
 
-## Data category
+### Data category
 
 It store data on each stage of the analysis. They are stored in the root tree as branches. Category contain header information and the data object storing actuall data. All values are borwsable in the tree.
 
-## Parameter containers
+### Parameter containers
 
 There are three types of the parameter container
 

@@ -358,6 +358,13 @@ SPar * SParManager::getParameterContainer(const std::string& cont_name)
     return parconts[cont_name];
 }
 
+
+/** Add new lookup table container.
+ *
+ * \param cont_name container name
+ * \param lucont lookup table object
+ * \return success
+ */
 bool SParManager::addLookupContainer(const std::string& cont_name, SLookupTable* lucont)
 {
     SContainer * cont = containers[cont_name];
@@ -374,11 +381,22 @@ bool SParManager::addLookupContainer(const std::string& cont_name, SLookupTable*
     return true;
 }
 
+/** Get lookup table by name.
+ *
+ * \param cont_name container name
+ * \return pointer to container
+ */
 SLookupTable * SParManager::getLookupContainer(const std::string& cont_name)
 {
     return lu_containers[cont_name];
 }
 
+/** Add new calibration container.
+ *
+ * \param cont_name container name
+ * \param calcont calibration object
+ * \return success
+ */
 bool SParManager::addCalibrationContainer(const std::string& cont_name, SCalContainer* calcont)
 {
     SContainer * cont = containers[cont_name];
@@ -395,6 +413,11 @@ bool SParManager::addCalibrationContainer(const std::string& cont_name, SCalCont
     return true;
 }
 
+/** Get calibration container by name.
+ *
+ * \param cont_name container name
+ * \return pointer to container
+ */
 SCalContainer * SParManager::getCalibrationContainer(const std::string& cont_name)
 {
     return cal_containers[cont_name];

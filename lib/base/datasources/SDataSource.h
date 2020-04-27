@@ -23,11 +23,23 @@
 
 class SUnpacker;
 
+/** \class SDataSource
+ * \ingroup lib_base_datasources
+ * This source read events from hld file. For each readout subevent address,
+ * a respective unpacker is called. If unpacker is missing, the program is
+ * aborted. To ignore the address, nullptr object can be passed.
+ */
 class SDataSource
 {
 public:
+    /// Open the source
+    /// \return success
     virtual bool open() = 0;
+    /// Close the source
+    /// \return success
     virtual bool close() = 0;
+    /// Read evnt from source
+    /// \return success
     virtual bool readCurrentEvent() = 0;
 
     void addUnpacker(SUnpacker * unpacker, const std::vector<uint16_t> & address);
@@ -35,7 +47,7 @@ public:
 private:
 
 protected:
-    std::map<uint16_t, SUnpacker *> unpackers;
+    std::map<uint16_t, SUnpacker *> unpackers;  ///< store unpackers and its addresses
 };
 
 #endif /* SDATASOURCE_H */
