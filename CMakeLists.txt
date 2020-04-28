@@ -28,6 +28,8 @@ include(helpers)
 export(PACKAGE ${CMAKE_PROJECT_NAME})
 string(TOUPPER "${PROJECT_NAME}" CAPS_PROJECT_NAME)
 
+option(SIFI_TREE "SiFi Install Tree" OFF)
+
 ##### set paths
 if(WIN32 AND NOT CYGWIN)
     set(DEF_CMAKE_INSTALL_CMAKEDIR cmake)
@@ -39,7 +41,17 @@ else()
     endif()
     set(DEF_CMAKE_INSTALL_CMAKEDIR ${DEF_CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME})
 endif()
-set(CMAKE_INSTALL_LIBDIR ${DEF_CMAKE_INSTALL_LIBDIR}/sifi CACHE PATH "Object code libraries" FORCE)
+
+if (SIFI_TREE)
+    set(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/sifi)
+    set(LOCAL_SIFI_TREE "")
+    set(CMAKE_INSTALL_LIBDIR ${DEF_CMAKE_INSTALL_LIBDIR}${LOCAL_SIFI_TREE} CACHE PATH "Object code libraries" FORCE)
+    set(_RPATH "\$ORIGIN/../${DEF_CMAKE_INSTALL_LIBDIR}")
+else()
+    set(LOCAL_SIFI_TREE "/sifi")
+    set(CMAKE_INSTALL_LIBDIR ${DEF_CMAKE_INSTALL_LIBDIR}${LOCAL_SIFI_TREE} CACHE PATH "Object code libraries" FORCE)
+    set(_RPATH "\$ORIGIN/../${DEF_CMAKE_INSTALL_LIBDIR}${LOCAL_SIFI_TREE}")
+endif()
 set(CMAKE_INSTALL_CMAKEDIR ${DEF_CMAKE_INSTALL_CMAKEDIR} CACHE PATH "Installation directory for CMake files" FORCE)
 
 # use, i.e. don't skip the full RPATH for the build tree
@@ -50,7 +62,7 @@ set(CMAKE_INSTALL_CMAKEDIR ${DEF_CMAKE_INSTALL_CMAKEDIR} CACHE PATH "Installatio
 # SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 
 # the RPATH to be used when installing
-SET(CMAKE_INSTALL_RPATH $ORIGIN/../$LIB/sifi)
+SET(CMAKE_INSTALL_RPATH ${_RPATH})
 
 # don't add the automatically determined parts of the RPATH
 # which point to directories outside the build tree to the install RPATH
@@ -137,6 +149,7 @@ endif()
 enable_testing()
 add_subdirectory(tests)
 
+uninstall_target()
 
 include(GenerateExportHeader)
 generate_export_header(SiFi)
@@ -159,7 +172,7 @@ FILES
     ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}ConfigVersion.cmake
     DESTINATION ${CMAKE_INSTALL_CMAKEDIR}
 FILES
-    ${CMAKE_BINARY_DIR}/sifi_export.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sifi
+    ${CMAKE_BINARY_DIR}/sifi_export.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}${LOCAL_SIFI_TREE}
 )
 
 # Add all targets to the build-tree export set
@@ -173,7 +186,9 @@ export(TARGETS ${PROJECT_TARGETS}
 #     COMPONENT shlib COMPONENT dev)
 
 install(EXPORT ${CMAKE_PROJECT_NAME}Targets
-    DESTINATION ${CMAKE_INSTALL_CMAKEDIR} COMPONENT dev)
+    DESTINATION ${CMAKE_INSTALL_CMAKEDIR}
+    COMPONENT Development
+)
 
 include(GenerateExportHeader)
 foreach(TRG ${TARGETS})
@@ -182,6 +197,6 @@ endforeach()
 
 message("")
 message("Add to your profile")
-message("export PATH=${CMAKE_INSTALL_PREFIX}/bin:\$\{PATH\}")
-message("export LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:\$\{LD_LIBRARY_PATH\}")
+message("export SIFIDIR=${CMAKE_INSTALL_PREFIX}")
+message("export PATH=${SIFIDIR}/bin:\$\{PATH\}")
 message("")
