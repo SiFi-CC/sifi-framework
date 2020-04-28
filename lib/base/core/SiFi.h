@@ -40,13 +40,13 @@ protected:
     std::string outputTreeName;                 ///< Output tree name
     std::string outputFileName;                 ///< Output file name
     SRootFileHeader fileHeader;                 ///< Root File Header
-    TTree* inputTree;                          ///< Pointer to input tree
+    TTree* inputTree;                           ///< Pointer to input tree
     std::string inputTreeTitle;                 ///< Input tree title
     std::string inputTreeName;                  ///< Input tree name
     std::vector<SDataSource *> inputSources;    ///< Input file name
     int numberOfEntries;                        ///< Number of input entries
     int currentEntry;                           ///< Current input entry number
-    SEvent * event;
+    SEvent * event;                             ///< Event info structure
 
     /// Ctaegory info
     struct CategoryInfo
@@ -64,8 +64,7 @@ protected:
     /// Category info array
     CategoryInfo cinfovec[SCategory::CatLimitDoNotUse * 2];
 
-    typedef std::map<SCategory::Cat, SCategory *> CatMap;
-    CatMap categories;              ///< Map of categories
+    std::map<SCategory::Cat, SCategory *> categories;   ///< Map of categories
     static SiFi * mm;               ///< Instance of the SiFi
     bool sim;                       ///< Simulation run
     bool branches_set;              ///< Has branches set
@@ -112,7 +111,10 @@ public:
     /// \param file file name
     void setOutputFileName(const std::string & file) { outputFileName = file; }
 
+    /// Add source to the list of sources
+    /// \param data source object
     void addSource(SDataSource * data) { inputSources.push_back(data); }
+
     /// Get entry number
     /// \return entry number
     int getEntryNumber() const { return currentEntry; }
@@ -120,11 +122,19 @@ public:
     /// Get input tree
     /// \return input tree
     TTree * getTree() const { return inputTree; }
+    /// Set input tree
+    /// \param t TTree tree object
     void setTree(TTree * t) { inputTree = t; }
 
+    /// Returns curent event.
+    /// \return SEvent structure
     SEvent * getCurrentEvent() const { return event; }
     void setEvent(SEvent * e);
 
+    /// Maps category kind and simulation flag into index.
+    /// \param cat category kind
+    /// \param simulation simulation flag
+    /// \return linearised index of the category
     static int getCategoryIndex(SCategory::Cat cat, int simulation) {
         return (cat * 2) + (int)simulation; }
 

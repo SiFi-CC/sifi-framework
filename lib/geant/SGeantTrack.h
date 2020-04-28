@@ -21,13 +21,15 @@
 class SGeantTrack : public TObject
 {
 public:
-    enum Process {                      ///< processes
+    /// List of recorderd physics processes
+    enum Process {
         COMPTON,                        ///< COmpton scaterring
         INELASTIC,                      ///< Inelastic scattering
         ATREST                          ///< Stopped at rest
     };
 
-    struct Point {                      ///< track point
+    /// Track interation point physical values
+    struct Point {
         Float_t x;                      ///< x coordinate
         Float_t y;                      ///< y coordinate
         Float_t z;                      ///< z coordinate

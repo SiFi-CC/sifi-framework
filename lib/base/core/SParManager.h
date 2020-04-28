@@ -46,10 +46,14 @@ void trim(std::string &s);
 void simplify(std::string & s);
 bool isFloat(const std::string & str);
 
+/**
+ * Stores content of the container read out from the disk.
+ */
 struct SIFI_EXPORT SContainer {
-    std::string name;
-    std::vector<std::string> lines;
+    std::string name;                   ///< container name
+    std::vector<std::string> lines;     ///< lines read out from the container
 
+    /// Print the contaner name and content
     void print() {
         printf("Container Table [%s]\n", name.c_str());
         for (auto line: lines)
@@ -78,9 +82,6 @@ private:
     SParManager();
     SParManager(SParManager const &) = delete;
 
-    // methods
-    /// Assignment operator
-    /// \return this object
     SParManager & operator=(SParManager const &) = delete;
 
 public:
@@ -99,7 +100,7 @@ public:
 
     bool parseSource();
     void writeDestination() const;
-    void writeContainers(const std::vector<std::string> & conts) const;
+    void writeContainers(const std::vector<std::string> & names) const;
 
     SContainer * getContainer(const std::string & cont_name);
 

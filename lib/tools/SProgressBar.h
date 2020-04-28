@@ -20,30 +20,30 @@ class SIFI_EXPORT SProgressBar
 {
 protected:
     // members
-    long cnt_current;           ///< current counter
-    long cnt_previous;          ///< previous counter
-    long cnt_limit;             ///< counter limit
+    ulong cnt_current;          ///< current counter
+    ulong cnt_previous;         ///< previous counter
+    ulong cnt_limit;            ///< counter limit
     uint point_width;           ///< width of a point
     uint bar_width;             ///< width of a bar
     bool new_bar;               ///< make new bar
     bool new_bar_line;          ///< make new bar line
-    bool running;
+    bool line_running;          ///< indicates that the bar line was not closed
 
     std::string line_prefix;    ///< line prefix
-    char bar_p;                 ///< ???
-    char alarm_p;               ///< ???
+    char bar_p;                 ///< if counter below limit, use regular sign
+    char alarm_p;               ///< if counter exceed limit, use alarm sign
 
 public:
     // constructor
     explicit SProgressBar(ulong limit, uint point_width = 500, uint bar_width = 20);
 
     // methods
-    void reset() { running = true; };
+    void reset();
     void finish();
     void setProgress(int current_location);
 
-    SProgressBar & operator++();
-    SProgressBar operator++(int);
+    ulong operator++();
+    ulong operator++(int) = delete;
 
     /// Set line prefix
     /// \param prefix prefix

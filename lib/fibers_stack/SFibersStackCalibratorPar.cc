@@ -13,7 +13,8 @@
 
 #include "SParContainer.h"
 
-/** \class SFibersStackCalibratorPar
+/**
+ * \class SFibersStackCalibratorPar
 \ingroup lib_fibers_stack
 
 A container for Fibers Stack Calibrator parameters

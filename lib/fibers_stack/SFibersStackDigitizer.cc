@@ -20,7 +20,8 @@
 
 #include <iostream>
 
-/** \class SFibersStackDigitizer
+/**
+ * \class SFibersStackDigitizer
 \ingroup lib_fibers_stack
 
 A digitizer task.
@@ -28,7 +29,8 @@ A digitizer task.
 \sa STask
 */
 
-/** Constructor
+/**
+ * Constructor
  */
 SFibersStackDigitizer::SFibersStackDigitizer()
     : STask()
@@ -37,13 +39,15 @@ SFibersStackDigitizer::SFibersStackDigitizer()
 {
 }
 
-/** Destructor
+/**
+ * Destructor
  */
 SFibersStackDigitizer::~SFibersStackDigitizer()
 {
 }
 
-/** Init task
+/**
+ * Init task
  * \sa STask::init()
  * \return success
  */
@@ -86,7 +90,8 @@ bool SFibersStackDigitizer::init()
     return true;
 }
 
-/** Execute task
+/**
+ * Execute task
  * \sa STask::execute()
  * \return success
  */
@@ -153,7 +158,8 @@ bool SFibersStackDigitizer::execute()
     return true;
 }
 
-/** Finalize task
+/**
+ * Finalize task
  * \sa STask::finalize()
  * \return success
  */

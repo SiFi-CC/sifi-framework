@@ -15,7 +15,8 @@
 
 #include "SDetectorManager.h"
 
-/** \class SDetectorManager
+/**
+ * \class SDetectorManager
 \ingroup lib_base
 
 Detector Manager class.
@@ -49,7 +50,8 @@ SDetectorManager * SDetectorManager::instance()
     return detm;
 }
 
-/** Shortcut
+/**
+ * Shortcut
  * \return SDetectorManager instance
  */
 SDetectorManager * dm()

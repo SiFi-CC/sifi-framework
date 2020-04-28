@@ -19,7 +19,8 @@
 #include <iostream>
 #include <cstring>
 
-/** \class SCategory
+/**
+ * \class SCategory
 \ingroup lib_base
 
 A Category abstract interface
@@ -39,7 +40,9 @@ SCategory::SCategory()
     index.clear();
 }
 
-/** Constructor
+/**
+ * Constructor
+ *
  * \param name name of the category
  * \param dim number of dimensions
  * \param sizes array of sizes of dimensions
@@ -62,7 +65,9 @@ SCategory::~SCategory()
     if (data) delete data;
 }
 
-/** Setup category
+/**
+ * Setup category
+ *
  * \param name name of the category
  * \param dim number of dimensions
  * \param sizes array of sizes of dimensions
@@ -93,11 +98,13 @@ void SCategory::setup(const char * name, size_t dim, size_t * sizes, bool simula
     printf("Category %s created with linear size of %lu\n", name, header.data_size);
 }
 
-/** Returns the object at the address from n locator.
- * Dimension of n must match dimension of the container.
- * \param n locator
- * \return pointer to an object
- */
+// /**
+//  * Returns the object at the address from n locator.
+//  * Dimension of n must match dimension of the container.
+//  *
+//  * \param n locator
+//  * \return pointer to an object
+//  */
 // TObject * SCategory::operator[](const SLocator & n)
 // {
 //     if (!checkDim(header.dim))     return nullptr;
@@ -108,8 +115,10 @@ void SCategory::setup(const char * name, size_t dim, size_t * sizes, bool simula
 //     return data->ConstructedAt(p);
 // }
 
-/** Returns a reference to an object at the address from locator n.
+/**
+ * Returns a reference to an object at the address from locator n.
  * Dimension of n must match dimension of the container.
+ *
  * \param n locator object
  * \return reference to a slot
  */
@@ -129,8 +138,10 @@ TObject *& SCategory::getSlot(const SLocator & n)
     return data->operator[](pos);
 }
 
-/** Create a new slot at the end of the array and returns it reference.
+/**
+ * Create a new slot at the end of the array and returns it reference.
  * Awailable only for 1d categories.
+ *
  * \bug assure that it really creates new slot, not n+1 which migh overlap
  * with existing slot.
  * \return reference to a slot
@@ -148,8 +159,10 @@ TObject *& SCategory::getNewSlot()
     return getSlot(loc);
 }
 
-/** Returns an object at the address from locator n.
+/**
+ * Returns an object at the address from locator n.
  * Dimension of n must match dimension of the container.
+ *
  * \param n locator object
  * \return pointer to the object
  */
@@ -163,7 +176,9 @@ TObject * SCategory::getObject(const SLocator & n)
     return data->At(p);
 }
 
-/** Returns an object at the index i.
+/**
+ * Returns an object at the index i.
+ *
  * \param i index
  * \return pointer to the object
  */
@@ -203,7 +218,9 @@ void SCategory::clear()
     index.clear();
 }
 
-/** Check whether the locator loc dimension fits to the container dimension
+/**
+ * Check whether the locator loc dimension fits to the container dimension
+ *
  * \param loc locator
  * \return success
  */
@@ -217,7 +234,9 @@ bool SCategory::checkDim(const SLocator& loc)
     return true;
 }
 
-/** Translate n-dimension locator loc into linear i coordinate.
+/**
+ * Translate n-dimension locator loc into linear i coordinate.
+ *
  * \param loc locator
  * \return linear coordinate of the array
  */

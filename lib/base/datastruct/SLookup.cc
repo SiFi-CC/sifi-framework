@@ -18,7 +18,8 @@
 
 #include <inttypes.h>
 
-/** \class SLookup
+/**
+ * \class SLookup
 \ingroup lib_base
 
 SLookup is an abstract class to hold container and geometry parameters.
@@ -35,34 +36,86 @@ parameters in the container and write to param file.
 \sa SFibersStackGeomPar
 */
 
-uint SLookupChannel::read(const char* data)
+/**
+ * Parses the mapping part of the lookup entry (see void SLookupTable for more
+ * details). The lookup entry must provide all values to initialize relevant
+ * members of SLookupChannel. This function must handle all of them. Must return
+ * number of read bytes.
+ *
+ * If sscanf is used, it returns number of read values. The assert() call should
+ * test whether the number is correct, and abort execution if not.
+ * To get number of read bytes, use `%n` after the last value.
+ *
+ * \param buffer string containing data to parse
+ * \return number of parsed elements.
+ */
+uint SLookupChannel::read(const char* buffer)
 {
     uint n;
-    int cnt = sscanf(data, "%2" SCNu8 "%2" SCNu8 "%2" SCNu8 "%n", &m, &l, &s, &n);
+    int cnt = sscanf(buffer, "%2" SCNu8 "%2" SCNu8 "%2" SCNu8 "%n", &m, &l, &s, &n);
     assert(cnt == 3);
     return n;
 }
 
-uint SLookupChannel::write(char* data, size_t n) const
+/**
+ * Exports the parameters to the mapping part of the entry. When overriding
+ * this class, the subclass must address all values in the channel. The output
+ * format should be consisten with the read format parsing.
+ *
+ * \param[out] buffer buffer to be written
+ * \param n buffer length
+ * \return number of written bytes.
+ */
+uint SLookupChannel::write(char* buffer, size_t n) const
 {
-    uint cnt = snprintf(data, n, "%d %d %d", m, l, s);
+    uint cnt = snprintf(buffer, n, "%d %d %d", m, l, s);
     if (cnt < 0) return cnt;
     if (cnt < n) return 0;
     return cnt;
 }
 
-void SLookupChannel::print(const char * prefix) const
+/**
+ * Prints the parameters to the mapping part of the entry. When overriding
+ * this class, the subclass must address all values in the channel. The output
+ * format should be consisten with the read format parsing.
+ *
+ * \param newline puts newline on the end
+ * \param prefix a text which should be displayed before the content of the
+ * channel params. If prefix is empty, then
+ */
+void SLookupChannel::print(bool newline, const char * prefix) const
 {
     printf("%s %d %d %d", prefix, m, l, s);
-    if (prefix[0] != '\0') putchar('\n');
+    if (newline) putchar('\n');
 }
 
-uint64_t SLookupChannel::quick_hash() const
+/**
+ * In certain cases lookup channels are stored in an unordered_map STL
+ * container. To rpovide quick access a specific hash function must be provides.
+ * Here we assumed that hash is a 64 bit word, which stores m, l, s lookup
+ * values at respectively 47-40, 55-48 and 63-56 bits of te word. The lower bits
+ * can be used in overriding structures to extend their classes. The hash can
+ * be also redefined in subclassing structures.
+ *
+ * The hash should be unike like the address itself is. What more, the hash must
+ * be reversible. The fromHash() functions decodes hash to address values.
+ *
+ * If overriding either of quick_hash() and fromHash(), the second most likely
+ * als must be overrided and adjusted.
+ *
+ * \return hash of the object
+ */
+uint64_t SLookupChannel::quickHash() const
 {
     uint64_t h = (uint64_t)m << 40 | (uint64_t)l << 48 | (uint64_t)s << 56;
     return h;
 }
 
+/**
+ * Recreates address from hash. See quickHash() for details about hash.
+ *
+ * \param hash the channel hash
+ */
 void SLookupChannel::fromHash(uint64_t hash)
 {
     m = uint8_t(hash >> 40 & 0xff);
@@ -70,8 +123,12 @@ void SLookupChannel::fromHash(uint64_t hash)
     s = uint8_t(hash >> 56 & 0xff);
 }
 
-
-SLookupBoard::SLookupBoard(UInt_t addr, UInt_t nchan) :
+/**
+ * Constructor
+ *
+ * \param addr,nchan address and channels number
+ */
+SLookupBoard::SLookupBoard(uint addr, uint nchan) :
     addr(addr), nchan(nchan)
 {
     channels = new SLookupChannel*[nchan];
@@ -84,18 +141,29 @@ SLookupBoard::~SLookupBoard()
     delete [] channels;
 }
 
+/**
+ * Prints all registered channels for given board.
+ */
 void SLookupBoard::print()
 {
     char p[16];
     for (uint i = 0; i < nchan; ++i)
     {
         sprintf(p, "0x%x  %2d  ", addr, i);
-        if (channels[i]) channels[i]->print(p);
+        if (channels[i]) channels[i]->print(true, p);
     }
 }
 
-
-SLookupTable::SLookupTable(const std::string& container, UInt_t addr_min, UInt_t addr_max, UInt_t channels) :
+/**
+ * Initialize lookup table from container named #container for given address
+ * range of \p addr_min, \p addr_max. Defines that each board has no more channeel 
+ * than specified in #channels.
+ *
+ * \param container container name
+ * \param addr_min,addr_max lower and upper range of boards addresses
+ * \param channels maximal number of channels in each board
+ */
+SLookupTable::SLookupTable(const std::string& container, uint addr_min, uint addr_max, uint channels) :
     container(container), a_min(addr_min), a_max(addr_max), channels(channels), is_init(false)
 {
     size_t nboards = addr_max - addr_min + 1;
@@ -103,6 +171,15 @@ SLookupTable::SLookupTable(const std::string& container, UInt_t addr_min, UInt_t
     memset(boards, 0, sizeof(SLookupBoard*) * nboards);
 }
 
+SLookupTable::~SLookupTable()
+{
+    delete [] boards;
+}
+
+/**
+ * Initialize lookup table from the container. The container must exists
+ * otherwise exception is thrown.
+ */
 void SLookupTable::fromContainer()
 {
     SContainer * lc = pm()->getContainer(container);
@@ -130,6 +207,11 @@ void SLookupTable::fromContainer()
     is_init = true;
 }
 
+/**
+ * Export lookup table to the container. The function is called by the
+ * SParManager class. The container must be registered in the Parameters
+ * Manager. Otherwise an exception is thrown.
+ */
 void SLookupTable::toContainer() const
 {
     SContainer * sc = pm()->getContainer(container);
@@ -160,11 +242,24 @@ void SLookupTable::toContainer() const
     }
 }
 
-SLookupTable::~SLookupTable()
-{
-    delete [] boards;
+/**
+ * Return lookup channel object based on the board address and channel
+ * number. Interally calls SLookupBoard::getChannel(). See its documentation
+ * for further information.
+ *
+ * \param addr board address
+ * \param chan channel number
+ * \return channel object or nullptr if boad or channel doesn't exists.
+ */
+SLookupChannel * SLookupTable::getAddress(uint addr, uint chan) {
+    if (!is_init) fromContainer();
+    if (!boards[addr-a_min]) return nullptr;
+    return boards[addr-a_min]->getChannel(chan);
 }
 
+/**
+ * Prints all existing boards and its channel lookup tables
+ */
 void SLookupTable::print()
 {
     if (!is_init) fromContainer();

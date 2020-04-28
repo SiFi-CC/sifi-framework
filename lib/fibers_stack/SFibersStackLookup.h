@@ -25,21 +25,26 @@
 struct SLookupChannel;
 class SLookupTable;
 
+/**
+ * Extends the SLookupChannel. In addiotion to `m`, `l`, and `s` adds #side
+ * dimension, which must be equal either to `l` (left) or `r` (right) denoting
+ * side of the read fiber.
+ */
 struct SIFI_EXPORT SFibersStackChannel : public SLookupChannel
 {
-    char side;
-    virtual uint read(const char * address) override;
-    virtual uint write(char * data, size_t n) const override;
-    virtual void print(const char * prefix) const override;
-    virtual uint64_t quick_hash() const override;
+    char side;          ///< side of a fiber, either 'l' or 'r'
+
+    virtual uint read(const char * buffer) override;
+    virtual uint write(char * buffer, size_t n) const override;
+    virtual void print(bool newline = true, const char * prefix = "") const override;
+    virtual uint64_t quickHash() const override;
     virtual void fromHash(uint64_t hash) override;
 };
 
 class SIFI_EXPORT SFibersStackLookupTable : public SLookupTable
 {
 public:
-    SFibersStackLookupTable(const std::string & container, UInt_t addr_min, UInt_t addr_max, UInt_t channels = 49):
-        SLookupTable(container, addr_min, addr_max, channels) {}
+    using SLookupTable::SLookupTable;
 
     // methods
     SLookupChannel * createChannel() const override { return new SFibersStackChannel(); }

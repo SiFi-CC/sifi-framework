@@ -15,14 +15,23 @@
 #include <iostream>
 #include <map>
 
-SDDSource::SDDSource(uint16_t address) : SDataSource()
-    , unpacker(address), input(), istream(), buffer_size(0)
+/**
+ * Constructor. Requires subevent id for unpacked source.
+ *
+ * \param subevent subevent id
+ */
+SDDSource::SDDSource(uint16_t subevent) : SDataSource()
+    , subevent(subevent), input(), istream(), buffer_size(0)
 {
 }
 
+/**
+ * Open source and init respective unpacker.
+ *
+ * \return success
+ */
 bool SDDSource::open()
 {
-    printf("File name = |%s|\n", input.c_str());
     istream.open(input.c_str(), std::ios::binary);
     if (!istream.is_open()) {
         std::cerr << "##### Error in SDDSource::open()! Could not open input file!" << std::endl;
@@ -33,13 +42,13 @@ bool SDDSource::open()
     if (unpackers.size() == 0)
         return false;
 
-    if (unpacker != 0x0000)
+    if (subevent != 0x0000)
     {
-        if (!unpackers[unpacker]) abort();
+        if (!unpackers[subevent]) abort();
     
-        bool res = unpackers[unpacker]->init();
+        bool res = unpackers[subevent]->init();
         if (!res) {
-            printf("Forced unpacker %#x not initalized\n", unpacker);
+            printf("Forced unpacker %#x not initalized\n", subevent);
             abort();
         }
     }
@@ -60,10 +69,10 @@ bool SDDSource::open()
 
 bool SDDSource::close()
 {
-    if (unpacker != 0x0000)
+    if (subevent != 0x0000)
     {
-        if (unpackers[unpacker])
-            unpackers[unpacker]->finalize();
+        if (unpackers[subevent])
+            unpackers[subevent]->finalize();
         else
             abort();
     }
@@ -90,22 +99,28 @@ bool SDDSource::readCurrentEvent()
     if (!flag)
         return false;
 
-    if (unpacker != 0x0000)
+    if (subevent != 0x0000)
     {
-        if (!unpackers[unpacker]) abort();
-        unpackers[unpacker]->execute(0, 0, unpacker, buffer, buffer_size);
+        if (!unpackers[subevent]) abort();
+        // TODO must pass event number to the execute
+        unpackers[subevent]->execute(0, 0, subevent, buffer, buffer_size);
     }
     else
     {
-        std::map<uint16_t, SUnpacker *>::iterator iter = unpackers.begin();
-        for (; iter != unpackers.end(); ++iter)
-            iter->second->execute(0, 0, iter->first, buffer, buffer_size);
+        for (const auto & u : unpackers)
+            u.second->execute(0, 0, u.first, buffer, buffer_size);
     }
 
     return true;
 }
 
-void SDDSource::setInput(const std::string& i, size_t buffer) {
-    input = i;
-    buffer_size = buffer;
+/**
+ * Set input for the source.
+ *
+ * \param filename input file name
+ * \param length length of buffer to read
+ */
+void SDDSource::setInput(const std::string& filename, size_t length) {
+    input = filename;
+    buffer_size = length;
 }

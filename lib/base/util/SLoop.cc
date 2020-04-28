@@ -23,34 +23,39 @@
 #include <iostream>
 #include <map>
 
-/** \class SLoop
+/**
+ * \class SLoop
 \ingroup lib_base_util
 
 */
 
-SLoop::SLoop::SLoop()
+SLoop::SLoop()
     : current_file(nullptr)
     , current_tree(nullptr)
     , current_event(0)
     , event(nullptr)
-    , fileHeader(nullptr)
+    , file_header(nullptr)
     , tree_cache_size(8000)
 {
     chain = new TChain("S");
-
     event = new SEvent;
-    categories = new SCategory*[SCategory::CatLimitDoNotUse*2];
+
     sifi()->setTree(chain);
     sifi()->setEvent(event);
 }
 
 SLoop::~SLoop()
 {
-    delete [] categories;
     delete event;
     delete chain;
 }
 
+/**
+ * Add file to the loop.
+ *
+ * \param file file name
+ * \return false - file not found, true - success
+ */
 bool SLoop::addFile(const std::string& file)
 {
     if (gSystem->AccessPathName(file.c_str()) == 0)
@@ -64,6 +69,13 @@ bool SLoop::addFile(const std::string& file)
     }
 }
 
+/**
+ * Add files to the loop. Runs addFile() internally. First file which will fail
+ * breaks the execution of the function.
+ *
+ * \param files vector of files name
+ * \return false - file not found, true - success.
+ */
 bool SLoop::addFiles(const std::vector<std::string>& files)
 {
     for (const auto &file : files)
@@ -76,6 +88,11 @@ bool SLoop::addFiles(const std::vector<std::string>& files)
     return true;
 }
 
+/**
+ * Set categories to be read from the input files.
+ *
+ * \param categories list of categories to be read.
+ */
 void SLoop::setInput(std::initializer_list<SCategory::Cat> categories)
 {
     if (chain->GetListOfFiles()->GetEntries() == 0) abort();
@@ -87,13 +104,13 @@ void SLoop::setInput(std::initializer_list<SCategory::Cat> categories)
     current_tree->Print();
 
     TFile * f = chain->GetCurrentFile();
-    f->GetObject("FileHeader", fileHeader);
+    f->GetObject("FileHeader", file_header);
 
-    CatNameMap::iterator iter = fileHeader->catName.begin();
-    for (; iter != fileHeader->catName.end(); ++iter)
+    CatNameMap::iterator iter = file_header->catName.begin();
+    for (; iter != file_header->catName.end(); ++iter)
     {
         printf("Read category %s\n", iter->second.Data());
-// PR(Form("%s.", iter->second.Data()));
+
         TBranch * br = current_tree->GetBranch(Form("%s", iter->second.Data())); // FIXME add .
         if(!br)
         {
@@ -112,19 +129,36 @@ void SLoop::setInput(std::initializer_list<SCategory::Cat> categories)
     }
 }
 
+/**
+ * Returns numer of entries in the chain.
+ *
+ * \return number of entries
+ */
 size_t SLoop::getEntries() const
 {
     return chain->GetEntries();
 }
 
-int SLoop::nextEvent(uint ev)
+/**
+ * Fetch the next event from the #chain. If the event rach end of teh tree, it
+ * return 0. See TChain::GetEntry() for details.
+ *
+ * \return 0 indicates error, >0 is a number of read bytes.
+ */
+Int_t SLoop::nextEvent()
 {
     sifi()->getCurrentEvent()->clearCategories();
-    current_event = ev;
-    return chain->GetEntry(ev);
+    return chain->GetEntry(++current_event);
 }
 
-
-void SLoop::print()
-{
+/**
+ * Fetch the given event from the #chain. If event number is outside teh chain,
+ * it returns 0. See TChain::GetEntry() for details.
+ *
+ * \param event event number
+ * \return 0 indicates error, >0 is a number of read bytes.
+ */
+Int_t SLoop::getEvent(ulong event) {
+    sifi()->getCurrentEvent()->clearCategories();
+    return chain->GetEntry(event);
 }

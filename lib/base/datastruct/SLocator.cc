@@ -16,7 +16,8 @@
 
 #include "SLocator.h"
 
-/** \class SLocator
+/**
+ * \class SLocator
 \ingroup lib_base
 
 A class to provide multi-dimensional access to the address space of the data.
@@ -33,7 +34,8 @@ dimensions don't fit, also appropriate message is printed to standard error
 output.
 */
 
-/** Print locator info.
+/**
+ * Print locator info.
  */
 void SLocator::print() const
 {

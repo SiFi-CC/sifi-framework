@@ -11,7 +11,8 @@
 
 #include "STask.h"
 
-/** \class STask
+/**
+ * \class STask
 \ingroup lib_base
 
 A Task abstract interface

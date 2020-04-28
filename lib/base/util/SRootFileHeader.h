@@ -20,9 +20,10 @@
 #include <TMap.h>
 #include <TString.h>
 
-#include "map"
+#include <map>
 
-/** \class SRootFileHeader
+/**
+ * \class SRootFileHeader
 \ingroup lib_base_util
 
 A header object for the category
@@ -34,7 +35,7 @@ typedef std::map<SCategory::Cat, TString> CatNameMap;
 class SRootFileHeader : public TObject
 {
 public:
-    CatNameMap  catName;
+    CatNameMap  catName;        ///< category type
 public:
     // constructor
     SRootFileHeader() : TObject() {}

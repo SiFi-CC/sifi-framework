@@ -25,7 +25,12 @@
 #include <string>
 #include <fstream>
 
-class  SRootSource : public SDataSource
+/**
+ * Read data from root file. needs better implementatoin when a such data show
+ * up.
+ * \todo Implement actually
+ */
+class SRootSource : public SDataSource
 {
 public:
     SRootSource();
@@ -35,7 +40,7 @@ public:
     virtual bool readCurrentEvent() override;
 
 private:
-    std::string input;
+    std::string input;      ///< root file input
 };
 
 #endif /* SROOTSOURCE_H */

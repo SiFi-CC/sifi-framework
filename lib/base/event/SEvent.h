@@ -20,19 +20,24 @@
 
 class TObjArray;
 
+/**
+ * All the data are kelt in a single tree in a root file. This structure is
+ * written or read from the file, and contains description of the tree
+ * composition.
+ */
 class SEvent : public TObject
 {
 public:
     SEvent();
     virtual ~SEvent();
 
-    void addCategory(SCategory::Cat cat, SCategory * address);
-    SCategory * getCategory(SCategory::Cat cat);
+    void addCategory(SCategory::Cat catid, SCategory * category);
+    SCategory * getCategory(SCategory::Cat catid);
 
     void clearCategories();
 
 private:
-    TObjArray * categories;
+    TObjArray * categories;         ///< Array of categories
 
     ClassDef(SEvent, 1);
 };

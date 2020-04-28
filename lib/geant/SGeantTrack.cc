@@ -10,21 +10,24 @@
  *************************************************************************/
 
 #include "SGeantTrack.h"
-/** \class SGeantTrack
+/**
+ * \class SGeantTrack
 \ingroup lib_geant
 
 A container for Geant tracks
 
 */
 
-/** Constructor
+/**
+ * Constructor
  */
 SGeantTrack::SGeantTrack()
 {
     clear();
 }
 
-/** Clear container
+/**
+ * Clear container
  */
 void SGeantTrack::clear()
 {
@@ -60,7 +63,9 @@ void SGeantTrack::clear()
     proc_arr[ATREST]                    = kFALSE;
 }
 
-/** Add process
+/**
+ * Add process
+ *
  * \param name process name;
  */
 void SGeantTrack::addProcess(const std::string & name)
@@ -68,7 +73,9 @@ void SGeantTrack::addProcess(const std::string & name)
     processes.push_back(name);
 }
 
-/** Add child ID
+/**
+ * Add child ID
+ *
  * \param ID child ID
  */
 void SGeantTrack::addChildID(Int_t ID)
@@ -76,7 +83,9 @@ void SGeantTrack::addChildID(Int_t ID)
     secondariesID.push_back(ID);
 }
 
-/** Get dostance from the reference of the stop point
+/**
+ * Get dostance from the reference of the stop point
+ *
  * \param ref reference point
  * \return distance (mm)
  */
@@ -86,7 +95,9 @@ Double_t SGeantTrack::getDistance(const TVector3 & ref) const
     return end_.Mag();
 }
 
-/** Get range in the detector
+/**
+ * Get range in the detector
+ *
  * \param ref reference
  * \return range
  */
@@ -128,7 +139,8 @@ Double_t SGeantTrack::getRange(const TVector3 & ref) const
     return (intsec - sto).Mag();
 }
 
-/** Print track
+/**
+ * Print track
  */
 void SGeantTrack::print() const
 {
@@ -155,8 +167,10 @@ void SGeantTrack::print() const
     //   Double_t endEnergy;
 }
 
-/** Clear object.
+/**
+ * Clear object.
  * Parameter options are ignored, for ROOT compatibility.
+ *
  * \param opt options
  */
 void SGeantTrack::Clear(Option_t* /*opt*/)

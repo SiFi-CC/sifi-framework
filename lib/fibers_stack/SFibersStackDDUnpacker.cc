@@ -24,7 +24,8 @@
 
 const Float_t adc_to_mv = 4.096;
 const Float_t sample_to_ns = 1.;
-/** \class SFibersStackDDUnpacker
+/**
+ * \class SFibersStackDDUnpacker
 \ingroup lib_fibers_stack
 
 A unpacker task.
@@ -95,21 +96,24 @@ Float_t FindTMax(Float_t* samples, size_t len, Float_t threshold, Int_t _t0,
     return tmax;
 }
 
-/** Constructor
+/**
+ * Constructor
  */
 SFibersStackDDUnpacker::SFibersStackDDUnpacker()
     : SDDUnpacker()
     , catDDSamples(nullptr), catFibersRaw(nullptr)
     , pDDUnpackerPar(nullptr), pLookUp(nullptr)
-    , lookup_name(), lookup_table(nullptr)
 {
 }
 
-/** Destructor
+/**
+ * Destructor
  */
 SFibersStackDDUnpacker::~SFibersStackDDUnpacker() {}
 
-/** Init task
+/**
+ * Init task
+ *
  * \sa STask::init()
  * \return success
  */
@@ -160,10 +164,19 @@ bool SFibersStackDDUnpacker::init()
     return true;
 }
 
-bool SFibersStackDDUnpacker::decode(uint16_t address, float* data, size_t length)
+/**
+ * Decode data from the source. The source calls decode function passing the
+ * subevent id, buffer with float numbers amd length of the buffer.
+ *
+ * \param subevtid subevent id of the data
+ * \param data data buffer
+ * \param length of the data
+ * \return reading of the data was successful
+ */
+bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t length)
 {
-    uint16_t fake_address = address & 0xfff0;
-    uint8_t channel = address & 0x0f;
+    uint16_t fake_address = subevtid & 0xfff0;
+    uint8_t channel = subevtid & 0x0f;
 
     Float_t thr = pDDUnpackerPar->getThreshold(channel);
     Int_t pol = pDDUnpackerPar->getPolarity();
@@ -203,9 +216,6 @@ bool SFibersStackDDUnpacker::decode(uint16_t address, float* data, size_t length
         bl_sigma += (bl - samples[i]) * (bl - samples[i]);
     }
     bl_sigma = sqrt(bl_sigma / 50.);
-
-//     for (auto& s : samples)
-//         s -= bl;
 
     std::transform(samples, samples+length, samples,
         [bl](float f) { return f - bl; });

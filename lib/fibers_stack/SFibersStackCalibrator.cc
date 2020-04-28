@@ -20,7 +20,8 @@
 
 #include <iostream>
 
-/** \class SFibersStackCalibrator
+/**
+ * \class SFibersStackCalibrator
 \ingroup lib_fibers_stack
 
 A calibraror task for Fibers Stack.
@@ -30,19 +31,22 @@ interface description.
 
 */
 
-/** Default constructor
+/**
+ * Default constructor
  */
 SFibersStackCalibrator::SFibersStackCalibrator() : STask(), catFibersRaw(nullptr), catFibersCal(nullptr), pCalibratorPar(nullptr)
 {
 }
 
-/** Default destructor
+/**
+ * Default destructor
  */
 SFibersStackCalibrator::~SFibersStackCalibrator()
 {
 }
 
-/** Init task
+/**
+ * Init task
  *
  * \sa STask::init()
  * \return success
@@ -76,7 +80,8 @@ bool SFibersStackCalibrator::init()
     return true;
 }
 
-/** Execute task
+/**
+ * Execute task
  *
  * \sa STask::execute()
  * \return success
@@ -149,7 +154,8 @@ bool SFibersStackCalibrator::execute()
     return true;
 }
 
-/** Finalize task
+/**
+ * Finalize task
  *
  * \sa STask::finalize()
  * \return success

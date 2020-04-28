@@ -17,7 +17,8 @@
 
 #include <iostream>
 
-/** \class SFibersStackUnpacker
+/**
+ * \class SFibersStackUnpacker
 \ingroup lib_fibers_stack
 
 A unpacker task.
@@ -25,19 +26,22 @@ A unpacker task.
 \sa STask
 */
 
-/** Constructor
+/**
+ * Constructor
  */
 SFibersStackUnpacker::SFibersStackUnpacker() : STask(), catFibersRaw(nullptr)
 {
 }
 
-/** Destructor
+/**
+ * Destructor
  */
 SFibersStackUnpacker::~SFibersStackUnpacker()
 {
 }
 
-/** Init task
+/**
+ * Init task
  * \sa STask::init()
  * \return success
  */
@@ -53,7 +57,8 @@ bool SFibersStackUnpacker::init()
     return true;
 }
 
-/** Execute task
+/**
+ * Execute task
  * \sa STask::execute()
  * \return success
  */
@@ -105,7 +110,8 @@ bool SFibersStackUnpacker::execute()
     return true;
 }
 
-/** Finalize task
+/**
+ * Finalize task
  * \sa STask::finalize()
  * \return success
  */

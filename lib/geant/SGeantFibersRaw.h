@@ -104,20 +104,20 @@ public:
     Double_t getLightL() const { return light_l; }
     /// Set light on the left side
     /// \param l kinetic energy
-    void setLightR(Float_t r) { light_r = r; }
+    void setLightR(Float_t l) { light_r = l; }
     /// Get light on the right side
     /// \return light
     Double_t getLightR() const { return light_r; }
 
     /// Set time on the left side
-    /// \param l kinetic energy
-    void setTimeL(Float_t l) { time_l = l; }
+    /// \param t kinetic energy
+    void setTimeL(Float_t t) { time_l = t; }
     /// Get time on the left side
     /// \return time
     Double_t getTimeL() const { return time_l; }
     /// Set time on the left side
-    /// \param l kinetic energy
-    void setTimeR(Float_t r) { time_r = r; }
+    /// \param t kinetic energy
+    void setTimeR(Float_t t) { time_r = t; }
     /// Get time on the right side
     /// \return time
     Double_t getTimeR() const { return time_r; }

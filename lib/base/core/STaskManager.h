@@ -18,6 +18,10 @@
 
 class STask;
 
+/**
+ * This class manages alll the tasks when running the framework.
+ * \todo Need more description.
+ */
 class SIFI_EXPORT STaskManager
 {
 protected:

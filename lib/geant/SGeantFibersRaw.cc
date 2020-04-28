@@ -11,21 +11,24 @@
 
 #include "SGeantFibersRaw.h"
 
-/** \class SGeantFibersRaw
+/**
+ * \class SGeantFibersRaw
 \ingroup lib_geant
 
 A container for Geant Fiber hits
 
 */
 
-/** Constructor
+/**
+ * Constructor
  */
 SGeantFibersRaw::SGeantFibersRaw()
 {
     clear();
 }
 
-/** Clear container
+/**
+ * Clear container
  */
 void SGeantFibersRaw::clear()
 {
@@ -41,15 +44,20 @@ void SGeantFibersRaw::clear()
     fiberHits = 0;
 }
 
-/** Clear object
+/**
+ * Clear object
  * Parameter options are ignored, for ROOT compatibility.
+ *
+ * \sa TObject::Clear()
+ * \param opt options, ignored.
  */
 void SGeantFibersRaw::Clear(Option_t* /*opt*/)
 {
     clear();
 }
 
-/** Print container
+/**
+ * Print container
  */
 void SGeantFibersRaw::print() const
 {

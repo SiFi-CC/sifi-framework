@@ -34,6 +34,7 @@ class SFibersStackDDUnpackerPar : public SPar
     void print() const override;
 
     /// Return Threshold
+    /// \param chan channel number
     /// \return threshold
     Float_t getThreshold(Int_t chan) const;
     /// Return Polarity

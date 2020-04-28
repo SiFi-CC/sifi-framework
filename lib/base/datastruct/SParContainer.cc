@@ -17,7 +17,8 @@
 #include <sstream>
 #include <string>
 
-/** \class SParContainer
+/**
+ * \class SParContainer
 \ingroup lib_base
 
 SPar is an abstract class to hold container and geometry parameters.
@@ -38,7 +39,8 @@ namespace {
 
 enum WhatNext { WNContainer, WNContainerOrParam, WNParam, WNParamCont };
 
-/** Parse single value.
+/**
+ * Parse single value.
  *
  * \param str string with values
  * \param values vector to store values
@@ -80,14 +82,17 @@ WhatNext parseValues(const std::string & str, std::vector<std::string> & values)
 
 };
 
-/** Constructor
+/**
+ * Constructor
+ *
  * \param container container name
  */
 SParContainer::SParContainer(const std::string& container) : container(container), line_split(8)
 {
 }
 
-/** Add key with integer value
+/**
+ * Add key with integer value
  *
  * \param name key name
  * \param val value
@@ -104,7 +109,8 @@ bool SParContainer::add(const std::string & name, Int_t val)
     return true;
 }
 
-/** Add key with float value
+/**
+ * Add key with float value
  *
  * \param name key name
  * \param val value
@@ -121,7 +127,8 @@ bool SParContainer::add(const std::string & name, Float_t val)
     return true;
 }
 
-/** Add key with double precision float value
+/**
+ * Add key with double precision float value
  *
  * \param name key name
  * \param val value
@@ -138,7 +145,8 @@ bool SParContainer::add(const std::string & name, Double_t val)
     return true;
 }
 
-/** Add key with integer array value
+/**
+ * Add key with integer array value
  *
  * \param name key name
  * \param val value
@@ -158,7 +166,8 @@ bool SParContainer::add(const std::string & name, const TArrayI & val)
     return true;
 }
 
-/** Add key with float array value
+/**
+ * Add key with float array value
  *
  * \param name key name
  * \param val value
@@ -178,7 +187,8 @@ bool SParContainer::add(const std::string & name, const TArrayF & val)
     return true;
 }
 
-/** Add key with double precision float array value
+/**
+ * Add key with double precision float array value
  *
  * \param name key name
  * \param val value
@@ -198,7 +208,8 @@ bool SParContainer::add(const std::string & name, const TArrayD & val)
     return true;
 }
 
-/** Get key with integer value
+/**
+ * Get key with integer value
  *
  * \param name key name
  * \param val value
@@ -225,7 +236,8 @@ bool SParContainer::fill(const std::string & name, Int_t& val)
     return true;
 }
 
-/** Get key with float value
+/**
+ * Get key with float value
  *
  * \param name key name
  * \param val value
@@ -252,7 +264,8 @@ bool SParContainer::fill(const std::string & name, Float_t& val)
     return true;
 }
 
-/** Get key with double precision float value
+/**
+ * Get key with double precision float value
  *
  * \param name key name
  * \param val value
@@ -279,7 +292,8 @@ bool SParContainer::fill(const std::string & name, Double_t& val)
     return true;
 }
 
-/** Get key with integer array value
+/**
+ * Get key with integer array value
  *
  * \param name key name
  * \param val value
@@ -306,7 +320,8 @@ bool SParContainer::fill(const std::string & name, TArrayI& val)
     return true;
 }
 
-/** Get key with float array value
+/**
+ * Get key with float array value
  *
  * \param name key name
  * \param val value
@@ -333,7 +348,8 @@ bool SParContainer::fill(const std::string & name, TArrayF& val)
     return true;
 }
 
-/** Get key with double precision float array value
+/**
+ * Get key with double precision float array value
  *
  * \param name key name
  * \param val value
@@ -360,7 +376,8 @@ bool SParContainer::fill(const std::string & name, TArrayD& val)
     return true;
 }
 
-/** Print container
+/**
+ * Print container
  */
 void SParContainer::print()
 {
@@ -377,7 +394,8 @@ void SParContainer::print()
     }
 }
 
-/** Init param with type and values
+/**
+ * Init param with type and values
  *
  * \param name key name
  * \param type key type
@@ -390,7 +408,11 @@ bool SParContainer::initParam(const std::string& name, const std::string& type, 
     return true;
 }
 
-bool SParContainer::fromContainer() {
+/**
+ * Parses all the parameters from the file. In case of parsing fail (broken
+ * input file), the function aborts the execution of the calling process.
+ */
+void SParContainer::fromContainer() {
     SContainer * sc = pm()->getContainer(container);
     if (!sc) throw "No parameter container.";
 
@@ -429,7 +451,7 @@ bool SParContainer::fromContainer() {
                 if (line[pos] == '\\')
                 {
                     std::cerr << "No type name detected in the param name line:" << std::endl << line << std::endl;
-                    return false;
+                    abort();
                 }
                 pos2 = line.find_first_of(' ', pos+1);
 
@@ -437,7 +459,7 @@ bool SParContainer::fromContainer() {
                 if (type_name != "Int_t" and type_name != "Float_t" and type_name != "Double_t")
                 {
                     std::cerr << "Invalid param type '" << type_name << "' in line:" << std::endl << line << std::endl;
-                    return false;
+                    abort();
                 }
 
                 wn = WNParamCont;
@@ -451,7 +473,7 @@ bool SParContainer::fromContainer() {
                     if (values.size() == 0)
                     {
                         std::cerr << "No values given in line:" << std::endl << line << std::endl;
-                        return false;
+                        abort();
                     }
                     else
                     {
@@ -461,11 +483,16 @@ bool SParContainer::fromContainer() {
             }
         }
     }
-
-    return true;
 }
 
-
+/**
+ * Exports Par Container to the corresponding SContainer class. It formats each
+ * parameter with format string `"%s : %s", name, type`, followed by list of
+ * parameter values. If the number of parameters is not larger than #line_split
+ * value, the values follow in the same line, otherwise are printed in the next
+ * lines, each containing maximal of #line_split values. In that case each line
+ * beside the last one is broke with `\` character.
+ */
 void SParContainer::toContainer() const {
     SContainer * sc = pm()->getContainer(container);
     if (!sc) throw "No parameter container.";

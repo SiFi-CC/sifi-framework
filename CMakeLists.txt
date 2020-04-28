@@ -95,7 +95,7 @@ file(GLOB_RECURSE FFILES *.[hc] *.[hc]pp)
 clang_format(format ${FFILES})
 include_what_you_use(-Xiwyu)
 
-build_docs(TARGET_NAME doc DOXYFILE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in PROCESS_DOXYFILE)
+build_docs(TARGET_NAME doc DOXYFILE_PATH ${CMAKE_SOURCE_DIR}/Doxyfile.in PROCESS_DOXYFILE)
 
 cxx_17()
 # add_code_coverage()

@@ -49,7 +49,8 @@ public:
 
     void addTask(STask * task, Int_t step);
 
-    /** Set tasks mask.
+    /**
+     * Set tasks mask.
      * When the new task is add, it is logically conjugated with the mask, and
      * if the result is false, task is not add.
      *

@@ -23,7 +23,8 @@
 #include <locale>
 #include <sstream>
 
-/** \class SParManager
+/**
+ * \class SParManager
 
 \ingroup lib_base
 
@@ -39,7 +40,8 @@ the requested parameter containers exists.
 // for trim functions see
 // https://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
 
-/** Trim from start (in place)
+/**
+ * Trim from start (in place)
  *
  * \param s string
  */
@@ -49,7 +51,8 @@ static inline void ltrim(std::string &s) {
     }));
 }
 
-/** Trim from end (in place)
+/**
+ * Trim from end (in place)
  *
  * \param s string
  */
@@ -59,7 +62,8 @@ static inline void rtrim(std::string &s) {
     }).base(), s.end());
 }
 
-/** Trim from both ends (in place)
+/**
+ * Trim from both ends (in place)
  *
  * \param s string
  */
@@ -68,7 +72,8 @@ void trim(std::string &s) {
     rtrim(s);
 }
 
-/** Trim from start (copying)
+/**
+ * Trim from start (copying)
  *
  * \param s string
  * \return trimmed string
@@ -78,7 +83,8 @@ static inline std::string ltrim_copy(std::string s) {
     return s;
 }
 
-/** Trim from end (copying)
+/**
+ * Trim from end (copying)
  *
  * \param s string
  * \return trimmed string
@@ -88,7 +94,8 @@ static inline std::string rtrim_copy(std::string s) {
     return s;
 }
 
-/** Trim from both ends (copying)
+/**
+ * Trim from both ends (copying)
  *
  * \param s string
  * \return trimmed string
@@ -98,7 +105,8 @@ static inline std::string trim_copy(std::string s) {
     return s;
 }
 
-/** Remove all tabs (in place)
+/**
+ * Remove all tabs (in place)
  *
  * \param s string
  */
@@ -114,7 +122,8 @@ void simplify(std::string & s)
     }
 }
 
-/** Check if float.
+/**
+ * Check if float.
  *
  * \sa Stackoverflow #447206
  *
@@ -131,7 +140,8 @@ bool isFloat(const std::string & str)
 
 SParManager * SParManager::pm = nullptr;
 
-/** Returns instance of the Detector Manager class.
+/**
+ * Returns instance of the Detector Manager class.
  *
  * \return manager instance
  */
@@ -143,7 +153,8 @@ SParManager * SParManager::instance()
     return pm;
 }
 
-/** Shortcut
+/**
+ * Shortcut
  * \return SParManager instance
  */
 SParManager * pm()
@@ -151,19 +162,22 @@ SParManager * pm()
     return SParManager::instance();
 }
 
-/** Default constructor
+/**
+ * Default constructor
  */
 SParManager::SParManager()
 {
 }
 
-/** Destructor
+/**
+ * Destructor
  */
 SParManager::~SParManager()
 {
 }
 
-/** Parse source file
+/**
+ * Parse source file
  *
  * \return success
  */
@@ -243,9 +257,9 @@ bool SParManager::parseSource()
     return true;
 }
 
-/** Write params to destination.
- *
- * Needs to be implemented.
+/**
+ * Write all containers to destination file. Internally it creates a list of
+ * containers and calls writeContainers();
  */
 void SParManager::writeDestination() const
 {
@@ -259,7 +273,12 @@ void SParManager::writeDestination() const
     writeContainers(names);
 }
 
-void SParManager::writeContainers(const std::vector<std::string> & conts) const
+/**
+ * Write selected containers to the destination file.
+ *
+ * \param names vector of container names
+ */
+void SParManager::writeContainers(const std::vector<std::string> & names) const
 {
     for (const auto & pc : par_containers)
         pc.second->toContainer();
@@ -277,7 +296,7 @@ void SParManager::writeContainers(const std::vector<std::string> & conts) const
 
     std::ofstream ofs(destination);
     if (ofs.is_open()) {
-        for (auto &c : conts) {
+        for (auto &c : names) {
             ofs << "[" << c << "]" << std::endl;
             for (const auto & l : containers.at(c)->lines)
                 ofs << l << std::endl;
@@ -287,7 +306,8 @@ void SParManager::writeContainers(const std::vector<std::string> & conts) const
 }
 
 
-/** Print containers
+/**
+ * Print containers
  */
 void SParManager::print() const
 {
@@ -296,7 +316,8 @@ void SParManager::print() const
         par_it->second->print();
 }
 
-/** Get parameter container by name.
+/**
+ * Get parameter container by name.
  *
  * \param cont_name container name
  * \return pointer to container
@@ -313,7 +334,8 @@ SContainer * SParManager::getContainer(const std::string& cont_name)
     return cont;
 }
 
-/** Add new parameter container.
+/**
+ * Add new parameter container.
  *
  * \param cont_name container name
  * \param parcont container object
@@ -348,7 +370,8 @@ bool SParManager::addParameterContainer(const std::string& cont_name, SPar* parc
     return true;
 }
 
-/** Get parameter container by name.
+/**
+ * Get parameter container by name.
  *
  * \param cont_name container name
  * \return pointer to container
@@ -359,7 +382,8 @@ SPar * SParManager::getParameterContainer(const std::string& cont_name)
 }
 
 
-/** Add new lookup table container.
+/**
+ * Add new lookup table container.
  *
  * \param cont_name container name
  * \param lucont lookup table object
@@ -381,7 +405,8 @@ bool SParManager::addLookupContainer(const std::string& cont_name, SLookupTable*
     return true;
 }
 
-/** Get lookup table by name.
+/**
+ * Get lookup table by name.
  *
  * \param cont_name container name
  * \return pointer to container
@@ -391,7 +416,8 @@ SLookupTable * SParManager::getLookupContainer(const std::string& cont_name)
     return lu_containers[cont_name];
 }
 
-/** Add new calibration container.
+/**
+ * Add new calibration container.
  *
  * \param cont_name container name
  * \param calcont calibration object
@@ -413,7 +439,8 @@ bool SParManager::addCalibrationContainer(const std::string& cont_name, SCalCont
     return true;
 }
 
-/** Get calibration container by name.
+/**
+ * Get calibration container by name.
  *
  * \param cont_name container name
  * \return pointer to container

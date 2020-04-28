@@ -11,27 +11,32 @@
 
 #include "SFibersStackCalSim.h"
 
-/** \class SFibersStackCalSim
+/**
+ * \class SFibersStackCalSim
 \ingroup lib_fibers_stack
 
 A container for Fibers Stack Calibrated simulation data
 
 */
 
-/** Constructor
+/**
+ * Constructor
  */
 SFibersStackCalSim::SFibersStackCalSim() : SFibersStackCal(), T(0.0), E(0.0), dEdx(0.0)
 {
 }
 
-/** Destructor
+/**
+ * Destructor
  */
 SFibersStackCalSim::~SFibersStackCalSim()
 {
 }
 
-/** Clear object.
+/**
+ * Clear object.
  * Parameter options are ignored, for ROOT compatibility.
+ *
  * \param opt options
  */
 void SFibersStackCalSim::Clear(Option_t * /*opt*/)
@@ -41,7 +46,8 @@ void SFibersStackCalSim::Clear(Option_t * /*opt*/)
     dEdx = 0.0;
 }
 
-/** Print category.
+/**
+ * Print category.
  */
 void SFibersStackCalSim::print() const
 {

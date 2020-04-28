@@ -28,8 +28,9 @@ public:
         sscanf(address, "%*s %*s %d %d %d %d\n", &sta, &lay, &str, &sub);
     }
 
-    void print(const char * prefix) const override {
-        printf("%s %d  %d  %d  %d\n", prefix, sta, lay, str, sub);
+    void print(bool newline = true, const char * prefix = "") const override {
+        printf("%s %d  %d  %d  %d", prefix, sta, lay, str, sub);
+        if (newline) putchar('\n');
     }
 };
 

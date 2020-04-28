@@ -15,7 +15,8 @@
 
 #include "SParContainer.h"
 
-/** \class SFibersStackGeomPar
+/**
+ * \class SFibersStackGeomPar
 \ingroup lib_fibers_stack
 
 A container for Fibers Stack geometry parameters
@@ -24,20 +25,23 @@ A container for Fibers Stack geometry parameters
 
 */
 
-/** Constructor
+/**
+ * Constructor
  */
 SFibersStackGeomPar::SFibersStackGeomPar() : SPar(), mods(nullptr)
 {
 }
 
-/** Destructor
+/**
+ * Destructor
  */
 SFibersStackGeomPar::~SFibersStackGeomPar()
 {
     delete [] mods;
 }
 
-/** Clear parameters
+/**
+ * Clear parameters
  */
 void SFibersStackGeomPar::clear()
 {
@@ -46,7 +50,9 @@ void SFibersStackGeomPar::clear()
     modules = 0;
 }
 
-/** Get parameters
+/**
+ * Get parameters
+ *
  * \sa SPar::getParams()
  * \param parcont pointer to container object
  * \return success
@@ -138,7 +144,9 @@ bool SFibersStackGeomPar::getParams(SParContainer* parcont)
     return true;
 }
 
-/** Put parameters
+/**
+ * Put parameters
+ *
  * \sa SPar::putParams()
  * \param parcont pointer to container object
  * \return success
@@ -148,7 +156,8 @@ bool SFibersStackGeomPar::putParams(SParContainer* /*parcont*/) const
     return true;
 }
 
-/** Print parameters
+/**
+ * Print parameters
  */
 void SFibersStackGeomPar::print() const
 {
@@ -175,7 +184,9 @@ void SFibersStackGeomPar::print() const
     }
 }
 
-/** Get number of layers in the module
+/**
+ * Get number of layers in the module
+ *
  * \param m module
  * \return number of layers
  */
@@ -187,7 +198,9 @@ Int_t SFibersStackGeomPar::getLayers(Int_t m) const
         return -1;
 }
 
-/** Get number of fibers in the layer
+/**
+ * Get number of fibers in the layer
+ *
  * \param m module
  * \param l layer
  * \return number of fibers
@@ -200,7 +213,9 @@ Int_t SFibersStackGeomPar::getFibers(Int_t m, Int_t l) const
         return -1;
 }
 
-/** Get layer rotation
+/**
+ * Get layer rotation
+ *
  * \param m module
  * \param l layer
  * \return layer rotation
@@ -213,7 +228,9 @@ Float_t SFibersStackGeomPar::getLayerRotation(Int_t m, Int_t l) const
         return -10000.;
 }
 
-/** Get fibers offset X
+/**
+ * Get fibers offset X
+ *
  * \param m module
  * \param l layer
  * \return offset X
@@ -226,7 +243,9 @@ Float_t SFibersStackGeomPar::getFiberOffsetX(Int_t m, Int_t l) const
         return -10000.;
 }
 
-/** Get layers offset Y
+/**
+ * Get layers offset Y
+ *
  * \param m module
  * \param l layer
  * \return offset Y
@@ -239,7 +258,9 @@ Float_t SFibersStackGeomPar::getFiberOffsetY(Int_t m, Int_t l) const
         return -10000.;
 }
 
-/** Get fibers pitch in a layer
+/**
+ * Get fibers pitch in a layer
+ *
  * \param m module
  * \param l layer
  * \return fibers pitch

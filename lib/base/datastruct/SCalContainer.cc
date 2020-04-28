@@ -18,7 +18,8 @@
 
 #include <cassert>
 
-/** \class SCalContainer
+/**
+ * \class SCalContainer
 \ingroup lib_base
 
 SLookup is an abstract class to hold container and geometry parameters.
@@ -35,36 +36,72 @@ parameters in the container and write to param file.
 \sa SFibersStackGeomPar
 */
 
-uint SCalPar::read(const char* data)
+/**
+ * Read parameters from a container. See SLookupChannel::read() for details how to
+ * implement.
+ *
+ * \sa SLookupChannel
+ * \param buffer string containing data to parse
+ * \return number of parsed elements.
+ */
+uint SCalPar::read(const char* buffer)
 {
     uint n;
-    int cnt = sscanf(data, "%f %f %f%n", &par0, &par1, &par2, &n);
+    int cnt = sscanf(buffer, "%f %f %f%n", &par0, &par1, &par2, &n);
     assert(cnt == 3);
     return n;
 }
 
-uint SCalPar::write(char* data, size_t n) const
+/**
+ * Exports the parameters to a container. See SLookupChannel::write() for
+ * details how to implement.
+ *
+ * \sa SLookupChannel
+ * \param[out] buffer buffer to be written
+ * \param n buffer length
+ * \return number of written bytes.
+ */
+uint SCalPar::write(char* buffer, size_t n) const
 {
-    int cnt = snprintf(data, n, "%7.6g %7.6g %7.6g", par0, par1, par2);
+    int cnt = snprintf(buffer, n, "%7.6g %7.6g %7.6g", par0, par1, par2);
     if (cnt < 0) return cnt;
     if (cnt < n) return 0;
     return cnt;
 }
 
-void SCalPar::print(const char * prefix)
+/**
+ * Prints the calibration parameters. See SLookupChannel::print() for details. 
+ *
+ * \sa SLookupChannel
+ * \param newline puts newline on the end
+ * \param prefix a text which should be displayed before the content of the
+ * channel params. If prefix is empty, then
+ */
+void SCalPar::print(bool newline, const char * prefix)
 {
     printf("%s %f %f %f", prefix, par0, par1, par2);
-    if (prefix[0] != '\0') putchar('\n');
+    if (newline) putchar('\n');
 }
 
-SCalContainer::SCalContainer(const std::string& container) :
-    container(container), is_init(false)
+/**
+ * Constructor
+ *
+ * \param container container name
+ */
+SCalContainer::SCalContainer(const std::string& container)
+    : name(container), is_init(false)
 {
 }
 
+/**
+ * Read cal parameters from respective SContainer. Uses lookup channel hash as
+ * a key for the map, and SCalPar or derivied for a value.
+ *
+ * \sa SLookupTable::fromContainer()
+ */
 void SCalContainer::fromContainer()
 {
-    SContainer * lc = pm()->getContainer(container);
+    SContainer * lc = pm()->getContainer(name);
     if (!lc) throw "No lookup container.";
 
     const std::vector<std::string> & lv = lc->lines;
@@ -76,15 +113,21 @@ void SCalContainer::fromContainer()
         SCalPar cp;
         cp.read(line.c_str() + cnt);
 
-        calpars.insert({chan->quick_hash(), cp});
+        calpars.insert({chan->quickHash(), cp});
     }
 
     is_init = true;
 }
 
+/**
+ * Write cal parameters to respective SContainer.
+ *
+ * \sa fromContainer()
+ * \sa SLookupTable::toContainer()
+ */
 void SCalContainer::toContainer() const
 {
-    SContainer * sc = pm()->getContainer(container);
+    SContainer * sc = pm()->getContainer(name);
     if (!sc) throw "No lookup container.";
 
     sc->lines.clear();
@@ -106,21 +149,34 @@ void SCalContainer::toContainer() const
     }
 }
 
+/**
+ * Get single SCalPar object fr given channel described by SLookupChannel
+ * object.
+ *
+ * \todo Probably we need to develop better mechanism here, maybe converting
+ * constructor?
+ *
+ * \param channel channel object
+ * \return calibration parameter object
+ */
 SCalPar& SCalContainer::getPar(const SLookupChannel * channel) {
     if (!is_init) fromContainer();
 
-    uint64_t hash = channel->quick_hash();
-    map_type::iterator it = calpars.find(hash);
+    uint64_t hash = channel->quickHash();
+    std::map<size_t, SCalPar>::iterator it = calpars.find(hash);
 
     assert(it != calpars.end());
     return it->second;
 }
 
+/**
+ * Print all parameters from given cal container.
+ */
 void SCalContainer::print()
 {
     if (!is_init) fromContainer();
 
-    printf("[%s]\n", container.c_str());
+    printf("[%s]\n", name.c_str());
     for (auto calpar: calpars)
     {
         SLookupChannel * chan = createChannel();

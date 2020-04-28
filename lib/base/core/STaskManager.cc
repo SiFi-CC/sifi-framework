@@ -15,7 +15,8 @@
 
 #include "STaskManager.h"
 
-/** \class SParManager
+/**
+ * \class SParManager
 \ingroup lib_base
 
 Task Manager class. Manages all tasks.
@@ -33,7 +34,8 @@ execution order.
 
 STaskManager * STaskManager::tm = nullptr;
 
-/** Returns instance of the Detector Manager class.
+/**
+ * Returns instance of the Detector Manager class.
  *
  * \return manager instance
  */
@@ -45,19 +47,23 @@ STaskManager * STaskManager::instance()
     return tm;
 }
 
-/** Default constructor
+/**
+ * Default constructor
  */
 STaskManager::STaskManager()
 {
 }
 
-/** Default destructor
+/**
+ * Default destructor
  */
 STaskManager::~STaskManager()
 {
 }
 
-/** Add task at given step
+/**
+ * Add task at given step
+ *
  * \param task pointer to task object
  * \param step step value
  */
@@ -66,7 +72,8 @@ void STaskManager::addTask(STask* task, int step)
     tasks.insert( std::pair<int, STask *>(step, task) );
 }
 
-/** Init all tasks
+/**
+ * Init all tasks
  */
 void STaskManager::initTasks()
 {
@@ -82,7 +89,8 @@ void STaskManager::initTasks()
     }
 }
 
-/** Reinitialize all tasks
+/**
+ * Reinitialize all tasks
  */
 void STaskManager::reinitTasks()
 {
@@ -98,7 +106,8 @@ void STaskManager::reinitTasks()
     }
 }
 
-/** Run tasks.
+/**
+ * Run tasks.
  *
  * Start with step 0 until the last step.
  */
@@ -116,7 +125,8 @@ void STaskManager::runTasks()
     }
 }
 
-/** Finalize tasks
+/**
+ * Finalize tasks
  */
 void STaskManager::finalizeTasks()
 {

@@ -25,7 +25,8 @@
 
 #include "SiFi.h"
 
-/** \class SFibersStackDetector
+/**
+ * \class SFibersStackDetector
 \ingroup lib_fibers_stack
 
 An organizer class for the detector
@@ -33,7 +34,8 @@ An organizer class for the detector
 \sa SDetector
 */
 
-/** Constructor
+/**
+ * Constructor
  *
  * \param name detetcor name
  */
@@ -42,7 +44,8 @@ modules(1), layers(30), fibers(30)
 {
 }
 
-/** Constructor
+/**
+ * Constructor
  *
  * \param name detetcor name
  * \param m number of modules
@@ -54,13 +57,15 @@ SFibersStackDetector::SFibersStackDetector(const std::string & name, size_t m, s
 {
 }
 
-/** Destructor
+/**
+ * Destructor
  */
 SFibersStackDetector::~SFibersStackDetector()
 {
 }
 
-/** Init tasks
+/**
+ * Init tasks
  *
  * \sa SPar::initTasks()
  * \return success
@@ -80,7 +85,8 @@ bool SFibersStackDetector::initTasks()
     return true;
 }
 
-/** Init containers
+/**
+ * Init containers
  *
  * \sa SPar::initCategories()
  * \return success
@@ -103,7 +109,8 @@ bool SFibersStackDetector::initContainers()
     return true;
 }
 
-/** Init categries
+/**
+ * Init categries
  *
  * \sa SPar::initCategories()
  * \return success

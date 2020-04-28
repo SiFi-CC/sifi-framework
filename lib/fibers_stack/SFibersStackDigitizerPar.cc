@@ -13,7 +13,8 @@
 
 #include "SParContainer.h"
 
-/** \class SFibersStackDigitizerPar
+/**
+ * \class SFibersStackDigitizerPar
 \ingroup lib_fibers_stack
 
 A container for Fibers Stack Digitizer parameters
@@ -22,7 +23,8 @@ A container for Fibers Stack Digitizer parameters
 
 */
 
-/** Get parameters
+/**
+ * Get parameters
  * \sa SPar::getParams()
  * \param parcont pointer to container object
  * \return success
@@ -32,7 +34,8 @@ bool SFibersStackDigitizerPar::getParams(SParContainer* /*parcont*/)
     return true;
 }
 
-/** Put parameters
+/**
+ * Put parameters
  * \sa SPar::putParams()
  * \param parcont pointer to container object
  * \return success
@@ -42,7 +45,8 @@ bool SFibersStackDigitizerPar::putParams(SParContainer* /*parcont*/) const
     return true;
 }
 
-/** Clear parameters
+/**
+ * Clear parameters
  */
 void SFibersStackDigitizerPar::clear()
 {

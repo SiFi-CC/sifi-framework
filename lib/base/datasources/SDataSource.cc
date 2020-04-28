@@ -15,7 +15,9 @@
 #include <iostream>
 #include <map>
 
-/** Add an unpacker fo source
+/**
+ * Add an unpacker fo source
+ *
  * \param unpacker the unpacker object
  * \param address addresses which the unpacker must handle
  */

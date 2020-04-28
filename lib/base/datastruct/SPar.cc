@@ -13,7 +13,8 @@
 
 #include "SParContainer.h"
 
-/** \class SPar
+/**
+ * \class SPar
 \ingroup lib_base
 
 SPar is an abstract class to hold container and geometry parameters.
@@ -30,19 +31,22 @@ parameters in the container and write to param file.
 \sa SFibersStackGeomPar
 */
 
-/** Default constructor
+/**
+ * Default constructor
  */
 SPar::SPar() : parcont(nullptr)
 {
 }
 
-/** Destructor
+/**
+ * Destructor
  */
 SPar::~SPar()
 {
 }
 
-/** Print container info
+/**
+ * Print container info
  */
 void SPar::print() const
 {

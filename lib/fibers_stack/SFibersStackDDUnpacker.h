@@ -28,10 +28,10 @@ class SIFI_EXPORT SFibersStackDDUnpacker : public SDDUnpacker
 {
 protected:
     // members
-    SCategory * catDDSamples;           ///< fibers raw category
-    SCategory * catFibersRaw;           ///< fibers raw category
+    SCategory * catDDSamples;                   ///< fibers raw category
+    SCategory * catFibersRaw;                   ///< fibers raw category
     SFibersStackDDUnpackerPar * pDDUnpackerPar; ///< calibrator parameters
-    SFibersStackLookupTable * pLookUp;
+    SFibersStackLookupTable * pLookUp;          ///< lookup table
 
 public:
     // constructor
@@ -42,11 +42,7 @@ public:
     virtual bool init() override;
 protected:
     // methods
-    bool decode(uint16_t address, float * data, size_t length) override;
-
-private:
-    std::string lookup_name;
-    SLookupTable * lookup_table;
+    bool decode(uint16_t subevtid, float * data, size_t length) override;
 };
 
 #endif /* SFIBERSSTACKUNPACKER_H */

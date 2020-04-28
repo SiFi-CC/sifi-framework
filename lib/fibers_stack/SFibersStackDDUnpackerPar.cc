@@ -15,7 +15,8 @@
 
 #include <iostream>
 
-/** \class SFibersStackDDUnpackerPar
+/**
+ * \class SFibersStackDDUnpackerPar
 \ingroup lib_fibers_stack
 
 A container for Fibers Stack Calibrator parameters
@@ -24,7 +25,8 @@ A container for Fibers Stack Calibrator parameters
 
 */
 
-/** Clear parameters
+/**
+ * Clear parameters
  */
 void SFibersStackDDUnpackerPar::clear()
 {
@@ -35,7 +37,8 @@ void SFibersStackDDUnpackerPar::clear()
     nDeadTime = 0;
 }
 
-/** Get parameters
+/**
+ * Get parameters
  * \sa SPar::getParams()
  * \param parcont pointer to container object
  * \return success
@@ -59,7 +62,8 @@ bool SFibersStackDDUnpackerPar::getParams(SParContainer* parcont)
     return true;
 }
 
-/** Put parameters
+/**
+ * Put parameters
  * \sa SPar::putParams()
  * \param parcont pointer to container object
  * \return success
@@ -69,7 +73,8 @@ bool SFibersStackDDUnpackerPar::putParams(SParContainer* /*parcont*/) const
     return true;
 }
 
-/** Print parameters
+/**
+ * Print parameters
  */
 void SFibersStackDDUnpackerPar::print() const
 {

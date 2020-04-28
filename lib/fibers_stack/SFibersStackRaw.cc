@@ -11,20 +11,24 @@
 
 #include "SFibersStackRaw.h"
 
-/** \class SFibersStackRaw
+/**
+ * \class SFibersStackRaw
 \ingroup lib_fibers_stack
 
 A container for Fibers Stack Raw data
 
 */
 
-/** Constructor
+/**
+ * Constructor
  */
 SFibersStackRaw::SFibersStackRaw() : TObject() {}
 
 
-/** Clear object
+/**
+ * Clear object
  * Parameter options are ignored, for ROOT compatibility.
+ *
  * \param opt options
  */
 void SFibersStackRaw::Clear(Option_t* /*opt*/)
@@ -41,7 +45,8 @@ void SFibersStackRaw::Clear(Option_t* /*opt*/)
     time_r = 0.0;
 }
 
-/** Print category
+/**
+ * Print category
  */
 void SFibersStackRaw::print() const
 {

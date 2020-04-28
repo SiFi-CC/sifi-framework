@@ -18,7 +18,8 @@
 #include <TObject.h>
 #include <TString.h>
 
-/** \class SCategoryHeader
+/**
+ * \class SCategoryHeader
 \ingroup lib_base
 
 A header object for the category

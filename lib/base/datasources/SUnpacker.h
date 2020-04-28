@@ -23,6 +23,16 @@
 #include <TObject.h>
 #include <TString.h>
 
+/**
+ * Abstract base class for unpacker. The interface contains of following
+ * functions:
+ *  * init() - init unpacker, called only once,
+ *  * reinit() - called when some of the data has changed, e.g. parameters and
+ *    lookup tables,
+ *  * execute() - executes the task, accept several fields describing the event
+ *    and data passed to the unpacker,
+ *  * finalize() - makes final steps, e.g. release containers.
+ */
 class SUnpacker
 {
 public:
@@ -35,11 +45,11 @@ public:
     /// Execute task
     /// \param event global event number
     /// \param seq_number sequence number (par file)
-    /// \param address address of subevent
+    /// \param subevent address of subevent
     /// \param buffer data buffer
     /// \param length size of teh buffer in bytes (uint8_t)
     /// \return success
-    virtual bool execute(unsigned long event, unsigned long seq_number, uint16_t address,
+    virtual bool execute(ulong event, ulong seq_number, uint16_t subevent,
         void * buffer, size_t length) = 0;
     /// Finalize task
     /// \return success

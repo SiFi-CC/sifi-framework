@@ -25,6 +25,10 @@
 #include <TObject.h>
 #include <TString.h>
 
+/**
+ * Unpacker for Desktop Digitizer data. It is a abstract base class which must
+ * provide implementation to the data, mainly lookup table.
+ */
 class SIFI_EXPORT SDDUnpacker : public SUnpacker
 {
 public:
@@ -38,17 +42,30 @@ public:
     /// \return success
     virtual bool reinit() override;
     /// Execute task
+    /// \param event event number
+    /// \param seq_number sequence number
+    /// \param subevent subevent id
+    /// \param buffer data buffer
+    /// \param length buffer length
     /// \return success
-    virtual bool execute(unsigned long event, unsigned long seq_number, uint16_t address,
-        void * buffer, size_t length) override;
+    virtual bool execute(ulong event, ulong seq_number, uint16_t subevent,
+                         void * buffer, size_t length) override;
 
+    /// Set expected data len, we speak about floats not bytes.
+    /// \param length size of the array in terms of floats
     void setDataLen(size_t length) { data_length = length;}
 
 protected:
-    virtual bool decode(uint16_t address, float * data, size_t length) = 0;
+    /// Decode buffer. This function must be implemented in deriving class to
+    /// provide interpretation for data.
+    /// \param subevent subevent id
+    /// \param data data buffer
+    /// \param length buffer length
+    /// \return success
+    virtual bool decode(uint16_t subevent, float * data, size_t length) = 0;
 
 private:
-    size_t data_length;
+    size_t data_length;         ///< data buffer length
 };
 
 #endif /* SDDUNPACKER_H */

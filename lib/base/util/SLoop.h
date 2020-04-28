@@ -24,6 +24,9 @@ class TChain;
 class TFile;
 class TTree;
 
+/** Loops over the tree, e.g. from the root file.
+ * \todo Add support for SRootSource
+ */
 class SLoop
 {
 public:
@@ -38,21 +41,20 @@ public:
     void setInput(std::initializer_list<SCategory::Cat> categories);
 
     size_t getEntries() const;
-    int nextEvent(uint ev);
-
-    virtual void print();
+    Int_t nextEvent();
+    Int_t getEvent(ulong event);
 
 private:
-    TChain * chain;
-    TFile * current_file;
-    TTree * current_tree;
-    uint current_event;
-    SCategory ** categories;
+    TChain * chain;                 ///< chain storing all input files
+    TFile * current_file;           ///< pointer to the current file
+    TTree * current_tree;           ///< pointer to the current tree
+    ulong current_event;            ///< number of current event
+    SCategory * categories[SCategory::CatLimitDoNotUse*2];  ///< list of categories
 
-    SEvent * event;
-    SRootFileHeader * fileHeader;
+    SEvent * event;                 ///< event data
+    SRootFileHeader * file_header;  ///< file header
 
-    Long64_t tree_cache_size;
+    Long64_t tree_cache_size;       ///< tree cache size
 };
 
 #endif /* SLOOP_H */

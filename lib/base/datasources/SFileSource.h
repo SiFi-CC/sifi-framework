@@ -25,6 +25,13 @@
 #include <string>
 #include <fstream>
 
+/**
+ * File source reads data from text or binary file. As the subevent id is not
+ * provided by regular text or binary file, the unpacker must by provied with
+ * forceUnpacker() function. When specifying the input file, one needs to
+ * specify also size of buffer to be read from file. The source expect the data
+ * chunks of equal sizes.
+ */
 class SFileSource : public SDataSource
 {
 public:
@@ -33,15 +40,17 @@ public:
     virtual bool open() override;
     virtual bool close() override;
     virtual bool readCurrentEvent() override;
-    virtual void setInput(const std::string & i, size_t buffer);
+    virtual void setInput(const std::string & filename, size_t buffer_size);
 
-    virtual void forceUnpacker(uint16_t address) { unpacker = address; }
+    /// Define unpacker address for the source
+    /// \param address emulated subevent id
+    virtual void forceUnpacker(uint16_t address) { subevent = address; }
 
 private:
-    uint16_t unpacker;
-    std::string input;
-    std::ifstream istream;
-    size_t buffer_size;
+    uint16_t subevent;              ///< set address for unpacker
+    std::string input;              ///< file input
+    std::ifstream istream;          ///< file reader stream
+    size_t buffer_size;             ///< size of data chunk
 };
 
 #endif /* SFILESOURCE_H */

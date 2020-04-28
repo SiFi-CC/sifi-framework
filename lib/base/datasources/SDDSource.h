@@ -25,22 +25,24 @@
 #include <string>
 #include <fstream>
 
+/**
+ * Extends SDataSOurce to read data from Desktop Digitizer.
+ */
 class SIFI_EXPORT SDDSource : public SDataSource
 {
 public:
-    explicit SDDSource(uint16_t address);
+    explicit SDDSource(uint16_t subevent);
 
     virtual bool open() override;
     virtual bool close() override;
     virtual bool readCurrentEvent() override;
-    virtual void setInput(const std::string & i, size_t buffer);
+    virtual void setInput(const std::string & filename, size_t length);
 
 private:
-    uint16_t unpacker;
-
-    std::string input;
-    std::ifstream istream;
-    size_t buffer_size;
+    uint16_t subevent;          ///< subevent id
+    std::string input;          ///< source file name
+    std::ifstream istream;      ///< input file stream
+    size_t buffer_size;         ///< data buffer size
 };
 
 #endif /* SDDSOURCE_H */

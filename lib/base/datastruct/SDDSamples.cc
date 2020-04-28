@@ -13,18 +13,21 @@
 
 #include <iostream>
 
-/** \class SDDSamples
+/**
+ * \class SDDSamples
 \ingroup lib_fibers_stack
 
 A container for Fibers Stack Raw data
 
 */
 
-/** Constructor
+/**
+ * Constructor
  */
 SDDSamples::SDDSamples() : TObject() {}
 
-/** Clear object
+/**
+ * Clear object
  * Parameter options are ignored, for ROOT compatibility.
  * \param opt options
  */
@@ -49,7 +52,8 @@ void SDDSamples::fillSamplesR(float* samples, size_t length) {
     memcpy(this->samples_r, samples, limit * sizeof(float));
 }
 
-/** Print category
+/**
+ * Print category
  */
 void SDDSamples::print() const {
     printf("fiber m,l,f=%d,%d,%d\n", module, layer, fiber);

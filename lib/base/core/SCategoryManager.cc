@@ -14,12 +14,17 @@
 
 #include <iostream>
 
-/** \class SCategoryManager
-\ingroup lib_base
+/**
+
+\ingroup lib_base_core
 
 */
 
-SCategory * SCategoryManager::getCategory(SCategory::Cat cat)
+namespace SCategoryManager {
+
+SCategory * getCategory(SCategory::Cat cat)
 {
     return sifi()->getCurrentEvent()->getCategory(cat);
 }
+
+};

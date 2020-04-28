@@ -18,7 +18,8 @@
 
 #include "SCategoryIndex.h"
 
-/** \class SCategoryIndex
+/**
+ * \class SCategoryIndex
 \ingroup lib_base
 
 An index object for the category. This class provides an interface to map

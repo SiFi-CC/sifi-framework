@@ -59,10 +59,12 @@ public:
     /// \param _y longnitudal coordinate
     void setY(Float_t _y) { y = _y; }
     /// Set ADC value
-    /// \param a adc
+    /// \param al adc on the left side of the fiber
+    /// \param ar adc on the right side of teh fiber
     void setADC(Float_t al, Float_t ar) { adc_l = al; adc_r = ar; }
     /// Set Time value
-    /// \param t time
+    /// \param tl time on the left side of fiber
+    /// \param tr time on the right side of fiber
     void setTime(Float_t tl, Float_t tr) { time_l = tl; time_r = tr; }
     /// Set ADC value
     /// \param a adc

@@ -56,7 +56,7 @@ public:
     virtual bool fill(const std::string & name, TArrayD & val);
 
     bool initParam(const std::string & name, const std::string & type, const std::vector<std::string> & values);
-    bool fromContainer();
+    void fromContainer();
     void toContainer() const;
 
     void print();

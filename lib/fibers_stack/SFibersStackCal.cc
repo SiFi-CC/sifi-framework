@@ -11,14 +11,16 @@
 
 #include "SFibersStackCal.h"
 
-/** \class SFibersStackCal
+/**
+ * \class SFibersStackCal
 \ingroup lib_fibers_stack
 
 A container for Fibers Stack Calibrated data
 
 */
 
-/** Default constructor
+/**
+ * Default constructor
  */
 SFibersStackCal::SFibersStackCal() : SFibersStackRaw()
 {

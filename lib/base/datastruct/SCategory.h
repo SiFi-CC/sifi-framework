@@ -70,6 +70,8 @@ public:
     /// \return number of entries
     Int_t getEntries() const { return data->GetEntries(); }
 
+    /// \sa TObject::IsFolder()
+    /// \return is a folder
     Bool_t IsFolder() const override { return kTRUE; }
 
     void compress();

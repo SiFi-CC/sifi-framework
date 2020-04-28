@@ -25,7 +25,8 @@
 
 class SUnpacker;
 
-/** \class SDataSource
+/**
+ * \class SDataSource
  * \ingroup lib_base_datasources
  * This source read events from hld file. For each readout subevent address,
  * a respective unpacker is called. If unpacker is missing, the program is
