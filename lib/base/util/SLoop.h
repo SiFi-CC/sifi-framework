@@ -27,13 +27,16 @@ class TTree;
 /** Loops over the tree, e.g. from the root file.
  * \todo Add support for SRootSource
  */
-class SLoop
+class SIFI_EXPORT SLoop
 {
 public:
     // constructor
     SLoop();
+    SLoop(const SLoop &) = delete;
     // destructor
     virtual ~SLoop();
+
+    SLoop & operator=(const SLoop &) = delete;
 
     bool addFile(const std::string & file);
     bool addFiles(const std::vector<std::string> & files);

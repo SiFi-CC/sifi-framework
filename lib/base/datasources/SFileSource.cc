@@ -113,5 +113,5 @@ bool SFileSource::readCurrentEvent()
  */
 void SFileSource::setInput(const std::string& filename, size_t buffer_size) {
     input = filename;
-    buffer_size = buffer_size;
+    this->buffer_size = buffer_size;
 }

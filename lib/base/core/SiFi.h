@@ -35,13 +35,11 @@ class SiFi
 protected:
     // members
     TFile* outputFile;                          ///< Pointer to output file
-    TTree* outputTree;                          ///< Pointer to output tree
-    std::string outputTreeTitle;                ///< Output tree title
-    std::string outputTreeName;                 ///< Output tree name
     std::string outputFileName;                 ///< Output file name
+    TTree* outputTree;                          ///< Pointer to output tree
+    std::string outputTreeName;                 ///< Output tree name
     SRootFileHeader fileHeader;                 ///< Root File Header
     TTree* inputTree;                           ///< Pointer to input tree
-    std::string inputTreeTitle;                 ///< Input tree title
     std::string inputTreeName;                  ///< Input tree name
     std::vector<SDataSource *> inputSources;    ///< Input file name
     int numberOfEntries;                        ///< Number of input entries
@@ -49,7 +47,7 @@ protected:
     SEvent * event;                             ///< Event info structure
 
     /// Ctaegory info
-    struct CategoryInfo
+    static struct CategoryInfo
     {
         bool registered = false;    ///< Category is registered
         bool persistent = false;    ///< Category is persistent
@@ -59,10 +57,8 @@ protected:
         size_t dim;                 ///< Dimension of ctageory
         size_t sizes[16];           ///< Sizes of dimension
         SCategory * ptr = nullptr;  ///< Pointer to category object
-    };
+    }   cinfovec[SCategory::CatLimitDoNotUse * 2];  ///< Category info array
 
-    /// Category info array
-    CategoryInfo cinfovec[SCategory::CatLimitDoNotUse * 2];
 
     std::map<SCategory::Cat, SCategory *> categories;   ///< Map of categories
     static SiFi * mm;               ///< Instance of the SiFi
@@ -102,7 +98,7 @@ public:
     /// \return is simulation
     bool isSimulation() const { return sim; }
 
-    SIFI_EXPORT bool registerCategory(SCategory::Cat cat, const std::string & name, size_t dim, size_t * sizes, bool simulation);
+    SIFI_EXPORT static bool registerCategory(SCategory::Cat cat, const std::string & name, size_t dim, size_t * sizes, bool simulation);
 
     SIFI_EXPORT SCategory * buildCategory(SCategory::Cat cat, bool persistent = true);
     SIFI_EXPORT SCategory * getCategory(SCategory::Cat cat, bool persistent = true);

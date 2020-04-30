@@ -12,11 +12,13 @@
 #ifndef SCATEGORYMANAGER_H
 #define SCATEGORYMANAGER_H
 
+#include "sifi_export.h"
+
 #include "SCategory.h"
 
 namespace SCategoryManager
 {
-   SCategory * getCategory(SCategory::Cat cat);
+   SIFI_EXPORT SCategory * getCategory(SCategory::Cat cat);
 }
 
 #endif /* STASKMANAGER_H */

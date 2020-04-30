@@ -31,6 +31,7 @@ managing all data operations. It loads a root tree from specified file.
 SCategory * gNullSCategoryPtr = 0;
 
 SiFi * SiFi::mm = nullptr;
+SiFi::CategoryInfo SiFi::cinfovec[SCategory::CatLimitDoNotUse * 2] = {};
 
 /**
  * Returns instance of the Detector Manager class.
@@ -58,13 +59,12 @@ SiFi * sifi()
 /**
  * Default constructor
  */
-SiFi::SiFi() :
-    outputFile(nullptr), outputTree(nullptr), outputTreeTitle("S"),
-    outputTreeName("S"), outputFileName("output.root"),
-    inputTree(nullptr), inputTreeTitle("S"), inputTreeName("S"),
-    numberOfEntries(-1), currentEntry(-1), event(nullptr),
-    cinfovec(),
-    sim(false), branches_set(false)
+SiFi::SiFi()
+    : outputFile(nullptr), outputFileName("output.root")
+    , outputTree(nullptr), outputTreeName("S")
+    , inputTree(nullptr), inputTreeName("S")
+    , numberOfEntries(-1), currentEntry(-1), event(nullptr)
+    , sim(false), branches_set(false)
 {
 }
 
@@ -106,7 +106,7 @@ bool SiFi::book(bool with_tree)
     }
 
     // Create tree
-    outputTree = new TTree(outputTreeName.c_str(), outputTreeTitle.c_str());
+    outputTree = new TTree(outputTreeName.c_str(), outputTreeName.c_str());
 
     return true;
 }
@@ -213,10 +213,10 @@ bool SiFi::registerCategory(SCategory::Cat cat, const std::string & name, size_t
 {
     int pos = getCategoryIndex(cat, simulation);
 
-    if (cinfovec[pos].registered == true)
+    if (SiFi::cinfovec[pos].registered == true)
         return true;
 
-    CategoryInfo cinfo;
+    CategoryInfo & cinfo = SiFi::cinfovec[pos];
     cinfo.registered = true;
     cinfo.cat = cat;
     cinfo.name = name;
@@ -225,8 +225,6 @@ bool SiFi::registerCategory(SCategory::Cat cat, const std::string & name, size_t
     for (int i = 0; i < dim; ++i)
         cinfo.sizes[i] = sizes[i];
     cinfo.ptr = nullptr;
-
-    cinfovec[pos] = cinfo;
 
     return true;
 }
@@ -243,7 +241,7 @@ void SiFi::initBranches()
     size_t limit = SCategory::CatLimitDoNotUse * 2;
     for (size_t i = 0; i < limit; ++i)
     {
-        CategoryInfo cinfo = cinfovec[i];
+        CategoryInfo & cinfo = SiFi::cinfovec[i];
         if (!cinfo.persistent)
             continue;
 
@@ -270,7 +268,7 @@ SCategory * SiFi::buildCategory(SCategory::Cat cat, bool persistent)
 
     int pos = getCategoryIndex(cat, sim);
 
-    CategoryInfo cinfo = cinfovec[pos];
+    CategoryInfo & cinfo = SiFi::cinfovec[pos];
     if (cinfo.registered == false)
         return gNullSCategoryPtr;
 
@@ -281,7 +279,6 @@ SCategory * SiFi::buildCategory(SCategory::Cat cat, bool persistent)
     if (cat_ptr)
     {
         categories[cat] = cat_ptr;
-        cinfovec[pos] = cinfo;
         fileHeader.catName[cat] = cinfo.name;
         return cat_ptr;
     }
@@ -301,7 +298,7 @@ SCategory * SiFi::buildCategory(SCategory::Cat cat, bool persistent)
 SCategory * SiFi::getCategory(SCategory::Cat cat, bool /*persistent*/)
 {
     int pos = getCategoryIndex(cat, sim);
-    CategoryInfo cinfo = cinfovec[pos];
+    CategoryInfo & cinfo = SiFi::cinfovec[pos];
     if (cinfo.registered == false)
         return gNullSCategoryPtr;
     if (cinfo.ptr)

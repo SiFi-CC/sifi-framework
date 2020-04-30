@@ -42,12 +42,14 @@ SLoop::SLoop()
 
     sifi()->setTree(chain);
     sifi()->setEvent(event);
+
+    memset(categories, 0, SCategory::CatLimitDoNotUse*2 * sizeof(SCategory*));
 }
 
 SLoop::~SLoop()
 {
-    delete event;
     delete chain;
+    delete event;
 }
 
 /**
@@ -91,6 +93,7 @@ bool SLoop::addFiles(const std::vector<std::string>& files)
 /**
  * Set categories to be read from the input files.
  *
+ * \todo categories selection doesn't work yet
  * \param categories list of categories to be read.
  */
 void SLoop::setInput(std::initializer_list<SCategory::Cat> categories)
@@ -101,10 +104,14 @@ void SLoop::setInput(std::initializer_list<SCategory::Cat> categories)
     chain->GetEntry(current_event);
 
     current_tree = chain->GetTree();
-    current_tree->Print();
 
     TFile * f = chain->GetCurrentFile();
     f->GetObject("FileHeader", file_header);
+
+    if (!file_header) {
+        std::cerr << "File header does not exists!" << std::endl;
+        abort();
+    }
 
     CatNameMap::iterator iter = file_header->catName.begin();
     for (; iter != file_header->catName.end(); ++iter)
