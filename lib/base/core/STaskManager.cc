@@ -77,9 +77,9 @@ void STaskManager::addTask(STask* task, int step)
  */
 void STaskManager::initTasks()
 {
-    for (TasksMap::const_iterator it = tasks.begin(); it != tasks.end(); ++it)
+    for (const auto & t : tasks)
     {
-        bool res = it->second->init();
+        bool res = t.second->init();
 
         if (!res)
         {
@@ -94,9 +94,9 @@ void STaskManager::initTasks()
  */
 void STaskManager::reinitTasks()
 {
-    for (TasksMap::const_iterator it = tasks.begin(); it != tasks.end(); ++it)
+    for (const auto & t : tasks)
     {
-        bool res = it->second->reinit();
+        bool res = t.second->reinit();
 
         if (!res)
         {
@@ -113,9 +113,9 @@ void STaskManager::reinitTasks()
  */
 void STaskManager::runTasks()
 {
-    for (TasksMap::const_iterator it = tasks.begin(); it != tasks.end(); ++it)
+    for (const auto & t : tasks)
     {
-        bool res = it->second->execute();
+        bool res = t.second->execute();
 
         if (!res)
         {
@@ -130,9 +130,9 @@ void STaskManager::runTasks()
  */
 void STaskManager::finalizeTasks()
 {
-    for (TasksMap::const_iterator it = tasks.begin(); it != tasks.end(); ++it)
+    for (const auto & t : tasks)
     {
-        bool res = it->second->finalize();
+        bool res = t.second->finalize();
 
         if (!res)
         {

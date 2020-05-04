@@ -46,7 +46,6 @@ SFibersStackGeomPar::~SFibersStackGeomPar()
 void SFibersStackGeomPar::clear()
 {
     delete [] mods;
-    mods = nullptr;
     modules = 0;
 }
 
@@ -61,7 +60,7 @@ bool SFibersStackGeomPar::getParams(SParContainer* parcont)
 {
     if (!parcont->fill("nModules", modules)) return false;
 
-    if (mods) delete [] mods;
+    if (modules) delete [] mods;
     mods = new SingleModule[modules];
 
     // get layers

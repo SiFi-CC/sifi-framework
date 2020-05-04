@@ -95,7 +95,31 @@ file(GLOB_RECURSE FFILES *.[hc] *.[hc]pp)
 clang_format(format ${FFILES})
 include_what_you_use(-Xiwyu)
 
-build_docs(TARGET_NAME doc DOXYFILE_PATH ${CMAKE_SOURCE_DIR}/Doxyfile.in PROCESS_DOXYFILE)
+option(ROOT_XREF "Root Cross-reference in doc" OFF)
+
+# add_custom_command(
+#     OUTPUT ROOT.tag
+#     COMMAND curl https://root.cern.ch/doc/master/ROOT.tag -o ROOT.tag
+#     BYPRODUCTS ROOT.tag
+# )
+
+if (ROOT_XREF)
+    set(TAGFILES ${CMAKE_BINARY_DIR}/ROOT.tag=https://root.cern/doc/master/)
+else()
+    unset(TAGFILES)
+endif()
+
+build_docs(ADD_TO_DOC DOXYFILE_PATH ${CMAKE_SOURCE_DIR}/Doxyfile.in PROCESS_DOXYFILE)
+
+if (ROOT_XREF)
+    add_custom_target(
+        ROOT_tag
+        COMMAND curl https://root.cern.ch/doc/master/ROOT.tag -o ROOT.tag -C -
+        BYPRODUCTS ROOT.tag
+    )
+    add_dependencies(doc ROOT_tag)
+endif()
+
 
 cxx_17()
 # add_code_coverage()

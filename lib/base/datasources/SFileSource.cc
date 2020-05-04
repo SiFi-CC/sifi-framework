@@ -45,12 +45,11 @@ bool SFileSource::open()
     }
     else
     {
-        std::map<uint16_t, SUnpacker *>::iterator iter = unpackers.begin();
-        for (; iter != unpackers.end(); ++iter)
+        for (auto & unp : unpackers)
         {
-            bool res = iter->second->init();
+            bool res = unp.second->init();
             if (!res) {
-                printf("Unpacker %#x not initalized\n", iter->first);
+                printf("Unpacker %#x not initalized\n", unp.first);
                 abort();
             }
         }
@@ -97,9 +96,8 @@ bool SFileSource::readCurrentEvent()
     }
     else
     {
-        std::map<uint16_t, SUnpacker *>::iterator iter = unpackers.begin();
-        for (; iter != unpackers.end(); ++iter)
-            iter->second->execute(0, 0, iter->first, buffer, buffer_size);
+        for (auto & unp : unpackers)
+            unp.second->execute(0, 0, unp.first, buffer, buffer_size);
     }
 
     return true;

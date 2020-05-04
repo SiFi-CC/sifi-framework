@@ -174,6 +174,20 @@ SParManager::SParManager()
  */
 SParManager::~SParManager()
 {
+    for (auto & c : parconts)
+        delete c.second;
+
+    for (auto & c : lu_containers)
+        delete c.second;
+
+    for (auto & c : cal_containers)
+        delete c.second;
+
+    for (auto & c : par_containers)
+        delete c.second;
+
+    for (auto & c : containers)
+        delete c.second;
 }
 
 /**
@@ -311,9 +325,8 @@ void SParManager::writeContainers(const std::vector<std::string> & names) const
  */
 void SParManager::print() const
 {
-    std::map<std::string, SParContainer *>::const_iterator par_it = par_containers.begin();
-    for (; par_it != par_containers.end(); ++par_it)
-        par_it->second->print();
+    for (const auto & p : par_containers)
+        p.second->print();
 }
 
 /**

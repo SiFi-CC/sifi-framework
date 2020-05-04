@@ -22,8 +22,7 @@ class SIFI_EXPORT SDetectorManager
 {
 private:
     // members
-    typedef std::map<std::string, SDetector *> DetectorsMap;    ///< type DetMap
-    DetectorsMap detectors;             ///< map detector name to object
+    std::map<std::string, SDetector *> detectors;   ///< map det name to object
     static SDetectorManager * detm;     ///< Instance of the SDetectorManager
 
 private:
@@ -37,7 +36,7 @@ public:
     // instance method
     static SDetectorManager * instance();
     // destructor
-    ~SDetectorManager() {}
+    virtual ~SDetectorManager();
 
     // methods
     void addDetector(SDetector * detector);

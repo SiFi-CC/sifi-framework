@@ -30,7 +30,7 @@
 #include <fstream>
 #include <map>
 
-class SiFi
+class SIFI_EXPORT SiFi
 {
 protected:
     // members
@@ -77,7 +77,7 @@ public:
     SIFI_EXPORT static SiFi * instance();
 
     // destructor
-    virtual ~SiFi() {};
+    virtual ~SiFi();
 
     // methods
     void print() const;

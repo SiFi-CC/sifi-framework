@@ -26,9 +26,8 @@ class SIFI_EXPORT STaskManager
 {
 protected:
     // members
-    typedef std::multimap<int, STask *> TasksMap;   ///< TaskMap type
-    TasksMap tasks;                 ///< Tasks map
-    static STaskManager * tm;       ///< Instance of the STaskManager
+    std::multimap<int, STask *> tasks;  ///< Tasks map
+    static STaskManager * tm;           ///< Instance of STaskManager
 
 private:
     // constructors

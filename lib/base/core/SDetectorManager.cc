@@ -59,6 +59,12 @@ SDetectorManager * dm()
     return SDetectorManager::instance();
 }
 
+SDetectorManager::~SDetectorManager() {
+    for (auto & d: detectors)
+        if (d.second)
+            delete d.second;
+}
+
 /**
  * Add detector.
  *
@@ -78,7 +84,7 @@ void SDetectorManager::addDetector(SDetector* detector)
  */
 SDetector * SDetectorManager::getDetector(const std::string& name)
 {
-    DetectorsMap::iterator it = detectors.find(name);
+    std::map<std::string, SDetector *>::iterator it = detectors.find(name);
     if (it != detectors.end())
         return it->second;
     else
@@ -90,9 +96,9 @@ SDetector * SDetectorManager::getDetector(const std::string& name)
  */
 void SDetectorManager::initTasks()
 {
-    for (DetectorsMap::iterator it = detectors.begin(); it != detectors.end(); ++it)
+    for (const auto & d: detectors)
     {
-        bool res = it->second->initTasks();
+        bool res = d.second->initTasks();
 
         if (!res)
         {
@@ -109,9 +115,9 @@ void SDetectorManager::initTasks()
  */
 void SDetectorManager::initParameterContainers()
 {
-    for (DetectorsMap::iterator it = detectors.begin(); it != detectors.end(); ++it)
+    for (const auto & d: detectors)
     {
-        bool res = it->second->initContainers();
+        bool res = d.second->initContainers();
 
         if (!res)
         {
@@ -129,9 +135,9 @@ void SDetectorManager::initParameterContainers()
  */
 void SDetectorManager::initCategories()
 {
-    for (DetectorsMap::iterator it = detectors.begin(); it != detectors.end(); ++it)
+    for (const auto & d: detectors)
     {
-        bool res = it->second->initCategories();
+        bool res = d.second->initCategories();
 
         if (!res)
         {

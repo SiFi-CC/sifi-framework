@@ -30,12 +30,10 @@ A header object for the category
 
 */
 
-typedef std::map<SCategory::Cat, TString> CatNameMap;
-
 class SRootFileHeader : public TObject
 {
 public:
-    CatNameMap  catName;        ///< category type
+    std::map<SCategory::Cat, TString> catName;      ///< category type
 public:
     // constructor
     SRootFileHeader() : TObject() {}

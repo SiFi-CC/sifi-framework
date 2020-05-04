@@ -53,16 +53,16 @@ WhatNext parseValues(const std::string & str, std::vector<std::string> & values)
     {
         size_t pos = str.find_first_not_of(' ', pos2);
 
-        // if new line detected
-        if (str[pos] == '\\')
-        {
-            return WNParamCont;
-        }
-
         // if end of line
         if (pos == str.npos)
         {
             break;
+        }
+
+        // if new line detected
+        if (str[pos] == '\\')
+        {
+            return WNParamCont;
         }
 
         pos2 = str.find_first_of(' ', pos+1);
@@ -382,13 +382,12 @@ bool SParContainer::fill(const std::string & name, TArrayD& val)
 void SParContainer::print()
 {
     printf("Container [%s]\n", container.c_str());
-    ParMap::const_iterator it = parameters.begin();
-    for (; it != parameters.end(); ++it)
+    for (const auto & p : parameters)
     {
-        printf("%s:  %s", it->first.c_str(), it->second.first.c_str());
-        for (int i = 0; i < it->second.second.size(); ++i)
+        printf("%s:  %s", p.first.c_str(), p.second.first.c_str());
+        for (int i = 0; i < p.second.second.size(); ++i)
         {
-            printf("  %s", it->second.second[i].c_str());
+            printf("  %s", p.second.second[i].c_str());
         }
         putchar('\n');
     }

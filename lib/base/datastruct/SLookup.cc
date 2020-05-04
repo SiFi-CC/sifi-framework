@@ -131,13 +131,15 @@ void SLookupChannel::fromHash(uint64_t hash)
 SLookupBoard::SLookupBoard(uint addr, uint nchan) :
     addr(addr), nchan(nchan)
 {
-    channels = new SLookupChannel*[nchan];
-    for (uint i = 0; i < nchan; ++i)
-        channels[i] = 0;
+    channels = new SLookupChannel*[nchan]{nullptr};
 }
 
 SLookupBoard::~SLookupBoard()
 {
+    for (uint i = 0; i < nchan; ++i)
+        if (channels[i])
+            delete channels[i];
+
     delete [] channels;
 }
 

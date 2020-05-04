@@ -93,6 +93,12 @@ SCalContainer::SCalContainer(const std::string& container)
 {
 }
 
+SCalContainer::~SCalContainer()
+{
+    for (auto & p : calpars)
+        delete p.second;
+}
+
 /**
  * Read cal parameters from respective SContainer. Uses lookup channel hash as
  * a key for the map, and SCalPar or derivied for a value.
@@ -110,10 +116,11 @@ void SCalContainer::fromContainer()
     {
         SLookupChannel * chan = createChannel();
         int cnt = chan->read(line.c_str());
-        SCalPar cp;
-        cp.read(line.c_str() + cnt);
+        SCalPar * cp = new SCalPar;
+        cp->read(line.c_str() + cnt);
 
         calpars.insert({chan->quickHash(), cp});
+        delete chan;
     }
 
     is_init = true;
@@ -143,7 +150,7 @@ void SCalContainer::toContainer() const
         std::string s("  ");
         s += buff;
         s += "\t\t";
-        calpar.second.write(buff, len);
+        calpar.second->write(buff, len);
         s += buff;
         sc->lines.push_back(s);
     }
@@ -159,11 +166,11 @@ void SCalContainer::toContainer() const
  * \param channel channel object
  * \return calibration parameter object
  */
-SCalPar& SCalContainer::getPar(const SLookupChannel * channel) {
+SCalPar* SCalContainer::getPar(const SLookupChannel * channel) {
     if (!is_init) fromContainer();
 
     uint64_t hash = channel->quickHash();
-    std::map<size_t, SCalPar>::iterator it = calpars.find(hash);
+    std::map<size_t, SCalPar*>::iterator it = calpars.find(hash);
 
     assert(it != calpars.end());
     return it->second;
@@ -182,7 +189,7 @@ void SCalContainer::print()
         SLookupChannel * chan = createChannel();
         chan->fromHash(calpar.first);
         chan->print("");
-        calpar.second.print("  ");
+        calpar.second->print("  ");
     }
 
 }

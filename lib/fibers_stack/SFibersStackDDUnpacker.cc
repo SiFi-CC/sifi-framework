@@ -221,8 +221,10 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
         [bl](float f) { return f - bl; });
 
     Float_t threshold = 0;
-    Float_t ampl = 0;
+    Float_t ampl = -100;
     Int_t pileup = 0;
+    Float_t tot = -100;
+    Float_t charge = -100;
 
     if (pol == 1)
     {
@@ -236,20 +238,22 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
     }
     Float_t t0 = FindT0(samples, limit, threshold, pol);
 
-    Float_t _mod = t0 - int(t0);
-    Int_t _t0 = _mod > 0. ? int(t0 + 1) : int(t0);
+    if (t0 >= 0) {
+        Float_t _mod = t0 - int(t0);
+        Int_t _t0 = _mod > 0. ? int(t0 + 1) : int(t0);
 
-    Float_t tmax =
-        FindTMax(samples, limit, threshold, _t0, pol, deadtime, pileup);
-    Float_t tot = tmax - t0;
+        Float_t tmax =
+            FindTMax(samples, limit, threshold, _t0, pol, deadtime, pileup);
+        tot = tmax - t0;
 
-    Int_t _tmax = tmax;
-    Int_t _len = intmode <= 0 ? _tmax - _t0 : intmode;
+        Int_t _tmax = tmax;
+        Int_t _len = intmode <= 0 ? _tmax - _t0 : intmode;
 
-    if (_len+_t0 >= 1024) _len = 1024 - _t0 - 1;
+        if (_len+_t0 >= 1024) _len = 1024 - _t0 - 1;
 
-    Float_t charge = std::accumulate(samples + _t0, samples + _t0 + _len, 0);
-    if (pol == 0) charge = -charge;
+        charge = std::accumulate(samples + _t0, samples + _t0 + _len, 0);
+        if (pol == 0) charge = -charge;
+    }
 
     SFibersStackRaw* pRaw = dynamic_cast<SFibersStackRaw*>(catFibersRaw->getObject(loc));
     if (!pRaw)

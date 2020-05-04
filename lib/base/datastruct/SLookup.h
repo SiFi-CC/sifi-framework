@@ -40,6 +40,8 @@ class SLookupTable;
  */
 struct SIFI_EXPORT SLookupChannel
 {
+    virtual ~SLookupChannel() = default;
+
     ///@{
     uint8_t m, l, s;    ///< component of virtual address
     ///}@

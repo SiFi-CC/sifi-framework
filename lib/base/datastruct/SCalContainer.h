@@ -58,19 +58,20 @@ class SIFI_EXPORT SCalContainer
 {
 protected:
     std::string name;                   ///< container name
-    std::map<size_t, SCalPar> calpars;  ///< individual calibration parameters
+    std::map<size_t, SCalPar*> calpars;  ///< individual calibration parameters
     bool is_init;                       ///< is container init
 
 public:
     // constructor
     explicit SCalContainer(const std::string & container);
+    virtual ~SCalContainer();
 
     /// return empty object of Lookup channel
     /// \sa SLookupTable::createChannel()
     /// \return empty lookup channel
     virtual SLookupChannel * createChannel() const { return new SLookupChannel; }
 
-    SCalPar & getPar(const SLookupChannel * channel);
+    SCalPar * getPar(const SLookupChannel * channel);
 
     virtual void print();
 

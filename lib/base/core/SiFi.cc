@@ -68,6 +68,22 @@ SiFi::SiFi()
 {
 }
 
+SiFi::~SiFi()
+{
+    if (outputFile)
+        delete outputFile;
+
+    if (inputTree)
+        delete inputTree;
+
+    for (auto & c : categories)
+        delete c.second;
+
+    for (auto & s : inputSources)
+        delete s;
+}
+
+
 /**
  * Set simulation run.
  *
@@ -176,16 +192,11 @@ bool SiFi::open()
         return false;
     }
 
-    for (uint i = 0; i < inputSources.size(); ++i)
+    for (auto & s : inputSources)
     {
 //         printf("Add file %s\n", inputFiles[i].c_str());
 //         inputTree->Add(inputFiles[i].c_str());
-        inputSources[i]->open();
-    }
-
-    if (!inputTree) {
-        std::cerr << "[Error] in SiFi open: openTree == NULL" << "\n";
-        return false;
+        s->open();
     }
 
     inputTree->SetBranchStatus("*");
@@ -377,11 +388,11 @@ void SiFi::clear()
  */
 void SiFi::loop(long entries, bool show_progress_bar)
 {
-    for (ulong s = 0; s < inputSources.size(); ++s)
+    for (auto & s : inputSources)
     {
-        bool rc = inputSources[s]->open();
+        bool rc = s->open();
         if (!rc) {
-            printf("Could not open source %zu\n", s);
+            printf("Could not open source %d\n", 0);    // TODO add some feedback info
             abort();
         }
     }
@@ -397,9 +408,9 @@ void SiFi::loop(long entries, bool show_progress_bar)
         clear();
         bool flag = false;
 
-        for (uint s = 0; s < inputSources.size(); ++s)
+        for (auto & s : inputSources)
         {
-            flag = inputSources[s]->readCurrentEvent();
+            flag = s->readCurrentEvent();
             if (!flag) break;
         }
 

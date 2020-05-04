@@ -146,7 +146,5 @@ int main(int argc, char** argv)
 //     pm()->setParamDest("p.txt");
 //     pm()->writeDestination();
 
-    delete unp;
-
     return 0;
 }

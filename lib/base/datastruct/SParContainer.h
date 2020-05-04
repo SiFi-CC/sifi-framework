@@ -26,7 +26,7 @@
 typedef std::pair<std::string, std::vector<std::string> > TypeDataField;
 typedef std::map<std::string, TypeDataField> ParMap;
 
-class SParContainer
+class SIFI_EXPORT SParContainer
 {
 protected:
     // members

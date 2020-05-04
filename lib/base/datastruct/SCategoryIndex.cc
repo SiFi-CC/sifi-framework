@@ -86,9 +86,8 @@ void SCategoryIndex::clear()
 void SCategoryIndex::compress()
 {
     Int_t j = 0;
-    IndexMap::iterator it = idxmap.begin();
-    for (; it != idxmap.end(); ++it)
-        it->second = j++;
+    for (auto & i : idxmap)
+        i.second = j++;
 
     compressed = kTRUE;
 }

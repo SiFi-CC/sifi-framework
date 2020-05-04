@@ -113,12 +113,11 @@ void SLoop::setInput(std::initializer_list<SCategory::Cat> categories)
         abort();
     }
 
-    CatNameMap::iterator iter = file_header->catName.begin();
-    for (; iter != file_header->catName.end(); ++iter)
+    for (auto & cn : file_header->catName)
     {
-        printf("Read category %s\n", iter->second.Data());
+        printf("Read category %s\n", cn.second.Data());
 
-        TBranch * br = current_tree->GetBranch(Form("%s", iter->second.Data())); // FIXME add .
+        TBranch * br = current_tree->GetBranch(Form("%s", cn.second.Data())); // FIXME add .
         if(!br)
         {
     //         Error("setInput()","Branch not found : %s !",Form("%s.",catname.Data()));
@@ -126,12 +125,12 @@ void SLoop::setInput(std::initializer_list<SCategory::Cat> categories)
         }
         else
         {
-            int pos = SiFi::getCategoryIndex(iter->first, sifi()->isSimulation());
-            chain->SetBranchAddress(Form("%s", iter->second.Data()), &(this->categories[pos]));
-            chain->SetBranchStatus (Form("%s", iter->second.Data()),1);
-            chain->SetBranchStatus (Form("%s", iter->second.Data()),1);
+            int pos = SiFi::getCategoryIndex(cn.first, sifi()->isSimulation());
+            chain->SetBranchAddress(Form("%s", cn.second.Data()), &(this->categories[pos]));
+            chain->SetBranchStatus (Form("%s", cn.second.Data()),1);
+            chain->SetBranchStatus (Form("%s", cn.second.Data()),1);
 
-            sifi()->getCurrentEvent()->addCategory(iter->first, this->categories[pos]);
+            sifi()->getCurrentEvent()->addCategory(cn.first, this->categories[pos]);
         }
     }
 }
