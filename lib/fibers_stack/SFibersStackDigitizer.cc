@@ -40,13 +40,6 @@ SFibersStackDigitizer::SFibersStackDigitizer()
 }
 
 /**
- * Destructor
- */
-SFibersStackDigitizer::~SFibersStackDigitizer()
-{
-}
-
-/**
  * Init task
  * \sa STask::init()
  * \return success

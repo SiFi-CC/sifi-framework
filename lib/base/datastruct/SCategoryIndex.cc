@@ -57,9 +57,9 @@ Bool_t SCategoryIndex::setMapIndex(Int_t pos, Int_t val)
  * \param pos input index of the original coordinate
  * \return index of the mapped value
  */
-Int_t SCategoryIndex::getMapIndex(Int_t pos)
+Int_t SCategoryIndex::getMapIndex(Int_t pos) const
 {
-    IndexMap::const_iterator it = idxmap.find(pos);
+    const auto & it = idxmap.find(pos);
     if (it == idxmap.end())
         return -1;
     return it->second;

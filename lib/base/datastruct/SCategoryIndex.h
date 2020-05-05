@@ -23,17 +23,16 @@ class SCategoryIndex : public TObject
 {
 private:
     // members
-    typedef std::map<Int_t, Int_t> IndexMap;    ///< index map type
-    IndexMap idxmap;                            ///< map of indexes
+    std::map<Int_t, Int_t> idxmap;              ///< map of indexes
     // flags
     Bool_t compressed;                          ///< compressed
 
 public:
     SCategoryIndex();
-    virtual ~SCategoryIndex() {}
+    virtual ~SCategoryIndex() = default;
 
     Bool_t setMapIndex(Int_t pos, Int_t val);
-    Int_t getMapIndex(Int_t pos);
+    Int_t getMapIndex(Int_t pos) const;
 
     /// Is category compressed already
     /// \return compressed

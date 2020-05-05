@@ -36,6 +36,8 @@
 class SUnpacker
 {
 public:
+    virtual ~SUnpacker() = default;
+
     /// Initialize task
     /// \return success
     virtual bool init() { return true; };

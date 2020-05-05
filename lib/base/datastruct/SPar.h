@@ -27,7 +27,7 @@ public:
     // constructor
     SPar();
     // destructor
-    virtual ~SPar();
+    virtual ~SPar() = default;
 
     // methods
     /// Clear parameters

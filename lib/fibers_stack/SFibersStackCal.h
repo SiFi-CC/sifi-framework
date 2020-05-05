@@ -21,6 +21,7 @@ class SFibersStackCal : public SFibersStackRaw
 public:
     // constructors
     SFibersStackCal();
+    virtual ~SFibersStackCal() = default;
 
     ClassDef(SFibersStackCal, 1);   // container for fibers stack calibrated data
 };

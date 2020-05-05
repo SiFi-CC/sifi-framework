@@ -37,7 +37,7 @@ SFibersStackGeomPar::SFibersStackGeomPar() : SPar(), mods(nullptr)
  */
 SFibersStackGeomPar::~SFibersStackGeomPar()
 {
-    delete [] mods;
+    clear();
 }
 
 /**

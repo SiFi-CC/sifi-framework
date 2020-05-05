@@ -38,7 +38,7 @@ public:
     // constructor
     SFibersStackDigitizer();
     // destructor
-    virtual ~SFibersStackDigitizer();
+    virtual ~SFibersStackDigitizer() = default;
 
     // methods
     bool init() override;

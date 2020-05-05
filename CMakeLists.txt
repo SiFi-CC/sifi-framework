@@ -91,17 +91,11 @@ include(doxygen)
 include(formatting)
 include(tools)
 
-file(GLOB_RECURSE FFILES *.[hc] *.[hc]pp)
+file(GLOB_RECURSE FFILES S*.[hc] S*.[hc]pp)
 clang_format(format ${FFILES})
 include_what_you_use(-Xiwyu)
 
 option(ROOT_XREF "Root Cross-reference in doc" OFF)
-
-# add_custom_command(
-#     OUTPUT ROOT.tag
-#     COMMAND curl https://root.cern.ch/doc/master/ROOT.tag -o ROOT.tag
-#     BYPRODUCTS ROOT.tag
-# )
 
 if (ROOT_XREF)
     set(TAGFILES ${CMAKE_BINARY_DIR}/ROOT.tag=https://root.cern/doc/master/)

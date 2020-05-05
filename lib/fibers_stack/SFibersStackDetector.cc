@@ -58,13 +58,6 @@ SFibersStackDetector::SFibersStackDetector(const std::string & name, size_t m, s
 }
 
 /**
- * Destructor
- */
-SFibersStackDetector::~SFibersStackDetector()
-{
-}
-
-/**
  * Init tasks
  *
  * \sa SPar::initTasks()

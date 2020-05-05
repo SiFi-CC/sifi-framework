@@ -39,7 +39,7 @@ public:
     // constrructor
     SGeantFibersRaw();
     // destructor
-    virtual ~SGeantFibersRaw() {}
+    virtual ~SGeantFibersRaw() = default;
 
     // inherited from ROOT
     void Clear(Option_t* opt = "");

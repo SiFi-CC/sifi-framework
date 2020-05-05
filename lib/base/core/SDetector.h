@@ -34,7 +34,7 @@ public:
     // constructor
     SDetector(const std::string & name);
     // destructor
-    virtual ~SDetector() {};
+    virtual ~SDetector() = default;
 
     // methods
     /// Initialize tasks

@@ -37,7 +37,7 @@ public:
     /// \param N dimension of the locator
     explicit SLocator(std::size_t N) : dim(N), addr(N) {}
     //destructor
-    virtual ~SLocator() {}
+    virtual ~SLocator() = default;
 
     //methods
 

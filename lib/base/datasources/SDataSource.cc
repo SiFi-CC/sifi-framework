@@ -33,3 +33,9 @@ void SDataSource::addUnpacker(SUnpacker * unpacker, const std::vector<uint16_t> 
         unpackers[addr] = unpacker;
     }
 }
+
+SDataSource::~SDataSource()
+{
+    for (auto & unp : unpackers)
+        delete unp.second;
+}

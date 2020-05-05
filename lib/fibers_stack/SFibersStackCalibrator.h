@@ -30,7 +30,7 @@ public:
     // constructor
     SFibersStackCalibrator();
     // destructor
-    virtual ~SFibersStackCalibrator();
+    virtual ~SFibersStackCalibrator() = default;
 
     // methods
     bool init() override;

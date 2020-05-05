@@ -36,6 +36,7 @@ protected:
 public:
     // constructor
     SFibersStackRaw();
+    virtual ~SFibersStackRaw() = default;
 
     // inherited from ROOT
     virtual void Clear(Option_t* opt = "");

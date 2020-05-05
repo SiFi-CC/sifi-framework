@@ -39,13 +39,6 @@ SPar::SPar() : parcont(nullptr)
 }
 
 /**
- * Destructor
- */
-SPar::~SPar()
-{
-}
-
-/**
  * Print container info
  */
 void SPar::print() const

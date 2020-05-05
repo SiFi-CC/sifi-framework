@@ -27,13 +27,6 @@ SFibersStackCalSim::SFibersStackCalSim() : SFibersStackCal(), T(0.0), E(0.0), dE
 }
 
 /**
- * Destructor
- */
-SFibersStackCalSim::~SFibersStackCalSim()
-{
-}
-
-/**
  * Clear object.
  * Parameter options are ignored, for ROOT compatibility.
  *

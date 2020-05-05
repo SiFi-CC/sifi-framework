@@ -60,7 +60,7 @@ public:
     // constructor
     SGeantTrack();
     // destructor
-    virtual ~SGeantTrack() {}
+    virtual ~SGeantTrack() = default;
 
     void clear();
     void addProcess(const std::string & name);

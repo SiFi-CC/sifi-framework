@@ -35,7 +35,7 @@ class SUnpacker;
 class SIFI_EXPORT SDataSource
 {
 public:
-    virtual ~SDataSource() {}
+    virtual ~SDataSource();
 
     /// Open the source
     /// \return success

@@ -38,7 +38,7 @@ public:
     // constructor
     explicit SParContainer(const std::string & container);
     // destructor
-    virtual ~SParContainer() {}
+    virtual ~SParContainer() = default;
 
     // methods
     virtual bool add(const std::string & name, Int_t val);
@@ -59,7 +59,7 @@ public:
     void fromContainer();
     void toContainer() const;
 
-    void print();
+    void print() const;
 
 protected:
     // methods

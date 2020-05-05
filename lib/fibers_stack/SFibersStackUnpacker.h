@@ -27,7 +27,7 @@ public:
     // constructor
     SFibersStackUnpacker();
     // destructor
-    virtual ~SFibersStackUnpacker();
+    virtual ~SFibersStackUnpacker() = default;
 
     // methods
     bool init() override;

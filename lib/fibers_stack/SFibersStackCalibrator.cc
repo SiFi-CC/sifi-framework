@@ -39,13 +39,6 @@ SFibersStackCalibrator::SFibersStackCalibrator() : STask(), catFibersRaw(nullptr
 }
 
 /**
- * Default destructor
- */
-SFibersStackCalibrator::~SFibersStackCalibrator()
-{
-}
-
-/**
  * Init task
  *
  * \sa STask::init()

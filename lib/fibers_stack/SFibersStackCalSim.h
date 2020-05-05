@@ -26,7 +26,7 @@ public:
     // constructors
     SFibersStackCalSim();
     // detructor
-    ~SFibersStackCalSim();
+    virtual ~SFibersStackCalSim() = default;
 
     // inherited from ROOT
     virtual void Clear(Option_t* opt = "") override;

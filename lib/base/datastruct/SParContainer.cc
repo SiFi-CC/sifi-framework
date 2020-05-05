@@ -379,7 +379,7 @@ bool SParContainer::fill(const std::string & name, TArrayD& val)
 /**
  * Print container
  */
-void SParContainer::print()
+void SParContainer::print() const
 {
     printf("Container [%s]\n", container.c_str());
     for (const auto & p : parameters)

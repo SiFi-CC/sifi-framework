@@ -107,11 +107,6 @@ SFibersStackDDUnpacker::SFibersStackDDUnpacker()
 }
 
 /**
- * Destructor
- */
-SFibersStackDDUnpacker::~SFibersStackDDUnpacker() {}
-
-/**
  * Init task
  *
  * \sa STask::init()

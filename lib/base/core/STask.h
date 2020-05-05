@@ -17,7 +17,7 @@
 class STask
 {
 public:
-    virtual ~STask() {}
+    virtual ~STask() = default;
 
     // methods
     /// Initialize task

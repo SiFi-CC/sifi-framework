@@ -59,6 +59,8 @@ STaskManager::STaskManager()
  */
 STaskManager::~STaskManager()
 {
+    for (auto & t : tasks)
+        delete t.second;
 }
 
 /**

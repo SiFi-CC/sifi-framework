@@ -110,9 +110,7 @@ void SCalContainer::fromContainer()
     SContainer * lc = pm()->getContainer(name);
     if (!lc) throw "No lookup container.";
 
-    const std::vector<std::string> & lv = lc->lines;
-
-    for (auto line: lv)
+    for (const auto & line: lc->lines)
     {
         SLookupChannel * chan = createChannel();
         int cnt = chan->read(line.c_str());
@@ -170,7 +168,7 @@ SCalPar* SCalContainer::getPar(const SLookupChannel * channel) {
     if (!is_init) fromContainer();
 
     uint64_t hash = channel->quickHash();
-    std::map<size_t, SCalPar*>::iterator it = calpars.find(hash);
+    auto it = calpars.find(hash);
 
     assert(it != calpars.end());
     return it->second;
@@ -184,7 +182,7 @@ void SCalContainer::print()
     if (!is_init) fromContainer();
 
     printf("[%s]\n", name.c_str());
-    for (auto calpar: calpars)
+    for (auto & calpar: calpars)
     {
         SLookupChannel * chan = createChannel();
         chan->fromHash(calpar.first);

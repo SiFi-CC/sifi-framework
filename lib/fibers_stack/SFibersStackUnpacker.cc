@@ -34,13 +34,6 @@ SFibersStackUnpacker::SFibersStackUnpacker() : STask(), catFibersRaw(nullptr)
 }
 
 /**
- * Destructor
- */
-SFibersStackUnpacker::~SFibersStackUnpacker()
-{
-}
-
-/**
  * Init task
  * \sa STask::init()
  * \return success
