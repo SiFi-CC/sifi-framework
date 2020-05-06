@@ -199,6 +199,7 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
     // copy samples
     Float_t samples[1024];
     size_t limit = length <= 1024 ? length : 1024;
+
     memcpy(samples, data, limit * sizeof(float));
 
     // find baseline
@@ -259,7 +260,8 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
 
     pRaw->setAddress(loc[0], loc[1], loc[2]);
     if (side == 'l') {
-        pSamples->fillSamplesL(data, length);
+        if (save_samples)
+            pSamples->fillSamplesL(data, length);
         pSamples->getSignalL()->SetAmplitude(ampl / adc_to_mv);
         pSamples->getSignalL()->SetT0(t0 /** sample_to_ns*/);
         pSamples->getSignalL()->SetTOT(tot /** sample_to_ns*/);
@@ -272,7 +274,8 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
         pRaw->setTimeL(t0);
     }
     if (side == 'r') {
-        pSamples->fillSamplesR(data, length);
+        if (save_samples)
+            pSamples->fillSamplesR(data, length);
         pSamples->getSignalR()->SetAmplitude(ampl / adc_to_mv);
         pSamples->getSignalR()->SetT0(t0 /** sample_to_ns*/);
         pSamples->getSignalR()->SetTOT(tot /** sample_to_ns*/);

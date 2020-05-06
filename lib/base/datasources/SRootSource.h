@@ -33,7 +33,7 @@
 class SRootSource : public SDataSource
 {
 public:
-    SRootSource();
+    SRootSource() = default;
 
     virtual bool open() override;
     virtual bool close() override;

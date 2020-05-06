@@ -55,6 +55,8 @@ public:
     /// \param length size of the array in terms of floats
     void setDataLen(size_t length) { data_length = length;}
 
+    static void saveSamples(bool save) { save_samples = save; }
+
 protected:
     /// Decode buffer. This function must be implemented in deriving class to
     /// provide interpretation for data.
@@ -63,6 +65,9 @@ protected:
     /// \param length buffer length
     /// \return success
     virtual bool decode(uint16_t subevent, float * data, size_t length) = 0;
+
+protected:
+    static bool save_samples;
 
 private:
     size_t data_length;         ///< data buffer length

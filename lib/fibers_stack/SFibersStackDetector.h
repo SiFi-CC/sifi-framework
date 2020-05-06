@@ -26,6 +26,7 @@ protected:
 
 public:
     // constructors
+    SFibersStackDetector() = delete;
     explicit SFibersStackDetector(const std::string & name);
     SFibersStackDetector(const std::string & name, size_t m, size_t l, size_t f);
     // destructor

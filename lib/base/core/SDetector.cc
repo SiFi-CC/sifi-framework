@@ -29,7 +29,8 @@ on maximal number of steps, but 32 steps seems sufficient for most of the cases.
  *
  * \param name detector name
  */
-SDetector::SDetector(const std::string & name) : TNamed(name.c_str(), name.c_str()), task_mask(0xff)
+SDetector::SDetector(const std::string & name)
+    : TNamed(name.c_str(), name.c_str()), task_mask(0xff)
 {
 }
 

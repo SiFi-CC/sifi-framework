@@ -31,7 +31,7 @@ protected:
 
 private:
     // constructors
-    STaskManager();
+    STaskManager() = default;
 
 public:
     /// Copy constructor

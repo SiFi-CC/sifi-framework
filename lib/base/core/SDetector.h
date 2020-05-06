@@ -18,6 +18,8 @@
 #include "STaskManager.h"
 #include "SParManager.h"
 
+#include <string>
+
 #include <TNamed.h>
 
 class STask;

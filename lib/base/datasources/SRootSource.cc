@@ -15,10 +15,6 @@
 #include <iostream>
 #include <map>
 
-SRootSource::SRootSource() : SDataSource()
-{
-}
-
 bool SRootSource::open()
 {
     return true;

@@ -54,7 +54,7 @@ struct SIFI_EXPORT SContainer {
     std::vector<std::string> lines;     ///< lines read out from the container
 
     /// Print the contaner name and content
-    void print() {
+    void print() const {
         printf("Container Table [%s]\n", name.c_str());
         for (auto line: lines)
         {
@@ -79,7 +79,7 @@ protected:
 
 private:
     // constructors
-    SParManager();
+    SParManager() = default;
     SParManager(SParManager const &) = delete;
 
     SParManager & operator=(SParManager const &) = delete;

@@ -37,6 +37,7 @@
 int main(int argc, char** argv)
 {
     int events = 1000000;
+    int save_samples = 0;
 
     std::string output("test.root");
     std::string params_file("params.txt");
@@ -44,6 +45,7 @@ int main(int argc, char** argv)
     while (1)
     {
         static struct option long_options[] = {
+            { "ss", no_argument, &save_samples, 1 },
             {"events", required_argument, 0, 'e'},
             {"output", required_argument, 0, 'o'},
             {"params_file", required_argument, 0, 'p'},
@@ -73,6 +75,7 @@ int main(int argc, char** argv)
     }
 
     SFibersStackDDUnpacker* unp = new SFibersStackDDUnpacker();
+    SFibersStackDDUnpacker::saveSamples(save_samples);
 
     while (optind < argc)
     {

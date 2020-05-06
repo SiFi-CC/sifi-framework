@@ -27,7 +27,7 @@ private:
 
 private:
     // constructors
-    SDetectorManager() {}
+    SDetectorManager() = default;
 
 public:
     SDetectorManager(SDetectorManager const &) = delete;

@@ -16,6 +16,8 @@
 
 #include "SDDUnpacker.h"
 
+bool SDDUnpacker::save_samples  = false;
+
 SDDUnpacker::SDDUnpacker() : data_length(0)
 {
 }

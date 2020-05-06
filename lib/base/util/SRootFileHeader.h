@@ -36,7 +36,7 @@ public:
     std::map<SCategory::Cat, TString> catName;      ///< category type
 public:
     // constructor
-    SRootFileHeader() : TObject() {}
+    SRootFileHeader() = default;
 
 private:
     ClassDef(SRootFileHeader,1);

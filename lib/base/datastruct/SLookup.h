@@ -67,6 +67,7 @@ private:
     SLookupChannel ** channels;     ///< array of channels
 
 public:
+    SLookupBoard() = delete;
     SLookupBoard(uint addr, uint nchan);
     SLookupBoard(const SLookupBoard &) = delete;
     SLookupBoard & operator=(const SLookupBoard &) = delete;

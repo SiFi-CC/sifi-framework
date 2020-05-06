@@ -18,10 +18,3 @@
 A container for Fibers Stack Calibrated data
 
 */
-
-/**
- * Default constructor
- */
-SFibersStackCal::SFibersStackCal() : SFibersStackRaw()
-{
-}

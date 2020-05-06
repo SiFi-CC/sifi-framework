@@ -48,13 +48,6 @@ STaskManager * STaskManager::instance()
 }
 
 /**
- * Default constructor
- */
-STaskManager::STaskManager()
-{
-}
-
-/**
  * Default destructor
  */
 STaskManager::~STaskManager()

@@ -163,13 +163,6 @@ SParManager * pm()
 }
 
 /**
- * Default constructor
- */
-SParManager::SParManager()
-{
-}
-
-/**
  * Destructor
  */
 SParManager::~SParManager()
