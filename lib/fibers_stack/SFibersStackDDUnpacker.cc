@@ -203,8 +203,8 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
     memcpy(samples, data, limit * sizeof(float));
 
     // find baseline
-    Float_t bl = std::accumulate(samples, samples + 50, 0);
-    bl /= 50;
+    Float_t bl = std::accumulate(samples, samples + 50, 0.);
+    bl /= 50.;
 
     Float_t bl_sigma = 0;
     for (int i = 0; i < 50; ++i)
@@ -247,7 +247,7 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
 
         if (_len+_t0 >= 1024) _len = 1024 - _t0 - 1;
 
-        charge = std::accumulate(samples + _t0, samples + _t0 + _len, 0);
+        charge = std::accumulate(samples + _t0, samples + _t0 + _len, 0.);
         if (pol == 0) charge = -charge;
     }
 
