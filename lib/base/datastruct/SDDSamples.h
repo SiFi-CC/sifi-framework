@@ -20,7 +20,7 @@
  * Set of functions used in the analysis by Katarzyna Rusiecka. Imported here
  * for compatiblity. Most likely will be deprecated in teh future.
  */
-class SIFI_EXPORT DDSignal
+class SIFI_EXPORT SDDSignal
 {
   public:
     Float_t fAmp;       ///< Amplitude [mV]
@@ -33,7 +33,7 @@ class SIFI_EXPORT DDSignal
     Int_t fPileUp;      ///< pileup flag
 
   public:
-    DDSignal();
+    SDDSignal();
 
     /// Sets signal amplitude in mV
     /// \param amp amplitude of the signal
@@ -85,8 +85,8 @@ class SIFI_EXPORT SDDSamples : public TObject
     Float_t samples_l[1024];    ///< samples read on ou the left side
     Float_t samples_r[1024];    ///< samples read on ou the right side
 
-    DDSignal signal_l;          ///< signal from the left side, backward comp.
-    DDSignal signal_r;          ///< signal from the right side, backward comp.
+    SDDSignal signal_l;          ///< signal from the left side, backward comp.
+    SDDSignal signal_r;          ///< signal from the right side, backward comp.
 
   public:
     // constructor
@@ -134,10 +134,10 @@ class SIFI_EXPORT SDDSamples : public TObject
     Float_t* getSamplesR() { return samples_r; }
     /// Get signal from the left side
     /// \return signal data
-    DDSignal* getSignalL() { return &signal_l; }
+    SDDSignal* getSignalL() { return &signal_l; }
     /// Get signal from the right side
     /// \return signal data
-    DDSignal* getSignalR() { return &signal_r; }
+    SDDSignal* getSignalR() { return &signal_r; }
 
     void print() const;
 
