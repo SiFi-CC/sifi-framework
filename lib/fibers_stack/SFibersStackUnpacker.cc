@@ -76,7 +76,7 @@ bool SFibersStackUnpacker::execute()
         Float_t y = 0;
 
         // take this from data
-        Float_t adc = 0;
+        Float_t qdc = 0;
 
         SLocator loc(3);
         loc[0] = mod;
@@ -94,8 +94,8 @@ bool SFibersStackUnpacker::execute()
         pRaw->setAddress(mod, lay, fib);
         pRaw->setU(u);
         pRaw->setY(y);
-        pRaw->setADCL(adc);
-        pRaw->setADCR(adc);
+        pRaw->setQDCL(qdc);
+        pRaw->setQDCR(qdc);
         pRaw->setTimeL(0);
         pRaw->setTimeR(0);
     }

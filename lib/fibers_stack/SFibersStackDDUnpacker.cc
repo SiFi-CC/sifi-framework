@@ -270,7 +270,7 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
         pSamples->getSignalL()->fBL_sigma = bl_sigma;
         pSamples->getSignalL()->fPileUp = pileup;
 
-        pRaw->setADCL(charge / adc_to_mv);
+        pRaw->setQDCL(charge / adc_to_mv);
         pRaw->setTimeL(t0);
     }
     if (side == 'r') {
@@ -284,7 +284,7 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
         pSamples->getSignalR()->fBL_sigma = bl_sigma;
         pSamples->getSignalR()->fPileUp = pileup;
 
-        pRaw->setADCR(charge / adc_to_mv);
+        pRaw->setQDCR(charge / adc_to_mv);
         pRaw->setTimeR(t0);
     }
 

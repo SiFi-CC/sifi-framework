@@ -142,8 +142,8 @@ bool SFibersStackDigitizer::execute()
         pCal->setU(u);
         pCal->setY(y);
         pCal->setEnergyLoss(pHit->getEnergyLoss());
-        pCal->setADCL(pHit->getLightL());
-        pCal->setADCR(pHit->getLightR());
+        pCal->setQDCL(pHit->getLightL());
+        pCal->setQDCR(pHit->getLightR());
         pCal->setKineticEnergy(pHit->getKineticEnergy());
         pCal->setTotalEnergy(pHit->getTotalEnergy());
     }

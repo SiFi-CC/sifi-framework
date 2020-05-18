@@ -39,9 +39,9 @@ void SFibersStackRaw::Clear(Option_t* /*opt*/)
 
     u = 0;
     y = 0;
-    adc_l = 0.0;
+    qdc_l = 0.0;
     time_l = 0.0;
-    adc_r = 0.0;
+    qdc_r = 0.0;
     time_r = 0.0;
 }
 
@@ -51,5 +51,5 @@ void SFibersStackRaw::Clear(Option_t* /*opt*/)
 void SFibersStackRaw::print() const
 {
     printf("fiber m,l,f=%d,%d,%d  u,y=%f,%f  L: ADC=%f  Time=%f   R: ADC=%f  Time=%f\n",
-           module, layer, fiber, u, y, adc_l, time_l, adc_r, time_r);
+           module, layer, fiber, u, y, qdc_l, time_l, qdc_r, time_r);
 }
