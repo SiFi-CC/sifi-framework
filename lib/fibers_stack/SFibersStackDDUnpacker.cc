@@ -247,7 +247,7 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
 
         if (_len+_t0 >= 1024) _len = 1024 - _t0 - 1;
 
-        charge = std::accumulate(samples + _t0, samples + _t0 + _len, 0.);
+        charge = std::accumulate(samples + _t0 - 20, samples + _t0 + _len, 0.); // backward integration here
         if (pol == 0) charge = -charge;
     }
 
