@@ -196,6 +196,7 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
     Int_t anamode = pDDUnpackerPar->getAnaMode();
     Int_t intmode = pDDUnpackerPar->getIntMode();
     Int_t deadtime = pDDUnpackerPar->getDeadTime();
+    Int_t blmode = pDDUnpackerPar->getBLMode(channel);
     Float_t veto_thr = pDDUnpackerPar->getVetoThreshold(channel);
 
     SFibersStackChannel * lc = dynamic_cast<SFibersStackChannel *>(pLookUp->getAddress(fake_address, channel));
@@ -222,16 +223,26 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
     memcpy(samples, data, limit * sizeof(float));
 
     // find baseline
-    Float_t bl = std::accumulate(samples, samples + 50, 0.);
-    bl /= 50.;
-
+    Float_t bl = -1;
     Float_t bl_sigma = 0;
-    for (int i = 0; i < 50; ++i)
+    
+    if(blmode == 0)
     {
-        bl_sigma += (bl - samples[i]) * (bl - samples[i]);
-    }
-    bl_sigma = sqrt(bl_sigma / 50.);
+        bl = std::accumulate(samples, samples + 50, 0.);
+        bl /= 50.;
 
+        bl_sigma = 0;
+        for (int i = 0; i < 50; ++i)
+        {
+            bl_sigma += (bl - samples[i]) * (bl - samples[i]);
+        }
+        bl_sigma = sqrt(bl_sigma / 50.);
+    }
+    else
+    {
+        bl = blmode;
+    }
+    
     std::transform(samples, samples+length, samples,
         [bl](float f) { return f - bl; });
 

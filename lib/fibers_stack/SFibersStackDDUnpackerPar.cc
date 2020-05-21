@@ -32,6 +32,7 @@ void SFibersStackDDUnpackerPar::clear()
 {
     fThreshold = 0.0;
     fVetoThreshold = 0.0;
+    fBLMode = 0;
     nPolarity = 0;
     nAnaMode = 0;
     nIntMode = 0;
@@ -63,6 +64,15 @@ bool SFibersStackDDUnpackerPar::getParams(SParContainer* parcont)
         return false;
     }
     fVetoThreshold = _v;
+
+    TArrayI _b(16);
+    if (!parcont->fill("fBLMode", _b)) return false;
+    if (_v.GetSize() != 16)
+    {
+        std::cerr << "Size of fBLMode doesn't match 16" << std::endl;
+        return false;
+    }
+    fBLMode = _b;
     
     if (!parcont->fill("nPolarity", nPolarity)) return false;
     if (!parcont->fill("nAnaMode", nAnaMode)) return false;
@@ -84,7 +94,22 @@ bool SFibersStackDDUnpackerPar::getParams(SParContainer* parcont)
         std::cerr << "nAnaMode = " << nAnaMode << std::endl;
         exit(EXIT_FAILURE);
     }
-    
+
+    if(nIntMode < 0)
+    {
+        std::cerr << "nIntMode cannot be smaller than 0!" << std::endl;
+        std::cerr << "Possible values are: 0 - TOT or >0 - Limit" << std::endl;
+        std::cerr << "nIntMode = " << nIntMode << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    if(nDeadTime < 0)
+    {
+        std::cerr << "nDeadTime cannot be smaller than 0!" << std::endl;
+        std::cerr << "nDeadTime = " << nDeadTime << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
     return true;
 }
 
@@ -110,6 +135,9 @@ void SFibersStackDDUnpackerPar::print() const
     printf("\n Veto thresholds =");
     for (int i = 0; i < 16; ++i)
         printf(" %.2f", fVetoThreshold[i]);
+    printf("\n Baseline modes =");
+    for (int i = 0; i < 16; ++i)
+        printf(" %d", fBLMode[i]);
     printf("\n polarity = %d\n", nPolarity);
     printf(" anamode = %d\n", nAnaMode);
     printf(" intmode = %d\n", nIntMode);
@@ -126,4 +154,10 @@ Float_t SFibersStackDDUnpackerPar::getVetoThreshold(Int_t chan) const
 {
     if (chan < 0 or chan > 15) abort();
     return fVetoThreshold[chan]; 
+}
+
+Int_t SFibersStackDDUnpackerPar::getBLMode(Int_t chan) const
+{
+    if (chan < 0 or chan > 15) abort();
+    return fBLMode[chan]; 
 }
