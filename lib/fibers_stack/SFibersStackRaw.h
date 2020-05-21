@@ -68,13 +68,13 @@ public:
     /// \param tr time on the right side of fiber
     void setTime(Float_t tl, Float_t tr) { time_l = tl; time_r = tr; }
     /// Set QDC value
-    /// \param a adc
+    /// \param q qdc
     void setQDCL(Float_t q) { qdc_l = q; }
     /// Set Time value
     /// \param t time
     void setTimeL(Float_t t) { time_l = t; }
     /// Set QDC value
-    /// \param a adc
+    /// \param q qdc
     void setQDCR(Float_t q) { qdc_r = q; }
     /// Set Time value
     /// \param t time

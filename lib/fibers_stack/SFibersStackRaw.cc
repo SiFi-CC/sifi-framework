@@ -50,6 +50,6 @@ void SFibersStackRaw::Clear(Option_t* /*opt*/)
  */
 void SFibersStackRaw::print() const
 {
-    printf("fiber m,l,f=%d,%d,%d  u,y=%f,%f  L: ADC=%f  Time=%f   R: ADC=%f  Time=%f\n",
+    printf("fiber m,l,f=%d,%d,%d  u,y=%f,%f  L: QDC=%f  Time=%f   R: QDC=%f  Time=%f\n",
            module, layer, fiber, u, y, qdc_l, time_l, qdc_r, time_r);
 }
