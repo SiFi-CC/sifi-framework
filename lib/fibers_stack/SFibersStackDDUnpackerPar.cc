@@ -69,6 +69,22 @@ bool SFibersStackDDUnpackerPar::getParams(SParContainer* parcont)
     if (!parcont->fill("nIntMode", nIntMode)) return false;
     if (!parcont->fill("nDeadTime", nDeadTime)) return false;
 
+    if( ! (nPolarity == 0 || nPolarity ==1) )
+    {
+        std::cerr << "Incorrect value of nPolarity!" << std::endl;
+        std::cerr << "Possible values are: 0 - NEGATIVE or 1 - POSITIVE" << std::endl;
+        std::cerr << "nPolarity = " << nPolarity << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    if( ! (nAnaMode == 0 || nAnaMode ==1) )
+    {
+        std::cerr << "Incorrect value of nAnaMode!" << std::endl;
+        std::cerr << "Possible values are: 0 - Leading Edge or 1 - Constant Fraction" << std::endl;
+        std::cerr << "nAnaMode = " << nAnaMode << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    
     return true;
 }
 
