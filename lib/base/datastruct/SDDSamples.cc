@@ -69,8 +69,8 @@ void SDDSamples::print() const {
 //------------------------------------------------------------------
 /// Default constructor.
 SDDSignal::SDDSignal()
-    : fAmp(-100), fT0(-100), fTOT(-100), fCharge(-100), fPE(-100), fBL(-100.),
-      fBL_sigma(0), fPileUp(0) {}
+    : fAmp(-100), fT0(-100), fTOT(-100), fCharge(-100), fPE(-100), fBL(-100),
+      fBL_sigma(-100), fPileUp(-100), fVeto(-100) {}
 
 //------------------------------------------------------------------
 /// Sets all values of signals parameters to their default values.
@@ -83,6 +83,7 @@ void SDDSignal::Clear(void) {
     fBL = -100;
     fBL_sigma = -100;
     fPileUp = -100;
+    fVeto = -100;
 }
 //------------------------------------------------------------------
 /// Prints details of the SDDSignal class object.
@@ -95,9 +96,10 @@ void SDDSignal::Print(void) const {
     std::cout << "Time over threshold = " << fTOT << " ns" << std::endl;
     std::cout << "Charge (signal integral) = " << fCharge << std::endl;
     std::cout << "Calibrated charge = " << fPE << " P.E. / keV" << std::endl;
-    std::cout << "Baseline = " << fBL << " +- " << fBL_sigma << " keV"
+    std::cout << "Baseline = " << fBL << " +/- " << fBL_sigma << " keV"
               << std::endl;
-    std::cout << "PileUp = " << fPileUp << "" << std::endl;
+    std::cout << "PileUp = " << fPileUp << std::endl;
+    std::cout << "Veto = " << fVeto << std::endl;
     std::cout << "------------------------------------------------\n"
               << std::endl;
     return;

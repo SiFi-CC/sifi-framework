@@ -96,6 +96,24 @@ Float_t FindTMax(Float_t* samples, size_t len, Float_t threshold, Int_t _t0,
     return tmax;
 }
 
+Int_t FindVeto(Float_t* samples, size_t limit, Float_t threshold, Int_t pol){
+    
+    if(pol==0){
+        for(int i=0; i<limit; i++){
+            if(samples[i] > threshold)
+                return 1;
+        }
+    }
+    else if(pol==1){
+        for(int i=0; i<limit; i++){
+            if(samples[i] < threshold)
+                return 1;
+        }
+    }
+    
+    return 0;
+}
+
 /**
  * Constructor
  */
@@ -178,6 +196,7 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
     Int_t anamode = pDDUnpackerPar->getAnaMode();
     Int_t intmode = pDDUnpackerPar->getIntMode();
     Int_t deadtime = pDDUnpackerPar->getDeadTime();
+    Float_t veto_thr = pDDUnpackerPar->getVetoThreshold(channel);
 
     SFibersStackChannel * lc = dynamic_cast<SFibersStackChannel *>(pLookUp->getAddress(fake_address, channel));
     SLocator loc(3);
@@ -253,6 +272,8 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
         charge = std::accumulate(samples + offset_start, samples + offset_stop, 0.); // backward integration here
         if (pol == 0) charge = -charge;
     }
+    
+    Int_t veto = FindVeto(samples, limit, veto_thr, pol);
 
     SFibersStackRaw* pRaw = dynamic_cast<SFibersStackRaw*>(catFibersRaw->getObject(loc));
     if (!pRaw)
@@ -269,9 +290,10 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
         pSamples->getSignalL()->SetT0(t0 /** sample_to_ns*/);
         pSamples->getSignalL()->SetTOT(tot /** sample_to_ns*/);
         pSamples->getSignalL()->SetCharge(charge / adc_to_mv);
-        pSamples->getSignalL()->fBL = bl;
-        pSamples->getSignalL()->fBL_sigma = bl_sigma;
-        pSamples->getSignalL()->fPileUp = pileup;
+        pSamples->getSignalL()->SetBL(bl);
+        pSamples->getSignalL()->SetBLSigma(bl_sigma);
+        pSamples->getSignalL()->SetPileUp(pileup);
+        pSamples->getSignalL()->SetVeto(veto);
 
         pRaw->setQDCL(charge / adc_to_mv);
         pRaw->setTimeL(t0);
@@ -283,9 +305,10 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
         pSamples->getSignalR()->SetT0(t0 /** sample_to_ns*/);
         pSamples->getSignalR()->SetTOT(tot /** sample_to_ns*/);
         pSamples->getSignalR()->SetCharge(charge / adc_to_mv);
-        pSamples->getSignalR()->fBL = bl;
-        pSamples->getSignalR()->fBL_sigma = bl_sigma;
-        pSamples->getSignalR()->fPileUp = pileup;
+        pSamples->getSignalR()->SetBL(bl);
+        pSamples->getSignalR()->SetBLSigma(bl_sigma);
+        pSamples->getSignalR()->SetPileUp(pileup);
+        pSamples->getSignalR()->SetVeto(veto);
 
         pRaw->setQDCR(charge / adc_to_mv);
         pRaw->setTimeR(t0);

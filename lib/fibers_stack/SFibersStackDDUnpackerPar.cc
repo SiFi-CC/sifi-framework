@@ -31,6 +31,7 @@ A container for Fibers Stack Calibrator parameters
 void SFibersStackDDUnpackerPar::clear()
 {
     fThreshold = 0.0;
+    fVetoThreshold = 0.0;
     nPolarity = 0;
     nAnaMode = 0;
     nIntMode = 0;
@@ -54,6 +55,15 @@ bool SFibersStackDDUnpackerPar::getParams(SParContainer* parcont)
     }
     fThreshold = _t;
 
+    TArrayF _v(16);
+    if (!parcont->fill("fVetoThreshold", _v)) return false;
+    if (_v.GetSize() != 16)
+    {
+        std::cerr << "Size of fVetoThreshold doesn't match 16" << std::endl;
+        return false;
+    }
+    fVetoThreshold = _v;
+    
     if (!parcont->fill("nPolarity", nPolarity)) return false;
     if (!parcont->fill("nAnaMode", nAnaMode)) return false;
     if (!parcont->fill("nIntMode", nIntMode)) return false;
@@ -81,6 +91,9 @@ void SFibersStackDDUnpackerPar::print() const
     printf(" +++\n Thresholds =");
     for (int i = 0; i < 16; ++i)
         printf(" %.2f", fThreshold[i]);
+    printf("\n Veto thresholds =");
+    for (int i = 0; i < 16; ++i)
+        printf(" %.2f", fVetoThreshold[i]);
     printf("\n polarity = %d\n", nPolarity);
     printf(" anamode = %d\n", nAnaMode);
     printf(" intmode = %d\n", nIntMode);
@@ -91,4 +104,10 @@ Float_t SFibersStackDDUnpackerPar::getThreshold(Int_t chan) const
 {
     if (chan < 0 or chan > 15) abort();
     return fThreshold[chan];
+}
+
+Float_t SFibersStackDDUnpackerPar::getVetoThreshold(Int_t chan) const
+{
+    if (chan < 0 or chan > 15) abort();
+    return fVetoThreshold[chan]; 
 }

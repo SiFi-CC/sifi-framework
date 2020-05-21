@@ -22,6 +22,7 @@ class SFibersStackDDUnpackerPar : public SPar
   private:
     // members
     TArrayF fThreshold; ///< Threshold in ADC (LE) or % (CF)
+    TArrayF fVetoThreshold; ///< Threshold for determination of fVeto flag (in ADC)
     Int_t nPolarity;    ///< 0 - neg, 1 - pos
     Int_t nAnaMode;     ///< 0 - LE, 1 - CF
     Int_t nIntMode;     ///< <=0 - TOT, >0 - Limit
@@ -37,6 +38,9 @@ class SFibersStackDDUnpackerPar : public SPar
     /// \param chan channel number
     /// \return threshold
     Float_t getThreshold(Int_t chan) const;
+    /// Returns threshold for determination of fVeto flag
+    /// \return veto threshold
+    Float_t getVetoThreshold(Int_t chan) const;
     /// Return Polarity
     /// \return polarity
     Int_t getPolarity() const { return nPolarity; }
