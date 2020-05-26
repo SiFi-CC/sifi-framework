@@ -68,13 +68,13 @@ void SDDSamples::print() const {
 
 //------------------------------------------------------------------
 /// Default constructor.
-DDSignal::DDSignal()
-    : fAmp(-100), fT0(-100), fTOT(-100), fCharge(-100), fPE(-100), fBL(-100.),
-      fBL_sigma(0), fPileUp(0) {}
+SDDSignal::SDDSignal()
+    : fAmp(-100), fT0(-100), fTOT(-100), fCharge(-100), fPE(-100), fBL(-100),
+      fBL_sigma(-100), fPileUp(-100), fVeto(-100) {}
 
 //------------------------------------------------------------------
 /// Sets all values of signals parameters to their default values.
-void DDSignal::Clear(void) {
+void SDDSignal::Clear(void) {
     fAmp = -100.;
     fT0 = -100.;
     fTOT = -100.;
@@ -83,21 +83,23 @@ void DDSignal::Clear(void) {
     fBL = -100;
     fBL_sigma = -100;
     fPileUp = -100;
+    fVeto = -100;
 }
 //------------------------------------------------------------------
-/// Prints details of the DDSignal class object.
-void DDSignal::Print(void) const {
+/// Prints details of the SDDSignal class object.
+void SDDSignal::Print(void) const {
     std::cout << "\n\n------------------------------------------------"
               << std::endl;
-    std::cout << "This is Print() for DDSignalBase class object" << std::endl;
+    std::cout << "This is Print() for SDDSignal class object" << std::endl;
     std::cout << "Amplitude = " << fAmp << " mV" << std::endl;
     std::cout << "T0 = " << fT0 << " ns" << std::endl;
     std::cout << "Time over threshold = " << fTOT << " ns" << std::endl;
     std::cout << "Charge (signal integral) = " << fCharge << std::endl;
     std::cout << "Calibrated charge = " << fPE << " P.E. / keV" << std::endl;
-    std::cout << "Baseline = " << fBL << " +- " << fBL_sigma << " keV"
+    std::cout << "Baseline = " << fBL << " +/- " << fBL_sigma << " keV"
               << std::endl;
-    std::cout << "PileUp = " << fPileUp << "" << std::endl;
+    std::cout << "PileUp = " << fPileUp << std::endl;
+    std::cout << "Veto = " << fVeto << std::endl;
     std::cout << "------------------------------------------------\n"
               << std::endl;
     return;

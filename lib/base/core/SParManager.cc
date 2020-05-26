@@ -191,6 +191,14 @@ SParManager::~SParManager()
 bool SParManager::parseSource()
 {
     std::ifstream ifs(source);
+    
+    if( ! ifs.is_open())
+    {
+        std::cerr << "Source file " << source <<
+        " could not be opened!" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    
     size_t length = 0;
     if (ifs)
     {

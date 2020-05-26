@@ -22,7 +22,7 @@
 #pragma link C++ class SiFi;
 
 // datasources
-#pragma link C++ class DDSignal+;
+#pragma link C++ class SDDSignal+;
 #pragma link C++ class SDDSamples+;
 
 // util

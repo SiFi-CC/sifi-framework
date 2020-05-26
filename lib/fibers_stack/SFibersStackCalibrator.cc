@@ -111,16 +111,16 @@ bool SFibersStackCalibrator::execute()
         // calc laboratory coordinates from digi data
         Float_t u = pRaw->getU();
         Float_t y = pRaw->getY();
-        Float_t adc_l = pRaw->getADCL();
-        Float_t adc_r = pRaw->getADCR();
+        Float_t qdc_l = pRaw->getQDCL();
+        Float_t qdc_r = pRaw->getQDCR();
         Float_t time_l = pRaw->getTimeL();
         Float_t time_r = pRaw->getTimeR();
 
-        // do your magic here with u, y and adc
+        // do your magic here with u, y and qdc
         Float_t lab_u = u;
         Float_t lab_y = y;
-        Float_t energy_l = cp_l->par0 * adc_l + cp_l->par1;
-        Float_t energy_r = cp_r->par0 * adc_r + cp_r->par1;
+        Float_t energy_l = cp_l->par0 * qdc_l + cp_l->par1;
+        Float_t energy_r = cp_r->par0 * qdc_r + cp_r->par1;
         time_l += cp_l->par2;
         time_r += cp_r->par2;
 
@@ -140,7 +140,7 @@ bool SFibersStackCalibrator::execute()
         pCal->setAddress(mod, lay, fib);
         pCal->setU(lab_u);
         pCal->setY(lab_y);
-        pCal->setADC(energy_l, energy_r);
+        pCal->setQDC(energy_l, energy_r);
         pCal->setTime(time_l, time_r);
     }
 

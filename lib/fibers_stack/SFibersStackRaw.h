@@ -27,10 +27,10 @@ protected:
     Float_t u;          ///< u-coord in the lab system
     Float_t y;          ///< y-coord in the lab system
 
-    Float_t adc_l;      ///< adc value
+    Float_t qdc_l;      ///< qdc value
     Float_t time_l;     ///< time value
 
-    Float_t adc_r;      ///< adc value
+    Float_t qdc_r;      ///< qdc value
     Float_t time_r;     ///< time value
 
 public:
@@ -60,22 +60,22 @@ public:
     /// \param _y longnitudal coordinate
     void setY(Float_t _y) { y = _y; }
     /// Set ADC value
-    /// \param al adc on the left side of the fiber
-    /// \param ar adc on the right side of teh fiber
-    void setADC(Float_t al, Float_t ar) { adc_l = al; adc_r = ar; }
+    /// \param ql qdc on the left side of the fiber
+    /// \param qr qdc on the right side of teh fiber
+    void setQDC(Float_t ql, Float_t qr) { qdc_l = ql; qdc_r = qr; }
     /// Set Time value
     /// \param tl time on the left side of fiber
     /// \param tr time on the right side of fiber
     void setTime(Float_t tl, Float_t tr) { time_l = tl; time_r = tr; }
-    /// Set ADC value
-    /// \param a adc
-    void setADCL(Float_t a) { adc_l = a; }
+    /// Set QDC value
+    /// \param q qdc
+    void setQDCL(Float_t q) { qdc_l = q; }
     /// Set Time value
     /// \param t time
     void setTimeL(Float_t t) { time_l = t; }
-    /// Set ADC value
-    /// \param a adc
-    void setADCR(Float_t a) { adc_r = a; }
+    /// Set QDC value
+    /// \param q qdc
+    void setQDCR(Float_t q) { qdc_r = q; }
     /// Set Time value
     /// \param t time
     void setTimeR(Float_t t) { time_r = t; }
@@ -86,15 +86,15 @@ public:
     /// Get cooridnate along layers
     /// \return longnitudal coordinate
     Float_t getY() const { return y; }
-    /// Get ADC value
-    /// \return adc
-    Float_t getADCL() const { return adc_l; }
+    /// Get QDC value
+    /// \return qdc
+    Float_t getQDCL() const { return qdc_l; }
     /// Get Time value
     /// \return time
     Float_t getTimeL() const { return time_l; }
-    /// Get ADC value
-    /// \return adc
-    Float_t getADCR() const { return adc_r; }
+    /// Get QDC value
+    /// \return qdc
+    Float_t getQDCR() const { return qdc_r; }
     /// Get Time value
     /// \return time
     Float_t getTimeR() const { return time_r; }
