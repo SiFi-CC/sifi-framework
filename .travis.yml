@@ -14,6 +14,8 @@ before_script:
     - wget https://root.cern/download/root_v6.20.04.Linux-ubuntu18-x86_64-gcc7.5.tar.gz
     - tar zxf root_v6.20.04.Linux-ubuntu18-x86_64-gcc7.5.tar.gz -C .aux_deps
     - . ./.aux_deps/root/bin/thisroot.sh
+    - root-config --cflags
+    - root-config --features
     - mkdir build && cd build
     - cmake .. -DCODE_COVERAGE=1 -DCMAKE_BUILD_TYPE=Debug
 script:
