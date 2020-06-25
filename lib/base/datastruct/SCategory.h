@@ -41,7 +41,9 @@ public:
         CatDDSamples,
         // fibers
         CatFibersStackRaw,      ///< fibers stack raw data
-        CatFibersStackCal,      ///< gibers cal data
+        CatFibersStackCal,      ///< fibers cal data
+        CatFibersStackHit,      ///< fibers hit
+        CatFibersStackClus,     ///< fibers cluster
         CatFiberTrack,          ///< fibers track
         // tracks
         // Limit 

@@ -99,6 +99,7 @@ public:
     bool isSimulation() const { return sim; }
 
     SIFI_EXPORT static bool registerCategory(SCategory::Cat cat, const std::string & name, size_t dim, size_t * sizes, bool simulation);
+    SIFI_EXPORT static bool registerCategory(SCategory::Cat cat, const std::string & name, size_t n, bool simulation);
 
     SIFI_EXPORT SCategory * buildCategory(SCategory::Cat cat, bool persistent = true);
     SIFI_EXPORT SCategory * getCategory(SCategory::Cat cat, bool persistent = true);

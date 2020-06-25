@@ -131,5 +131,8 @@ bool SFibersStackDetector::initCategories()
         if (!dm->registerCategory(SCategory::CatFibersStackCal, "SFibersStackCal", 3, sizes, false)) return false;
     }
 
+    if (!dm->registerCategory(SCategory::CatFibersStackHit, "SFibersStackHit", 3, sizes, false)) return false;
+    if (!dm->registerCategory(SCategory::CatFibersStackClus, "SFibersStackClus", 10, false)) return false;
+
     return true;
 }

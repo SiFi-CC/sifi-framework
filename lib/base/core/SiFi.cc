@@ -241,6 +241,38 @@ bool SiFi::registerCategory(SCategory::Cat cat, const std::string & name, size_t
 }
 
 /**
+ * Register linear category of length n.
+ *
+ * Every category must be registered first before using it (reading or writing).
+ * The detector related categories should be registerd inside
+ * MDetector::initCategories() method.
+ *
+ * \param cat category ID
+ * \param name category name
+ * \param n linear length
+ * \param simulation simulation run
+ * \return success
+ */
+bool SiFi::registerCategory(SCategory::Cat cat, const std::string & name, size_t n, bool simulation)
+{
+    int pos = getCategoryIndex(cat, simulation);
+
+    if (SiFi::cinfovec[pos].registered == true)
+        return true;
+
+    CategoryInfo & cinfo = SiFi::cinfovec[pos];
+    cinfo.registered = true;
+    cinfo.cat = cat;
+    cinfo.name = name;
+    cinfo.simulation = simulation;
+    cinfo.dim = 1;
+    cinfo.sizes[0] = n;
+    cinfo.ptr = nullptr;
+
+    return true;
+}
+
+/**
  * Init all braches in the output tree.
  *
  * Uses registered categories info to init branches. If the category is
