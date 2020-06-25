@@ -14,7 +14,7 @@
 
 #include "SFibersStackCal.h"
 
-class SFibersStackCalSim : public SFibersStackCal
+class SIFI_EXPORT SFibersStackCalSim : public SFibersStackCal
 {
 protected:
     // data members

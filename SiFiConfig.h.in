@@ -1,0 +1,6 @@
+#ifndef SIFICONFIG_H
+#define SIFICONFIG_H
+
+#cmakedefine HAVE_SIFIDETRES_SUPPORT
+
+#endif /* SIFICONFIG_H */

@@ -144,11 +144,27 @@ include_directories(
     lib/geant/
     lib/fibers_stack/
     lib/tools/
+    lib/tools/importers/
     ${CMAKE_BINARY_DIR}
 )
 # Link directories for libgeometry.so
 # link_directories(${PROJECT_SOURCE_DIR}/geometry/build)
 # include_directories(${PROJECT_SOURCE_DIR}/geometry/include)
+
+option(BUILD_SIFIDETRES_SUPPORT "Build SiFi Detector Response" OFF)
+if (BUILD_SIFIDETRES_SUPPORT)
+    set(SIFIDETRES_PATH "" CACHE PATH "Installation or source directory of SiFi Detector Response")
+    find_file(HAVE_SIFIDETRES_SUPPORT
+        NAMES DR_Cluster.hh
+        PATHS ${SIFIDETRES_PATH}
+        PATH_SUFFIXES include
+        REQUIRED)
+    if (HAVE_SIFIDETRES_SUPPORT)
+        get_filename_component(SIFIDETRES_INCLUDE ${HAVE_SIFIDETRES_SUPPORT} DIRECTORY)
+        message(STATUS "SiFi Det Res = ${HAVE_SIFIDETRES_SUPPORT}")
+        include_directories(AAA ${SIFIDETRES_INCLUDE})
+    endif()
+endif()
 
 #----------------------------------------------------------------------------
 add_subdirectory(lib)
@@ -158,6 +174,8 @@ add_subdirectory(lib)
 # add_subdirectory(analysis)
 add_subdirectory(dst)
 #add_subdirectory(particle_filter)
+
+configure_file(SiFiConfig.h.in SiFiConfig.h)
 
 option(BUILD_PYTHON_WRAPPER "Build python wrapper" OFF)
 if(BUILD_PYTHON_WRAPPER)

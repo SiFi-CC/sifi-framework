@@ -16,31 +16,29 @@
 
 #include "SDataSource.h"
 
-#include <TArrayI.h>
-#include <TClonesArray.h>
-#include <TObject.h>
-#include <TString.h>
+#include <TChain.h>
 
-#include <cstddef>
 #include <string>
-#include <fstream>
 
 /**
  * Read data from root file. needs better implementatoin when a such data show
  * up.
  * \todo Implement actually
  */
-class SRootSource : public SDataSource
+class SIFI_EXPORT SRootSource : public SDataSource
 {
 public:
-    SRootSource() = default;
+    SRootSource(const std::string & tree_name);
 
     virtual bool open() override;
     virtual bool close() override;
     virtual bool readCurrentEvent() override;
+    virtual void addInput(const std::string & filename);
 
-private:
-    std::string input;      ///< root file input
+    virtual long getEntries() { return chain->GetEntries(); }
+
+protected:
+    TChain * chain;
 };
 
 #endif /* SROOTSOURCE_H */

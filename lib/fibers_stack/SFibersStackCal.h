@@ -16,7 +16,7 @@
 
 #include <SFibersStackRaw.h>
 
-class SFibersStackCal : public SFibersStackRaw
+class SIFI_EXPORT SFibersStackCal : public SFibersStackRaw
 {
 public:
     // constructors

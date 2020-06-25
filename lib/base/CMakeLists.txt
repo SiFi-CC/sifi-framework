@@ -1,5 +1,11 @@
 #----------------------------------------------------------------------------
 
+message(STATUS "Got it ${HAVE_SIFIDETRES_SUPPORT}")
+if(BUILD_SIFIDETRES_SUPPORT AND HAVE_SIFIDETRES_SUPPORT)
+    set(SDR_CC "datasources/SDRSource.cc")
+    set(SDR_H "datasources/SDRSource.h")
+endif()
+
 SIFI_GENERATE_LIBRARY(
     TARGET SiFi
     SOURCES
@@ -16,6 +22,7 @@ SIFI_GENERATE_LIBRARY(
         datasources/SDataSource.cc
         datasources/SFileSource.cc
         datasources/SDDSource.cc
+        ${SDR_CC}
         datasources/SRootSource.cc
         datasources/SUnpacker.cc
         datasources/SDDUnpacker.cc
@@ -45,6 +52,7 @@ SIFI_GENERATE_LIBRARY(
 
         datasources/SDataSource.h
         datasources/SDDSource.h
+        ${SDR_H}
         datasources/SFileSource.h
         datasources/SRootSource.h
 
