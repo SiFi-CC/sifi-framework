@@ -1,7 +1,7 @@
 # #----------------------------------------------------------------------------
 
 SIFI_GENERATE_LIBRARY(
-    TARGET Tools
+    TARGET SiFiTools
     SOURCES
         SProgressBar.cc
     HEADERS

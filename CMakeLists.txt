@@ -48,7 +48,7 @@ if (SIFI_TREE)
     set(CMAKE_INSTALL_LIBDIR ${DEF_CMAKE_INSTALL_LIBDIR}${LOCAL_SIFI_TREE} CACHE PATH "Object code libraries" FORCE)
     set(_RPATH "\$ORIGIN/../${DEF_CMAKE_INSTALL_LIBDIR}")
 else()
-    set(LOCAL_SIFI_TREE "/sifi")
+    set(LOCAL_SIFI_TREE "")
     set(CMAKE_INSTALL_LIBDIR ${DEF_CMAKE_INSTALL_LIBDIR}${LOCAL_SIFI_TREE} CACHE PATH "Object code libraries" FORCE)
     set(_RPATH "\$ORIGIN/../${DEF_CMAKE_INSTALL_LIBDIR}${LOCAL_SIFI_TREE}")
 endif()
@@ -173,7 +173,7 @@ include(GenerateExportHeader)
 generate_export_header(SiFi)
 
 # keep all targets here
-set(PROJECT_TARGETS SiFi FibersStack Geant Tools)
+set(PROJECT_TARGETS SiFi FibersStack Geant SiFiTools)
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file(Config.cmake.in ${CMAKE_PROJECT_NAME}Config.cmake

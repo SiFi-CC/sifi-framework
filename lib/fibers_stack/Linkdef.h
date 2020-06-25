@@ -14,5 +14,7 @@
 #pragma link C++ class SFibersStackRaw+;
 #pragma link C++ class SFibersStackCal+;
 #pragma link C++ class SFibersStackCalSim+;
+#pragma link C++ class SFibersStackHit+;
+#pragma link C++ class SFibersStackCluster+;
 
 #endif
