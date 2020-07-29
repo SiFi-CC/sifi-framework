@@ -37,7 +37,7 @@ public:
     // destructor
     virtual ~SSiFiCCDetResImporter() = default;
 
-    virtual bool init();
+    virtual bool init() override;
 
     virtual bool execute(ulong event, ulong seq_number, uint16_t subevent,
         void * buffer, size_t length) override;

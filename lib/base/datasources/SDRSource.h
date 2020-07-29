@@ -41,9 +41,12 @@ struct TREE_Address {
     char s;
 };
 
+struct TREE_hit {};
+
 struct TREE_all {
     TREE_Address address;
     TREE_Events events;
+    TREE_hit l, r;
 };
 
 /**

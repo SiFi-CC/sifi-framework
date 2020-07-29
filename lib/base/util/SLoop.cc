@@ -146,8 +146,11 @@ size_t SLoop::getEntries() const
 }
 
 /**
- * Fetch the next event from the #chain. If the event rach end of teh tree, it
- * return 0. See TChain::GetEntry() for details.
+ * Fetch the next event from the #chain. If the event reaches end of the tree,
+ * it returns 0. This function should be used at the end of the loop, as it
+ * moves to event #1. setInput() resets event position to 0.
+ *
+ * See TChain::GetEntry() for details.
  *
  * \return 0 indicates error, >0 is a number of read bytes.
  */
