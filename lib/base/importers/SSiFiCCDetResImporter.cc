@@ -90,9 +90,13 @@ bool SSiFiCCDetResImporter::execute(ulong event, ulong seq_number, uint16_t sube
     pCal->setAddress(loc[0], loc[1], loc[2]);
     if (side == 'l') {
         // fill CALL
+        pCal->setQDCL(tree->data.counts);
+        pCal->setTimeL(tree->data.time);
     }
     if (side == 'r') {
         // fill CALL
+        pCal->setQDCR(tree->data.counts);
+        pCal->setTimeR(tree->data.time);
     }
 
     return true;

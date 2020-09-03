@@ -13,6 +13,8 @@
 #include "SUnpacker.h"
 #include "SSiFiCCDetResImporter.h"
 
+#include <DR_CCSetup.hh>
+
 #include <TChain.h>
 
 #include <iostream>
@@ -30,13 +32,16 @@ SDRSource::SDRSource()
     chain2 = new TChain("DetectorEvents");
     chain3 = new TChain("Setup_stats");
 
-    tree.events.fElectronPositions = new std::vector<TVector3>;
+    tree.events.fHitArray = new TClonesArray(TClass::GetClass<OPHit>(), 10000);
+
     tree.address.m = 0;
     tree.address.l = 0;
     tree.address.f = 0;
     tree.address.s = 'l';
     /* source is for "Events" tree */
-    chain->SetBranchAddress("EPos", &(tree.events.fElectronPositions));
+    chain2->SetBranchAddress("Hitsarray", &(tree.events.fHitArray));
+
+    pmmodel = new DRSiPMModel(0.4, 0.06, 3e6, 500, 10, true);
 }
 
 /**
@@ -46,15 +51,34 @@ SDRSource::SDRSource()
  */
 bool SDRSource::open()
 {
-//     istream.open(input.c_str(), std::ios::binary);
-//     if (!istream.is_open()) {
-//         std::cerr << "##### Error in SDRSource::open()! Could not open input file!" << std::endl;
-//         std::cerr << input << std::endl;
-//         return false;
-//     }
-// 
     if (unpackers.size() == 0)
         return false;
+
+    chain3->GetEntry(0);
+    // create fibers map
+    ccsetup = new DRSiFiCCSetup(chain3, false);
+    const size_t modules = ccsetup->GetNumberOfDetectors();
+    size_t id_offset = 0;
+    for (int m = 0; m < modules; ++m) {
+        const size_t layers = ccsetup->GetLayerAmount(m);
+        const size_t fibers = ccsetup->GetVoxelAmount(m);
+
+        for (int l = 0; l < layers; ++l) {
+            for (int f = 0; f < fibers; ++f) {
+                size_t base_l = id_offset + (l * fibers + f);
+                size_t base_r = id_offset + layers*fibers + (l * fibers + f);
+
+                fiber_map[base_l] = { m, l, f, 'l' };
+                fiber_map[base_r] = { m, l, f, 'r' };
+            }
+        }
+
+        id_offset += layers*fibers*2;
+    }
+
+    // Uncomment to verify ID vs fiber adress
+//  for (auto & addr : fiber_map)
+//      printf("ID=%d  M=%d  L=%d  F=%d  SIDE=%c\n", addr.first, addr.second.m, addr.second.l, addr.second.f, addr.second.s);
 
     if (subevent != 0x0000)
     {
@@ -78,26 +102,30 @@ bool SDRSource::open()
             }
         }
     }
+
+    printf("Files in chain = %d\n", chain->GetFileNumber());
+    chain->Print();
+    chain2->Print();
+    chain3->Print();
+
     return true;
 }
 
 bool SDRSource::close()
 {
-//     if (subevent != 0x0000)
-//     {
-//         if (unpackers[subevent])
-//             unpackers[subevent]->finalize();
-//         else
-//             abort();
-//     }
-//     else
-//     {
-//         std::map<uint16_t, SUnpacker *>::iterator iter = unpackers.begin();
-//         for (; iter != unpackers.end(); ++iter)
-//             iter->second->finalize();
-//     }
-// 
-//     istream.close();
+    if (subevent != 0x0000)
+    {
+        if (unpackers[subevent])
+            unpackers[subevent]->finalize();
+        else
+            abort();
+    }
+    else
+    {
+        std::map<uint16_t, SUnpacker *>::iterator iter = unpackers.begin();
+        for (; iter != unpackers.end(); ++iter)
+            iter->second->finalize();
+    }
     return true;
 }
 
@@ -106,38 +134,45 @@ bool SDRSource::readCurrentEvent()
     if (unpackers.size() == 0)
         return false;
 
-    void * buffer[buffer_size];
-    istream.read((char*)&buffer, buffer_size);
-    bool flag = istream.good();
+    long ce = getCurrentEvent();
+    chain->GetEntry(ce);
+    chain2->GetEntry(ce);
 
-    if (!flag)
-        return false;
+    pmmodel->DigitizeEvent(ce, tree.events.fHitArray);
+    auto counts = pmmodel->GetSiPMCounts();
+    auto times = pmmodel->GetSiPMTimes();
 
     if (subevent != 0x0000)
     {
         if (!unpackers[subevent]) abort();
         // TODO must pass event number to the execute
         SSiFiCCDetResImporter * unp = dynamic_cast<SSiFiCCDetResImporter*>(unpackers[subevent]);
-        if (unp) unp->execute(0, 0, subevent, &tree, 1);
+        for (auto & c : counts) {
+            tree.address = fiber_map[c.first];
+            tree.data.counts = c.second;
+            tree.data.time = times[c.first];
+            if (unp) unp->execute(0, 0, subevent, &tree, 1);
+        }
     }
     else
     {
         for (const auto & u : unpackers) {
             SSiFiCCDetResImporter * unp = dynamic_cast<SSiFiCCDetResImporter*>(u.second);
-            if (unp) unp->execute(0, 0, u.first, &tree, 1);
+            for (auto & c : counts) {
+                tree.address = fiber_map[c.first];
+                tree.data.counts = c.second;
+                tree.data.time = times[c.first];
+                if (unp) unp->execute(0, 0, u.first, &tree, 1);
+            }
         }
     }
 
     return true;
 }
 
-/**
- * Set input for the source.
- *
- * \param filename input file name
- * \param length length of buffer to read
- */
-void SDRSource::setInput(const std::string& filename, size_t length) {
-    input = filename;
-    buffer_size = length;
+void SDRSource::addInput(const std::string& filename)
+{
+    SRootSource::addInput(filename);
+    chain2->Add(filename.c_str());
+    chain3->Add(filename.c_str());
 }

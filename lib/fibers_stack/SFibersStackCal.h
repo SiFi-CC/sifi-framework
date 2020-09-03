@@ -14,7 +14,7 @@
 
 #include "sifi_export.h"
 
-#include <SFibersStackRaw.h>
+#include "SFibersStackRaw.h"
 
 class SIFI_EXPORT SFibersStackCal : public SFibersStackRaw
 {

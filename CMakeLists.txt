@@ -138,8 +138,10 @@ include_directories(
     lib/base/
     lib/base/core/
     lib/base/datasources/
+    lib/base/datasources/
     lib/base/datastruct/
     lib/base/event/
+    lib/base/importers/
     lib/base/util/
     lib/geant/
     lib/fibers_stack/

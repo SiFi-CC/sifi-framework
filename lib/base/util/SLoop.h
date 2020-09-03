@@ -31,7 +31,7 @@ class SIFI_EXPORT SLoop
 {
 public:
     // constructor
-    SLoop();
+    SIFI_EXPORT SLoop();
     SLoop(const SLoop &) = delete;
     // destructor
     virtual ~SLoop();

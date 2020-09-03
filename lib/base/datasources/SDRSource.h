@@ -17,7 +17,8 @@
 
 #include "SRootSource.h"
 
-#include "DR_EventHandler.hh"
+#include <DR_EventHandler.hh>
+#include <ComptonCameraHitClass.hh>
 
 #include <TClonesArray.h>
 #include <TObject.h>
@@ -28,25 +29,30 @@
 #include <string>
 #include <fstream>
 
+class DRSiFiCCSetup;
+class DRSiPMModel;
+
 /* declare branches here and define in constructor */
 struct TREE_Events {
-    std::vector<TVector3> * fElectronPositions;
+    TClonesArray * fHitArray;
 };
 
 struct TREE_Address {
-    // something here
     int m;
     int l;
     int f;
     char s;
 };
 
-struct TREE_hit {};
+struct TREE_hit {
+    int counts;
+    float time;
+};
 
 struct TREE_all {
     TREE_Address address;
     TREE_Events events;
-    TREE_hit l, r;
+    TREE_hit data;
 };
 
 /**
@@ -60,7 +66,7 @@ public:
     virtual bool open() override;
     virtual bool close() override;
     virtual bool readCurrentEvent() override;
-    virtual void setInput(const std::string & filename, size_t length);
+    virtual void addInput(const std::string & filename) override;
 
 protected:
     TChain * chain2;
@@ -71,7 +77,11 @@ private:
     std::ifstream istream;      ///< input file stream
     size_t buffer_size;         ///< data buffer size
 
+    std::map<int, TREE_Address> fiber_map;
+
     TREE_all tree;
+    DRSiFiCCSetup * ccsetup;
+    DRSiPMModel * pmmodel;
 };
 
 #endif /* SDRSOURCE_H */

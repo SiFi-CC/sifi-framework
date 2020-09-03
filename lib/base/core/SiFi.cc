@@ -442,6 +442,7 @@ void SiFi::loop(long entries, bool show_progress_bar)
 
         for (auto & s : inputSources)
         {
+            s->setCurrentEvent(i);
             flag = s->readCurrentEvent();
             if (!flag) break;
         }
