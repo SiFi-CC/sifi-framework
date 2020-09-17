@@ -73,9 +73,6 @@ protected:
     TChain * chain3;
 private:
     uint16_t subevent;          ///< subevent id
-    std::string input;          ///< source file name
-    std::ifstream istream;      ///< input file stream
-    size_t buffer_size;         ///< data buffer size
 
     std::map<int, TREE_Address> fiber_map;
 

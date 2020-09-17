@@ -10,6 +10,7 @@ target_link_libraries(sifi_dst SiFi FibersStack Geant SiFiTools)
 if(BUILD_SIFIDETRES_SUPPORT AND HAVE_SIFIDETRES_SUPPORT)
     add_executable(sifi_detres_importer dst_sifidetres.cc)
     target_link_libraries(sifi_detres_importer SiFi FibersStack Geant SiFiTools)
+    install(TARGETS sifi_detres_importer DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
 
 #----------------------------------------------------------------------------

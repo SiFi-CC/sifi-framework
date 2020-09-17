@@ -26,8 +26,7 @@
  * \param subevent subevent id
  */
 SDRSource::SDRSource()
-    : SRootSource("Events")
-    , /*subevent(subevent),*/ input(), istream(), buffer_size(0)
+    : SRootSource("Events"), subevent(0)
 {
     chain2 = new TChain("DetectorEvents");
     chain3 = new TChain("Setup_stats");
@@ -41,7 +40,7 @@ SDRSource::SDRSource()
     /* source is for "Events" tree */
     chain2->SetBranchAddress("Hitsarray", &(tree.events.fHitArray));
 
-    pmmodel = new DRSiPMModel(0.4, 0.06, 3e6, 500, 10, true);
+    pmmodel = new DRSiPMModel(0.4, 0.06, 3e6, 500, 10, false);
 }
 
 /**
@@ -75,6 +74,8 @@ bool SDRSource::open()
 
         id_offset += layers*fibers*2;
     }
+    ccsetup->GetDetectorPosition(0).Print();
+    ccsetup->GetDetectorPosition(1).Print();
 
     // Uncomment to verify ID vs fiber adress
 //  for (auto & addr : fiber_map)
@@ -83,7 +84,7 @@ bool SDRSource::open()
     if (subevent != 0x0000)
     {
         if (!unpackers[subevent]) abort();
-    
+
         bool res = unpackers[subevent]->init();
         if (!res) {
             printf("Forced unpacker %#x not initalized\n", subevent);
