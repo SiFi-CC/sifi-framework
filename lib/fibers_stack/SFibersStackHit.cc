@@ -24,7 +24,6 @@ A container for Fibers Stack Raw data
  */
 SFibersStackHit::SFibersStackHit() : TObject() {}
 
-
 /**
  * Clear object
  * Parameter options are ignored, for ROOT compatibility.
@@ -48,6 +47,7 @@ void SFibersStackHit::Clear(Option_t* /*opt*/)
  */
 void SFibersStackHit::print() const
 {
-    printf("FIBER HIT m,l,f=%d,%d,%d  x,y,z= %f,%f,%f (%f,%f,%f)  E= %f +- %f  Time= %f +- %f\n",
+    printf("FIBER HIT m,l,f=%d,%d,%d  x,y,z= %f,%f,%f (%f,%f,%f)  E= %f +- %f  "
+           "Time= %f +- %f\n",
            module, layer, fiber, x, y, z, sx, sy, sz, E, sE, t, st);
 }

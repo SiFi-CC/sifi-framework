@@ -20,6 +20,7 @@
 #include "SFibersStackDigitizer.h"
 
 #include "SFibersStackDDUnpackerPar.h"
+#include "SFibersStackHitFinder.h"
 
 #include "SCalContainer.h"
 
@@ -73,6 +74,7 @@ bool SFibersStackDetector::initTasks()
     {
         addTask(new SFibersStackUnpacker(), 0);
         addTask(new SFibersStackCalibrator(), 1);
+        addTask(new SFibersStackHitFinder(), 2);
     }
 
     return true;
@@ -124,14 +126,15 @@ bool SFibersStackDetector::initCategories()
 
         if (!dm->registerCategory(SCategory::CatGeantFibersRaw, "SGeantFibersRaw", 2, sim_sizes, true)) return false;
         if (!dm->registerCategory(SCategory::CatFibersStackCal, "SFibersStackCalSim", 3, sizes, true)) return false;
+        if (!dm->registerCategory(SCategory::CatFibersStackHit, "SFibersStackHitSim", 3, sizes, true)) return false;
     }
     else
     {
         if (!dm->registerCategory(SCategory::CatFibersStackRaw, "SFibersStackRaw", 3, sizes, false)) return false;
         if (!dm->registerCategory(SCategory::CatFibersStackCal, "SFibersStackCal", 3, sizes, false)) return false;
+        if (!dm->registerCategory(SCategory::CatFibersStackHit, "SFibersStackHit", 3, sizes, false)) return false;
     }
 
-    if (!dm->registerCategory(SCategory::CatFibersStackHit, "SFibersStackHit", 3, sizes, false)) return false;
     if (!dm->registerCategory(SCategory::CatFibersStackClus, "SFibersStackClus", 10, false)) return false;
 
     return true;
