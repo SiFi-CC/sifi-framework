@@ -10,9 +10,9 @@
  *************************************************************************/
 
 #include "SSiFiCCDetResImporter.h"
-#include "SFibersStackLookup.h"
 #include "SCategory.h"
 #include "SFibersStackCal.h"
+#include "SFibersStackLookup.h"
 #include "SParManager.h"
 #include "SiFi.h"
 
@@ -35,8 +35,7 @@ A unpacker task.
  * Constructor
  */
 SSiFiCCDetResImporter::SSiFiCCDetResImporter()
-    : SUnpacker()
-    , catFibersCal(nullptr), pLookUp(nullptr)
+    : SUnpacker(), catFibersCal(nullptr), pLookUp(nullptr)
 {
 }
 
@@ -58,43 +57,43 @@ bool SSiFiCCDetResImporter::init()
         return false;
     }
 
-    pLookUp = dynamic_cast<SFibersStackLookupTable*>(pm()->getLookupContainer("SFibersStackDDLookupTable"));
+    pLookUp = dynamic_cast<SFibersStackLookupTable*>(
+        pm()->getLookupContainer("SFibersStackDDLookupTable"));
     pLookUp->print();
 
     return true;
 }
 
-
-
-bool SSiFiCCDetResImporter::execute(ulong event, ulong seq_number, uint16_t subevent, void * buffer, size_t length)
+bool SSiFiCCDetResImporter::execute(ulong /*event*/, ulong /*seq_number*/,
+                                    uint16_t /*subevent*/, void* buffer,
+                                    size_t /*length*/)
 {
-    TREE_all * tree = static_cast<TREE_all*>(buffer);
+    TREE_all* tree = static_cast<TREE_all*>(buffer);
     if (!tree) return false;
 
-    uint16_t fake_address = subevent & 0xfff0;
-    uint8_t channel = subevent & 0x0f;
-
     SLocator loc(3);
-    loc[0] = tree->address.m;     // mod;
-    loc[1] = tree->address.l;     // lay;
-    loc[2] = tree->address.f;     // fib;
+    loc[0] = tree->address.m; // mod;
+    loc[1] = tree->address.l; // lay;
+    loc[2] = tree->address.f; // fib;
     char side = tree->address.s;
 
-    SFibersStackCal* pCal = dynamic_cast<SFibersStackCal*>(catFibersCal->getObject(loc));
+    SFibersStackCal* pCal =
+        dynamic_cast<SFibersStackCal*>(catFibersCal->getObject(loc));
     if (!pCal)
     {
         pCal = reinterpret_cast<SFibersStackCal*>(catFibersCal->getSlot(loc));
         new (pCal) SFibersStackCal;
+        pCal->setAddress(loc[0], loc[1], loc[2]);
     }
 
-    pCal->setAddress(loc[0], loc[1], loc[2]);
-    if (side == 'l') {
-        // fill CALL
+    // fill CALL
+    if (side == 'l' and pCal->getQDCL() == 0.0)
+    {
         pCal->setQDCL(tree->data.counts);
         pCal->setTimeL(tree->data.time);
     }
-    if (side == 'r') {
-        // fill CALL
+    if (side == 'r' and pCal->getQDCR() == 0.0)
+    {
         pCal->setQDCR(tree->data.counts);
         pCal->setTimeR(tree->data.time);
     }

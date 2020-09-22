@@ -92,7 +92,7 @@ bool SFibersStackHitFinder::execute()
         Int_t mod = 0;
         Int_t lay = 0;
         Int_t fib = 0;
-        // pCal->getAddress(mod, lay, fib);
+        pCal->getAddress(mod, lay, fib);
 
         // calc laboratory coordinates from digi data
         Float_t u = pCal->getU();
@@ -101,6 +101,8 @@ bool SFibersStackHitFinder::execute()
         Float_t qdc_r = pCal->getQDCR();
         Float_t time_l = pCal->getTimeL();
         Float_t time_r = pCal->getTimeR();
+
+        if (fabs(time_l) < 0.0001 or fabs(time_r) < 0.0001) continue;
 
         SLocator loc(3);
         loc[0] = mod;
@@ -117,15 +119,15 @@ bool SFibersStackHitFinder::execute()
             pHit->Clear();
         }
 
-        // pHit->setAddress(mod, lay, fib);
+        pHit->setAddress(mod, lay, fib);
         //         pHit->setU(lab_u);
         //         pHit->setY(lab_y);
         //         pHit->setQDC(energy_l, energy_r);
         //         pHit->setTime(time_l, time_r);
 
         // pHit->getAddress();
-        Float_t v = 3e8; // m/s
-        Float_t L = 0.1; // m
+        Float_t v = 3e8 * 1e3 * 1e-9 / 1.82; // c * mm/m * ns/s / n_scint
+        Float_t L = 0.1;                     // m
         Float_t hitPosTime;
         hitPosTime = ((time_l - time_r) * v + L) / 2 - L / 2;
         pHit->setZt(hitPosTime);
