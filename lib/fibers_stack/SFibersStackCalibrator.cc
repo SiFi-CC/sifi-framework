@@ -10,15 +10,22 @@
  *************************************************************************/
 
 #include "SFibersStackCalibrator.h"
-#include "SFibersStackCalibratorPar.h"
-#include "SFibersStackRaw.h"
-#include "SFibersStackCal.h"
-#include "SParManager.h"
 #include "SCalContainer.h"
 #include "SCategory.h"
+#include "SFibersStackCal.h"
+#include "SFibersStackCalibratorPar.h"
+#include "SFibersStackLookup.h"
+#include "SFibersStackRaw.h"
+#include "SLocator.h"
+#include "SParManager.h"
 #include "SiFi.h"
 
+#include "RtypesCore.h"
+
+#include <cstdio>
+#include <cstdlib>
 #include <iostream>
+#include <memory>
 
 /**
  * \class SFibersStackCalibrator
@@ -34,7 +41,9 @@ interface description.
 /**
  * Default constructor
  */
-SFibersStackCalibrator::SFibersStackCalibrator() : STask(), catFibersRaw(nullptr), catFibersCal(nullptr), pCalibratorPar(nullptr)
+SFibersStackCalibrator::SFibersStackCalibrator()
+    : STask(), catFibersRaw(nullptr), catFibersCal(nullptr),
+      pCalibratorPar(nullptr)
 {
 }
 
@@ -50,7 +59,8 @@ bool SFibersStackCalibrator::init()
     catFibersRaw = sifi()->getCategory(SCategory::CatFibersStackRaw);
     if (!catFibersRaw)
     {
-        std::cerr << "No CatFibersStackRaw category" << "\n";
+        std::cerr << "No CatFibersStackRaw category"
+                  << "\n";
         return false;
     }
 
@@ -58,15 +68,19 @@ bool SFibersStackCalibrator::init()
     catFibersCal = sifi()->buildCategory(SCategory::CatFibersStackCal);
     if (!catFibersCal)
     {
-        std::cerr << "No CatFibersStackCal category" << "\n";
+        std::cerr << "No CatFibersStackCal category"
+                  << "\n";
         return false;
     }
 
     // get calibrator parameters
-    pCalibratorPar = dynamic_cast<SCalContainer*>(pm()->getCalibrationContainer("SFibersStackCalibratorPar"));
+    pCalibratorPar = dynamic_cast<SCalContainer*>(
+        pm()->getCalibrationContainer("SFibersStackCalibratorPar"));
     if (!pCalibratorPar)
     {
-        std::cerr << "Parameter container 'SFibersStackCalibratorPar' was not obtained!" << std::endl;
+        std::cerr << "Parameter container 'SFibersStackCalibratorPar' was not "
+                     "obtained!"
+                  << std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -85,10 +99,11 @@ bool SFibersStackCalibrator::execute()
 
     for (int i = 0; i < size; ++i)
     {
-        SFibersStackRaw * pRaw = dynamic_cast<SFibersStackRaw *>(catFibersRaw->getObject(i));
+        SFibersStackRaw* pRaw =
+            dynamic_cast<SFibersStackRaw*>(catFibersRaw->getObject(i));
         if (!pRaw)
         {
-            printf("Hit doesnt exists!\n");
+            printf("FibersStackRaw doesn't exists!\n");
             continue;
         }
 
@@ -105,8 +120,8 @@ bool SFibersStackCalibrator::execute()
         SFibersStackChannel chan_r = chan_l;
         chan_r.side = 'r';
 
-        SCalPar * cp_l = pCalibratorPar->getPar(&chan_l);
-        SCalPar * cp_r = pCalibratorPar->getPar(&chan_r);
+        SCalPar* cp_l = pCalibratorPar->getPar(&chan_l);
+        SCalPar* cp_r = pCalibratorPar->getPar(&chan_r);
 
         // calc laboratory coordinates from digi data
         Float_t u = pRaw->getU();
@@ -129,10 +144,12 @@ bool SFibersStackCalibrator::execute()
         loc[1] = lay;
         loc[2] = fib;
 
-        SFibersStackCal * pCal = dynamic_cast<SFibersStackCal *>(catFibersCal->getObject(loc));
+        SFibersStackCal* pCal =
+            dynamic_cast<SFibersStackCal*>(catFibersCal->getObject(loc));
         if (!pCal)
         {
-            pCal = reinterpret_cast<SFibersStackCal *>(catFibersCal->getSlot(loc));
+            pCal =
+                reinterpret_cast<SFibersStackCal*>(catFibersCal->getSlot(loc));
             new (pCal) SFibersStackCal;
             pCal->Clear();
         }
@@ -153,7 +170,4 @@ bool SFibersStackCalibrator::execute()
  * \sa STask::finalize()
  * \return success
  */
-bool SFibersStackCalibrator::finalize()
-{
-    return true;
-}
+bool SFibersStackCalibrator::finalize() { return true; }

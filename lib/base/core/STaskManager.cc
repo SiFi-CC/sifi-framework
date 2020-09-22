@@ -9,11 +9,12 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#include <iostream>
-
+#include "STaskManager.h"
 #include "STask.h"
 
-#include "STaskManager.h"
+#include <cstdlib>
+#include <iostream>
+#include <utility>
 
 /**
  * \class SParManager
@@ -32,17 +33,16 @@ always execute in the same order. Add tasks at diferent steps to preserve
 execution order.
 */
 
-STaskManager * STaskManager::tm = nullptr;
+STaskManager* STaskManager::tm = nullptr;
 
 /**
  * Returns instance of the Detector Manager class.
  *
  * \return manager instance
  */
-STaskManager * STaskManager::instance()
+STaskManager* STaskManager::instance()
 {
-    if (!tm)
-        tm = new STaskManager;
+    if (!tm) tm = new STaskManager;
 
     return tm;
 }
@@ -52,7 +52,7 @@ STaskManager * STaskManager::instance()
  */
 STaskManager::~STaskManager()
 {
-    for (auto & t : tasks)
+    for (auto& t : tasks)
         delete t.second;
 }
 
@@ -64,7 +64,7 @@ STaskManager::~STaskManager()
  */
 void STaskManager::addTask(STask* task, int step)
 {
-    tasks.insert( std::pair<int, STask *>(step, task) );
+    tasks.insert(std::pair<int, STask*>(step, task));
 }
 
 /**
@@ -72,7 +72,7 @@ void STaskManager::addTask(STask* task, int step)
  */
 void STaskManager::initTasks()
 {
-    for (const auto & t : tasks)
+    for (const auto& t : tasks)
     {
         bool res = t.second->init();
 
@@ -89,7 +89,7 @@ void STaskManager::initTasks()
  */
 void STaskManager::reinitTasks()
 {
-    for (const auto & t : tasks)
+    for (const auto& t : tasks)
     {
         bool res = t.second->reinit();
 
@@ -108,7 +108,7 @@ void STaskManager::reinitTasks()
  */
 void STaskManager::runTasks()
 {
-    for (const auto & t : tasks)
+    for (const auto& t : tasks)
     {
         bool res = t.second->execute();
 
@@ -125,7 +125,7 @@ void STaskManager::runTasks()
  */
 void STaskManager::finalizeTasks()
 {
-    for (const auto & t : tasks)
+    for (const auto& t : tasks)
     {
         bool res = t.second->finalize();
 

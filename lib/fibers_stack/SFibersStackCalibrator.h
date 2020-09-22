@@ -16,7 +16,6 @@
 
 class SCategory;
 class SCalContainer;
-class SFibersStackCalibratorPar;
 
 class SFibersStackCalibrator : public STask
 {

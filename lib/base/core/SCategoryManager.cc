@@ -10,9 +10,8 @@
  *************************************************************************/
 
 #include "SCategoryManager.h"
+#include "SEvent.h"
 #include "SiFi.h"
-
-#include <iostream>
 
 /**
 
@@ -20,11 +19,12 @@
 
 */
 
-namespace SCategoryManager {
+namespace SCategoryManager
+{
 
-SCategory * getCategory(SCategory::Cat cat)
+SCategory* getCategory(SCategory::Cat cat)
 {
     return sifi()->getCurrentEvent()->getCategory(cat);
 }
 
-};
+}; // namespace SCategoryManager

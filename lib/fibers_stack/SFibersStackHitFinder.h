@@ -5,9 +5,6 @@
 #include "STask.h"
 
 class SCategory;
-class SCalContainer;
-class SFibersStackCalibratorPar;
-class SFibersStackCalibrator; //?
 
 //class SFibersStackCalibrator : public STask
 class SFibersStackHitFinder : public STask

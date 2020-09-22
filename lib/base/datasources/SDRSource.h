@@ -12,13 +12,13 @@
 #ifndef SDRSOURCE_H
 #define SDRSOURCE_H
 
-#include "sifi_export.h"
 #include "SiFiConfig.h"
+#include "sifi_export.h"
 
 #include "SRootSource.h"
 
-#include <DR_EventHandler.hh>
 #include <ComptonCameraHitClass.hh>
+#include <DR_EventHandler.hh>
 
 #include <TClonesArray.h>
 #include <TObject.h>
@@ -26,30 +26,36 @@
 #include <TVector3.h>
 
 #include <cstddef>
-#include <string>
 #include <fstream>
+#include <string>
 
 class DRSiFiCCSetup;
 class DRSiPMModel;
 
+class TChain;
+
 /* declare branches here and define in constructor */
-struct TREE_Events {
-    TClonesArray * fHitArray;
+struct TREE_Events
+{
+    TClonesArray* fHitArray;
 };
 
-struct TREE_Address {
+struct TREE_Address
+{
     int m;
     int l;
     int f;
     char s;
 };
 
-struct TREE_hit {
+struct TREE_hit
+{
     int counts;
     float time;
 };
 
-struct TREE_all {
+struct TREE_all
+{
     TREE_Address address;
     TREE_Events events;
     TREE_hit data;
@@ -60,25 +66,26 @@ struct TREE_all {
  */
 class SIFI_EXPORT SDRSource : public SRootSource
 {
-public:
+  public:
     explicit SDRSource(/*uint16_t subevent*/);
 
     virtual bool open() override;
     virtual bool close() override;
     virtual bool readCurrentEvent() override;
-    virtual void addInput(const std::string & filename) override;
+    virtual void addInput(const std::string& filename) override;
 
-protected:
-    TChain * chain2;
-    TChain * chain3;
-private:
-    uint16_t subevent;          ///< subevent id
+  protected:
+    TChain* chain2;
+    TChain* chain3;
+
+  private:
+    uint16_t subevent; ///< subevent id
 
     std::map<int, TREE_Address> fiber_map;
 
     TREE_all tree;
-    DRSiFiCCSetup * ccsetup;
-    DRSiPMModel * pmmodel;
+    DRSiFiCCSetup* ccsetup;
+    DRSiPMModel* pmmodel;
 };
 
 #endif /* SDRSOURCE_H */

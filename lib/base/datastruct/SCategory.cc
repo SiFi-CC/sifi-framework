@@ -184,6 +184,10 @@ TObject * SCategory::getObject(const SLocator & n)
  */
 TObject * SCategory::getObject(Int_t i)
 {
+    if (!index.isCompressed()) {
+        compress();
+    }
+
     return data->At(i);
 }
 

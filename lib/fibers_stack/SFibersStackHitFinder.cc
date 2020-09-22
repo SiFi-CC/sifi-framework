@@ -1,14 +1,15 @@
 
 #include "SFibersStackHitFinder.h"
-#include "SFibersStackCalibrator.h"
-#include "SFibersStackCalibratorPar.h"
-#include "SFibersStackHit.h"
-#include "SFibersStackCal.h"
-#include "SParManager.h"
-#include "SCalContainer.h"
+
 #include "SCategory.h"
+#include "SFibersStackCal.h"
+#include "SFibersStackHit.h"
+#include "SLocator.h"
 #include "SiFi.h"
 
+#include <RtypesCore.h>
+
+#include <cstdio>
 #include <iostream>
 
 /**
@@ -25,11 +26,11 @@ interface description.
 /**
  * Default constructor
  */
-SFibersStackHitFinder::SFibersStackHitFinder() : STask(),  catFibersCal(nullptr), catFibersHit(nullptr)//,  pHitFinderPar(nullptr)
+SFibersStackHitFinder::SFibersStackHitFinder()
+    : STask(), catFibersCal(nullptr),
+      catFibersHit(nullptr) //,  pHitFinderPar(nullptr)
 {
 }
-
-
 
 /**
  * Init task
@@ -40,32 +41,33 @@ SFibersStackHitFinder::SFibersStackHitFinder() : STask(),  catFibersCal(nullptr)
 bool SFibersStackHitFinder::init()
 {
 
-        // get Cal category
+    // get Cal category
     catFibersCal = sifi()->getCategory(SCategory::CatFibersStackCal);
     if (!catFibersCal)
     {
-        std::cerr << "No CatFibersStackCal category" << "\n";
+        std::cerr << "No CatFibersStackCal category"
+                  << "\n";
         return false;
     }
 
     // create Hit category
-    catFibersHit = sifi()->buildCategory(SCategory::CatFibersStackHit); 
+    catFibersHit = sifi()->buildCategory(SCategory::CatFibersStackHit);
     if (!catFibersHit)
     {
-        std::cerr << "No CatFibersStackHit category" << "\n";
+        std::cerr << "No CatFibersStackHit category"
+                  << "\n";
         return false;
     }
 
-//     get calibrator parameters
-//     pHitFinderPar = dynamic_cast<SCalContainer*>(pm()->getCalibrationContainer("SFibersStackCalibratorPar"));
-//     if (!pCalibratorPar)
-//     {
-//         std::cerr << "Parameter container 'SFibersStackCalibratorPar' was not obtained!" << std::endl;
-//         exit(EXIT_FAILURE);
-//     }
+    //     get calibrator parameters
+    //     pHitFinderPar =
+    //     dynamic_cast<SCalContainer*>(pm()->getCalibrationContainer("SFibersStackCalibratorPar"));
+    //     if (!pCalibratorPar)
+    //     {
+    //         std::cerr << "Parameter container 'SFibersStackCalibratorPar' was
+    //         not obtained!" << std::endl; exit(EXIT_FAILURE);
+    //     }
 
-    
-    
     return true;
 }
 
@@ -77,23 +79,20 @@ bool SFibersStackHitFinder::init()
  */
 bool SFibersStackHitFinder::execute()
 {
-    int size = catFibersCal->getEntries(); //changed from Raw
+    int size = catFibersCal->getEntries(); // changed from Raw
     for (int i = 0; i < size; ++i)
     {
-//         SFibersStackCal * pCal = dynamic_cast<SFibersStackCal *>(catFibersCal->getObject(i));
-//         if (!pCal)
-        SFibersStackCal * pCal = dynamic_cast<SFibersStackCal *>(catFibersCal->getObject(i));
-         if (!pCal)
-        
+        SFibersStackCal* pCal =
+            dynamic_cast<SFibersStackCal*>(catFibersCal->getObject(i));
+        if (!pCal)
         {
-            printf("Cal doesnt exists!\n");
+            printf("FibersStackCal doesn't exists!\n");
             continue;
         }
         Int_t mod = 0;
         Int_t lay = 0;
         Int_t fib = 0;
-        //pCal->getAddress(mod, lay, fib);
-
+        // pCal->getAddress(mod, lay, fib);
 
         // calc laboratory coordinates from digi data
         Float_t u = pCal->getU();
@@ -103,33 +102,33 @@ bool SFibersStackHitFinder::execute()
         Float_t time_l = pCal->getTimeL();
         Float_t time_r = pCal->getTimeR();
 
-
         SLocator loc(3);
         loc[0] = mod;
         loc[1] = lay;
         loc[2] = fib;
 
-        SFibersStackHit * pHit = dynamic_cast<SFibersStackHit *>(catFibersHit->getObject(loc));
+        SFibersStackHit* pHit =
+            dynamic_cast<SFibersStackHit*>(catFibersHit->getObject(loc));
         if (!pHit)
         {
-            pHit = reinterpret_cast<SFibersStackHit *>(catFibersHit->getSlot(loc));
+            pHit =
+                reinterpret_cast<SFibersStackHit*>(catFibersHit->getSlot(loc));
             new (pHit) SFibersStackHit;
             pHit->Clear();
         }
 
-           //pHit->setAddress(mod, lay, fib);
-//         pHit->setU(lab_u);
-//         pHit->setY(lab_y);
-//         pHit->setQDC(energy_l, energy_r);
-//         pHit->setTime(time_l, time_r);
+        // pHit->setAddress(mod, lay, fib);
+        //         pHit->setU(lab_u);
+        //         pHit->setY(lab_y);
+        //         pHit->setQDC(energy_l, energy_r);
+        //         pHit->setTime(time_l, time_r);
 
-
-           //pHit->getAddress();
-           Float_t v = 3e8; //m/s
-           Float_t L = 0.1; // m
-           Float_t hitPosTime;
-           hitPosTime = ((time_l - time_r)*v+L)/2 -L/2;
-           pHit->setZt(hitPosTime);
+        // pHit->getAddress();
+        Float_t v = 3e8; // m/s
+        Float_t L = 0.1; // m
+        Float_t hitPosTime;
+        hitPosTime = ((time_l - time_r) * v + L) / 2 - L / 2;
+        pHit->setZt(hitPosTime);
     }
 
     return true;
@@ -141,8 +140,4 @@ bool SFibersStackHitFinder::execute()
  * \sa STask::finalize()
  * \return success
  */
-bool SFibersStackHitFinder::finalize()
-{
-    return true;
-}
-
+bool SFibersStackHitFinder::finalize() { return true; }

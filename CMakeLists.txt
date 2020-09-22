@@ -95,9 +95,9 @@ file(GLOB_RECURSE FFILES S*.[hc] S*.[hc]pp)
 clang_format(format ${FFILES})
 include_what_you_use(-Xiwyu)
 
-option(ROOT_XREF "Root Cross-reference in doc" OFF)
+option(ROOT_DOC_XREF "Root Cross-reference in doc" OFF)
 
-if (ROOT_XREF)
+if (ROOT_DOC_XREF)
     set(TAGFILES ${CMAKE_BINARY_DIR}/ROOT.tag=https://root.cern/doc/master/)
 else()
     unset(TAGFILES)

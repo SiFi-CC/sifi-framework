@@ -15,6 +15,7 @@
 #include "sifi_export.h"
 
 #include <string>
+#include <sys/types.h>
 
 class SIFI_EXPORT SProgressBar
 {

@@ -17,18 +17,20 @@
 #include "sifi_export.h"
 
 #include "SCategory.h"
-#include "SDataSource.h"
-#include "SEvent.h"
 #include "SRootFileHeader.h"
 
-#include "TROOT.h"
-#include "TChain.h"
-#include "TFile.h"
-#include "TTree.h"
+#include "RtypesCore.h"
 
+#include <cstddef>
 #include <string>
-#include <fstream>
 #include <map>
+#include <algorithm>
+#include <vector>
+
+class SDataSource;
+class SEvent;
+class TFile;
+class TTree;
 
 class SIFI_EXPORT SiFi
 {
