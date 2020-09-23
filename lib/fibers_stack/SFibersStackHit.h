@@ -27,12 +27,12 @@ protected:
     Float_t x;          ///< x-coord in the lab system
     Float_t y;          ///< y-coord in the lab system
     Float_t z;          ///< z-coord in the lab system
-    Float_t zt;         ///< z-coord in the lab system, reconstructed from times
+    Float_t xt;         ///< x-coord in the lab system, reconstructed from times
 
     Float_t sx;         ///< sigma of x
     Float_t sy;         ///< sigma of y
     Float_t sz;         ///< sigma of z
-    Float_t szt;        ///< sigma of zt
+    Float_t sxt;        ///< sigma of xt
 
     Float_t E;          ///< Energy
     Float_t sE;         ///< sigma of energy
@@ -65,9 +65,9 @@ public:
     /// \param _y x coordinate
     /// \param _z x coordinate
     void setXYZ(Float_t _x, Float_t _y, Float_t _z) { x = _x; y = _y; z = _z; }
-    void setZt( Float_t _zt) { zt = _zt; }
+    void setXt( Float_t _xt) { xt = _xt; }
     void setXYZErrors(Float_t _sx, Float_t _sy, Float_t _sz) { sx = _sx; sy = _sy; sz = _sz; }
-    void setZtErrors( Float_t _szt) { szt = _szt; }
+    void setXtError( Float_t _sxt) { sxt = _sxt; }
     /// Set Energy value
     /// \param _E energy
     /// \param _sE sigma of energy
@@ -88,13 +88,13 @@ public:
     Float_t getZ() const { return z; }
     /// Get z-cooridnate
     /// \return ... coordinate
-    Float_t getZt() const { return zt; }
+    Float_t getXt() const { return xt; }
     /// Get XYZ errors
     /// \param _sx sigma of x
     /// \param _sy sigma of y
     /// \param _sz sigma of z
     void getXYZErrors(Float_t & _sx, Float_t & _sy, Float_t & _sz) { _sx = sx; _sy = sy; _sz = sz; }
-    void getZtErrors(Float_t & _szt) { _szt = szt; }
+    void getXtError(Float_t & _sxt) { _sxt = sxt; }
     /// Get Energy value
     /// \return qdc
     Float_t getE() const { return E; }

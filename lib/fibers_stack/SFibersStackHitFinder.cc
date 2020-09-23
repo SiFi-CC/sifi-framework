@@ -125,12 +125,20 @@ bool SFibersStackHitFinder::execute()
         //         pHit->setQDC(energy_l, energy_r);
         //         pHit->setTime(time_l, time_r);
 
-        // pHit->getAddress();
-        Float_t v = 3e8 * 1e3 * 1e-9 / 1.82; // c * mm/m * ns/s / n_scint
-        Float_t L = 0.1;                     // m
+        //pHit->getAddress();
+
+        Float_t v = 3e8 * 1e3 * 1e-12 / 1.82; // c * mm/m * ps/s / n_scint
+        //Float_t L = 0.1;                     // m
+        Float_t L = 100;    // mm
         Float_t hitPosTime;
-        hitPosTime = ((time_l - time_r) * v + L) / 2 - L / 2;
-        pHit->setZt(hitPosTime);
+        hitPosTime = (((time_l - time_r) * v + L) / 2 - L / 2); // 
+        //hitPosTime = (((time_l - time_r) * v + L) / 2)*100; //cm
+        pHit->setXt(hitPosTime);
+        //printf ("hitPosTime: %10.10f \n", hitPosTime);
+        //printf ("time_l: %10.10f \n", time_l);
+        //printf ("time_r: %10.10f \n \n", time_r);
+        pHit->setXtError(0.0);
+        
     }
 
     return true;
