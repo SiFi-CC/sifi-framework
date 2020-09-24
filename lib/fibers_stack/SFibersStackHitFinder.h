@@ -3,6 +3,9 @@
 #define SFIBERSSTACKHITFINDER_H
 
 #include "STask.h"
+#include "SCalContainer.h"
+#include "SLookup.h"
+#include "SFibersStackHitFinderPar.h"
 
 class SCategory;
 
@@ -14,6 +17,8 @@ protected:
     SCategory * catFibersCal;                   ///< fibers cal category
     SCategory * catFibersHit;                   ///< fibers hit category
     //SCalContainer * pHitFinderPar; ///< hit finder parameters
+    SFibersStackHitFinderPar * pHitFinderPar; ///< hit finder parameters
+    //SFibersStackLookupTable * pLookUp;          ///< lookup table. needed?
 public:
     // constructor
     SFibersStackHitFinder();

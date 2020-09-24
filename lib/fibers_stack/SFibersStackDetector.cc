@@ -21,6 +21,7 @@
 
 #include "SFibersStackDDUnpackerPar.h"
 #include "SFibersStackHitFinder.h"
+#include "SFibersStackHitFinderPar.h"
 
 #include "SCalContainer.h"
 
@@ -100,7 +101,7 @@ bool SFibersStackDetector::initContainers()
         pm()->addCalibrationContainer("SFibersStackCalibratorPar",
                                       new SFibersStackCalibratorPar("SFibersStackCalibratorPar"));
     }
-
+    pm()->addParameterContainer("SFibersStackHitFinderPar",  new SFibersStackHitFinderPar());
     return true;
 }
 

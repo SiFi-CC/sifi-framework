@@ -1,15 +1,26 @@
+// @(#)lib/fibers_stack:$Id$
+// Author: Rafal Lalik  18/11/2017
 
-#include "SFibersStackHitFinder.h"
+/*************************************************************************
+ * Copyright (C) 2017-2018, Rafał Lalik.                                 *
+ * All rights reserved.                                                  *
+ *                                                                       *
+ * For the licensing terms see $SiFiSYS/LICENSE.                         *
+ * For the list of contributors see $SiFiSYS/README/CREDITS.             *
+ *************************************************************************/
 
 #include "SCategory.h"
 #include "SFibersStackCal.h"
 #include "SFibersStackHit.h"
+#include "SFibersStackHitFinder.h"
+#include "SFibersStackHitFinderPar.h"
 #include "SLocator.h"
 #include "SiFi.h"
 
 #include <RtypesCore.h>
 
 #include <cstdio>
+#include <math.h> 
 #include <iostream>
 
 /**
@@ -28,7 +39,7 @@ interface description.
  */
 SFibersStackHitFinder::SFibersStackHitFinder()
     : STask(), catFibersCal(nullptr),
-      catFibersHit(nullptr) //,  pHitFinderPar(nullptr)
+      catFibersHit(nullptr),  pHitFinderPar(nullptr) //,pLookUp(nullptr)
 {
 }
 
@@ -67,6 +78,21 @@ bool SFibersStackHitFinder::init()
     //         std::cerr << "Parameter container 'SFibersStackCalibratorPar' was
     //         not obtained!" << std::endl; exit(EXIT_FAILURE);
     //     }
+    
+    //    get calibrator parameters
+    pHitFinderPar = dynamic_cast<SFibersStackHitFinderPar*>(pm()->getParameterContainer(
+        "SFibersStackHitFinderPar"));
+    if (!pHitFinderPar)
+    {
+        std::cerr << "Parameter container 'SFibersStackHitFinderPar' was not "
+                     "obtained!"
+                  << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    
+    
+    
 
     return true;
 }
@@ -101,6 +127,8 @@ bool SFibersStackHitFinder::execute()
         Float_t qdc_r = pCal->getQDCR();
         Float_t time_l = pCal->getTimeL();
         Float_t time_r = pCal->getTimeR();
+        Float_t a0 = pHitFinderPar->getfA0();
+        Float_t lambda = pHitFinderPar->getfLambda();
 
         if (fabs(time_l) < 0.0001 or fabs(time_r) < 0.0001) continue;
 
@@ -127,18 +155,21 @@ bool SFibersStackHitFinder::execute()
 
         //pHit->getAddress();
 
-        Float_t v = 3e8 * 1e3 * 1e-12 / 1.82; // c * mm/m * ps/s / n_scint
+        Float_t v = 3e8 * 1e3 * 1e-9 / 1.82; // c * m/mm * ns/s / n_scint
         //Float_t L = 0.1;                     // m
-        Float_t L = 100;    // mm
+        //Float_t L = 100;    // mm
         Float_t hitPosTime;
-        hitPosTime = (((time_l - time_r) * v + L) / 2 - L / 2); // 
+        hitPosTime = ((time_l - time_r) * v) / 2; // 
         //hitPosTime = (((time_l - time_r) * v + L) / 2)*100; //cm
         pHit->setXt(hitPosTime);
         //printf ("hitPosTime: %10.10f \n", hitPosTime);
         //printf ("time_l: %10.10f \n", time_l);
         //printf ("time_r: %10.10f \n \n", time_r);
         pHit->setXtError(0.0);
-        
+        Float_t hitPosM;
+        hitPosM = (a0 - log(sqrt(qdc_l/qdc_r)))*lambda;
+        //hitPosM = log(sqrt(qdc_l/qdc_r));
+        pHit->setXm(hitPosM);
     }
 
     return true;

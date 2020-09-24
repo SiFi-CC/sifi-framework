@@ -28,11 +28,13 @@ protected:
     Float_t y;          ///< y-coord in the lab system
     Float_t z;          ///< z-coord in the lab system
     Float_t xt;         ///< x-coord in the lab system, reconstructed from times
+    Float_t xm;         ///< x-coord in the lab system, reconstructed from M_LR
 
     Float_t sx;         ///< sigma of x
     Float_t sy;         ///< sigma of y
     Float_t sz;         ///< sigma of z
     Float_t sxt;        ///< sigma of xt
+    Float_t sxm;        ///< sigma of xm
 
     Float_t E;          ///< Energy
     Float_t sE;         ///< sigma of energy
@@ -66,8 +68,10 @@ public:
     /// \param _z x coordinate
     void setXYZ(Float_t _x, Float_t _y, Float_t _z) { x = _x; y = _y; z = _z; }
     void setXt( Float_t _xt) { xt = _xt; }
+    void setXm( Float_t _xm) { xm = _xm; }
     void setXYZErrors(Float_t _sx, Float_t _sy, Float_t _sz) { sx = _sx; sy = _sy; sz = _sz; }
     void setXtError( Float_t _sxt) { sxt = _sxt; }
+    void setXmError( Float_t _sxm) { sxm = _sxm; }
     /// Set Energy value
     /// \param _E energy
     /// \param _sE sigma of energy
@@ -89,12 +93,14 @@ public:
     /// Get z-cooridnate
     /// \return ... coordinate
     Float_t getXt() const { return xt; }
+    Float_t getXm() const { return xm; }
     /// Get XYZ errors
     /// \param _sx sigma of x
     /// \param _sy sigma of y
     /// \param _sz sigma of z
     void getXYZErrors(Float_t & _sx, Float_t & _sy, Float_t & _sz) { _sx = sx; _sy = sy; _sz = sz; }
     void getXtError(Float_t & _sxt) { _sxt = sxt; }
+    void getXmError(Float_t & _sxm) { _sxm = sxm; }
     /// Get Energy value
     /// \return qdc
     Float_t getE() const { return E; }
