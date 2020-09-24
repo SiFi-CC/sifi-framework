@@ -10,8 +10,8 @@
  *************************************************************************/
 
 #include "SDRSource.h"
-#include "SUnpacker.h"
 #include "SSiFiCCDetResImporter.h"
+#include "SUnpacker.h"
 
 #include <DR_CCSetup.hh>
 
@@ -25,8 +25,7 @@
  *
  * \param subevent subevent id
  */
-SDRSource::SDRSource()
-    : SRootSource("Events"), subevent(0)
+SDRSource::SDRSource() : SRootSource("Events"), subevent(0)
 {
     chain2 = new TChain("DetectorEvents");
     chain3 = new TChain("Setup_stats");
@@ -50,54 +49,63 @@ SDRSource::SDRSource()
  */
 bool SDRSource::open()
 {
-    if (unpackers.size() == 0)
-        return false;
+    if (unpackers.size() == 0) return false;
 
     chain3->GetEntry(0);
     // create fibers map
     ccsetup = new DRSiFiCCSetup(chain3, false);
     const size_t modules = ccsetup->GetNumberOfDetectors();
+    size_t acc_layers = 0;
     size_t id_offset = 0;
-    for (int m = 0; m < modules; ++m) {
+    for (int m = 0; m < modules; ++m)
+    {
         const size_t layers = ccsetup->GetLayerAmount(m);
         const size_t fibers = ccsetup->GetVoxelAmount(m);
 
-        for (int l = 0; l < layers; ++l) {
-            for (int f = 0; f < fibers; ++f) {
+        for (int l = 0; l < layers; ++l)
+        {
+            for (int f = 0; f < fibers; ++f)
+            {
                 size_t base_l = id_offset + (l * fibers + f);
-                size_t base_r = id_offset + layers*fibers + (l * fibers + f);
+                size_t base_r = id_offset + layers * fibers + (l * fibers + f);
 
-                fiber_map[base_l] = { m, l, f, 'l' };
-                fiber_map[base_r] = { m, l, f, 'r' };
+                sipm_map[base_l] = {m, l, f, 'l'};
+                sipm_map[base_r] = {m, l, f, 'r'};
+                fiber_map[base_l] = acc_layers * fibers + l * fibers + f;
+                fiber_map[base_r] = acc_layers * fibers + l * fibers + f;
             }
         }
 
-        id_offset += layers*fibers*2;
+        acc_layers += layers;
+        id_offset += layers * fibers * 2;
     }
     ccsetup->GetDetectorPosition(0).Print();
     ccsetup->GetDetectorPosition(1).Print();
 
     // Uncomment to verify ID vs fiber adress
-//  for (auto & addr : fiber_map)
-//      printf("ID=%d  M=%d  L=%d  F=%d  SIDE=%c\n", addr.first, addr.second.m, addr.second.l, addr.second.f, addr.second.s);
+    //  for (auto & addr : sipm_map)
+    //      printf("ID=%d  M=%d  L=%d  F=%d  SIDE=%c\n", addr.first,
+    //      addr.second.m, addr.second.l, addr.second.f, addr.second.s);
 
     if (subevent != 0x0000)
     {
         if (!unpackers[subevent]) abort();
 
         bool res = unpackers[subevent]->init();
-        if (!res) {
+        if (!res)
+        {
             printf("Forced unpacker %#x not initalized\n", subevent);
             abort();
         }
     }
     else
     {
-        std::map<uint16_t, SUnpacker *>::iterator iter = unpackers.begin();
+        std::map<uint16_t, SUnpacker*>::iterator iter = unpackers.begin();
         for (; iter != unpackers.end(); ++iter)
         {
             bool res = iter->second->init();
-            if (!res) {
+            if (!res)
+            {
                 printf("Unpacker %#x not initalized\n", iter->first);
                 abort();
             }
@@ -105,9 +113,6 @@ bool SDRSource::open()
     }
 
     printf("Files in chain = %d\n", chain->GetFileNumber());
-    chain->Print();
-    chain2->Print();
-    chain3->Print();
 
     return true;
 }
@@ -123,7 +128,7 @@ bool SDRSource::close()
     }
     else
     {
-        std::map<uint16_t, SUnpacker *>::iterator iter = unpackers.begin();
+        std::map<uint16_t, SUnpacker*>::iterator iter = unpackers.begin();
         for (; iter != unpackers.end(); ++iter)
             iter->second->finalize();
     }
@@ -132,8 +137,7 @@ bool SDRSource::close()
 
 bool SDRSource::readCurrentEvent()
 {
-    if (unpackers.size() == 0)
-        return false;
+    if (unpackers.size() == 0) return false;
 
     long ce = getCurrentEvent();
     chain->GetEntry(ce);
@@ -147,20 +151,27 @@ bool SDRSource::readCurrentEvent()
     {
         if (!unpackers[subevent]) abort();
         // TODO must pass event number to the execute
-        SSiFiCCDetResImporter * unp = dynamic_cast<SSiFiCCDetResImporter*>(unpackers[subevent]);
-        for (auto & c : counts) {
-            tree.address = fiber_map[c.first];
+        SSiFiCCDetResImporter* unp =
+            dynamic_cast<SSiFiCCDetResImporter*>(unpackers[subevent]);
+        for (auto& c : counts)
+        {
+            tree.address = sipm_map[c.first];
             tree.data.counts = c.second;
             tree.data.time = times[c.first];
+            int fiber_id = fiber_map[c.first];
+
             if (unp) unp->execute(0, 0, subevent, &tree, 1);
         }
     }
     else
     {
-        for (const auto & u : unpackers) {
-            SSiFiCCDetResImporter * unp = dynamic_cast<SSiFiCCDetResImporter*>(u.second);
-            for (auto & c : counts) {
-                tree.address = fiber_map[c.first];
+        for (const auto& u : unpackers)
+        {
+            SSiFiCCDetResImporter* unp =
+                dynamic_cast<SSiFiCCDetResImporter*>(u.second);
+            for (auto& c : counts)
+            {
+                tree.address = sipm_map[c.first];
                 tree.data.counts = c.second;
                 tree.data.time = times[c.first];
                 if (unp) unp->execute(0, 0, u.first, &tree, 1);

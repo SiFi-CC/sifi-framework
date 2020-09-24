@@ -37,7 +37,13 @@ struct TREE_Events {
     TClonesArray * fHitArray;
 };
 
-struct TREE_Address {
+struct FIBER_Address {
+    int m;
+    int l;
+    int f;
+};
+
+struct TREE_Address : FIBER_Address {
     int m;
     int l;
     int f;
@@ -47,6 +53,10 @@ struct TREE_Address {
 struct TREE_hit {
     int counts;
     float time;
+};
+
+struct TREE_simdata {
+    float x, y, z;
 };
 
 struct TREE_all {
@@ -74,7 +84,8 @@ protected:
 private:
     uint16_t subevent;          ///< subevent id
 
-    std::map<int, TREE_Address> fiber_map;
+    std::map<int, int> fiber_map;
+    std::map<int, TREE_Address> sipm_map;
 
     TREE_all tree;
     DRSiFiCCSetup * ccsetup;
