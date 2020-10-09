@@ -11,6 +11,7 @@
 
 #include "SDRSource.h"
 #include "SSiFiCCDetResImporter.h"
+#include "SFibersStackCalSim.h"
 #include "SUnpacker.h"
 
 #include <DR_CCSetup.hh>
@@ -31,6 +32,9 @@ SDRSource::SDRSource() : SRootSource("Events"), subevent(0)
     chain3 = new TChain("Setup_stats");
 
     tree.events.fHitArray = new TClonesArray(TClass::GetClass<OPHit>(), 10000);
+    fPxPosPhot = new std::map<int, TVector3>;
+    fPxPosElec = new std::map<int, TVector3>;
+    fPxPosScin = new std::map<int, TVector3>;
 
     tree.address.m = 0;
     tree.address.l = 0;
@@ -38,7 +42,9 @@ SDRSource::SDRSource() : SRootSource("Events"), subevent(0)
     tree.address.s = 'l';
     /* source is for "Events" tree */
     chain2->SetBranchAddress("Hitsarray", &(tree.events.fHitArray));
-
+    chain2->SetBranchAddress("Pixel_Position_Photon", &(fPxPosPhot));
+    chain2->SetBranchAddress("Pixel_Position_Electron", &(fPxPosElec));
+    chain2->SetBranchAddress("Pixel_Position_Scin", &(fPxPosScin));
     pmmodel = new DRSiPMModel(0.4, 0.06, 3e6, 500, 10, false);
 }
 
@@ -52,6 +58,8 @@ bool SDRSource::open()
     if (unpackers.size() == 0) return false;
 
     chain3->GetEntry(0);
+    chain2->GetEntry(0);
+
     // create fibers map
     ccsetup = new DRSiFiCCSetup(chain3, false);
     const size_t modules = ccsetup->GetNumberOfDetectors();
@@ -68,7 +76,6 @@ bool SDRSource::open()
             {
                 size_t base_l = id_offset + (l * fibers + f);
                 size_t base_r = id_offset + layers * fibers + (l * fibers + f);
-
                 sipm_map[base_l] = {m, l, f, 'l'};
                 sipm_map[base_r] = {m, l, f, 'r'};
                 fiber_map[base_l] = acc_layers * fibers + l * fibers + f;
@@ -83,9 +90,9 @@ bool SDRSource::open()
     ccsetup->GetDetectorPosition(1).Print();
 
     // Uncomment to verify ID vs fiber adress
-    //  for (auto & addr : sipm_map)
-    //      printf("ID=%d  M=%d  L=%d  F=%d  SIDE=%c\n", addr.first,
-    //      addr.second.m, addr.second.l, addr.second.f, addr.second.s);
+//     for (auto & addr : sipm_map)
+//         printf("ID=%d  M=%d  L=%d  F=%d  SIDE=%c\n", addr.first,
+//         addr.second.m, addr.second.l, addr.second.f, addr.second.s);
 
     if (subevent != 0x0000)
     {
@@ -174,6 +181,46 @@ bool SDRSource::readCurrentEvent()
                 tree.address = sipm_map[c.first];
                 tree.data.counts = c.second;
                 tree.data.time = times[c.first];
+                int fiber_id = fiber_map[c.first];
+                std::map<int, TVector3>::iterator iter;
+
+                if ((iter = fPxPosPhot->find(fiber_id)) !=
+                    fPxPosPhot->end())
+                {
+//                     printf("Fiber_ID %d for PixelPosPhot is found\n", fiber_id);
+//                     printf("X: %f\n", iter->second.X());
+//                     printf("Y: %f\n", iter->second.Y());
+//                     printf("Z: %f\n", iter->second.Z());
+                    tree.pos = iter->second;
+                    tree.type = SFibersStackCalSim::InteractionType::PHOTON;
+                }
+                else if ((iter = fPxPosElec->find(fiber_id)) !=
+                         fPxPosElec->end())
+                {
+//                     printf("\tFiber_ID %d for PixelPosElec is found\n", fiber_id);
+//                     printf("X: %f\n", iter->second.X());
+//                     printf("Y: %f\n", iter->second.Y());
+//                     printf("Z: %f\n", iter->second.Z());
+                    tree.pos = iter->second;
+                    tree.type = SFibersStackCalSim::InteractionType::ELECTRON;
+                }
+                else if ((iter = fPxPosScin->find(fiber_id)) !=
+                         fPxPosScin->end())
+                {
+//                     printf("\t\tFiber_ID %d for PixelPosScin is found\n",
+//                            fiber_id);
+//                     printf("X: %f\n", iter->second.X());
+//                     printf("Y: %f\n", iter->second.Y());
+//                     printf("Z: %f\n", iter->second.Z());
+                    tree.pos = iter->second;
+                    tree.type = SFibersStackCalSim::InteractionType::SCINT;
+                }
+                else
+                {
+                    std::cerr << "does not work\n";
+                    continue;
+                }
+
                 if (unp) unp->execute(0, 0, u.first, &tree, 1);
             }
         }
@@ -188,3 +235,4 @@ void SDRSource::addInput(const std::string& filename)
     chain2->Add(filename.c_str());
     chain3->Add(filename.c_str());
 }
+

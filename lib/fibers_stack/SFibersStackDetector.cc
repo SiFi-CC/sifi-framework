@@ -67,7 +67,7 @@ bool SFibersStackDetector::initTasks()
 {
     if (isSimulation())
     {
-        addTask(new SFibersStackDigitizer(), 0);
+//         addTask(new SFibersStackDigitizer(), 0); FIXME collides with DR Importer
     }
     else
     {

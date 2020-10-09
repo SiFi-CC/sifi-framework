@@ -12,12 +12,14 @@
 #ifndef SFIBERSSTACKGEOMPAR_H
 #define SFIBERSSTACKGEOMPAR_H
 
+#include "sifi_export.h"
+
 #include <TArrayI.h>
 #include <TArrayF.h>
 
 #include "SPar.h"
 
-class SFibersStackGeomPar : public SPar
+class SIFI_EXPORT SFibersStackGeomPar : public SPar
 {
 protected:
     // members

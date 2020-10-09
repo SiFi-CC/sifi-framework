@@ -16,11 +16,13 @@
 
 class SIFI_EXPORT SFibersStackCalSim : public SFibersStackCal
 {
-protected:
+public:
     // data members
     Float_t T;                  ///< kinetic energy
     Float_t E;                  ///< total energy
     Float_t dEdx;               ///< energy loss
+    Float_t fGeantU;            ///< position along the fiber, from simulation 
+    enum InteractionType { PHOTON, ELECTRON, SCINT } type;
 
 public:
     // constructors

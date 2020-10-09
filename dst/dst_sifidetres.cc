@@ -43,7 +43,7 @@ int main(int argc, char** argv)
     std::string output("test.root");
     std::string params_file("params.txt");
 
-//     sifi()->setSimulation(true);
+    sifi()->setSimulation(true);
 
     while (1)
     {
@@ -103,7 +103,8 @@ int main(int argc, char** argv)
     std::cout << source1->getEntries() << " events, analyze " << ev_limit
               << std::endl;
 
-    sifi()->getCategory(SCategory::CatGeantTrack, true);
+//     sifi()->buildCategory(SCategory::CatGeantTrack, true);
+//     sifi()->buildCategory(SCategory::CatGeantFibersRaw, true);
 
     // initialize parameters
     pm()->setParamSource(params_file);
