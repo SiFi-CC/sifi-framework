@@ -8,4 +8,6 @@ SIFI_GENERATE_LIBRARY(
     HEADERS
         SGeantFibersRaw.h
         SGeantTrack.h
+    LIBRARIES
+        ROOT::Core
 )

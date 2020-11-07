@@ -1,22 +1,44 @@
 
-function(SIFI_GENERATE_LIBRARY)
-    cmake_parse_arguments(ARG "" "TARGET" "SOURCES;HEADERS;LIBRARIES;" ${ARGN})
+macro(SIFI_GENERATE_LIBRARY)
+    cmake_parse_arguments(ARG "" "TARGET" "SOURCES;HEADERS;PRIVATE_HEADERS;LIBRARIES;PRIVATE_LIBRARIES;INCLUDE_DIRS" ${ARGN})
 
-ROOT_GENERATE_DICTIONARY(G__${ARG_TARGET}_cc
-    ${ARG_HEADERS}
-    LINKDEF Linkdef.h
-)
+set(BI_INCLUDE_DIRS "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>")
+foreach(incdir ${ARG_INCLUDE_DIRS})
+    list(APPEND BI_INCLUDE_DIRS "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${incdir}>")
+endforeach()
 
 # ROOT_GENERATE_ROOTMAP(${ARG_TARGET} LINKDEF ${CMAKE_CURRENT_SOURCE_DIR}/Linkdef.h)
 
 add_library(${ARG_TARGET} SHARED
     ${ARG_SOURCES}
-    G__${ARG_TARGET}_cc
+)
+ROOT_GENERATE_DICTIONARY(G__${ARG_TARGET}_cc
+    ${ARG_HEADERS}
+    MODULE ${ARG_TARGET}
+    LINKDEF Linkdef.h
 )
 
+add_library(SiFi::${ARG_TARGET} ALIAS ${ARG_TARGET})
+
+get_property(ALL_SOURCES GLOBAL PROPERTY ALL_SOURCES)
+list(APPEND ALL_SOURCES ${ARG_SOURCES} ${ARG_HEADERS} ${ARG_PRIVATE_HEADERS})
+set_property(GLOBAL PROPERTY ALL_SOURCES "${ALL_SOURCES}")
+
+target_include_directories(${ARG_TARGET}
+    PUBLIC
+        $<INSTALL_INTERFACE:include>
+        ${BI_INCLUDE_DIRS}
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/inc
+)
+
+target_compile_features(${ARG_TARGET} PRIVATE cxx_std_17)
+
 target_link_libraries(${ARG_TARGET}
-    ${ROOT_LIBRARIES}
-    ${ARG_LIBRARIES}
+    PUBLIC
+        ${ARG_LIBRARIES}
+    PRIVATE
+        ${ARG_PRIVATE_LIBRARIES}
 )
 
 set_target_properties(${ARG_TARGET}
@@ -39,7 +61,7 @@ install(TARGETS ${ARG_TARGET}
         COMPONENT Development
 )
 
-endfunction(SIFI_GENERATE_LIBRARY)
+endmacro(SIFI_GENERATE_LIBRARY)
 
 
 #-------------------------------------------------------------------------------

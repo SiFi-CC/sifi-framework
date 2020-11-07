@@ -91,9 +91,9 @@ include(doxygen)
 include(formatting)
 include(tools)
 
-file(GLOB_RECURSE FFILES S*.[hc] S*.[hc]pp)
-clang_format(format ${FFILES})
+clang_format(format ${ALL_SOURCES})
 include_what_you_use(-Xiwyu)
+message(WARNING "ALL sources: ${ALL_SOURCES} FIXME")
 
 option(ROOT_XREF "Root Cross-reference in doc" OFF)
 
@@ -120,12 +120,7 @@ endif()
 add_code_coverage_all_targets()
 
 # Root
-find_package(ROOT QUIET REQUIRED COMPONENTS Core)
-include_directories(${ROOT_INCLUDE_DIR})
-
-if (DEFINED ROOT_USE_FILE)
-include(${ROOT_USE_FILE})
-endif()
+find_package(ROOT QUIET REQUIRED COMPONENTS Core Tree)
 
 include(GNUInstallDirs)
 
@@ -135,15 +130,6 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 #----------------------------------------------------------------------------
 # Setup include directory for this project
 include_directories(
-    lib/base/
-    lib/base/core/
-    lib/base/datasources/
-    lib/base/datastruct/
-    lib/base/event/
-    lib/base/util/
-    lib/geant/
-    lib/fibers_stack/
-    lib/tools/
     ${CMAKE_BINARY_DIR}
 )
 # Link directories for libgeometry.so
@@ -163,9 +149,6 @@ option(BUILD_PYTHON_WRAPPER "Build python wrapper" OFF)
 if(BUILD_PYTHON_WRAPPER)
 add_subdirectory(python)
 endif()
-
-enable_testing()
-add_subdirectory(tests)
 
 uninstall_target()
 
@@ -196,7 +179,15 @@ install(FILES
 
 # Add all targets to the build-tree export set
 export(TARGETS ${PROJECT_TARGETS}
-    FILE ${CMAKE_PROJECT_NAME}Targets.cmake)
+    FILE ${CMAKE_PROJECT_NAME}Targets.cmake
+    NAMESPACE SIFI::)
+
+# Register package in user's package registry
+export(PACKAGE SIFI)
+
+#add_subdirectory(dst)
+enable_testing()
+add_subdirectory(tests)
 
 # # Install the export set for use with the install-tree
 # install(TARGETS SiFi Fibers GeantSim

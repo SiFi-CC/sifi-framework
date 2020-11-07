@@ -63,4 +63,14 @@ SIFI_GENERATE_LIBRARY(
 
         util/SLoop.h
         util/SRootFileHeader.h
+    LIBRARIES
+        ROOT::Core
+        ROOT::Tree
+        SiFiTools
+    INCLUDE_DIRS
+        core
+        datasources
+        datastruct
+        event
+        util
 )
