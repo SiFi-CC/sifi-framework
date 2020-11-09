@@ -186,8 +186,7 @@ void SCalContainer::print()
     {
         SLookupChannel * chan = createChannel();
         chan->fromHash(calpar.first);
-        chan->print("");
-        calpar.second->print("  ");
+        chan->print(false, "");
+        calpar.second->print(true, "  ");
     }
-
 }

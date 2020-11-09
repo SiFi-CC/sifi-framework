@@ -27,10 +27,9 @@
  * \class SFibersStackHitFinder
 \ingroup lib_fibers_stack
 
-A calibraror task for Fibers Stack.
+A hit finder task for Fibers Stack.
 
-Takes MGeantFibersStackRaw data and applies calibration. See MTask for the
-interface description.
+Takes each fiber data and tries to reconstruct hit along the fiber.
 
 */
 
@@ -38,8 +37,8 @@ interface description.
  * Default constructor
  */
 SFibersStackHitFinder::SFibersStackHitFinder()
-    : STask(), catFibersCal(nullptr),
-      catFibersHit(nullptr),  pHitFinderPar(nullptr) //,pLookUp(nullptr)
+    : STask()
+    , catFibersCal(nullptr), catFibersHit(nullptr), pHitFinderPar(nullptr)
 {
 }
 
@@ -70,29 +69,22 @@ bool SFibersStackHitFinder::init()
         return false;
     }
 
-    //     get calibrator parameters
-    //     pHitFinderPar =
-    //     dynamic_cast<SCalContainer*>(pm()->getCalibrationContainer("SFibersStackCalibratorPar"));
-    //     if (!pCalibratorPar)
-    //     {
-    //         std::cerr << "Parameter container 'SFibersStackCalibratorPar' was
-    //         not obtained!" << std::endl; exit(EXIT_FAILURE);
-    //     }
-    
+    // get calibrator fiber parameters
+    pHitFinderFiberPar =
+    dynamic_cast<SCalContainer*>(pm()->getCalibrationContainer("SFibersStackHitFinderFiberPar"));
+    if (!pHitFinderFiberPar)
+    {
+        std::cerr << "Parameter container 'SFibersStackHitFinderFiberPar' was not obtained!" << std::endl; exit(EXIT_FAILURE);
+    }
+pHitFinderFiberPar->print();
     //    get calibrator parameters
-    pHitFinderPar = dynamic_cast<SFibersStackHitFinderPar*>(pm()->getParameterContainer(
-        "SFibersStackHitFinderPar"));
+    pHitFinderPar = dynamic_cast<SFibersStackHitFinderPar*>(pm()->getParameterContainer("SFibersStackHitFinderPar"));
     if (!pHitFinderPar)
     {
-        std::cerr << "Parameter container 'SFibersStackHitFinderPar' was not "
-                     "obtained!"
+        std::cerr << "Parameter container 'SFibersStackHitFinderPar' was not obtained!"
                   << std::endl;
         exit(EXIT_FAILURE);
     }
-
-    
-    
-    
 
     return true;
 }
@@ -130,6 +122,7 @@ bool SFibersStackHitFinder::execute()
         Float_t a0 = pHitFinderPar->getfA0();
         Float_t lambda = pHitFinderPar->getfLambda();
 
+        // if times are small, then sipm hit for given side was not recorded
         if (fabs(time_l) < 0.0001 or fabs(time_r) < 0.0001) continue;
 
         SLocator loc(3);
@@ -148,12 +141,6 @@ bool SFibersStackHitFinder::execute()
         }
 
         pHit->setAddress(mod, lay, fib);
-        //         pHit->setU(lab_u);
-        //         pHit->setY(lab_y);
-        //         pHit->setQDC(energy_l, energy_r);
-        //         pHit->setTime(time_l, time_r);
-
-        //pHit->getAddress();
 
         Float_t v = 3e8 * 1e3 * 1e-9 / 1.82; // c * m/mm * ns/s / n_scint
         //Float_t L = 0.1;                     // m
@@ -169,7 +156,7 @@ bool SFibersStackHitFinder::execute()
         Float_t hitPosM;
         hitPosM = (a0 - log(sqrt(qdc_l/qdc_r)))*lambda;
         //hitPosM = log(sqrt(qdc_l/qdc_r));
-        pHit->setXm(hitPosM);
+        pHit->setXYZ(hitPosM, 0, 0);
     }
 
     return true;
