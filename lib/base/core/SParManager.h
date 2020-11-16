@@ -39,7 +39,7 @@
 
 class SPar;
 class SParContainer;
-class SCalContainer;
+class SVirtualCalContainer;
 class SLookupTable;
 
 void trim(std::string &s);
@@ -71,7 +71,7 @@ protected:
 
     std::map<std::string, SContainer *> containers;         ///< Containers
     std::map<std::string, SParContainer *> par_containers;  ///< Par Containers
-    std::map<std::string, SCalContainer *> cal_containers;  ///< Par Containers
+    std::map<std::string, SVirtualCalContainer *> cal_containers;  ///< Par Containers
     std::map<std::string, SLookupTable *> lu_containers;    ///< Lookup Containers
     std::map<std::string, SPar *> parconts;                 ///< Parameters
 
@@ -110,8 +110,8 @@ public:
     bool addLookupContainer(const std::string & cont_name, SLookupTable * lucont);
     SLookupTable * getLookupContainer(const std::string & cont_name);
 
-    bool addCalibrationContainer(const std::string & cont_name, SCalContainer * calcont);
-    SCalContainer * getCalibrationContainer(const std::string & cont_name);
+    bool addCalibrationContainer(const std::string & cont_name, SVirtualCalContainer * calcont);
+    SVirtualCalContainer * getCalibrationContainer(const std::string & cont_name);
 
     void print() const;
 };

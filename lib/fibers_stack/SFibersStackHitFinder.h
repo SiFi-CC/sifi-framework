@@ -15,7 +15,7 @@ protected:
     // members
     SCategory * catFibersCal;                   ///< fibers cal category
     SCategory * catFibersHit;                   ///< fibers hit category
-    SCalContainer * pHitFinderFiberPar;         ///< hit finder fiber parameters
+    SCalContainer<2> * pHitFinderFiberPar;      ///< hit finder fiber parameters
     SFibersStackHitFinderPar * pHitFinderPar;   ///< hit finder parameters
     //SFibersStackLookupTable * pLookUp;        ///< lookup table. needed?
 public:

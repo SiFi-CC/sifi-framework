@@ -437,7 +437,7 @@ SLookupTable * SParManager::getLookupContainer(const std::string& cont_name)
  * \param calcont calibration object
  * \return success
  */
-bool SParManager::addCalibrationContainer(const std::string& cont_name, SCalContainer* calcont)
+bool SParManager::addCalibrationContainer(const std::string& cont_name, SVirtualCalContainer* calcont)
 {
     SContainer * cont = containers[cont_name];
     if (!cont)
@@ -459,7 +459,7 @@ bool SParManager::addCalibrationContainer(const std::string& cont_name, SCalCont
  * \param cont_name container name
  * \return pointer to container
  */
-SCalContainer * SParManager::getCalibrationContainer(const std::string& cont_name)
+SVirtualCalContainer * SParManager::getCalibrationContainer(const std::string& cont_name)
 {
     return cal_containers[cont_name];
 }

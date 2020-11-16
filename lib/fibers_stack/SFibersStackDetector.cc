@@ -103,7 +103,7 @@ bool SFibersStackDetector::initContainers()
         pm()->addCalibrationContainer("SFibersStackCalibratorPar",
                                       new SFibersStackCalibratorPar("SFibersStackCalibratorPar"));
         pm()->addCalibrationContainer("SFibersStackHitFinderFiberPar",
-                                      new SCalContainer("SFibersStackHitFinderFiberPar"));
+                                      new SCalContainer<2>("SFibersStackHitFinderFiberPar"));
     }
     pm()->addParameterContainer("SFibersStackHitFinderPar",  new SFibersStackHitFinderPar());
     return true;

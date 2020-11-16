@@ -71,7 +71,7 @@ bool SFibersStackHitFinder::init()
 
     // get calibrator fiber parameters
     pHitFinderFiberPar =
-    dynamic_cast<SCalContainer*>(pm()->getCalibrationContainer("SFibersStackHitFinderFiberPar"));
+    dynamic_cast<SCalContainer<2>*>(pm()->getCalibrationContainer("SFibersStackHitFinderFiberPar"));
     if (!pHitFinderFiberPar)
     {
         std::cerr << "Parameter container 'SFibersStackHitFinderFiberPar' was not obtained!" << std::endl; exit(EXIT_FAILURE);

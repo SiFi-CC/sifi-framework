@@ -37,14 +37,27 @@
  *  * write() - writes cal pars to the container
  *  * print() - print cal par values
  */
+template<int N>
 struct SIFI_EXPORT SCalPar
 {   ///@{
-    float par0, par1, par2;     ///< various parameters
+    float par[N];     ///< various parameters
     ///}@
-
+    virtual ~SCalPar() {}
     virtual uint read(const char * buffer);
     virtual uint write(char * buffer, size_t n) const;
     virtual void print(bool newline = true, const char * prefix = 0);
+};
+
+class SVirtualCalContainer {
+public:
+    virtual SLookupChannel * createChannel() const = 0;
+
+protected:
+    virtual void fromContainer() = 0;
+    virtual void toContainer() const = 0;
+
+    /* Have access to fromContainer() and toContainer() to SParManager */
+    friend void SParManager::writeContainers(const std::vector<std::string> & conts) const;
 };
 
 /**
@@ -54,11 +67,12 @@ struct SIFI_EXPORT SCalPar
  * virtual address (SCalContainer) and this virtual address is a key to
  * individual calibration parameters.
  */
-class SIFI_EXPORT SCalContainer
+template<int N>
+class SIFI_EXPORT SCalContainer : public SVirtualCalContainer
 {
 protected:
     std::string name;                   ///< container name
-    std::map<size_t, SCalPar*> calpars;  ///< individual calibration parameters
+    std::map<size_t, SCalPar<N>*> calpars;  ///< individual calibration parameters
     bool is_init;                       ///< is container init
 
 public:
@@ -71,16 +85,13 @@ public:
     /// \return empty lookup channel
     virtual SLookupChannel * createChannel() const { return new SLookupChannel; }
 
-    SCalPar * getPar(const SLookupChannel * channel);
+    SCalPar<N> * getPar(const SLookupChannel * channel);
 
     virtual void print();
 
 protected:
     void fromContainer();
     void toContainer() const;
-
-    /* Have access to fromContainer() and toContainer() to SParManager */
-    friend void SParManager::writeContainers(const std::vector<std::string> & conts) const;
 };
 
 #endif /* SCALCONTAINER_H */
