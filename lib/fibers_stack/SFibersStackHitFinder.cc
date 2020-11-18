@@ -76,7 +76,7 @@ bool SFibersStackHitFinder::init()
     {
         std::cerr << "Parameter container 'SFibersStackHitFinderFiberPar' was not obtained!" << std::endl; exit(EXIT_FAILURE);
     }
-pHitFinderFiberPar->print();
+
     //    get calibrator parameters
     pHitFinderPar = dynamic_cast<SFibersStackHitFinderPar*>(pm()->getParameterContainer("SFibersStackHitFinderPar"));
     if (!pHitFinderPar)
@@ -119,8 +119,6 @@ bool SFibersStackHitFinder::execute()
         Float_t qdc_r = pCal->getQDCR();
         Float_t time_l = pCal->getTimeL();
         Float_t time_r = pCal->getTimeR();
-        Float_t a0 = pHitFinderPar->getfA0();
-        Float_t lambda = pHitFinderPar->getfLambda();
 
         // if times are small, then sipm hit for given side was not recorded
         if (fabs(time_l) < 0.0001 or fabs(time_r) < 0.0001) continue;
@@ -142,21 +140,25 @@ bool SFibersStackHitFinder::execute()
 
         pHit->setAddress(mod, lay, fib);
 
-        Float_t v = 3e8 * 1e3 * 1e-9 / 1.82; // c * m/mm * ns/s / n_scint
-        //Float_t L = 0.1;                     // m
-        //Float_t L = 100;    // mm
-        Float_t hitPosTime;
-        hitPosTime = ((time_l - time_r) * v) / 2; // 
-        //hitPosTime = (((time_l - time_r) * v + L) / 2)*100; //cm
-        pHit->setXt(hitPosTime);
-        //printf ("hitPosTime: %10.10f \n", hitPosTime);
-        //printf ("time_l: %10.10f \n", time_l);
-        //printf ("time_r: %10.10f \n \n", time_r);
-        pHit->setXtError(0.0);
-        Float_t hitPosM;
-        hitPosM = (a0 - log(sqrt(qdc_l/qdc_r)))*lambda;
-        //hitPosM = log(sqrt(qdc_l/qdc_r));
+        // obtain per fiber hit finder parameters
+        SLookupChannel chan;
+        chan.m = mod;
+        chan.l = lay;
+        chan.s = fib;
+
+        SCalPar<2>* hfp = pHitFinderFiberPar->getPar(&chan);
+        Float_t a0 = hfp->par[0];
+        Float_t lambda = hfp->par[1];
+
+        // calculate position from MLR
+        Float_t hitPosM = (log(sqrt(qdc_r/qdc_l)) - a0) * lambda;
         pHit->setXYZ(hitPosM, 0, 0);
+
+        // calculate position from times (inacccurate)
+        Float_t v = 3e8 * 1e3 * 1e-9 / 1.82; // c * m/mm * ns/s / n_scint
+        Float_t hitPosTime = ((time_l - time_r) * v) / 2;
+        pHit->setXt(hitPosTime);
+        pHit->setXtError(0.0);
     }
 
     return true;
