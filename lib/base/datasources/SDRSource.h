@@ -16,6 +16,7 @@
 #include "sifi_export.h"
 
 #include "SRootSource.h"
+#include "SFibersStackCalSim.h"
 
 #include <ComptonCameraHitClass.hh>
 #include <DR_EventHandler.hh>
@@ -54,11 +55,16 @@ struct TREE_hit
     float time;
 };
 
-struct TREE_all
-{
+struct TREE_simdata {
+    float x, y, z;
+};
+
+struct TREE_all {
     TREE_Address address;
     TREE_Events events;
     TREE_hit data;
+    TVector3 pos;
+    SFibersStackCalSim::InteractionType type;
 };
 
 /**
@@ -81,11 +87,16 @@ class SIFI_EXPORT SDRSource : public SRootSource
   private:
     uint16_t subevent; ///< subevent id
 
-    std::map<int, TREE_Address> fiber_map;
-
+    std::map<int, int> fiber_map;
+    std::map<int, TREE_Address> sipm_map;
+    std::map<int,TVector3> * fPxPosPhot;
+    std::map<int,TVector3> * fPxPosElec;
+    std::map<int,TVector3> * fPxPosScin;
+    
     TREE_all tree;
-    DRSiFiCCSetup* ccsetup;
-    DRSiPMModel* pmmodel;
+    DRSiFiCCSetup * ccsetup;
+    DRSiPMModel * pmmodel;
+
 };
 
 #endif /* SDRSOURCE_H */

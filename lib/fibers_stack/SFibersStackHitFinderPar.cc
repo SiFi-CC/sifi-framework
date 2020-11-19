@@ -32,7 +32,6 @@ void SFibersStackHitFinderPar::clear()
 {
     fA0 = 0.0;
     fLambda = 0.0;
-    fPar3 = 0.0;
 }
 
 /**
@@ -44,8 +43,7 @@ void SFibersStackHitFinderPar::clear()
 bool SFibersStackHitFinderPar::getParams(SParContainer* parcont)
 {
     if (!parcont->fill("fA0", fA0)) return false;
-    if (!parcont->fill("fLambda", fLambda)) return false;
-    if (!parcont->fill("fPar3", fPar3)) return false;    
+    if (!parcont->fill("fLambda", fLambda)) return false;   
 //     TArrayF _t(16);
 //     if (!parcont->fill("fThreshold", _t)) return false;
 //     if (_t.GetSize() != 16)
@@ -130,7 +128,6 @@ void SFibersStackHitFinderPar::print() const
 {
     printf(" fA0 = %f\n", fA0);
     printf(" fLambda = %f\n", fLambda);
-    printf(" fPar3 = %f\n", fPar3);
 //     printf(" +++\n Thresholds =");
 //     for (int i = 0; i < 16; ++i)
 //         printf(" %.2f", fThreshold[i]);

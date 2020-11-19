@@ -12,13 +12,15 @@
 #include "SSiFiCCDetResImporter.h"
 #include "SCategory.h"
 #include "SFibersStackCal.h"
-#include "SFibersStackLookup.h"
+#include "SFibersStackCalSim.h"
+#include "SFibersStackGeomPar.h"
 #include "SParManager.h"
 #include "SiFi.h"
 
 #include <algorithm>
 #include <iostream>
 #include <numeric>
+#include <math.h>
 
 const Float_t adc_to_mv = 4.096;
 const Float_t sample_to_ns = 1.;
@@ -35,7 +37,9 @@ A unpacker task.
  * Constructor
  */
 SSiFiCCDetResImporter::SSiFiCCDetResImporter()
-    : SUnpacker(), catFibersCal(nullptr), pLookUp(nullptr)
+
+    : SUnpacker()
+    , catFibersCal(nullptr), /*pLookUp(nullptr),*/ pGeomPar(nullptr)
 {
 }
 
@@ -57,19 +61,29 @@ bool SSiFiCCDetResImporter::init()
         return false;
     }
 
-    pLookUp = dynamic_cast<SFibersStackLookupTable*>(
-        pm()->getLookupContainer("SFibersStackDDLookupTable"));
-    pLookUp->print();
 
+//     pLookUp = dynamic_cast<SFibersStackLookupTable*>(pm()->getLookupContainer("SFibersStackDDLookupTable"));
+//     pLookUp->print();
+
+    pGeomPar = dynamic_cast<SFibersStackGeomPar*>(pm()->getParameterContainer("SFibersStackGeomPar"));
+    if (!pGeomPar)
+    {
+        std::cerr << "Parameter container 'SFibersStackGeomPar' was not obtained!" << std::endl;
+        exit(EXIT_FAILURE);
+    }    
     return true;
 }
 
 bool SSiFiCCDetResImporter::execute(ulong /*event*/, ulong /*seq_number*/,
-                                    uint16_t /*subevent*/, void* buffer,
+                                    uint16_t subevent, void* buffer, 
                                     size_t /*length*/)
 {
     TREE_all* tree = static_cast<TREE_all*>(buffer);
     if (!tree) return false;
+
+
+    uint16_t fake_address = subevent & 0xfff0;
+    uint8_t channel = subevent & 0x0f;
 
     SLocator loc(3);
     loc[0] = tree->address.m; // mod;
@@ -77,23 +91,46 @@ bool SSiFiCCDetResImporter::execute(ulong /*event*/, ulong /*seq_number*/,
     loc[2] = tree->address.f; // fib;
     char side = tree->address.s;
 
-    SFibersStackCal* pCal =
-        dynamic_cast<SFibersStackCal*>(catFibersCal->getObject(loc));
+// <<<<<<< HEAD
+//     SFibersStackCal* pCal =
+//         dynamic_cast<SFibersStackCal*>(catFibersCal->getObject(loc));
+//     if (!pCal)
+//     {
+//         pCal = reinterpret_cast<SFibersStackCal*>(catFibersCal->getSlot(loc));
+//         new (pCal) SFibersStackCal;
+//         pCal->setAddress(loc[0], loc[1], loc[2]);
+//     }
+// 
+//     // fill CALL
+//     if (side == 'l' and pCal->getQDCL() == 0.0)
+//     {
+//         pCal->setQDCL(tree->data.counts);
+//         pCal->setTimeL(tree->data.time);
+//     }
+//     if (side == 'r' and pCal->getQDCR() == 0.0)
+//     {
+// =======
+    Float_t pos_x = tree->pos.X();
+    Float_t pos_y = tree->pos.Y();
+    Float_t rot = pGeomPar->getLayerRotation(loc[0], loc[1]);
+    Float_t u = pos_x * cos(rot * M_PI/180) + pos_y * sin(rot * M_PI/180);
+    
+    SFibersStackCalSim* pCal = dynamic_cast<SFibersStackCalSim*>(catFibersCal->getObject(loc));
     if (!pCal)
     {
-        pCal = reinterpret_cast<SFibersStackCal*>(catFibersCal->getSlot(loc));
-        new (pCal) SFibersStackCal;
-        pCal->setAddress(loc[0], loc[1], loc[2]);
+        pCal = reinterpret_cast<SFibersStackCalSim*>(catFibersCal->getSlot(loc));
+        new (pCal) SFibersStackCalSim;
     }
 
-    // fill CALL
-    if (side == 'l' and pCal->getQDCL() == 0.0)
-    {
+    pCal->setAddress(loc[0], loc[1], loc[2]);
+    if (side == 'l') {
+        pCal->setU(u);
         pCal->setQDCL(tree->data.counts);
         pCal->setTimeL(tree->data.time);
     }
-    if (side == 'r' and pCal->getQDCR() == 0.0)
-    {
+    if (side == 'r') {
+        pCal->setU(u);
+// >>>>>>> jonas_sync
         pCal->setQDCR(tree->data.counts);
         pCal->setTimeR(tree->data.time);
     }

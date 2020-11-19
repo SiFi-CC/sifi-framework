@@ -25,7 +25,6 @@ class SFibersStackHitFinderPar : public SPar
     // members
     Float_t fA0;
     Float_t fLambda;
-    Float_t fPar3; 
 
   public:
     bool getParams(SParContainer* parcont) override;
@@ -36,7 +35,6 @@ class SFibersStackHitFinderPar : public SPar
 
     Float_t getfA0() const { return fA0; }
     Float_t getfLambda() const { return fLambda; }
-    Float_t getPar3() const { return fPar3; }
 };
 
 #endif /* SFIBERSSTACKHITFINDERPAR_H */

@@ -91,7 +91,6 @@ bool SFibersStackDigitizer::init()
 bool SFibersStackDigitizer::execute()
 {
     int size = catGeantFibersRaw->getEntries();
-
     for (int i = 0; i < size; ++i)
     {
         SGeantFibersRaw * pHit = dynamic_cast<SGeantFibersRaw *>(catGeantFibersRaw->getObject(i));

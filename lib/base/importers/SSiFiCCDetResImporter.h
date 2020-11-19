@@ -8,14 +8,14 @@
  * For the licensing terms see $SiFiSYS/LICENSE.                         *
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
-
-#ifndef SFIBERSSTACKDDUNPACKER_H
-#define SFIBERSSTACKDDUNPACKER_H
+#ifndef SSIFICCDETRESIMPORTER_H
+#define SSIFICCDETRESIMPORTER_H
 
 #include "sifi_export.h"
-
+#include "SFibersStackLookup.h"
 #include "SDRSource.h"
 #include "SLookup.h"
+#include "SCategory.h"
 #include "SUnpacker.h"
 
 #include <string>
@@ -29,7 +29,8 @@ class SIFI_EXPORT SSiFiCCDetResImporter : public SUnpacker
 protected:
     // members
     SCategory * catFibersCal;                   ///< fibers raw category
-    SFibersStackLookupTable * pLookUp;          ///< lookup table
+//     SFibersStackLookupTable * pLookUp;          ///< lookup table
+    SFibersStackGeomPar * pGeomPar;
 
 public:
     // constructor
@@ -43,4 +44,4 @@ public:
         void * buffer, size_t length) override;
 };
 
-#endif /* SFIBERSSTACKUNPACKER_H */
+#endif /* SSIFICCDETRESIMPORTER_H */
