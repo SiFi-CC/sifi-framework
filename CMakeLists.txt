@@ -120,7 +120,7 @@ endif()
 add_code_coverage_all_targets()
 
 # Root
-find_package(ROOT QUIET REQUIRED COMPONENTS Core Tree)
+find_package(ROOT 6.20 CONFIG REQUIRED COMPONENTS Core Tree)
 
 include(GNUInstallDirs)
 

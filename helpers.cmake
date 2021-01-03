@@ -15,6 +15,7 @@ add_library(${ARG_TARGET} SHARED
 ROOT_GENERATE_DICTIONARY(G__${ARG_TARGET}_cc
     ${ARG_HEADERS}
     MODULE ${ARG_TARGET}
+    DEPENDENCIES ROOT::Core
     LINKDEF Linkdef.h
 )
 
@@ -31,8 +32,6 @@ target_include_directories(${ARG_TARGET}
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/inc
 )
-
-target_compile_features(${ARG_TARGET} PRIVATE cxx_std_17)
 
 target_link_libraries(${ARG_TARGET}
     PUBLIC
