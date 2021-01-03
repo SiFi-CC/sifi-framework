@@ -31,7 +31,6 @@ class SFibersStackHitFinderPar : public SPar
     bool putParams(SParContainer* parcont) const override;
     void clear() override;
     void print() const override;
-    
 
     Float_t getfA0() const { return fA0; }
     Float_t getfLambda() const { return fLambda; }

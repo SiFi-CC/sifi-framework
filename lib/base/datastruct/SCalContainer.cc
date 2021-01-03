@@ -17,6 +17,9 @@
 #include <sstream>
 
 #include <cassert>
+#include <cstring>
+
+#include <experimental/iterator>
 
 /**
  * \class SCalContainer
@@ -44,12 +47,16 @@ parameters in the container and write to param file.
  * \param buffer string containing data to parse
  * \return number of parsed elements.
  */
-uint SCalPar::read(const char* buffer)
+template<int N>
+uint SCalPar<N>::read(const char* buffer)
 {
-    uint n;
-    int cnt = sscanf(buffer, "%f %f %f%n", &par0, &par1, &par2, &n);
-    assert(cnt == 3);
-    return n;
+    int cnt = 0;
+    std::istringstream sstr(buffer);
+
+    while (sstr >> par[cnt] && cnt < N) ++cnt;
+
+        assert(cnt == N);
+    return cnt;
 }
 
 /**
@@ -61,12 +68,23 @@ uint SCalPar::read(const char* buffer)
  * \param n buffer length
  * \return number of written bytes.
  */
-uint SCalPar::write(char* buffer, size_t n) const
+template<int N>
+uint SCalPar<N>::write(char* buffer, size_t n) const
 {
-    int cnt = snprintf(buffer, n, "%7.6g %7.6g %7.6g", par0, par1, par2);
-    if (cnt < 0) return cnt;
-    if (cnt < n) return 0;
-    return cnt;
+    std::ostringstream sstr;
+    for (const auto & v : par) {
+        sstr.width(15);
+        sstr.setf(std::ios::scientific, std:: ios::floatfield);
+        sstr.fill(' ');
+        sstr << v;
+    }
+
+    if (sstr.str().length() >= n)
+        return -sstr.str().length();
+
+    std::strcpy(buffer, sstr.str().c_str());
+
+    return 0;
 }
 
 /**
@@ -77,9 +95,12 @@ uint SCalPar::write(char* buffer, size_t n) const
  * \param prefix a text which should be displayed before the content of the
  * channel params. If prefix is empty, then
  */
-void SCalPar::print(bool newline, const char * prefix)
+template<int N>
+void SCalPar<N>::print(bool newline, const char * prefix)
 {
-    printf("%s %f %f %f", prefix, par0, par1, par2);
+    std::cout << prefix << " ";
+    std::copy(std::begin(par), std::end(par),
+              std::experimental::make_ostream_joiner(std::cout, " "));
     if (newline) putchar('\n');
 }
 
@@ -88,12 +109,14 @@ void SCalPar::print(bool newline, const char * prefix)
  *
  * \param container container name
  */
-SCalContainer::SCalContainer(const std::string& container)
+template<int N>
+SCalContainer<N>::SCalContainer(const std::string& container)
     : name(container), is_init(false)
 {
 }
 
-SCalContainer::~SCalContainer()
+template<int N>
+SCalContainer<N>::~SCalContainer()
 {
     for (auto & p : calpars)
         delete p.second;
@@ -105,7 +128,8 @@ SCalContainer::~SCalContainer()
  *
  * \sa SLookupTable::fromContainer()
  */
-void SCalContainer::fromContainer()
+template<int N>
+void SCalContainer<N>::fromContainer()
 {
     SContainer * lc = pm()->getContainer(name);
     if (!lc) throw "No lookup container.";
@@ -114,7 +138,7 @@ void SCalContainer::fromContainer()
     {
         SLookupChannel * chan = createChannel();
         int cnt = chan->read(line.c_str());
-        SCalPar * cp = new SCalPar;
+        SCalPar<N> * cp = new SCalPar<N>;
         cp->read(line.c_str() + cnt);
 
         calpars.insert({chan->quickHash(), cp});
@@ -130,7 +154,8 @@ void SCalContainer::fromContainer()
  * \sa fromContainer()
  * \sa SLookupTable::toContainer()
  */
-void SCalContainer::toContainer() const
+template<int N>
+void SCalContainer<N>::toContainer() const
 {
     SContainer * sc = pm()->getContainer(name);
     if (!sc) throw "No lookup container.";
@@ -164,7 +189,8 @@ void SCalContainer::toContainer() const
  * \param channel channel object
  * \return calibration parameter object
  */
-SCalPar* SCalContainer::getPar(const SLookupChannel * channel) {
+template<int N>
+SCalPar<N>* SCalContainer<N>::getPar(const SLookupChannel * channel) {
     if (!is_init) fromContainer();
 
     uint64_t hash = channel->quickHash();
@@ -177,7 +203,8 @@ SCalPar* SCalContainer::getPar(const SLookupChannel * channel) {
 /**
  * Print all parameters from given cal container.
  */
-void SCalContainer::print()
+template<int N>
+void SCalContainer<N>::print()
 {
     if (!is_init) fromContainer();
 
@@ -186,8 +213,10 @@ void SCalContainer::print()
     {
         SLookupChannel * chan = createChannel();
         chan->fromHash(calpar.first);
-        chan->print("");
-        calpar.second->print("  ");
+        chan->print(false, "");
+        calpar.second->print(true, "  ");
     }
-
 }
+
+template class SCalContainer<2>;
+template class SCalContainer<3>;

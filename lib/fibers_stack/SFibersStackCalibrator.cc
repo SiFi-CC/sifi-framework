@@ -74,7 +74,7 @@ bool SFibersStackCalibrator::init()
     }
 
     // get calibrator parameters
-    pCalibratorPar = dynamic_cast<SCalContainer*>(
+    pCalibratorPar = dynamic_cast<SCalContainer<3>*>(
         pm()->getCalibrationContainer("SFibersStackCalibratorPar"));
     if (!pCalibratorPar)
     {
@@ -120,8 +120,8 @@ bool SFibersStackCalibrator::execute()
         SFibersStackChannel chan_r = chan_l;
         chan_r.side = 'r';
 
-        SCalPar* cp_l = pCalibratorPar->getPar(&chan_l);
-        SCalPar* cp_r = pCalibratorPar->getPar(&chan_r);
+        SCalPar<3>* cp_l = pCalibratorPar->getPar(&chan_l);
+        SCalPar<3>* cp_r = pCalibratorPar->getPar(&chan_r);
 
         // calc laboratory coordinates from digi data
         Float_t u = pRaw->getU();
@@ -134,10 +134,10 @@ bool SFibersStackCalibrator::execute()
         // do your magic here with u, y and qdc
         Float_t lab_u = u;
         Float_t lab_y = y;
-        Float_t energy_l = cp_l->par0 * qdc_l + cp_l->par1;
-        Float_t energy_r = cp_r->par0 * qdc_r + cp_r->par1;
-        time_l += cp_l->par2;
-        time_r += cp_r->par2;
+        Float_t energy_l = cp_l->par[0] * qdc_l + cp_l->par[1];
+        Float_t energy_r = cp_r->par[0] * qdc_r + cp_r->par[1];
+        time_l += cp_l->par[2];
+        time_r += cp_r->par[2];
 
         SLocator loc(3);
         loc[0] = mod;
