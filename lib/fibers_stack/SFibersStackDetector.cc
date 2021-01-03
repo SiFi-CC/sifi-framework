@@ -44,7 +44,7 @@ An organizer class for the detector
  * \param name detetcor name
  */
 SFibersStackDetector::SFibersStackDetector(const std::string & name) : SDetector(name),
-modules(1), layers(30), fibers(30)
+modules(2), layers(30), fibers(76)
 {
 }
 
@@ -72,6 +72,7 @@ bool SFibersStackDetector::initTasks()
     if (isSimulation())
     {
 //         addTask(new SFibersStackDigitizer(), 0); FIXME collides with DR Importer
+        addTask(new SFibersStackHitFinder(), 2);
     }
     else
     {
@@ -102,9 +103,10 @@ bool SFibersStackDetector::initContainers()
         pm()->addParameterContainer("SFibersStackDDUnpackerPar",  new SFibersStackDDUnpackerPar());
         pm()->addCalibrationContainer("SFibersStackCalibratorPar",
                                       new SFibersStackCalibratorPar("SFibersStackCalibratorPar"));
-        pm()->addCalibrationContainer("SFibersStackHitFinderFiberPar",
-                                      new SCalContainer<2>("SFibersStackHitFinderFiberPar"));
     }
+
+    pm()->addCalibrationContainer("SFibersStackHitFinderFiberPar",
+                                  new SCalContainer<2>("SFibersStackHitFinderFiberPar"));
     pm()->addParameterContainer("SFibersStackHitFinderPar",  new SFibersStackHitFinderPar());
     return true;
 }
@@ -131,7 +133,7 @@ bool SFibersStackDetector::initCategories()
 
         if (!dm->registerCategory(SCategory::CatGeantFibersRaw, "SGeantFibersRaw", 2, sim_sizes, true)) return false;
         if (!dm->registerCategory(SCategory::CatFibersStackCal, "SFibersStackCalSim", 3, sizes, true)) return false;
-        if (!dm->registerCategory(SCategory::CatFibersStackHit, "SFibersStackHitSim", 3, sizes, true)) return false;
+        if (!dm->registerCategory(SCategory::CatFibersStackHit, "SFibersStackHit", 3, sizes, true)) return false;
     }
     else
     {

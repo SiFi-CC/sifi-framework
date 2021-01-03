@@ -34,15 +34,6 @@ Takes each fiber data and tries to reconstruct hit along the fiber.
 */
 
 /**
- * Default constructor
- */
-SFibersStackHitFinder::SFibersStackHitFinder()
-    : STask()
-    , catFibersCal(nullptr), catFibersHit(nullptr), pHitFinderPar(nullptr)
-{
-}
-
-/**
  * Init task
  *
  * \sa STask::init()
@@ -77,14 +68,11 @@ bool SFibersStackHitFinder::init()
         std::cerr << "Parameter container 'SFibersStackHitFinderFiberPar' was not obtained!" << std::endl; exit(EXIT_FAILURE);
     }
 
-    //    get calibrator parameters
-    pHitFinderPar = dynamic_cast<SFibersStackHitFinderPar*>(pm()->getParameterContainer("SFibersStackHitFinderPar"));
-    if (!pHitFinderPar)
-    {
-        std::cerr << "Parameter container 'SFibersStackHitFinderPar' was not obtained!"
-                  << std::endl;
-        exit(EXIT_FAILURE);
-    }
+    SCalPar<2> * def = new SCalPar<2>();
+    def->par[0] = 0.0;
+    def->par[1] = 1.0;
+
+    pHitFinderFiberPar->setDefault(def);
 
     return true;
 }

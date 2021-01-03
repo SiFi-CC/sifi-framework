@@ -103,9 +103,6 @@ int main(int argc, char** argv)
     std::cout << source1->getEntries() << " events, analyze " << ev_limit
               << std::endl;
 
-//     sifi()->buildCategory(SCategory::CatGeantTrack, true);
-//     sifi()->buildCategory(SCategory::CatGeantFibersRaw, true);
-
     // initialize parameters
     pm()->setParamSource(params_file);
     pm()->parseSource();
@@ -115,9 +112,11 @@ int main(int argc, char** argv)
 
     detm->addDetector(new SFibersStackDetector("FibersStack"));
 
-    detm->initTasks();
-    detm->initParameterContainers();
     detm->initCategories();
+    sifi()->buildCategory(SCategory::CatFibersStackCal, true);
+
+    detm->initParameterContainers();
+    detm->initTasks();
 
     pm()->addLookupContainer("SFibersStackDDLookupTable", new SFibersStackLookupTable("SFibersStackDDLookupTable", 0x1000, 0x1fff, 32));
 

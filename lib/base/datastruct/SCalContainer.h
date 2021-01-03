@@ -74,6 +74,7 @@ protected:
     std::string name;                   ///< container name
     std::map<size_t, SCalPar<N>*> calpars;  ///< individual calibration parameters
     bool is_init;                       ///< is container init
+    SCalPar<N> * def{nullptr};          //!
 
 public:
     // constructor
@@ -88,6 +89,7 @@ public:
     SCalPar<N> * getPar(const SLookupChannel * channel);
 
     virtual void print();
+    virtual void setDefault(SCalPar<N> * d) { def = d; }
 
 protected:
     void fromContainer();

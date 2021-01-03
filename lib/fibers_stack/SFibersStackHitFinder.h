@@ -4,23 +4,20 @@
 
 #include "STask.h"
 #include "SCalContainer.h"
-#include "SLookup.h"
 
 class SCategory;
-class SFibersStackHitFinderPar;
 
 class SFibersStackHitFinder : public STask
 {
 protected:
     // members
-    SCategory * catFibersCal;                   ///< fibers cal category
-    SCategory * catFibersHit;                   ///< fibers hit category
-    SCalContainer<2> * pHitFinderFiberPar;      ///< hit finder fiber parameters
-    SFibersStackHitFinderPar * pHitFinderPar;   ///< hit finder parameters
-    //SFibersStackLookupTable * pLookUp;        ///< lookup table. needed?
+    SCategory * catFibersCal{nullptr};              ///< fibers cal category
+    SCategory * catFibersHit{nullptr};              ///< fibers hit category
+    SCalContainer<2> * pHitFinderFiberPar{nullptr}; ///< hit finder fiber parameters
+
 public:
     // constructor
-    SFibersStackHitFinder();
+    SFibersStackHitFinder() = default;
     // destructor
     virtual ~SFibersStackHitFinder() = default;
 

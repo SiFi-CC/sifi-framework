@@ -180,7 +180,7 @@ void SCalContainer<N>::toContainer() const
 }
 
 /**
- * Get single SCalPar object fr given channel described by SLookupChannel
+ * Get single SCalPar object for given channel described by SLookupChannel
  * object.
  *
  * \todo Probably we need to develop better mechanism here, maybe converting
@@ -196,7 +196,17 @@ SCalPar<N>* SCalContainer<N>::getPar(const SLookupChannel * channel) {
     uint64_t hash = channel->quickHash();
     auto it = calpars.find(hash);
 
-    assert(it != calpars.end());
+    if (it == calpars.end()) {
+        if (def) {
+            SCalPar<N> * cp = new SCalPar<N>;
+            *cp = *def;
+            calpars.insert({channel->quickHash(), cp});
+            return cp;
+        }
+    } else {
+        assert(it != calpars.end());
+    }
+
     return it->second;
 }
 

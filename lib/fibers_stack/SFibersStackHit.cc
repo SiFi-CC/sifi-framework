@@ -20,11 +20,6 @@ A container for Fibers Stack Raw data
 */
 
 /**
- * Constructor
- */
-SFibersStackHit::SFibersStackHit() : TObject() {}
-
-/**
  * Clear object
  * Parameter options are ignored, for ROOT compatibility.
  *

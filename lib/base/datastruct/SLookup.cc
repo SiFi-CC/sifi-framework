@@ -91,7 +91,7 @@ void SLookupChannel::print(bool newline, const char * prefix) const
 
 /**
  * In certain cases lookup channels are stored in an unordered_map STL
- * container. To rpovide quick access a specific hash function must be provides.
+ * container. To provide quick access a specific hash function must be provides.
  * Here we assumed that hash is a 64 bit word, which stores m, l, s lookup
  * values at respectively 47-40, 55-48 and 63-56 bits of te word. The lower bits
  * can be used in overriding structures to extend their classes. The hash can

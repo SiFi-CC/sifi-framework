@@ -13,6 +13,7 @@ if(BUILD_SIFIDETRES_SUPPORT AND HAVE_SIFIDETRES_SUPPORT)
     message(STATUS "OP Library = ${OPLIB} ${OPLIB_FOUND}")
     set(EXTRA_DEPS ${OPLIB})
 
+    set(EXTRA_INCLUDES ../fibers_stack/)
     find_library(GEOMLIB SiFiGeomLib HINTS ${CMAKE_INSTALL_PREFIX})
     message(STATUS "Struct Library = ${GEOMLIB} ${GEOMLIB_FOUND}")
     list(APPEND EXTRA_DEPS ${GEOMLIB})
@@ -89,6 +90,7 @@ SIFI_GENERATE_LIBRARY(
         util/SLoop.h
         util/SRootFileHeader.h
     LIBRARIES
+        ${EXTRA_DEPS}
         ROOT::Core
         ROOT::Tree
         SiFiTools
@@ -97,5 +99,7 @@ SIFI_GENERATE_LIBRARY(
         datasources
         datastruct
         event
+        importers
         util
+        ${EXTRA_INCLUDES}
 )

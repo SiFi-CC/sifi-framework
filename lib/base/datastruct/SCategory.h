@@ -35,12 +35,12 @@ public:
     /// List of all categories
     enum Cat {
         // simulations
-        CatGeantTrack,          ///< geant track
+        CatGeantTrack = 0,      ///< geant track
         CatGeantFibersRaw,      ///< fibers hit
         // helpers
-        CatDDSamples,
+        CatDDSamples = 10,
         // fibers
-        CatFibersStackRaw,      ///< fibers stack raw data
+        CatFibersStackRaw = 20, ///< fibers stack raw data
         CatFibersStackCal,      ///< fibers cal data
         CatFibersStackHit,      ///< fibers hit
         CatFibersStackClus,     ///< fibers cluster

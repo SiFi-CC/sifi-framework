@@ -42,7 +42,7 @@ protected:
 
 public:
     // constructor
-    SFibersStackHit();
+    SFibersStackHit() = default;
     virtual ~SFibersStackHit() = default;
 
     // inherited from ROOT
