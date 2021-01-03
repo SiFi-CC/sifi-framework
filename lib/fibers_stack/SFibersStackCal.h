@@ -16,7 +16,13 @@
 
 #include "SFibersStackRaw.h"
 
-class SIFI_EXPORT SFibersStackCal : public SFibersStackRaw
+#include <Rtypes.h>
+
+class TBuffer;
+class TClass;
+class TMemberInspector;
+
+class SFibersStackCal : public SFibersStackRaw
 {
 public:
     // constructors

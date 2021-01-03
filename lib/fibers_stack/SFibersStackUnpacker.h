@@ -15,7 +15,6 @@
 #include "STask.h"
 
 class SCategory;
-class SFibersStackGeomPar;
 
 class SFibersStackUnpacker : public STask
 {

@@ -11,6 +11,8 @@
 
 #include "SFibersStackRaw.h"
 
+#include <cstdio>
+
 /**
  * \class SFibersStackRaw
 \ingroup lib_fibers_stack

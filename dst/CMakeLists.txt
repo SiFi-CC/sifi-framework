@@ -2,10 +2,10 @@
 # Setup the project
 
 add_executable(sifi_simdst simdst.cc)
-target_link_libraries(sifi_simdst SiFi FibersStack Geant SiFiTools)
+target_link_libraries(sifi_simdst SiFi FibersStack Geant SiFiTools ROOT::Physics)
 
 add_executable(sifi_dst dst.cc)
-target_link_libraries(sifi_dst SiFi FibersStack Geant SiFiTools)
+target_link_libraries(sifi_dst SiFi FibersStack Geant SiFiTools ROOT::Physics)
 
 if(BUILD_SIFIDETRES_SUPPORT AND HAVE_SIFIDETRES_SUPPORT)
     add_executable(sifi_detres_importer dst_sifidetres.cc)

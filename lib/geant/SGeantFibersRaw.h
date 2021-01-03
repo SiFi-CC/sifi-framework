@@ -14,7 +14,7 @@
 
 #include "sifi_export.h"
 
-#include "TObject.h"
+#include <TObject.h>
 
 class SIFI_EXPORT SGeantFibersRaw : public TObject
 {

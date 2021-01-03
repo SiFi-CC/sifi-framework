@@ -36,6 +36,8 @@ SIFI_GENERATE_LIBRARY(
         SFibersStackCalSim.h
         SFibersStackHit.h
         SFibersStackCluster.h
-        SFibersStackHitFinder.h
-        SFibersStackHitFinderPar.h
+    LIBRARIES
+        ROOT::Core
+        SiFi
+        Geant
 )

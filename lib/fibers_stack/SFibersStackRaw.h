@@ -14,7 +14,13 @@
 
 #include "sifi_export.h"
 
+#include <Rtypes.h>       // for THashConsistencyHolder, ClassDef
+#include <RtypesCore.h>   // for Float_t, Int_t, Option_t
 #include <TObject.h>
+
+class TBuffer;
+class TClass;
+class TMemberInspector;
 
 class SIFI_EXPORT SFibersStackRaw : public TObject
 {
