@@ -6,14 +6,18 @@
 #include "SCalContainer.h"
 
 class SCategory;
+class SFibersStackGeomPar;
+class SFibersStackHitFinderPar;
 
 class SFibersStackHitFinder : public STask
 {
 protected:
     // members
-    SCategory * catFibersCal{nullptr};              ///< fibers cal category
-    SCategory * catFibersHit{nullptr};              ///< fibers hit category
-    SCalContainer<2> * pHitFinderFiberPar{nullptr}; ///< hit finder fiber parameters
+    SCategory * catFibersCal{nullptr};                  ///< fibers cal category
+    SCategory * catFibersHit{nullptr};                  ///< fibers hit category
+    SCalContainer<2> * pHitFinderFiberPar{nullptr};     ///< hit finder fiber parameters
+    SFibersStackHitFinderPar * pHitFinderPar{nullptr};  ///< hit finder parameters
+    SFibersStackGeomPar * pGeomPar;
 
 public:
     // constructor

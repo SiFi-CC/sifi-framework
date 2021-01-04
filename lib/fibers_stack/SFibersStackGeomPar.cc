@@ -115,6 +115,7 @@ bool SFibersStackGeomPar::getParams(SParContainer* parcont)
         return false;
     }
 
+    int cnt_layers = 0;
     for (int m = 0; m < modules; ++m)
     {
         mods[m].layers = _l[m];
@@ -126,11 +127,11 @@ bool SFibersStackGeomPar::getParams(SParContainer* parcont)
 
         for (int l = 0; l < _l[m]; ++l)
         {
-            Int_t fibers = _f[n_layers * m + l];
-            Int_t layrot = _lr[n_layers * m + l];
-            Float_t fox = _fox[n_layers * m + l];
-            Float_t foy = _foy[n_layers * m + l];
-            Float_t fsp = _fsp[n_layers * m + l];
+            Int_t fibers = _f[cnt_layers * m + l];
+            Int_t layrot = _lr[cnt_layers * m + l];
+            Float_t fox = _fox[cnt_layers * m + l];
+            Float_t foy = _foy[cnt_layers * m + l];
+            Float_t fsp = _fsp[cnt_layers * m + l];
 
             mods[m].fibers[l] = fibers;
             mods[m].layer_rotation[l] = layrot;
@@ -138,6 +139,7 @@ bool SFibersStackGeomPar::getParams(SParContainer* parcont)
             mods[m].fiber_offset_y[l] = foy;
             mods[m].fibers_pitch[l] = fsp;
         }
+        cnt_layers += _l[m];
     }
 
     return true;
@@ -169,16 +171,16 @@ void SFibersStackGeomPar::print() const
             printf(" %2d", mods[m].fibers[l]);
         printf("\n layrot:");
         for (int l = 0; l < mods[m].layers; ++l)
-            printf(" %2.0f", mods[m].layer_rotation[l]);
+            printf(" %#.2f", mods[m].layer_rotation[l]);
         printf("\n  off x:");
         for (int l = 0; l < mods[m].layers; ++l)
-            printf(" %2.0f", mods[m].fiber_offset_x[l]);
+            printf(" %#.2f", mods[m].fiber_offset_x[l]);
         printf("\n  off y:");
         for (int l = 0; l < mods[m].layers; ++l)
-            printf(" %2.0f", mods[m].fiber_offset_y[l]);
+            printf(" %#.2f", mods[m].fiber_offset_y[l]);
         printf("\n  pitch:");
         for (int l = 0; l < mods[m].layers; ++l)
-            printf(" %2.0f", mods[m].fibers_pitch[l]);
+            printf(" %#.2f", mods[m].fibers_pitch[l]);
         putchar('\n');
     }
 }

@@ -16,10 +16,10 @@ SIFI_GENERATE_LIBRARY(
         SFibersStackDigitizer.cc
         SFibersStackDigitizerPar.cc
         SFibersStackCalSim.cc
-        SFibersStackHit.cc
-        SFibersStackCluster.cc
         SFibersStackHitFinder.cc
         SFibersStackHitFinderPar.cc
+        SFibersStackHit.cc
+        SFibersStackCluster.cc
     HEADERS
         SFibersStackDetector.h
         SFibersStackGeomPar.h
@@ -34,6 +34,8 @@ SIFI_GENERATE_LIBRARY(
         SFibersStackDigitizer.h
         SFibersStackDigitizerPar.h
         SFibersStackCalSim.h
+        SFibersStackHitFinder.h
+        SFibersStackHitFinderPar.h
         SFibersStackHit.h
         SFibersStackCluster.h
     LIBRARIES

@@ -28,9 +28,8 @@ class SIFI_EXPORT SSiFiCCDetResImporter : public SUnpacker
 {
 protected:
     // members
-    SCategory * catFibersCal;                   ///< fibers raw category
-//     SFibersStackLookupTable * pLookUp;          ///< lookup table
-    SFibersStackGeomPar * pGeomPar;
+    SCategory * catFibersCal{nullptr};          ///< fibers raw category
+    SFibersStackGeomPar * pGeomPar{nullptr};    ///< fibers geometry
 
 public:
     // constructor

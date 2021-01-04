@@ -28,11 +28,13 @@ protected:
     Float_t y;          ///< y-coord in the lab system
     Float_t z;          ///< z-coord in the lab system
     Float_t xt;         ///< x-coord in the lab system, reconstructed from times
+    Float_t u;          ///< u-coord along the fiber
 
     Float_t sx;         ///< sigma of x
     Float_t sy;         ///< sigma of y
     Float_t sz;         ///< sigma of z
     Float_t sxt;        ///< sigma of xt
+    Float_t su;         ///< sigma of u
 
     Float_t E;          ///< Energy
     Float_t sE;         ///< sigma of energy
@@ -68,6 +70,9 @@ public:
     /// Set x-hit coordinate reconstructed from times
     /// \param _xt x coordinate
     void setXt( Float_t _xt) { xt = _xt; }
+    /// Set u-hit coordinate reconstructed from times
+    /// \param _u u coordinate
+    void setU( Float_t _u) { u = _u; }
     /// Set hit coordinate errors
     /// \param _sx x-coordinate error
     /// \param _sy x-coordinate error
@@ -97,6 +102,9 @@ public:
     /// Get z-cooridnate
     /// \return ... coordinate
     Float_t getXt() const { return xt; }
+    /// Get u-cooridnate
+    /// \return ... coordinate
+    Float_t getU() const { return u; }
     /// Get XYZ errors
     /// \param _sx sigma of x
     /// \param _sy sigma of y

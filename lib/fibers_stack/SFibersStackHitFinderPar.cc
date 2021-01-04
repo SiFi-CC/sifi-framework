@@ -54,8 +54,11 @@ bool SFibersStackHitFinderPar::getParams(SParContainer* parcont)
  * \param parcont pointer to container object
  * \return success
  */
-bool SFibersStackHitFinderPar::putParams(SParContainer* /*parcont*/) const
+bool SFibersStackHitFinderPar::putParams(SParContainer* parcont) const
 {
+    if (!parcont->add("fA0", fA0)) return false;
+    if (!parcont->add("fLambda", fLambda)) return false;
+
     return true;
 }
 

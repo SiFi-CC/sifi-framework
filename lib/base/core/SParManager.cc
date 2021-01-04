@@ -276,10 +276,15 @@ bool SParManager::parseSource()
  * Write all containers to destination file. Internally it creates a list of
  * containers and calls writeContainers();
  */
-void SParManager::writeDestination() const
+void SParManager::writeDestination()
 {
     std::vector<std::string> names;
     names.reserve(containers.size());
+
+    for (auto & p : parconts) {
+        SParContainer * pc = par_containers[p.first];
+        p.second->putParams(pc);
+    }
 
     std::transform(containers.begin(), containers.end(),
         std::back_inserter(names), [](std::pair<std::string, SContainer *> const & e) {
@@ -293,7 +298,7 @@ void SParManager::writeDestination() const
  *
  * \param names vector of container names
  */
-void SParManager::writeContainers(const std::vector<std::string> & names) const
+void SParManager::writeContainers(const std::vector<std::string> & names)
 {
     for (const auto & pc : par_containers)
         pc.second->toContainer();

@@ -99,8 +99,8 @@ public:
     void setParamDest(const std::string & dest) { this->destination = dest; }
 
     bool parseSource();
-    void writeDestination() const;
-    void writeContainers(const std::vector<std::string> & names) const;
+    void writeDestination();
+    void writeContainers(const std::vector<std::string> & names);
 
     SContainer * getContainer(const std::string & cont_name);
 

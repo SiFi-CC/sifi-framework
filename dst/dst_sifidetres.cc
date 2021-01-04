@@ -48,7 +48,7 @@ int main(int argc, char** argv)
     while (1)
     {
         static struct option long_options[] = {
-            { "ss", no_argument, &save_samples, 1 },
+            {"ss", no_argument, &save_samples, 1},
             {"events", required_argument, 0, 'e'},
             {"output", required_argument, 0, 'o'},
             {"params_file", required_argument, 0, 'p'},

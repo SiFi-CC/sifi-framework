@@ -12,19 +12,20 @@
 #ifndef SFIBERSSTACKHITFINDERPAR_H
 #define SFIBERSSTACKHITFINDERPAR_H
 
+#include "sifi_export.h"
+
 #include "SPar.h"
-//#include "SParContainer.h"
 
 #include <Rtypes.h>
 #include <TArrayF.h>
 #include <TArrayI.h>
 
-class SFibersStackHitFinderPar : public SPar
+class SIFI_EXPORT SFibersStackHitFinderPar : public SPar
 {
   private:
     // members
-    Float_t fA0;
-    Float_t fLambda;
+    Float_t fA0{0.0};
+    Float_t fLambda{0.0};
 
   public:
     bool getParams(SParContainer* parcont) override;
@@ -32,8 +33,11 @@ class SFibersStackHitFinderPar : public SPar
     void clear() override;
     void print() const override;
 
-    Float_t getfA0() const { return fA0; }
-    Float_t getfLambda() const { return fLambda; }
+    Float_t getA0() const { return fA0; }
+    Float_t getLambda() const { return fLambda; }
+
+    void setA0(Float_t v) { fA0 = v; }
+    void setLambda(Float_t v) { fLambda = v; }
 };
 
 #endif /* SFIBERSSTACKHITFINDERPAR_H */

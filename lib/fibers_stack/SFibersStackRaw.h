@@ -30,9 +30,6 @@ protected:
     Int_t layer;        ///< address - layer
     Int_t fiber;        ///< address - fiber
 
-    Float_t u;          ///< u-coord in the lab system
-    Float_t y;          ///< y-coord in the lab system
-
     Float_t qdc_l;      ///< qdc value
     Float_t time_l;     ///< time value
 
@@ -59,12 +56,6 @@ public:
     /// \param f fiber
     void getAddress(Int_t & m, Int_t & l, Int_t & f) const { m = module; l = layer; f = fiber; }
 
-    /// Set coordinate along fibers
-    /// \param _u transverse coordinate
-    void setU(Float_t _u) { u = _u; }
-    /// Set coordinate along layers
-    /// \param _y longnitudal coordinate
-    void setY(Float_t _y) { y = _y; }
     /// Set ADC value
     /// \param ql qdc on the left side of the fiber
     /// \param qr qdc on the right side of teh fiber
@@ -86,12 +77,6 @@ public:
     /// \param t time
     void setTimeR(Float_t t) { time_r = t; }
 
-    /// Get cooridnate along fibers
-    /// \return transverse coordinate
-    Float_t getU() const { return u; }
-    /// Get cooridnate along layers
-    /// \return longnitudal coordinate
-    Float_t getY() const { return y; }
     /// Get QDC value
     /// \return qdc
     Float_t getQDCL() const { return qdc_l; }

@@ -171,7 +171,7 @@ protected:
     void toContainer() const;
 
     /* Have access to fromContainer() and toContainer() to SParManager */
-    friend void SParManager::writeContainers(const std::vector<std::string> & conts) const;
+    friend void SParManager::writeContainers(const std::vector<std::string> & conts);
 };
 
 #endif /* SLOOKUP_H */

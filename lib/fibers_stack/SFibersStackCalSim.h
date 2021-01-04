@@ -55,6 +55,13 @@ public:
     /// \return energy loss
     Float_t getEnergyLoss() const { return dEdx; }
 
+    /// Set kinetic energy
+    /// \param t kinetic energy
+    void setGeantU(Float_t u) { fGeantU = u; }
+    /// Get kinetic energy
+    /// \return kinetic energy
+    Float_t getGeantU() const { return fGeantU; }
+
     void print() const;
 
 private:

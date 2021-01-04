@@ -11,10 +11,12 @@
 
 #include "SCategory.h"
 #include "SFibersStackCal.h"
+#include "SFibersStackGeomPar.h"
 #include "SFibersStackHit.h"
 #include "SFibersStackHitFinder.h"
 #include "SFibersStackHitFinderPar.h"
 #include "SLocator.h"
+#include "SLookup.h"
 #include "SiFi.h"
 
 #include <RtypesCore.h>
@@ -74,6 +76,24 @@ bool SFibersStackHitFinder::init()
 
     pHitFinderFiberPar->setDefault(def);
 
+    // get calibrator parameters
+    pHitFinderPar = dynamic_cast<SFibersStackHitFinderPar*>(pm()->getParameterContainer(
+        "SFibersStackHitFinderPar"));
+    if (!pHitFinderPar)
+    {
+        std::cerr << "Parameter container 'SFibersStackHitFinderPar' was not "
+                     "obtained!"
+                  << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    pGeomPar = dynamic_cast<SFibersStackGeomPar*>(pm()->getParameterContainer("SFibersStackGeomPar"));
+    if (!pGeomPar)
+    {
+        std::cerr << "Parameter container 'SFibersStackGeomPar' was not obtained!" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
     return true;
 }
 
@@ -101,8 +121,6 @@ bool SFibersStackHitFinder::execute()
         pCal->getAddress(mod, lay, fib);
 
         // calc laboratory coordinates from digi data
-        Float_t u = pCal->getU();
-        Float_t y = pCal->getY();
         Float_t qdc_l = pCal->getQDCL();
         Float_t qdc_r = pCal->getQDCR();
         Float_t time_l = pCal->getTimeL();
@@ -116,12 +134,9 @@ bool SFibersStackHitFinder::execute()
         loc[1] = lay;
         loc[2] = fib;
 
-        SFibersStackHit* pHit =
-            dynamic_cast<SFibersStackHit*>(catFibersHit->getObject(loc));
-        if (!pHit)
-        {
-            pHit =
-                reinterpret_cast<SFibersStackHit*>(catFibersHit->getSlot(loc));
+        SFibersStackHit* pHit = dynamic_cast<SFibersStackHit*>(catFibersHit->getObject(loc));
+        if (!pHit) {
+            pHit = reinterpret_cast<SFibersStackHit*>(catFibersHit->getSlot(loc));
             new (pHit) SFibersStackHit;
             pHit->Clear();
         }
@@ -134,17 +149,36 @@ bool SFibersStackHitFinder::execute()
         chan.l = lay;
         chan.s = fib;
 
-        SCalPar<2>* hfp = pHitFinderFiberPar->getPar(&chan);
-        Float_t a0 = hfp->par[0];
-        Float_t lambda = hfp->par[1];
+        Float_t a0 = 0.0;
+        Float_t lambda = 0.0;
+
+        if (sifi()->isSimulation()) {
+            a0 = pHitFinderPar->getA0();
+            lambda = pHitFinderPar->getLambda();
+        } else {
+            SCalPar<2>* hfp = pHitFinderFiberPar->getPar(&chan);
+            a0 = hfp->par[0];
+            lambda = hfp->par[1];
+        }
+
+        Float_t rot = pGeomPar->getLayerRotation(loc[0], loc[1]);
 
         // calculate position from MLR
-        Float_t hitPosM = (log(sqrt(qdc_r/qdc_l)) - a0) * lambda;
-        pHit->setXYZ(hitPosM, 0, 0);
+        Float_t u = (log(sqrt(qdc_r/qdc_l)) - a0) * lambda;
+
+        // the fiber is taken from geometry
+        Float_t v = pGeomPar->getFiberOffsetX(mod, lay) + fib * pGeomPar->getFibersPitch(mod, lay);
+
+        Float_t x = u * cos(rot * M_PI/180) - v * sin(rot * M_PI/180);
+        Float_t y = u * sin(rot * M_PI/180) + v * cos(rot * M_PI/180);
+        Float_t z = pGeomPar->getFiberOffsetY(mod, lay);;
+
+        pHit->setXYZ(x, y, z);
+        pHit->setU(u);
 
         // calculate position from times (inacccurate)
-        Float_t v = 3e8 * 1e3 * 1e-9 / 1.82; // c * m/mm * ns/s / n_scint
-        Float_t hitPosTime = ((time_l - time_r) * v) / 2;
+        Float_t v_p = 3e8 * 1e3 * 1e-9 / 1.82; // c * m/mm * ns/s / n_scint
+        Float_t hitPosTime = ((time_l - time_r) * v_p) / 2;
         pHit->setXt(hitPosTime);
         pHit->setXtError(0.0);
     }

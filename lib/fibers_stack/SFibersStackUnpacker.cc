@@ -71,10 +71,6 @@ bool SFibersStackUnpacker::execute()
         Int_t lay = 0;
         Int_t fib = 0;
 
-        // take these from lookup table?
-        Float_t u = 0;
-        Float_t y = 0;
-
         // take this from data
         Float_t qdc = 0;
 
@@ -92,8 +88,6 @@ bool SFibersStackUnpacker::execute()
         }
 
         pRaw->setAddress(mod, lay, fib);
-        pRaw->setU(u);
-        pRaw->setY(y);
         pRaw->setQDCL(qdc);
         pRaw->setQDCR(qdc);
         pRaw->setTimeL(0);

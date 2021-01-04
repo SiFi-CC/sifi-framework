@@ -121,9 +121,6 @@ bool SFibersStackDigitizer::execute()
             }
         }
 
-        Float_t u = pGeomPar->getFiberOffsetX(mod, lay) + fib * pGeomPar->getFibersPitch(mod, lay);
-        Float_t y = pGeomPar->getFiberOffsetY(mod, lay);
-
         SLocator loc(3);
         loc[0] = mod;
         loc[1] = lay;
@@ -138,8 +135,6 @@ bool SFibersStackDigitizer::execute()
         }
 
         pCal->setAddress(mod, lay, fib);
-        pCal->setU(u);
-        pCal->setY(y);
         pCal->setEnergyLoss(pHit->getEnergyLoss());
         pCal->setQDCL(pHit->getLightL());
         pCal->setQDCR(pHit->getLightR());
