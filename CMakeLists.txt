@@ -147,7 +147,7 @@ if (BUILD_SIFIDETRES_SUPPORT)
     if (HAVE_SIFIDETRES_SUPPORT)
         get_filename_component(SIFIDETRES_INCLUDE ${HAVE_SIFIDETRES_SUPPORT} DIRECTORY)
         message(STATUS "SiFi Det Res = ${HAVE_SIFIDETRES_SUPPORT}")
-        include_directories(AAA ${SIFIDETRES_INCLUDE})
+        include_directories(${SIFIDETRES_INCLUDE})
     endif()
 endif()
 

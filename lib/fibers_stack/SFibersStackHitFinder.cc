@@ -169,9 +169,9 @@ bool SFibersStackHitFinder::execute()
         // the fiber is taken from geometry
         Float_t v = pGeomPar->getFiberOffsetX(mod, lay) + fib * pGeomPar->getFibersPitch(mod, lay);
 
-        Float_t x = u * cos(rot * M_PI/180) - v * sin(rot * M_PI/180);
-        Float_t y = u * sin(rot * M_PI/180) + v * cos(rot * M_PI/180);
-        Float_t z = pGeomPar->getFiberOffsetY(mod, lay);;
+        Float_t x = v * cos(rot * M_PI/180) + u * sin(rot * M_PI/180);
+        Float_t y = v * sin(rot * M_PI/180) + u * cos(rot * M_PI/180);
+        Float_t z = pGeomPar->getFiberOffsetY(mod, lay);
 
         pHit->setXYZ(x, y, z);
         pHit->setU(u);
