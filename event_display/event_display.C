@@ -42,7 +42,6 @@ struct MultiView
     TEveScene* fRhoZEventScene;
 
     //---------------------------------------------------------------------------
-
     MultiView()
     {
         // Constructor --- creates required scenes, projection managers
@@ -125,7 +124,6 @@ struct MultiView
     void SetDepth(Float_t d)
     {
         // Set current depth on all projection managers.
-
         fRPhiMgr->SetCurrentDepth(d);
         fRhoZMgr->SetCurrentDepth(d);
     }
@@ -150,6 +148,7 @@ struct MultiView
 #include "SFibersStackDetector.h"
 #include "SFibersStackGeomPar.h"
 #include "SFibersStackHit.h"
+#include "SGeantTrack.h"
 #include "SLocator.h"
 #include "SLoop.h"
 #include "SParManager.h"
@@ -172,13 +171,17 @@ struct MultiView
 #include <TGeoMedium.h>
 #include <TGeoVolume.h>
 #include <TSystem.h>
+#include <TEveTrackPropagator.h>
+#include <TEvePathMark.h>
+#include <TEveVector.h>
 
-Int_t sifi_event_id = 1; // Current event id.
+Int_t sifi_event_id = 0; // Current event id.
 
 SLoop* loop = nullptr;
 SFibersStackGeomPar* pGeomPar = nullptr;
 SCategory* pCatCalSim = nullptr;
 SCategory* pCatHitSim = nullptr;
+SCategory* pCatGeantTrack = nullptr;
 
 TEveTrackList* gTrackList = 0;
 
@@ -192,6 +195,8 @@ TGNumberEntry* l_evt_jump[jumps_no] = {nullptr};
 TGeoMedium* Fiber_solid = nullptr;
 TGeoMedium* Fiber_trans = nullptr;
 
+Int_t marker_type = 3;
+
 void make_gui();
 TEveGeoTopNode* make_geometry();
 void load_event();
@@ -204,17 +209,14 @@ void setFiber(TGeoVolume* node)
     node->SetLineColor(kGreen);
     node->SetLineStyle(1);
     node->SetLineWidth(1);
-    //     node->SetTransparency(50);
     node->SetMedium(Fiber_solid);
 }
 
 void resetFiber(TGeoVolume* node)
 {
-    node->SetLineColor(kWhite);
+    node->SetLineColor(kGray);
     node->SetLineStyle(1);
     node->SetLineWidth(1);
-    //     node->SetTransparency(50);
-    //     node->SetVisibility(kFALSE);
     node->SetMedium(Fiber_trans);
 }
 
@@ -249,6 +251,7 @@ void geom_viewer()
         exit(EXIT_FAILURE);
     }
 
+    pCatGeantTrack = SCategoryManager::getCategory(SCategory::CatGeantTrack);
     pCatCalSim = SCategoryManager::getCategory(SCategory::CatFibersStackCal);
     pCatHitSim = SCategoryManager::getCategory(SCategory::CatFibersStackHit);
 
@@ -303,7 +306,7 @@ void geom_viewer()
     gEve->GetBrowser()->GetTabRight()->SetTab(0);
     make_gui();
 
-    //     load_event();
+    load_event();
 }
 
 //______________________________________________________________________________
@@ -311,8 +314,6 @@ void load_event()
 {
     // Load event specified in global sifi_event_id.
     // The contents of previous event are removed.
-
-    printf("Loading event %d.\n", sifi_event_id);
 
     l_evt->SetText(TString::Format(" %5d  ", sifi_event_id));
 
@@ -373,10 +374,11 @@ TEveGeoTopNode* make_geometry()
     //--- Definition of a simple geometry
     TGeoManager* geom = new TGeoManager("Assemblies", "Geometry using assemblies");
     geom->SetVerboseLevel(0);
-    Int_t i;
+
     //--- define some materials
     TGeoMaterial* matVacuum = new TGeoMaterial("Vacuum", 0, 0, 0);
     TGeoMaterial* matFiber_solid = new TGeoMaterial("LYSO:Ce_solid", 1, 1, 1);
+    matFiber_solid->SetTransparency(50);
     TGeoMaterial* matFiber_trans = new TGeoMaterial("LYSO:Ce_trans", 1, 1, 1);
     matFiber_trans->SetTransparency(95);
 
@@ -386,7 +388,7 @@ TEveGeoTopNode* make_geometry()
     Fiber_trans = new TGeoMedium("Aluminium_trans", 2, matFiber_trans);
 
     //--- make the top container volume
-    TGeoVolume* top = geom->MakeBox("TOP", Vacuum, 10000., 10000., 100.);
+    TGeoVolume* top = geom->MakeBox("TOP", Vacuum, 10000., 10000., 1000.);
     geom->SetTopVolume(top);
 
     TGeoVolume* fiber = geom->MakeBox("FIBER", Fiber_solid, 0.5, 50., 0.5);
@@ -427,7 +429,7 @@ TEveGeoTopNode* make_geometry()
                                           (j % 2 == 0) ? rot0 : rot90));
         }
 
-        top->AddNode(m, i, new TGeoTranslation(0, 0, -50 + 100 * i));
+        top->AddNode(m, i, new TGeoTranslation(0, 0, 200 + 200 * i));
     }
 
     for (auto f : all_fibers)
@@ -451,50 +453,51 @@ TEveGeoTopNode* make_geometry()
 //______________________________________________________________________________
 //
 // EvNavHandler class is needed to connect GUI signals.
-
 class EvNavHandler
 {
-public:
+  public:
     void Fwd()
     {
-        if (sifi_event_id < (int)loop->getEntries() - 2)
+        if (sifi_event_id < (int)loop->getEntries() - 1)
         {
             ++sifi_event_id;
             load_event();
         }
-                else
-                {
-                    printf("Already at last event.\n");
-                }
-    }
-        void Bck()
+        else
         {
-            if (sifi_event_id > 0)
-            {
-                --sifi_event_id;
-                load_event();
-            }
-                    else
-                    {
-                        printf("Already at first event.\n");
-                    }
+            printf("Already at last event.\n");
         }
+    }
+    void Bck()
+    {
+        if (sifi_event_id > 0)
+        {
+            --sifi_event_id;
+            load_event();
+        }
+        else
+        {
+            printf("Already at first event.\n");
+        }
+    }
 };
 
 class EvJumpNavHandler
 {
-public:
+  public:
     EvJumpNavHandler(int i) : i(i) {}
-    
-        void Jump()
-        {
-            if (sifi_event_id == l_evt_jump[i]->GetIntNumber()) { printf("Already at the event.\n"); }
-            
-                    sifi_event_id = l_evt_jump[i]->GetIntNumber();
-                    if (sifi_event_id >= 0 and sifi_event_id < (int)loop->getEntries()) { load_event(); }
-        }
-        
-private:
+
+    void Load() { l_evt_jump[i]->SetIntNumber(sifi_event_id); }
+
+    void Jump()
+    {
+        if (sifi_event_id == l_evt_jump[i]->GetIntNumber()) { printf("Already at the event.\n"); }
+
+        sifi_event_id = l_evt_jump[i]->GetIntNumber();
+        if (sifi_event_id >= 0 and sifi_event_id < (int)loop->getEntries()) { load_event(); }
+    }
+
+  private:
     int i;
 };
 
@@ -549,7 +552,11 @@ void make_gui()
 
         hf = new TGHorizontalFrame(frmMain);
         {
-            TGLabel* l = new TGLabel(hf, "Jump to event: ");
+            TGTextButton* b = new TGTextButton(hf, "Load");
+            hf->AddFrame(b);
+            b->Connect("Clicked()", "EvJumpNavHandler", fhj, "Load()");
+
+            TGLabel* l = new TGLabel(hf, "     Jump to event: ");
             hf->AddFrame(l);
 
             l_evt_jump[i] = new TGNumberEntry(
@@ -558,7 +565,7 @@ void make_gui()
 
             hf->AddFrame(l_evt_jump[i]);
 
-            TGTextButton* b = new TGTextButton(hf, TString::Format("Jump &%d", i+1));
+            b = new TGTextButton(hf, TString::Format("Jump &%d", i + 1));
             hf->AddFrame(b);
             b->Connect("Clicked()", "EvJumpNavHandler", fhj, "Jump()");
         }
@@ -573,23 +580,32 @@ void make_gui()
     browser->SetTabTitle("Event Control", 0);
 }
 
-// //______________________________________________________________________________
+//______________________________________________________________________________
 void sifi_read()
 {
-    size_t nn = pCatHitSim->getEntries();
     Int_t m, l, f;
-    Float_t MLR;
     SLocator loc(3);
+    
+    size_t nn = pCatHitSim->getEntries();
 
     auto hits = new TEvePointSet(nn);
-    hits->SetName("Origin marker");
+    hits->SetName("Reconstructed hits");
     hits->SetMarkerColor(2);
-    hits->SetMarkerStyle(3);
-    hits->SetMarkerSize(2);
+    hits->SetMarkerStyle(marker_type);
+    hits->SetMarkerSize(1);
 
-    auto pal = new TEveRGBAPalette(0, 130);
-    auto boxes = new TEveBoxSet("BoxSet");
-    //     boxes->SetPalette(pal);
+    auto ghits = new TEvePointSet(nn);
+    ghits->SetName("Geant hits");
+    ghits->SetMarkerColor(0);
+    ghits->SetMarkerStyle(marker_type);
+    ghits->SetMarkerSize(1);
+
+    auto fired_fibers = new TEveBoxSet("Fired fibers");
+    fired_fibers->UseSingleColor();
+    fired_fibers->SetMainColor(kGreen);
+    fired_fibers->Reset(TEveBoxSet::kBT_FreeBox, kFALSE, 64);
+
+    auto boxes = new TEveBoxSet("Collected signals");
     boxes->UseSingleColor();
     boxes->SetMainColor(kMagenta);
     boxes->Reset(TEveBoxSet::kBT_FreeBox, kFALSE, 64);
@@ -609,14 +625,14 @@ void sifi_read()
 
         int h = fhash(m, l, f);
         active_fibers.push_back(h);
-        setFiber(all_fibers[h]);
+//         setFiber(all_fibers[h]);
 
         // printf("EVENT: %d, %d/%d  %d %d %d  GEO: %#x (%#x)\n", sifi_event_id, j, nn, m,
         // l, f, all_fibers[h], h);
 
         Float_t x = pHit->getX();
         Float_t y = pHit->getY();
-        Float_t z = -50 + m * 100. + pHit->getZ();
+        Float_t z = 200 + m * 200. + pHit->getZ();
 
         hits->SetPoint(j, x, y, z);
         // pHit->print();
@@ -624,6 +640,41 @@ void sifi_read()
         SFibersStackCalSim* pCalSim = (SFibersStackCalSim*)pCatCalSim->getObject(loc);
         Float_t ql = pCalSim->getQDCL() / scale;
         Float_t qr = pCalSim->getQDCR() / scale;
+
+        ghits->SetPoint(j, pCalSim->getGeantX(), pCalSim->getGeantY(), pCalSim->getGeantZ());
+
+        if (l % 2 == 0)
+        {
+            Float_t verts[24] = {
+                // clang-format off
+                x-d, -pos, z-d,
+                x-d, -pos, z+d,
+                x+d, -pos, z+d,
+                x+d, -pos, z-d,
+                x-d, +pos, z-d,
+                x-d, +pos, z+d,
+                x+d, +pos, z+d,
+                x+d, +pos, z-d,
+                // clang-format on
+            };
+            fired_fibers->AddBox(verts);
+        }
+        else
+        {
+            Float_t verts[24] = {
+                // clang-format off
+                -pos, y-d, z-d,
+                -pos, y-d, z+d,
+                -pos, y+d, z+d,
+                -pos, y+d, z-d,
+                +pos, y-d, z-d,
+                +pos, y-d, z+d,
+                +pos, y+d, z+d,
+                +pos, y+d, z-d,
+                // clang-format on
+            };
+            fired_fibers->AddBox(verts);
+        }
 
         if (l % 2 == 0)
         {
@@ -684,6 +735,123 @@ void sifi_read()
             boxes->AddBox(verts2);
         }
     }
-    gEve->AddElement(hits);
+    gEve->AddElement(fired_fibers);
     gEve->AddElement(boxes);
+    gEve->AddElement(ghits);
+    gEve->AddElement(hits);
+
+    if (pCatGeantTrack) {
+        TEveTrackList * list = new TEveTrackList("Simulated tracks");
+
+        auto prop = list->GetPropagator();
+        prop->SetRnrReferences(kTRUE);
+        prop->SetRnrDaughters(kTRUE);
+        prop->SetRnrDecay(kTRUE);
+        prop->SetMaxZ(1000);
+        prop->SetMagField(0.);
+        prop->RefPMAtt().SetMarkerStyle(4);
+
+        list->SetLineColor(kMagenta);
+        list->SetLineWidth(2);
+
+        int n = pCatGeantTrack->getEntries();
+        printf("n = %d\n", n);
+
+        TEveTrack * prim = nullptr;
+        TEveTrack * elec = nullptr;
+        TEveTrack * phot = nullptr;
+
+        std::vector<TEveTrack *> etracks;
+
+        for (int i = 0; i < n; ++i) {
+            SGeantTrack * pTrack = dynamic_cast<SGeantTrack*>(pCatGeantTrack->getObject(i));
+
+            // pTrack->print();
+
+            auto rc = new TEveRecTrackD();
+            rc->fV.Set(pTrack->getStartX(), pTrack->getStartY(), pTrack->getStartZ());
+            rc->fP.Set(pTrack->Vect());
+            rc->fSign = 0;
+
+            TEveTrack * t = new TEveTrack(rc, prop);
+            t->SetLineWidth(2);
+            switch (pTrack->getType()) {
+                case SGeantTrack::G_PRIM:
+                    t->SetLineColor(kMagenta);
+                    t->SetLineStyle(2);
+                    prim = t;
+                    etracks.push_back(t);
+                    break;
+                case SGeantTrack::G_COMP:
+                    t->SetLineColor(kRed);
+                    t->SetLineStyle(2);
+                    if (!phot) {
+                        etracks.push_back(t);
+                        phot = t;
+                        if (prim) {
+                        prim->AddPathMark(TEvePathMarkD(TEvePathMarkD::kDecay,
+                                                        TEveVectorD(
+                                                            pTrack->getStartX(),
+                                                            pTrack->getStartY(),
+                                                            pTrack->getStartZ()
+                                                        )));
+                        }
+                    } else {
+                        phot->AddPathMark(TEvePathMarkD(TEvePathMarkD::kDaughter,
+                                                        TEveVectorD(
+                                                            pTrack->getStartX(),
+                                                            pTrack->getStartY(),
+                                                            pTrack->getStartZ()
+                                                        )));
+                    }
+                    break;
+                case SGeantTrack::G_COMP_ABS:
+                    if (phot) {
+                        phot->AddPathMark(TEvePathMarkD(TEvePathMarkD::kDecay,
+                                                        TEveVectorD(
+                                                            pTrack->getStartX(),
+                                                            pTrack->getStartY(),
+                                                            pTrack->getStartZ()
+                                                        )));
+                    }
+                    break;
+                case SGeantTrack::E_COMP:
+                    t->SetLineColor(kBlue);
+                    if (!elec) {
+                        etracks.push_back(t);
+                        elec = t;
+                    } else {
+                        elec->AddPathMark(TEvePathMarkD(TEvePathMarkD::kDaughter,
+                                                        TEveVectorD(
+                                                            pTrack->getStartX(),
+                                                            pTrack->getStartY(),
+                                                            pTrack->getStartZ()
+                                                        )));
+                    }
+                    break;
+                case SGeantTrack::E_COMP_ABS:
+                    if (elec) {
+                        elec->AddPathMark(TEvePathMarkD(TEvePathMarkD::kDecay,
+                                                        TEveVectorD(
+                                                            pTrack->getStartX(),
+                                                            pTrack->getStartY(),
+                                                            pTrack->getStartZ()
+                                                        )));
+                    }
+                    break;
+                default:
+                    t->SetLineColor(kBlack);
+                    break;
+            }
+            t->SetRnrPoints(kTRUE);
+            t->SetMarkerStyle(4);
+        }
+        
+        for (auto t : etracks) {
+            t->MakeTrack();
+            list->AddElement(t);
+        }
+        gEve->AddElement(list);
+
+    }
 }

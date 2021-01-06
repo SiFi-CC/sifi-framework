@@ -10,8 +10,8 @@
  *************************************************************************/
 
 #include "SDRSource.h"
-#include "SSiFiCCDetResImporter.h"
 #include "SFibersStackCalSim.h"
+#include "SSiFiCCDetResImporter.h"
 #include "SUnpacker.h"
 
 #include <DR_CCSetup.hh>
@@ -31,20 +31,36 @@ SDRSource::SDRSource() : SRootSource("Events"), subevent(0)
     chain2 = new TChain("DetectorEvents");
     chain3 = new TChain("Setup_stats");
 
-    tree.events.fHitArray = new TClonesArray(TClass::GetClass<OPHit>(), 10000);
-    fPxPosPhot = new std::map<int, TVector3>;
-    fPxPosElec = new std::map<int, TVector3>;
-    fPxPosScin = new std::map<int, TVector3>;
-
     tree.address.m = 0;
     tree.address.l = 0;
     tree.address.f = 0;
     tree.address.s = 'l';
-    /* source is for "Events" tree */
-    chain2->SetBranchAddress("Hitsarray", &(tree.events.fHitArray));
-    chain2->SetBranchAddress("Pixel_Position_Photon", &(fPxPosPhot));
-    chain2->SetBranchAddress("Pixel_Position_Electron", &(fPxPosElec));
-    chain2->SetBranchAddress("Pixel_Position_Scin", &(fPxPosScin));
+
+    // "Events" tree
+    chain->SetBranchAddress("PrimEnergy", &fPrimEnergy);
+    chain->SetBranchAddress("SourcePos", &fSourcePosition);
+    chain->SetBranchAddress("SDir", &fSourceDirection);
+
+    chain->SetBranchAddress("ScaEnergy_e", &fScaEnergyElectron);
+    chain->SetBranchAddress("ScaEnergy_p", &fScaEnergyPhoton);
+    chain->SetBranchAddress("ComptonTime", &fComptonTime);
+
+    chain->SetBranchAddress("CompPos", &fComptonPosition);
+
+    chain->SetBranchAddress("PDir", &fPhotonDirection);
+
+    chain->SetBranchAddress("PPos", &fPhotonPositions);
+    chain->SetBranchAddress("EPos", &fElectronPositions);
+
+    chain->SetBranchAddress("EInteractions", &fElectronInteractions);
+    chain->SetBranchAddress("PInteractions", &fPhotonInteractions);
+
+    // "DetectorEvent" tree
+    chain2->SetBranchAddress("Hitsarray", &tree.events.fHitArray);
+    chain2->SetBranchAddress("Pixel_Position_Photon", &fPxPosPhot);
+    chain2->SetBranchAddress("Pixel_Position_Electron", &fPxPosElec);
+    chain2->SetBranchAddress("Pixel_Position_Scin", &fPxPosScin);
+
     pmmodel = new DRSiPMModel(0.4, 0.06, 3e6, 500, 10, false);
 }
 
@@ -57,8 +73,9 @@ bool SDRSource::open()
 {
     if (unpackers.size() == 0) return false;
 
-    chain3->GetEntry(0);
+    chain->GetEntry(0);
     chain2->GetEntry(0);
+    chain3->GetEntry(0);
 
     // create fibers map
     ccsetup = new DRSiFiCCSetup(chain3, false);
@@ -92,10 +109,9 @@ bool SDRSource::open()
 
     // Uncomment to verify ID vs fiber adress
 
-//     for (auto & addr : sipm_map)
-//         printf("ID=%d  M=%d  L=%d  F=%d  SIDE=%c\n", addr.first,
-//         addr.second.m, addr.second.l, addr.second.f, addr.second.s);
-
+    //     for (auto & addr : sipm_map)
+    //         printf("ID=%d  M=%d  L=%d  F=%d  SIDE=%c\n", addr.first,
+    //         addr.second.m, addr.second.l, addr.second.f, addr.second.s);
 
     if (subevent != 0x0000)
     {
@@ -157,29 +173,88 @@ bool SDRSource::readCurrentEvent()
     auto counts = pmmodel->GetSiPMCounts();
     auto times = pmmodel->GetSiPMTimes();
 
+    tree.kine.clear();
+
+    if (fPrimEnergy->size())
+    {
+        TREE_Kine k = {(*fSourcePosition)[0], (*fSourceDirection)[0], (*fPrimEnergy)[0],
+                       SGeantTrack::G_PRIM};
+        tree.kine.push_back(k);
+    }
+    if (fComptonPosition && fPhotonDirection)
+    {
+        TREE_Kine k = {*fComptonPosition, *fPhotonDirection, 100, SGeantTrack::G_COMP};
+        tree.kine.push_back(k);
+    }
+    if (fPhotonPositions)
+    {
+        int n = fPhotonPositions->size();
+        if (n)
+        {
+            TREE_Kine k = {*fComptonPosition, (*fPhotonPositions)[0] - *fComptonPosition, 100,
+                           SGeantTrack::G_COMP};
+            tree.kine.push_back(k);
+        }
+        for (int i = 0; i < n - 1; ++i)
+        {
+            TREE_Kine k = {(*fPhotonPositions)[i],
+                           (*fPhotonPositions)[i + 1] - (*fPhotonPositions)[i], 100,
+                           SGeantTrack::G_COMP};
+            tree.kine.push_back(k);
+        }
+        if (n)
+        {
+            TREE_Kine k = {(*fPhotonPositions)[n - 1], TVector3(0, 0, 1), 100,
+                           SGeantTrack::G_COMP_ABS};
+            tree.kine.push_back(k);
+        }
+    }
+    if (fElectronPositions)
+    {
+        int n = fElectronPositions->size();
+        if (fComptonPosition && n)
+        {
+            TREE_Kine k = {*fComptonPosition, (*fElectronPositions)[0] - *fComptonPosition, 100,
+                           SGeantTrack::E_COMP};
+            tree.kine.push_back(k);
+        }
+        for (int i = 0; i < n - 1; ++i)
+        {
+            TREE_Kine k = {(*fElectronPositions)[i],
+                           (*fElectronPositions)[i + 1] - (*fElectronPositions)[i], 100,
+                           SGeantTrack::E_COMP};
+            tree.kine.push_back(k);
+        }
+        if (n)
+        {
+            TREE_Kine k = {(*fElectronPositions)[n - 1], TVector3(0, 0, 1), 100,
+                           SGeantTrack::E_COMP_ABS};
+            tree.kine.push_back(k);
+        }
+    }
+
     if (subevent != 0x0000)
     {
         if (!unpackers[subevent]) abort();
         // TODO must pass event number to the execute
-        SSiFiCCDetResImporter* unp =
-            dynamic_cast<SSiFiCCDetResImporter*>(unpackers[subevent]);
+        SSiFiCCDetResImporter* unp = dynamic_cast<SSiFiCCDetResImporter*>(unpackers[subevent]);
         for (auto& c : counts)
         {
 
             tree.address = sipm_map[c.first];
             tree.data.counts = c.second;
             tree.data.time = times[c.first];
-            int fiber_id = fiber_map[c.first];
+            // int fiber_id = fiber_map[c.first];
 
             if (unp) unp->execute(0, 0, subevent, &tree, 1);
+            tree.kine.clear();
         }
     }
     else
     {
         for (const auto& u : unpackers)
         {
-            SSiFiCCDetResImporter* unp =
-                dynamic_cast<SSiFiCCDetResImporter*>(u.second);
+            SSiFiCCDetResImporter* unp = dynamic_cast<SSiFiCCDetResImporter*>(u.second);
             for (auto& c : counts)
             {
                 tree.address = sipm_map[c.first];
@@ -188,34 +263,18 @@ bool SDRSource::readCurrentEvent()
                 int fiber_id = fiber_map[c.first];
                 std::map<int, TVector3>::iterator iter;
 
-                if ((iter = fPxPosPhot->find(fiber_id)) !=
-                    fPxPosPhot->end())
+                if ((iter = fPxPosPhot->find(fiber_id)) != fPxPosPhot->end())
                 {
-//                     printf("Fiber_ID %d for PixelPosPhot is found\n", fiber_id);
-//                     printf("X: %f\n", iter->second.X());
-//                     printf("Y: %f\n", iter->second.Y());
-//                     printf("Z: %f\n", iter->second.Z());
                     tree.pos = iter->second;
                     tree.type = SFibersStackCalSim::InteractionType::PHOTON;
                 }
-                else if ((iter = fPxPosElec->find(fiber_id)) !=
-                         fPxPosElec->end())
+                else if ((iter = fPxPosElec->find(fiber_id)) != fPxPosElec->end())
                 {
-//                     printf("\tFiber_ID %d for PixelPosElec is found\n", fiber_id);
-//                     printf("X: %f\n", iter->second.X());
-//                     printf("Y: %f\n", iter->second.Y());
-//                     printf("Z: %f\n", iter->second.Z());
                     tree.pos = iter->second;
                     tree.type = SFibersStackCalSim::InteractionType::ELECTRON;
                 }
-                else if ((iter = fPxPosScin->find(fiber_id)) !=
-                         fPxPosScin->end())
+                else if ((iter = fPxPosScin->find(fiber_id)) != fPxPosScin->end())
                 {
-//                     printf("\t\tFiber_ID %d for PixelPosScin is found\n",
-//                            fiber_id);
-//                     printf("X: %f\n", iter->second.X());
-//                     printf("Y: %f\n", iter->second.Y());
-//                     printf("Z: %f\n", iter->second.Z());
                     tree.pos = iter->second;
                     tree.type = SFibersStackCalSim::InteractionType::SCINT;
                 }
@@ -226,6 +285,7 @@ bool SDRSource::readCurrentEvent()
                 }
 
                 if (unp) unp->execute(0, 0, u.first, &tree, 1);
+                tree.kine.clear();
             }
         }
     }
@@ -239,4 +299,3 @@ void SDRSource::addInput(const std::string& filename)
     chain2->Add(filename.c_str());
     chain3->Add(filename.c_str());
 }
-

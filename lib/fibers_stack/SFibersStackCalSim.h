@@ -21,7 +21,9 @@ public:
     Float_t T;                  ///< kinetic energy
     Float_t E;                  ///< total energy
     Float_t dEdx;               ///< energy loss
-    Float_t fGeantU;            ///< position along the fiber, from simulation 
+    Float_t fGeantX;            ///< geant X
+    Float_t fGeantY;            ///< geant Y
+    Float_t fGeantZ;            ///< geant Z
     enum InteractionType { PHOTON, ELECTRON, SCINT } type;
 
 public:
@@ -55,12 +57,26 @@ public:
     /// \return energy loss
     Float_t getEnergyLoss() const { return dEdx; }
 
-    /// Set kinetic energy
-    /// \param t kinetic energy
-    void setGeantU(Float_t u) { fGeantU = u; }
-    /// Get kinetic energy
-    /// \return kinetic energy
-    Float_t getGeantU() const { return fGeantU; }
+    /// Set Geant X coordinate
+    /// \param v coordinate value
+    void setGeantX(Float_t v) { fGeantX = v; }
+    /// Get Geant X coordinate
+    /// \return X value
+    Float_t getGeantX() const { return fGeantX; }
+
+    /// Set Geant Y coordinate
+    /// \param v coordinate value
+    void setGeantY(Float_t v) { fGeantY = v; }
+    /// Get Geant Y coordinate
+    /// \return Y value
+    Float_t getGeantY() const { return fGeantY; }
+
+    /// Set Geant Z coordinate
+    /// \param v coordinate value
+    void setGeantZ(Float_t v) { fGeantZ = v; }
+    /// Get Geant Z coordinate
+    /// \return Z value
+    Float_t getGeantZ() const { return fGeantZ; }
 
     void print() const;
 

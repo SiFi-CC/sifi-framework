@@ -11,7 +11,8 @@
 
 #include "SSiFiCCDetResImporter.h"
 #include "SCategory.h"
-#include "SFibersStackCal.h"
+#include "SGeantTrack.h"
+#include "SGeantFibersRaw.h"
 #include "SFibersStackCalSim.h"
 #include "SFibersStackGeomPar.h"
 #include "SParManager.h"
@@ -50,11 +51,24 @@ bool SSiFiCCDetResImporter::init()
 {
     SUnpacker::init();
 
+    catGeantTrack = sifi()->buildCategory(SCategory::CatGeantTrack);
+    if (!catGeantTrack)
+    {
+        std::cerr << "No CatGeantTrack category" << "\n";
+        return false;
+    }
+
+    catGeantFibersRaw = sifi()->buildCategory(SCategory::CatGeantFibersRaw);
+    if (!catGeantFibersRaw)
+    {
+        std::cerr << "No CatGeantFibersRaw category" << "\n";
+        return false;
+    }
+
     catFibersCal = sifi()->buildCategory(SCategory::CatFibersStackCal);
     if (!catFibersCal)
     {
-        std::cerr << "No CatFibersStackCal category"
-                  << "\n";
+        std::cerr << "No CatFibersStackCal category" << "\n";
         return false;
     }
 
@@ -83,9 +97,22 @@ bool SSiFiCCDetResImporter::execute(ulong /*event*/, ulong /*seq_number*/,
 
     Float_t pos_x = tree->pos.X();
     Float_t pos_y = tree->pos.Y();
+    Float_t pos_z = tree->pos.Z();
 
     Float_t rot = pGeomPar->getLayerRotation(loc[0], loc[1]);
     Float_t u = pos_x * cos(rot * M_PI/180) + pos_y * sin(rot * M_PI/180);
+    Float_t v = pos_x * sin(rot * M_PI/180) + pos_y * cos(rot * M_PI/180);
+
+    for (auto t : tree->kine)
+    {
+        SGeantTrack * pTrack = reinterpret_cast<SGeantTrack*>(catGeantTrack->getNewSlot());
+        pTrack = new (pTrack) SGeantTrack;
+        TVector3 v_p = t.dir;
+        v_p.SetMag(t.E);
+        pTrack->SetVectM(v_p, 0);
+        pTrack->setStartXYZ(t.pos);
+        pTrack->setType(t.type);
+    }
 
     SFibersStackCalSim* pCal = dynamic_cast<SFibersStackCalSim*>(catFibersCal->getObject(loc));
     if (!pCal)
@@ -96,12 +123,16 @@ bool SSiFiCCDetResImporter::execute(ulong /*event*/, ulong /*seq_number*/,
 
     pCal->setAddress(loc[0], loc[1], loc[2]);
     if (side == 'l' and pCal->getQDCL() == 0.0) {
-        pCal->setGeantU(u);
+        pCal->setGeantX(u);
+        pCal->setGeantY(v);
+        pCal->setGeantZ(pos_z);
         pCal->setQDCL(tree->data.counts);
         pCal->setTimeL(tree->data.time);
     }
     if (side == 'r' and pCal->getQDCR() == 0.0) {
-        pCal->setGeantU(u);
+        pCal->setGeantX(u);
+        pCal->setGeantY(v);
+        pCal->setGeantZ(pos_z);
         pCal->setQDCR(tree->data.counts);
         pCal->setTimeR(tree->data.time);
     }

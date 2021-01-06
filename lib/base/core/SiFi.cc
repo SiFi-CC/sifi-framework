@@ -98,8 +98,7 @@ void SiFi::setSimulation(bool simulation)
         // Here register all detector independen categories
         size_t sizes[1];
         sizes[0] = 200;
-        registerCategory(SCategory::CatGeantTrack, "MGeantTrack", 1, sizes,
-                         true);
+        registerCategory(SCategory::CatGeantTrack, "SGeantTrack", 1, sizes, true);
     }
 }
 
@@ -158,7 +157,7 @@ bool SiFi::save()
  */
 Int_t SiFi::fill()
 {
-    if (!branches_set) initBranches();
+    initBranches();
 
     // clear the current event data
     for (auto& element : categories)
@@ -279,13 +278,15 @@ bool SiFi::registerCategory(SCategory::Cat cat, const std::string& name,
  */
 void SiFi::initBranches()
 {
+    if (branches_set) return;
+
     size_t limit = SCategory::CatLimitDoNotUse * 2;
     for (size_t i = 0; i < limit; ++i)
     {
         CategoryInfo& cinfo = SiFi::cinfovec[i];
         if (!cinfo.persistent) continue;
 
-        outputTree->Branch(cinfo.ptr->getName(), cinfo.ptr, 16000, 2);
+        outputTree->Branch(cinfo.ptr->getName(), cinfo.ptr, 16000, 99);
     }
 
     branches_set = true;
@@ -428,6 +429,8 @@ void SiFi::loop(long entries, bool show_progress_bar)
         }
     }
 
+    initBranches();
+
     STaskManager* tm = STaskManager::instance();
 
     SProgressBar pb(entries);
@@ -438,6 +441,8 @@ void SiFi::loop(long entries, bool show_progress_bar)
     {
         clear();
         bool flag = false;
+
+        getEntry(i);
 
         for (auto& s : inputSources)
         {
@@ -450,7 +455,6 @@ void SiFi::loop(long entries, bool show_progress_bar)
 
         if (show_progress_bar) ++pb;
 
-        getEntry(i);
         tm->runTasks();
         fill();
     }

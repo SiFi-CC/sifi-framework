@@ -127,11 +127,7 @@ bool SFibersStackDetector::initCategories()
     sizes[2] = fibers;
     if (isSimulation())
     {
-        size_t sim_sizes[2];
-        sim_sizes[0] = modules;
-        sim_sizes[1] = layers * fibers;
-
-        if (!dm->registerCategory(SCategory::CatGeantFibersRaw, "SGeantFibersRaw", 2, sim_sizes, true)) return false;
+        if (!dm->registerCategory(SCategory::CatGeantFibersRaw, "SGeantFibersRaw", 1000, true)) return false;
         if (!dm->registerCategory(SCategory::CatFibersStackCal, "SFibersStackCalSim", 3, sizes, true)) return false;
         if (!dm->registerCategory(SCategory::CatFibersStackHit, "SFibersStackHit", 3, sizes, true)) return false;
     }

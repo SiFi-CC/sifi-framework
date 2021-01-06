@@ -16,8 +16,8 @@
 #include <TClass.h>
 #include <TClonesArray.h>
 
-#include <iostream>
 #include <cstring>
+#include <iostream>
 
 /**
  * \class SCategory
@@ -28,13 +28,10 @@ A Category abstract interface
 */
 
 /// null object
-TObject * pNullSCategoryPtr = nullptr;
+TObject* pNullSCategoryPtr = nullptr;
 
 /// Default consructor
-SCategory::SCategory()
-    : TObject()
-    , data(nullptr)
-    , entries(0)
+SCategory::SCategory() : TObject(), data(nullptr), entries(0)
 {
     header.clear();
     index.clear();
@@ -48,9 +45,8 @@ SCategory::SCategory()
  * \param sizes array of sizes of dimensions
  * \param simulation set tru if category for simulation data
  */
-SCategory::SCategory(const char * name, size_t dim, size_t * sizes, bool simulation)
-    : TObject()
-    , data(nullptr), entries(0)
+SCategory::SCategory(const char* name, size_t dim, size_t* sizes, bool simulation)
+    : TObject(), data(nullptr), entries(0)
 {
     header.clear();
     index.clear();
@@ -73,8 +69,9 @@ SCategory::~SCategory()
  * \param sizes array of sizes of dimensions
  * \param simulation set true if category for simulation data
  */
-void SCategory::setup(const char * name, size_t dim, size_t * sizes, bool simulation)
+void SCategory::setup(const char* name, size_t dim, size_t* sizes, bool simulation)
 {
+    assert(data == nullptr);
     header.name = name;
     header.dim = dim;
     header.simulation = simulation;
@@ -87,12 +84,11 @@ void SCategory::setup(const char * name, size_t dim, size_t * sizes, bool simula
     header.data_size = sizes[0];
     for (size_t i = 1; i < dim; ++i)
     {
-        header.dim_offsets[i] = header.dim_offsets[i-1] * sizes[i-1];
+        header.dim_offsets[i] = header.dim_offsets[i - 1] * sizes[i - 1];
         header.dim_sizes[i] = sizes[i];
         header.data_size *= sizes[i];
     }
 
-    if (data) delete data;
     data = new TClonesArray(name, header.data_size);
 
     printf("Category %s created with linear size of %lu\n", name, header.data_size);
@@ -108,7 +104,7 @@ void SCategory::setup(const char * name, size_t dim, size_t * sizes, bool simula
 // TObject * SCategory::operator[](const SLocator & n)
 // {
 //     if (!checkDim(header.dim))     return nullptr;
-// 
+//
 //     size_t pos = loc2pos(n);
 //     Int_t p = index.getMapIndex(pos);
 //     if (p < 0) return nullptr;
@@ -122,18 +118,19 @@ void SCategory::setup(const char * name, size_t dim, size_t * sizes, bool simula
  * \param n locator object
  * \return reference to a slot
  */
-TObject *& SCategory::getSlot(const SLocator & n)
+TObject*& SCategory::getSlot(const SLocator& n)
 {
-    if (!checkDim(n))     return pNullSCategoryPtr;
+    if (!checkDim(n)) return pNullSCategoryPtr;
 
     size_t pos = loc2pos(n);
     if (!index.setMapIndex(pos, pos))
     {
-        std::cerr << "Category " << header.name << " was already compressed, can't add new slots." << std::endl;
+        std::cerr << "Category " << header.name << " was already compressed, can't add new slots."
+                  << std::endl;
         return pNullSCategoryPtr;
     }
 
-    if (!getObject(n))  ++entries;
+    if (!getObject(n)) ++entries;
 
     return data->operator[](pos);
 }
@@ -146,7 +143,7 @@ TObject *& SCategory::getSlot(const SLocator & n)
  * with existing slot.
  * \return reference to a slot
  */
-TObject *& SCategory::getNewSlot()
+TObject*& SCategory::getNewSlot()
 {
     if (header.dim != 1)
     {
@@ -166,9 +163,9 @@ TObject *& SCategory::getNewSlot()
  * \param n locator object
  * \return pointer to the object
  */
-TObject * SCategory::getObject(const SLocator & n)
+TObject* SCategory::getObject(const SLocator& n)
 {
-    if (!checkDim(n))     return pNullSCategoryPtr;
+    if (!checkDim(n)) return pNullSCategoryPtr;
 
     size_t pos = loc2pos(n);
     Int_t p = index.getMapIndex(pos);
@@ -182,11 +179,9 @@ TObject * SCategory::getObject(const SLocator & n)
  * \param i index
  * \return pointer to the object
  */
-TObject * SCategory::getObject(Int_t i)
+TObject* SCategory::getObject(Int_t i)
 {
-    if (!index.isCompressed()) {
-        compress();
-    }
+    if (!index.isCompressed()) { compress(); }
 
     return data->At(i);
 }
@@ -196,7 +191,8 @@ TObject * SCategory::getObject(Int_t i)
  */
 void SCategory::print() const
 {
-    printf("Category: %s  length=%lu  sim=%d\n", header.name.Data(), header.data_size, header.simulation);
+    printf("Category: %s  length=%lu  sim=%d\n", header.name.Data(), header.data_size,
+           header.simulation);
     printf("  index: objects=%zu  compressed=%d\n", index.size(), index.isCompressed());
     printf("  %d objects in the category:\n", data ? data->GetEntries() : 0);
 }
@@ -207,7 +203,7 @@ void SCategory::print() const
  */
 void SCategory::compress()
 {
-    if (!header.writable)   return;
+    if (!header.writable) return;
 
     if (data) data->Compress();
     index.compress();
@@ -232,7 +228,8 @@ bool SCategory::checkDim(const SLocator& loc)
 {
     if (loc.getDim() != header.dim)
     {
-        std::cerr << "Dimension of locator = " << loc.getDim() << " does not fit to category of = " << header.dim << std::endl;
+        std::cerr << "Dimension of locator = " << loc.getDim()
+                  << " does not fit to category of = " << header.dim << std::endl;
         return false;
     }
     return true;
@@ -254,34 +251,3 @@ int SCategory::loc2pos(const SLocator& loc)
     }
     return pos;
 }
-
-// void SCategory::Streamer(TBuffer &R__b)
-// {
-//     // Stream an object of class HLinearCategory.
-//     Char_t clase[200];
-//     if (R__b.IsReading())
-//     {
-//         /*Version_t R__v = */R__b.ReadVersion();
-//         TObject::Streamer(R__b);
-//         header.Streamer(R__b);
-//         index.Streamer(R__b);
-//         R__b.ReadString(clase, 200);
-//         if ( data && strcmp(clase, data->GetClass()->GetName())==0)
-//             data->Clear();
-//         else {
-//             delete data;
-//             data = new TClonesArray(clase);
-//         }
-//         data->Streamer(R__b);
-//         R__b >> entries;
-//     } else {
-//         R__b.WriteVersion(SCategory::IsA());
-//         TObject::Streamer(R__b);
-//         header.Streamer(R__b);
-//         index.Streamer(R__b);
-//         strlcpy(clase, data->GetClass()->GetName(), 200);
-//         R__b.WriteString(clase);
-//         data->Streamer(R__b);
-//         R__b << entries;
-//     }
-// }

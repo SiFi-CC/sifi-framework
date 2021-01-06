@@ -17,6 +17,7 @@
 
 #include "SRootSource.h"
 #include "SFibersStackCalSim.h"
+#include "SGeantTrack.h"
 
 #include <ComptonCameraHitClass.hh>
 #include <DR_EventHandler.hh>
@@ -30,27 +31,30 @@
 #include <fstream>
 #include <string>
 
+
 class DRSiFiCCSetup;
 class DRSiPMModel;
-
 class TChain;
 
-/* declare branches here and define in constructor */
-struct TREE_Events
-{
+
+struct TREE_Events {
     TClonesArray* fHitArray;
 };
 
-struct TREE_Address
-{
+struct TREE_Kine {
+    TVector3 pos, dir;
+    double E;
+    SGeantTrack::Type type;
+};
+
+struct TREE_Address {
     int m;
     int l;
     int f;
     char s;
 };
 
-struct TREE_hit
-{
+struct TREE_hit {
     int counts;
     float time;
 };
@@ -65,6 +69,7 @@ struct TREE_all {
     TREE_hit data;
     TVector3 pos;
     SFibersStackCalSim::InteractionType type;
+    std::vector<TREE_Kine> kine;
 };
 
 /**
@@ -72,31 +77,54 @@ struct TREE_all {
  */
 class SIFI_EXPORT SDRSource : public SRootSource
 {
-  public:
-    explicit SDRSource(/*uint16_t subevent*/);
+public:
+    explicit SDRSource ( /*uint16_t subevent*/ );
 
     virtual bool open() override;
     virtual bool close() override;
     virtual bool readCurrentEvent() override;
-    virtual void addInput(const std::string& filename) override;
+    virtual void addInput ( const std::string& filename ) override;
 
-  protected:
+protected:
     TChain* chain2;
     TChain* chain3;
 
-  private:
+private:
     uint16_t subevent; ///< subevent id
 
+    // for "Events" in chain
+    std::vector<double>* fPrimEnergy{nullptr};
+    std::vector<TVector3> * fSourcePosition{nullptr};   //!< BranchAddress RealData
+    std::vector<TVector3> * fSourceDirection{nullptr};  //!< BranchAddress RealData
+
+    double fScaEnergyElectron{0};                       //!< energy of the recoil electron
+    double fScaEnergyPhoton{0};                         //!< energy of the scattered photon
+    double fComptonTime{0};                             //!< time when the compton scattering occured
+
+    TVector3* fComptonPosition{nullptr};                //!< position where the compton scattering occured
+    // TVector3* fPhotonPosition{nullptr};                 //!< first position where the scattered photon is absorbed
+    // TVector3* fElectronPosition{nullptr};               //!< position where the recoilelectron is absorbed
+
+    TVector3* fPhotonDirection{nullptr};                //!< direction of the scattered photon
+
+    std::vector<TVector3>* fPhotonPositions{nullptr};   //!< positions where the scattered photon and its secondaries interacted
+    std::vector<TVector3>* fElectronPositions{nullptr}; //!< position where the recoilelectron and secondaries interacted
+
+    std::vector<int>* fPhotonInteractions;              //!< the interaction and secondary generations of the positions
+    std::vector<int>* fElectronInteractions;            //!< interactions to the recoilelectrons and
+
+    // helper
     std::map<int, int> fiber_map;
     std::map<int, TREE_Address> sipm_map;
-    std::map<int,TVector3> * fPxPosPhot;
-    std::map<int,TVector3> * fPxPosElec;
-    std::map<int,TVector3> * fPxPosScin;
-    
-    TREE_all tree;
-    DRSiFiCCSetup * ccsetup;
-    DRSiPMModel * pmmodel;
 
+    // for "DetectorEvent" in chain2
+    std::map<int,TVector3> * fPxPosPhot{nullptr};
+    std::map<int,TVector3> * fPxPosElec{nullptr};
+    std::map<int,TVector3> * fPxPosScin{nullptr};
+
+    TREE_all tree;
+    DRSiFiCCSetup * ccsetup{nullptr};
+    DRSiPMModel * pmmodel{nullptr};
 };
 
 #endif /* SDRSOURCE_H */

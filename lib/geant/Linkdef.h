@@ -12,7 +12,6 @@
 #ifdef __CLING__
 
 #pragma link C++ class SGeantTrack+;
-#pragma link C++ class SGeantTrack::Point+;
 #pragma link C++ class SGeantFibersRaw+;
 
 #endif

@@ -93,6 +93,7 @@ SIFI_GENERATE_LIBRARY(
         ${EXTRA_DEPS}
         ROOT::Core
         ROOT::Tree
+        Geant
         SiFiTools
     INCLUDE_DIRS
         core
