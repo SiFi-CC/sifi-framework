@@ -158,24 +158,28 @@ struct MultiView
 #include <TEveEventManager.h>
 #include <TEveGeoNode.h>
 #include <TEveManager.h>
+#include <TEvePathMark.h>
 #include <TEveTrack.h>
+#include <TEveTrackPropagator.h>
+#include <TEveVector.h>
 #include <TEveViewer.h>
 #include <TFile.h>
 #include <TGButton.h>
+#include <TGColorSelect.h>
+#include <TGFrame.h>
 #include <TGLLightSet.h>
 #include <TGLabel.h>
 #include <TGNumberEntry.h>
+#include <TGSlider.h>
 #include <TGTab.h>
 #include <TGeoManager.h>
 #include <TGeoMaterial.h>
 #include <TGeoMedium.h>
 #include <TGeoVolume.h>
+#include <TROOT.h>
 #include <TSystem.h>
-#include <TEveTrackPropagator.h>
-#include <TEvePathMark.h>
-#include <TEveVector.h>
 
-Int_t sifi_event_id = 0; // Current event id.
+Int_t sifi_event_id = 0; ///< Current event id.
 
 SLoop* loop = nullptr;
 SFibersStackGeomPar* pGeomPar = nullptr;
@@ -183,57 +187,48 @@ SCategory* pCatCalSim = nullptr;
 SCategory* pCatHitSim = nullptr;
 SCategory* pCatGeantTrack = nullptr;
 
-TEveTrackList* gTrackList = 0;
+// TEveTrackList* gTrackList = nullptr;
 
-MultiView* gMultiView = 0;
-TEveGeoShape* gGeomGentle = 0;
-TGLabel* l_evt = nullptr;
-
-const Int_t jumps_no = 5;
-TGNumberEntry* l_evt_jump[jumps_no] = {nullptr};
-
-TGeoMedium* Fiber_solid = nullptr;
-TGeoMedium* Fiber_trans = nullptr;
-
-Int_t marker_type = 3;
+MultiView* gMultiView = nullptr;
+TEveGeoShape* gGeomGentle = nullptr;
+TGLabel* l_evt = nullptr;          ///< Displays current event number
+const Int_t jumps_no = 5;          ///< Number of JumpNav fields
+TGeoManager* gGeom = nullptr;      ///< Geometry manager
+TGeoMedium* Fiber = nullptr;       ///< Fiber medium object
+TGeoVolume* fiber = nullptr;       ///< Fiber volume object
+Int_t marker_type = 3;             ///< Hit marker type
+Int_t fiber_color = kWhite;        ///< active fibers color
+Int_t active_fiber_color = kGreen; ///< active fibers color
+Int_t charge_color = kMagenta;     ///< deposited charge color
 
 void make_gui();
 TEveGeoTopNode* make_geometry();
 void load_event();
 void sifi_read();
 
-int fhash(int a, int b, int c) { return (a & 0xfff) | (b & 0xfff) << 12 | (c & 0xfff) << 24; }
-
-void setFiber(TGeoVolume* node)
-{
-    node->SetLineColor(kGreen);
-    node->SetLineStyle(1);
-    node->SetLineWidth(1);
-    node->SetMedium(Fiber_solid);
-}
-
-void resetFiber(TGeoVolume* node)
-{
-    node->SetLineColor(kGray);
-    node->SetLineStyle(1);
-    node->SetLineWidth(1);
-    node->SetMedium(Fiber_trans);
-}
-
-std::map<int, TGeoVolume*> all_fibers;
-std::vector<int> active_fibers;
-
-void geom_viewer()
+void event_display(const char* datafile = 0, const char* paramfile = "params.txt")
 {
     TEveManager::Create();
 
     /**** EVENTS ****/
     loop = new SLoop();
-    loop->addFile("testFile_calibrated.root");
+
+    if (datafile)
+    {
+        // input file can be passed by macro parameter
+        loop->addFile(datafile);
+    }
+    else
+    {
+        // or taking already open files
+        TSeqCollection* files = gROOT->GetListOfFiles();
+        for (int i = 0; i < files->GetEntries(); ++i)
+            loop->addFile(((TFile*)(files->At(i)))->GetName());
+    }
     loop->setInput({});
 
     /**** GEOMETRY ****/
-    std::string params_file("params.txt");
+    std::string params_file(paramfile);
 
     pm()->setParamSource(params_file);
     pm()->parseSource();
@@ -319,13 +314,7 @@ void load_event()
 
     gEve->GetViewers()->DeleteAnnotations();
 
-    if (gTrackList) gTrackList->DestroyElements();
-
-    for (int i : active_fibers)
-    {
-        resetFiber(all_fibers[i]);
-    }
-    active_fibers.clear();
+    //     if (gTrackList) gTrackList->DestroyElements();
 
     loop->getEvent(sifi_event_id);
     // loop->Show();
@@ -369,35 +358,35 @@ void print_geom_tree(TGeoNode* node, int indent = 0)
     }
 }
 
+TGeoMaterial* matFiber = nullptr;
 TEveGeoTopNode* make_geometry()
 {
     //--- Definition of a simple geometry
-    TGeoManager* geom = new TGeoManager("Assemblies", "Geometry using assemblies");
-    geom->SetVerboseLevel(0);
+    gGeom = new TGeoManager("Assemblies", "Geometry using assemblies");
+    gGeom->SetVerboseLevel(0);
 
     //--- define some materials
     TGeoMaterial* matVacuum = new TGeoMaterial("Vacuum", 0, 0, 0);
-    TGeoMaterial* matFiber_solid = new TGeoMaterial("LYSO:Ce_solid", 1, 1, 1);
-    matFiber_solid->SetTransparency(50);
-    TGeoMaterial* matFiber_trans = new TGeoMaterial("LYSO:Ce_trans", 1, 1, 1);
-    matFiber_trans->SetTransparency(95);
+    matFiber = new TGeoMaterial("LYSO:Ce_solid", 1, 1, 1);
+    matFiber->SetTransparency(95);
 
     //--- define some media
     TGeoMedium* Vacuum = new TGeoMedium("Vacuum", 1, matVacuum);
-    Fiber_solid = new TGeoMedium("Aluminium_solid", 2, matFiber_solid);
-    Fiber_trans = new TGeoMedium("Aluminium_trans", 2, matFiber_trans);
+    Fiber = new TGeoMedium("LYSO:Ce", 2, matFiber);
 
     //--- make the top container volume
-    TGeoVolume* top = geom->MakeBox("TOP", Vacuum, 10000., 10000., 1000.);
-    geom->SetTopVolume(top);
+    TGeoVolume* top = gGeom->MakeBox("TOP", Vacuum, 10000., 10000., 1000.);
+    gGeom->SetTopVolume(top);
 
-    TGeoVolume* fiber = geom->MakeBox("FIBER", Fiber_solid, 0.5, 50., 0.5);
-    TGeoVolume* plane = geom->MakeBox("PLANE", Vacuum, 100., 100., 1.);
+    fiber = gGeom->MakeBox("FIBER", Fiber, 0.5, 50., 0.5);
+    fiber->SetLineColor(fiber_color);
+
+    TGeoVolume* plane = gGeom->MakeBox("PLANE", Vacuum, 100., 100., 1.);
 
     TGeoRotation* rot0 = new TGeoRotation("rot0", 0, 0, 0);
     TGeoRotation* rot90 = new TGeoRotation("rot90", 90, 0, 0);
 
-    TGeoVolume* mod = geom->MakeBox("MODULE", Vacuum, 1000., 1000., 100.);
+    TGeoVolume* mod = gGeom->MakeBox("MODULE", Vacuum, 1000., 1000., 100.);
 
     Int_t m = pGeomPar->getModules();
     for (int i = 0; i < m; ++i)
@@ -412,36 +401,29 @@ TEveGeoTopNode* make_geometry()
             Int_t f = pGeomPar->getFibers(i, j);
             for (int k = 0; k < f; ++k)
             {
-                TGeoVolume* fib = fiber->CloneVolume();
+                TGeoVolume* fib = fiber; //->CloneVolume();
 
-                resetFiber(fib);
                 p->AddNode(fib, k,
                            new TGeoTranslation(pGeomPar->getFiberOffsetX(i, j) +
                                                    k * pGeomPar->getFibersPitch(i, j),
                                                0, 0));
-
-                all_fibers[fhash(i, j, k)] = fib;
-                fib->SetLineColor(kRed);
             }
 
             m->AddNode(p, j,
                        new TGeoCombiTrans(0, 0, pGeomPar->getFiberOffsetY(i, j),
-                                          (j % 2 == 0) ? rot0 : rot90));
+                                          pGeomPar->getLayerRotation(i, j) == 0 ? rot0 : rot90));
         }
 
         top->AddNode(m, i, new TGeoTranslation(0, 0, 200 + 200 * i));
     }
 
-    for (auto f : all_fibers)
-        resetFiber(f.second);
+    //--- close the gGeometry
+    gGeom->CloseGeometry();
 
-    //--- close the geometry
-    geom->CloseGeometry();
+    auto node1 = gGeom->GetTopNode();
+    //     print_gGeom_tree(node1, 0);
 
-    auto node1 = geom->GetTopNode();
-    //     print_geom_tree(node1, 0);
-
-    TEveGeoTopNode* en = new TEveGeoTopNode(geom, node1);
+    TEveGeoTopNode* en = new TEveGeoTopNode(gGeom, node1);
     //     en->SetVisOption(1);
     //     en->SetVisLevel(4);
 
@@ -482,23 +464,60 @@ class EvNavHandler
     }
 };
 
-class EvJumpNavHandler
+class QuickJumpNavHandler
 {
   public:
-    EvJumpNavHandler(int i) : i(i) {}
+    QuickJumpNavHandler(TGNumberEntry* widget) : l_evt_jump(widget) {}
 
-    void Load() { l_evt_jump[i]->SetIntNumber(sifi_event_id); }
+    void Load() { l_evt_jump->SetIntNumber(sifi_event_id); }
 
     void Jump()
     {
-        if (sifi_event_id == l_evt_jump[i]->GetIntNumber()) { printf("Already at the event.\n"); }
+        if (sifi_event_id == l_evt_jump->GetIntNumber()) { printf("Already at the event.\n"); }
 
-        sifi_event_id = l_evt_jump[i]->GetIntNumber();
+        sifi_event_id = l_evt_jump->GetIntNumber();
         if (sifi_event_id >= 0 and sifi_event_id < (int)loop->getEntries()) { load_event(); }
     }
 
   private:
-    int i;
+    TGNumberEntry* l_evt_jump;
+};
+
+class FibersPropHandler
+{
+  public:
+    FibersPropHandler(TGeoMaterial* material) : material(material), transparency_label(nullptr) {}
+
+    void SetTransparencyLabel(TGLabel* l) { transparency_label = l; }
+
+    void PositionChanged(Int_t n)
+    {
+        material->SetTransparency(n);
+        if (transparency_label) transparency_label->SetText(TString::Format("% 3d", n));
+        gEve->FullRedraw3D(kFALSE);
+    }
+
+    void FiberColorSelected(Pixel_t c)
+    {
+        if (fiber) fiber->SetLineColor(TColor::GetColor(c));
+        gEve->FullRedraw3D(kFALSE);
+    }
+
+    void ActiveFiberColorSelected(Pixel_t c)
+    {
+        if (fiber) active_fiber_color = TColor::GetColor(c);
+        load_event();
+    }
+
+    void ChargeColorSelected(Pixel_t c)
+    {
+        if (fiber) charge_color = TColor::GetColor(c);
+        load_event();
+    }
+
+  private:
+    TGeoMaterial* material;
+    TGLabel* transparency_label;
 };
 
 void make_gui()
@@ -514,63 +533,132 @@ void make_gui()
 
     EvNavHandler* fh = new EvNavHandler;
 
-    TGHorizontalFrame* hf = new TGHorizontalFrame(frmMain);
+    TGGroupFrame* groupFrame1 = new TGGroupFrame(frmMain, "Basic Navigation", kHorizontalFrame);
+    groupFrame1->SetTitlePos(TGGroupFrame::kLeft);
     {
         //         TString icondir(Form("%s/icons/", gSystem->Getenv("ROOTSYS")));
         //         TGPictureButton* b = 0;
         //         EvNavHandler* fh = new EvNavHandler;
         //
-        //         b = new TGPictureButton(hf, gClient->GetPicture(icondir + "GoBack.gif"));
-        //         hf->AddFrame(b);
-        //         b->Connect("Clicked()", "EvNavHandler", fh, "Bck()");
+        //         b = new TGPictureButton(groupFrame1, gClient->GetPicture(icondir +
+        //         "GoBack.gif")); groupFrame1->AddFrame(b); b->Connect("Clicked()", "EvNavHandler",
+        //         fh, "Bck()");
         //
-        //         b = new TGPictureButton(hf, gClient->GetPicture(icondir + "GoForward.gif"));
-        //         hf->AddFrame(b);
-        //         b->Connect("Clicked()", "EvNavHandler", fh, "Fwd()");
+        //         b = new TGPictureButton(groupFrame1, gClient->GetPicture(icondir +
+        //         "GoForward.gif")); groupFrame1->AddFrame(b); b->Connect("Clicked()",
+        //         "EvNavHandler", fh, "Fwd()");
 
         TGTextButton* b = 0;
 
-        b = new TGTextButton(hf, "&Prev");
-        hf->AddFrame(b);
+        b = new TGTextButton(groupFrame1, "&Prev");
+        groupFrame1->AddFrame(b, new TGLayoutHints(kLHintsExpandX, 0, 0, 5, 0));
         b->Connect("Clicked()", "EvNavHandler", fh, "Bck()");
 
-        TGLabel* l = new TGLabel(hf, "  Event: ");
-        hf->AddFrame(l);
+        TGLabel* l = new TGLabel(groupFrame1, "  Event: ");
+        groupFrame1->AddFrame(l, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 0, 0, 5, 0));
 
-        l_evt = new TGLabel(hf, "        ");
-        hf->AddFrame(l_evt);
+        l_evt = new TGLabel(groupFrame1, "        ");
+        groupFrame1->AddFrame(l_evt,
+                              new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 0, 0, 5, 0));
 
-        b = new TGTextButton(hf, "&Next");
-        hf->AddFrame(b);
+        b = new TGTextButton(groupFrame1, "&Next");
+        groupFrame1->AddFrame(b, new TGLayoutHints(kLHintsExpandX, 0, 0, 5, 0));
         b->Connect("Clicked()", "EvNavHandler", fh, "Fwd()");
     }
-    frmMain->AddFrame(hf, new TGLayoutHints(kLHintsCenterX, 5, 5, 5, 5));
+    frmMain->AddFrame(groupFrame1, new TGLayoutHints(kLHintsExpandX, 0, 0, 0, 0));
 
+    TGHorizontalFrame* hf = nullptr;
+
+    TGGroupFrame* groupFrame2 = new TGGroupFrame(frmMain, "Quick Navigation", kVerticalFrame);
+    groupFrame2->SetTitlePos(TGGroupFrame::kLeft);
     for (int i = 0; i < jumps_no; ++i)
     {
-        EvJumpNavHandler* fhj = new EvJumpNavHandler(i);
-
-        hf = new TGHorizontalFrame(frmMain);
+        hf = new TGHorizontalFrame(groupFrame2);
         {
-            TGTextButton* b = new TGTextButton(hf, "Load");
-            hf->AddFrame(b);
-            b->Connect("Clicked()", "EvJumpNavHandler", fhj, "Load()");
+            TGTextButton* b1 = new TGTextButton(hf, "Load");
+            hf->AddFrame(b1, new TGLayoutHints(kLHintsExpandX));
 
-            TGLabel* l = new TGLabel(hf, "     Jump to event: ");
-            hf->AddFrame(l);
+            TGLabel* l = new TGLabel(hf, "  Selected ");
+            hf->AddFrame(l, new TGLayoutHints(kLHintsCenterY, 0, 0, 0, 0));
 
-            l_evt_jump[i] = new TGNumberEntry(
+            TGNumberEntry* l_evt_jump = new TGNumberEntry(
                 hf, 0, 5, -1, TGNumberFormat::kNESInteger, TGNumberFormat::kNEAAnyNumber,
                 TGNumberFormat::kNELLimitMinMax, 0, (int)loop->getEntries() - 1);
+            hf->AddFrame(l_evt_jump);
 
-            hf->AddFrame(l_evt_jump[i]);
+            QuickJumpNavHandler* fhj = new QuickJumpNavHandler(l_evt_jump);
 
-            b = new TGTextButton(hf, TString::Format("Jump &%d", i + 1));
-            hf->AddFrame(b);
-            b->Connect("Clicked()", "EvJumpNavHandler", fhj, "Jump()");
+            TGTextButton* b2 = new TGTextButton(hf, TString::Format("Jump &%d", i + 1));
+            hf->AddFrame(b2, new TGLayoutHints(kLHintsExpandX, 5, 0, 0, 0));
+
+            b1->Connect("Clicked()", "QuickJumpNavHandler", fhj, "Load()");
+            b2->Connect("Clicked()", "QuickJumpNavHandler", fhj, "Jump()");
         }
-        frmMain->AddFrame(hf, new TGLayoutHints(kLHintsCenterX, 5, 5, 5, 5));
+        groupFrame2->AddFrame(hf, new TGLayoutHints(kLHintsExpandX, 0, 0, 2, 2));
     }
+    frmMain->AddFrame(groupFrame2, new TGLayoutHints(kLHintsExpandX));
+
+    // Fibers properties
+    FibersPropHandler* fph = new FibersPropHandler(matFiber);
+
+    TGGroupFrame* groupFrame3 = new TGGroupFrame(frmMain, "Fibers Properties", kVerticalFrame);
+    groupFrame3->SetTitlePos(TGGroupFrame::kLeft);
+
+    hf = new TGHorizontalFrame(groupFrame3);
+    {
+        TGLabel* l = new TGLabel(hf, "Transparency");
+        hf->AddFrame(l, new TGLayoutHints(kLHintsLeft | kLHintsCenterY, 0, 0, 0, 0));
+
+        TGHSlider* hslider = new TGHSlider(hf, 100, kSlider1 | kScaleDownRight, 1);
+        hslider->SetRange(80, 100);
+        hslider->Connect("PositionChanged(Int_t)", "FibersPropHandler", fph,
+                         "PositionChanged(Int_t)");
+        hslider->SetPosition(95);
+        hf->AddFrame(hslider, new TGLayoutHints(kLHintsExpandX, 0, 0, 0, 0));
+
+        l = new TGLabel(hf, "xxx");
+        hf->AddFrame(l, new TGLayoutHints(kLHintsLeft | kLHintsCenterY, 0, 0, 0, 0));
+        fph->SetTransparencyLabel(l);
+    }
+    groupFrame3->AddFrame(hf, new TGLayoutHints(kLHintsExpandX, 0, 0, 0, 0));
+
+    hf = new TGHorizontalFrame(groupFrame3);
+    {
+        TGLabel* l = new TGLabel(hf, "Fiber Color");
+        hf->AddFrame(l, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 0, 0, 0, 0));
+
+        TGColorSelect* csel = new TGColorSelect(hf, TColor::Number2Pixel(fiber_color), 100);
+        csel->Connect("ColorSelected(Pixel_t)", "FibersPropHandler", fph,
+                      "FiberColorSelected(Pixel_t)");
+        hf->AddFrame(csel, new TGLayoutHints(kLHintsLeft | kLHintsCenterY, 5, 2, 2, 2));
+    }
+    groupFrame3->AddFrame(hf, new TGLayoutHints(kLHintsExpandX, 0, 0, 0, 0));
+
+    hf = new TGHorizontalFrame(groupFrame3);
+    {
+        TGLabel* l = new TGLabel(hf, "Active Fiber Color");
+        hf->AddFrame(l, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 0, 0, 0, 0));
+
+        TGColorSelect* csel = new TGColorSelect(hf, TColor::Number2Pixel(active_fiber_color), 100);
+        csel->Connect("ColorSelected(Pixel_t)", "FibersPropHandler", fph,
+                      "ActiveFiberColorSelected(Pixel_t)");
+        hf->AddFrame(csel, new TGLayoutHints(kLHintsLeft | kLHintsCenterY, 5, 2, 2, 2));
+    }
+    groupFrame3->AddFrame(hf, new TGLayoutHints(kLHintsExpandX, 0, 0, 0, 0));
+
+    hf = new TGHorizontalFrame(groupFrame3);
+    {
+        TGLabel* l = new TGLabel(hf, "Charge Deposition Color");
+        hf->AddFrame(l, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 0, 0, 0, 0));
+
+        TGColorSelect* csel = new TGColorSelect(hf, TColor::Number2Pixel(charge_color), 100);
+        csel->Connect("ColorSelected(Pixel_t)", "FibersPropHandler", fph,
+                      "ChargeColorSelected(Pixel_t)");
+        hf->AddFrame(csel, new TGLayoutHints(kLHintsLeft | kLHintsCenterY, 5, 2, 2, 2));
+    }
+    groupFrame3->AddFrame(hf, new TGLayoutHints(kLHintsExpandX, 0, 0, 0, 0));
+
+    frmMain->AddFrame(groupFrame3, new TGLayoutHints(kLHintsExpandX));
 
     frmMain->MapSubwindows();
     frmMain->Resize();
@@ -585,7 +673,7 @@ void sifi_read()
 {
     Int_t m, l, f;
     SLocator loc(3);
-    
+
     size_t nn = pCatHitSim->getEntries();
 
     auto hits = new TEvePointSet(nn);
@@ -602,13 +690,13 @@ void sifi_read()
 
     auto fired_fibers = new TEveBoxSet("Fired fibers");
     fired_fibers->UseSingleColor();
-    fired_fibers->SetMainColor(kGreen);
+    fired_fibers->SetMainColor(active_fiber_color);
     fired_fibers->Reset(TEveBoxSet::kBT_FreeBox, kFALSE, 64);
 
-    auto boxes = new TEveBoxSet("Collected signals");
-    boxes->UseSingleColor();
-    boxes->SetMainColor(kMagenta);
-    boxes->Reset(TEveBoxSet::kBT_FreeBox, kFALSE, 64);
+    auto charges = new TEveBoxSet("Collected signals");
+    charges->UseSingleColor();
+    charges->SetMainColor(charge_color);
+    charges->Reset(TEveBoxSet::kBT_FreeBox, kFALSE, 64);
 
     float d = 0.5;
     float pos = 50.;
@@ -622,10 +710,6 @@ void sifi_read()
         loc[0] = m;
         loc[1] = l;
         loc[2] = f;
-
-        int h = fhash(m, l, f);
-        active_fibers.push_back(h);
-//         setFiber(all_fibers[h]);
 
         // printf("EVENT: %d, %d/%d  %d %d %d  GEO: %#x (%#x)\n", sifi_event_id, j, nn, m,
         // l, f, all_fibers[h], h);
@@ -690,7 +774,7 @@ void sifi_read()
                 x+d, -pos-ql, z-d,
                 // clang-format on
             };
-            boxes->AddBox(verts1);
+            charges->AddBox(verts1);
             Float_t verts2[24] = {
                 // clang-format off
                 x-d, pos, z-d,
@@ -703,7 +787,7 @@ void sifi_read()
                 x+d, pos+qr, z-d,
                 // clang-format on
             };
-            boxes->AddBox(verts2);
+            charges->AddBox(verts2);
         }
         else
         {
@@ -719,7 +803,7 @@ void sifi_read()
                 -pos-ql, y+d, z-d,
                 // clang-format on
             };
-            boxes->AddBox(verts1);
+            charges->AddBox(verts1);
             Float_t verts2[24] = {
                 // clang-format off
                 pos, y-d, z-d,
@@ -732,16 +816,17 @@ void sifi_read()
                 pos+qr, y+d, z-d,
                 // clang-format on
             };
-            boxes->AddBox(verts2);
+            charges->AddBox(verts2);
         }
     }
     gEve->AddElement(fired_fibers);
-    gEve->AddElement(boxes);
+    gEve->AddElement(charges);
     gEve->AddElement(ghits);
     gEve->AddElement(hits);
 
-    if (pCatGeantTrack) {
-        TEveTrackList * list = new TEveTrackList("Simulated tracks");
+    if (pCatGeantTrack)
+    {
+        TEveTrackList* list = new TEveTrackList("Simulated tracks");
 
         auto prop = list->GetPropagator();
         prop->SetRnrReferences(kTRUE);
@@ -757,14 +842,15 @@ void sifi_read()
         int n = pCatGeantTrack->getEntries();
         printf("n = %d\n", n);
 
-        TEveTrack * prim = nullptr;
-        TEveTrack * elec = nullptr;
-        TEveTrack * phot = nullptr;
+        TEveTrack* prim = nullptr;
+        TEveTrack* elec = nullptr;
+        TEveTrack* phot = nullptr;
 
-        std::vector<TEveTrack *> etracks;
+        std::vector<TEveTrack*> etracks;
 
-        for (int i = 0; i < n; ++i) {
-            SGeantTrack * pTrack = dynamic_cast<SGeantTrack*>(pCatGeantTrack->getObject(i));
+        for (int i = 0; i < n; ++i)
+        {
+            SGeantTrack* pTrack = dynamic_cast<SGeantTrack*>(pCatGeantTrack->getObject(i));
 
             // pTrack->print();
 
@@ -773,9 +859,10 @@ void sifi_read()
             rc->fP.Set(pTrack->Vect());
             rc->fSign = 0;
 
-            TEveTrack * t = new TEveTrack(rc, prop);
+            TEveTrack* t = new TEveTrack(rc, prop);
             t->SetLineWidth(2);
-            switch (pTrack->getType()) {
+            switch (pTrack->getType())
+            {
                 case SGeantTrack::G_PRIM:
                     t->SetLineColor(kMagenta);
                     t->SetLineStyle(2);
@@ -785,58 +872,57 @@ void sifi_read()
                 case SGeantTrack::G_COMP:
                     t->SetLineColor(kRed);
                     t->SetLineStyle(2);
-                    if (!phot) {
+                    if (!phot)
+                    {
                         etracks.push_back(t);
                         phot = t;
-                        if (prim) {
-                        prim->AddPathMark(TEvePathMarkD(TEvePathMarkD::kDecay,
-                                                        TEveVectorD(
-                                                            pTrack->getStartX(),
-                                                            pTrack->getStartY(),
-                                                            pTrack->getStartZ()
-                                                        )));
+                        if (prim)
+                        {
+                            prim->AddPathMark(
+                                TEvePathMarkD(TEvePathMarkD::kDecay,
+                                              TEveVectorD(pTrack->getStartX(), pTrack->getStartY(),
+                                                          pTrack->getStartZ())));
                         }
-                    } else {
-                        phot->AddPathMark(TEvePathMarkD(TEvePathMarkD::kDaughter,
-                                                        TEveVectorD(
-                                                            pTrack->getStartX(),
-                                                            pTrack->getStartY(),
-                                                            pTrack->getStartZ()
-                                                        )));
+                    }
+                    else
+                    {
+                        phot->AddPathMark(
+                            TEvePathMarkD(TEvePathMarkD::kDaughter,
+                                          TEveVectorD(pTrack->getStartX(), pTrack->getStartY(),
+                                                      pTrack->getStartZ())));
                     }
                     break;
                 case SGeantTrack::G_COMP_ABS:
-                    if (phot) {
-                        phot->AddPathMark(TEvePathMarkD(TEvePathMarkD::kDecay,
-                                                        TEveVectorD(
-                                                            pTrack->getStartX(),
-                                                            pTrack->getStartY(),
-                                                            pTrack->getStartZ()
-                                                        )));
+                    if (phot)
+                    {
+                        phot->AddPathMark(
+                            TEvePathMarkD(TEvePathMarkD::kDecay,
+                                          TEveVectorD(pTrack->getStartX(), pTrack->getStartY(),
+                                                      pTrack->getStartZ())));
                     }
                     break;
                 case SGeantTrack::E_COMP:
                     t->SetLineColor(kBlue);
-                    if (!elec) {
+                    if (!elec)
+                    {
                         etracks.push_back(t);
                         elec = t;
-                    } else {
-                        elec->AddPathMark(TEvePathMarkD(TEvePathMarkD::kDaughter,
-                                                        TEveVectorD(
-                                                            pTrack->getStartX(),
-                                                            pTrack->getStartY(),
-                                                            pTrack->getStartZ()
-                                                        )));
+                    }
+                    else
+                    {
+                        elec->AddPathMark(
+                            TEvePathMarkD(TEvePathMarkD::kDaughter,
+                                          TEveVectorD(pTrack->getStartX(), pTrack->getStartY(),
+                                                      pTrack->getStartZ())));
                     }
                     break;
                 case SGeantTrack::E_COMP_ABS:
-                    if (elec) {
-                        elec->AddPathMark(TEvePathMarkD(TEvePathMarkD::kDecay,
-                                                        TEveVectorD(
-                                                            pTrack->getStartX(),
-                                                            pTrack->getStartY(),
-                                                            pTrack->getStartZ()
-                                                        )));
+                    if (elec)
+                    {
+                        elec->AddPathMark(
+                            TEvePathMarkD(TEvePathMarkD::kDecay,
+                                          TEveVectorD(pTrack->getStartX(), pTrack->getStartY(),
+                                                      pTrack->getStartZ())));
                     }
                     break;
                 default:
@@ -846,12 +932,12 @@ void sifi_read()
             t->SetRnrPoints(kTRUE);
             t->SetMarkerStyle(4);
         }
-        
-        for (auto t : etracks) {
+
+        for (auto t : etracks)
+        {
             t->MakeTrack();
             list->AddElement(t);
         }
         gEve->AddElement(list);
-
     }
 }
