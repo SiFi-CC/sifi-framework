@@ -135,11 +135,12 @@ bool SFibersStackDigitizer::execute()
         }
 
         pCal->setAddress(mod, lay, fib);
-        pCal->setEnergyLoss(pHit->getEnergyLoss());
         pCal->setQDCL(pHit->getLightL());
         pCal->setQDCR(pHit->getLightR());
-        pCal->setKineticEnergy(pHit->getKineticEnergy());
-        pCal->setTotalEnergy(pHit->getTotalEnergy());
+        pCal->setGeantEnergyLoss(pHit->getEnergyLoss());
+        pCal->setGeantX(0.);    // FIXME fetch data from geant
+        pCal->setGeantY(0.);
+        pCal->setGeantZ(0.);
     }
 
     return true;

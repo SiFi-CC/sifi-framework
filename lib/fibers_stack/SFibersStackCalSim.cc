@@ -20,13 +20,6 @@ A container for Fibers Stack Calibrated simulation data
 */
 
 /**
- * Constructor
- */
-SFibersStackCalSim::SFibersStackCalSim() : SFibersStackCal(), T(0.0), E(0.0), dEdx(0.0)
-{
-}
-
-/**
  * Clear object.
  * Parameter options are ignored, for ROOT compatibility.
  *
@@ -34,9 +27,10 @@ SFibersStackCalSim::SFibersStackCalSim() : SFibersStackCal(), T(0.0), E(0.0), dE
  */
 void SFibersStackCalSim::Clear(Option_t * /*opt*/)
 {
-    T = 0.0;
-    E = 0.0;
-    dEdx = 0.0;
+    fGeantEloss = 0.0;
+    fGeantX = 0.;
+    fGeantY = 0.;
+    fGeantZ = 0.;
 }
 
 /**
@@ -45,4 +39,6 @@ void SFibersStackCalSim::Clear(Option_t * /*opt*/)
 void SFibersStackCalSim::print() const
 {
     SFibersStackCal::print();
+    printf("  GEANT: position = %.2f,%.2f,%.2f  Eloss = %.2f\n",
+           fGeantX, fGeantY, fGeantZ, fGeantEloss);
 }

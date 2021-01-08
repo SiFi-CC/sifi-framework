@@ -18,44 +18,27 @@ class SIFI_EXPORT SFibersStackCalSim : public SFibersStackCal
 {
 public:
     // data members
-    Float_t T;                  ///< kinetic energy
-    Float_t E;                  ///< total energy
-    Float_t dEdx;               ///< energy loss
-    Float_t fGeantX;            ///< geant X
-    Float_t fGeantY;            ///< geant Y
-    Float_t fGeantZ;            ///< geant Z
+    Float_t fGeantEloss{0};     ///< energy loss from Geant
+    Float_t fGeantX{0};         ///< geant X
+    Float_t fGeantY{0};         ///< geant Y
+    Float_t fGeantZ{0};         ///< geant Z
     enum InteractionType { PHOTON, ELECTRON, SCINT } type;
 
 public:
     // constructors
-    SFibersStackCalSim();
+    SFibersStackCalSim() = default;
     // detructor
     virtual ~SFibersStackCalSim() = default;
 
     // inherited from ROOT
     virtual void Clear(Option_t* opt = "") override;
 
-    // methods
-    /// Set kinetic energy
-    /// \param t kinetic energy
-    void setKineticEnergy(Float_t t) { T = t; }
-    /// Get kinetic energy
-    /// \return kinetic energy
-    Float_t getKineticEnergy() const { return T; }
-
-    /// Set total energy
-    /// \param e total energy
-    void setTotalEnergy(Float_t e) { E = e; }
-    /// Get total energy
-    /// \return total energy
-    Float_t getTotalEnergy() const { return E; }
-
-    /// Set energy loss
-    /// \param e energy loss
-    void setEnergyLoss(Float_t e) { dEdx = e; }
-    /// Get energy loss
-    /// \return energy loss
-    Float_t getEnergyLoss() const { return dEdx; }
+    /// Set energy loss simulated in Geant
+    /// \param e energy loss in Geant
+    void setGeantEnergyLoss(Float_t e) { fGeantEloss = e; }
+    /// Get energy loss simulated in Geant
+    /// \return energy loss in Geant
+    Float_t getGeantEnergyLoss() const { return fGeantEloss; }
 
     /// Set Geant X coordinate
     /// \param v coordinate value
@@ -78,7 +61,7 @@ public:
     /// \return Z value
     Float_t getGeantZ() const { return fGeantZ; }
 
-    void print() const;
+    void print() const override;
 
 private:
     ClassDefOverride(SFibersStackCalSim, 1);

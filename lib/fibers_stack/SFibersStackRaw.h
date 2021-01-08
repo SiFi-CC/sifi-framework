@@ -26,19 +26,19 @@ class SIFI_EXPORT SFibersStackRaw : public TObject
 {
 protected:
     // members
-    Int_t module;       ///< address - module
-    Int_t layer;        ///< address - layer
-    Int_t fiber;        ///< address - fiber
+    Int_t module{-1};   ///< address - module
+    Int_t layer{-1};    ///< address - layer
+    Int_t fiber{-1};    ///< address - fiber
 
-    Float_t qdc_l;      ///< qdc value
-    Float_t time_l;     ///< time value
+    Float_t qdc_l{0.};  ///< qdc value
+    Float_t time_l{0.}; ///< time value
 
-    Float_t qdc_r;      ///< qdc value
-    Float_t time_r;     ///< time value
+    Float_t qdc_r{0.};  ///< qdc value
+    Float_t time_r{0.}; ///< time value
 
 public:
     // constructor
-    SFibersStackRaw();
+    SFibersStackRaw() = default;
     virtual ~SFibersStackRaw() = default;
 
     // inherited from ROOT
@@ -90,7 +90,7 @@ public:
     /// \return time
     Float_t getTimeR() const { return time_r; }
 
-    void print() const;
+    virtual void print() const;
 
     ClassDef(SFibersStackRaw, 1);   // container for fibers stack raw data
 };
