@@ -1,33 +1,35 @@
 #include "SCategoryManager.h"
-#include "SDetectorManager.h"
-#include "SLoop.h"
 #include "SDDSamples.h"
-#include "SFibersStackDetector.h"
+#include "SDetectorManager.h"
 #include "SFibersStackCalSim.h"
+#include "SFibersStackDetector.h"
 #include "SFibersStackHit.h"
 #include "SFibersStackHitFinder.h"
 #include "SFibersStackHitFinderPar.h"
+#include "SLoop.h"
 #include "SParManager.h"
 
-#include <TH1D.h>
+#include <RtypesCore.h>
+#include <TAxis.h>
+#include <TCanvas.h>
+#include <TColor.h>
 #include <TF1.h>
+#include <TFile.h>
+#include <TGraph.h>
+#include <TH1D.h>
 #include <TH2I.h>
 #include <THStack.h>
-#include <TTree.h>
-#include <TLine.h>
-#include <TCanvas.h>
-#include <TStyle.h>
-#include <TColor.h>
-#include <TLegend.h>
 #include <TLatex.h>
-#include <TProfile.h>
+#include <TLegend.h>
+#include <TLine.h>
 #include <TMath.h>
-#include <TGraph.h>
-#include <TAxis.h>
-#include <RtypesCore.h>
+#include <TProfile.h>
+#include <TROOT.h>
+#include <TStyle.h>
+#include <TTree.h>
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <math.h>
 
 #define NBINSX 50
@@ -41,12 +43,12 @@
 #define CAN_COLS 4
 #define CAN_ROWS 3
 
-#define PR(x) std::cout << "++DEBUG: " << #x << " = |" << x << "| (" << __FILE__ << ", " << __LINE__ << ")\n";
+#define PR(x)                                                                                      \
+    std::cout << "++DEBUG: " << #x << " = |" << x << "| (" << __FILE__ << ", " << __LINE__ << ")\n";
 using namespace std;
 
-void format_h_31(TH1 * h) {
-    //        h->SetLineStyle(9);
-    //     h->SetTitle("");
+void format_h_31(TH1* h)
+{
     h->GetXaxis()->SetLabelSize(0.06);
     h->GetXaxis()->SetTitleSize(0.06);
     h->GetXaxis()->SetTitleOffset(0.85);
@@ -68,7 +70,7 @@ int hitfinder_calibration(const char* datafile = 0, const char* paramfile = "par
     gStyle->SetPalette(57);
     gStyle->SetLabelSize(10);
 
-    SLoop * loop = new SLoop();
+    SLoop* loop = new SLoop();
     if (datafile)
     {
         // input file can be passed by macro parameter
@@ -83,7 +85,7 @@ int hitfinder_calibration(const char* datafile = 0, const char* paramfile = "par
     }
     loop->setInput({});
 
-    std::string params_file("params.txt");
+    std::string params_file(paramfile);
 
     // initialize parameters
     pm()->setParamSource(params_file);
@@ -94,28 +96,30 @@ int hitfinder_calibration(const char* datafile = 0, const char* paramfile = "par
     detm->addDetector(new SFibersStackDetector("FibersStack"));
     detm->initParameterContainers();
 
-    SCategory * pCatCalSim = SCategoryManager::getCategory(SCategory::CatFibersStackCal);
-    SCategory * pCatHitSim = SCategoryManager::getCategory(SCategory::CatFibersStackHit);
+    SCategory* pCatCalSim = SCategoryManager::getCategory(SCategory::CatFibersStackCal);
+    SCategory* pCatHitSim = SCategoryManager::getCategory(SCategory::CatFibersStackHit);
 
-    SFibersStackHitFinderPar * pHitFinderPar = dynamic_cast<SFibersStackHitFinderPar*>(pm()->getParameterContainer("SFibersStackHitFinderPar"));
+    SFibersStackHitFinderPar* pHitFinderPar = dynamic_cast<SFibersStackHitFinderPar*>(
+        pm()->getParameterContainer("SFibersStackHitFinderPar"));
     if (!pHitFinderPar)
     {
-        std::cerr << "Parameter container 'SFibersStackHitFinderPar' was not obtained!" << std::endl;
+        std::cerr << "Parameter container 'SFibersStackHitFinderPar' was not obtained!"
+                  << std::endl;
         exit(EXIT_FAILURE);
     }
 
+
     Float_t a0 = pHitFinderPar->getA0();
     Float_t lambda = pHitFinderPar->getLambda();
-
     Double_t y_sim, MLR;
     Double_t tab_of_means[NBINSX], tab_of_bin_centers[NBINSX];
 
-    TH1D * hPosSim;
-    TH2D * hMLRY;
-    TH1D * hMLRY_proj[NBINSX];
+    TH1D* hPosSim;
+    TH2D* hMLRY;
+    TH1D* hMLRY_proj[NBINSX];
 
-    TF1 * fline = new TF1("fline", "pol1", -0.3, 0.3);
-    TF1 * fgauss2 = new TF1("fgauss2", "gaus(0)+pol2(3)", -50, 50);
+    TF1* fline = new TF1("fline", "pol1", -0.5, 0.5);
+    TF1* fgauss2 = new TF1("fgauss2", "gaus(0)+pol2(3)", -50, 50);
 
     fgauss2->SetParameters(200., 0, 5., 100, 0, 0);
     hPosSim = new TH1D("hPosSim", "hPosSim", NBINS, XLOW, XUP);
@@ -125,15 +129,15 @@ int hitfinder_calibration(const char* datafile = 0, const char* paramfile = "par
     int m, l, f;
     SLocator loc(3);
 
-    TCanvas * can0 = new TCanvas("can0", "can0", 800, 400);
-    can0->Divide(2,1);
+    TCanvas* can0 = new TCanvas("can0", "can0", 800, 400);
+    can0->Divide(2, 1);
 
     for (int i = 0; i < n; ++i)
     {
         size_t nn = pCatHitSim->getEntries();
         for (uint j = 0; j < nn; ++j)
         {
-            SFibersStackHit * pHit = (SFibersStackHit *)pCatHitSim->getObject(j);
+            SFibersStackHit* pHit = (SFibersStackHit*)pCatHitSim->getObject(j);
             MLR = pHit->getU();
 
             pHit->getAddress(m, l, f);
@@ -141,7 +145,7 @@ int hitfinder_calibration(const char* datafile = 0, const char* paramfile = "par
             loc[1] = l;
             loc[2] = f;
 
-            SFibersStackCalSim * pCalSim = (SFibersStackCalSim *)pCatCalSim->getObject(loc);
+            SFibersStackCalSim* pCalSim = (SFibersStackCalSim*)pCatCalSim->getObject(loc);
 
             y_sim = pCalSim->getGeantY();
 
@@ -157,13 +161,13 @@ int hitfinder_calibration(const char* datafile = 0, const char* paramfile = "par
     format_h_31(hMLRY);
     hMLRY->Draw("colz");
 
-    TCanvas * can1 = new TCanvas("can1", "can1", 1400, 600);
+    TCanvas* can1 = new TCanvas("can1", "can1", 1400, 600);
     can1->DivideSquare(NBINSX);
 
-    for(int i = 0; i < NBINSX; i++)
+    for (int i = 0; i < NBINSX; i++)
     {
-        can1->cd(i+1);
-        hMLRY_proj[i] = hMLRY->ProjectionY(Form("bin%d",i+1),i+1,i+1);
+        can1->cd(i + 1);
+        hMLRY_proj[i] = hMLRY->ProjectionY(Form("bin%d", i + 1), i + 1, i + 1);
 
         Int_t bm = hMLRY_proj[i]->GetMaximumBin();
         fgauss2->SetParameters(200., 0, 5., 100, 0, 0);
@@ -175,22 +179,22 @@ int hitfinder_calibration(const char* datafile = 0, const char* paramfile = "par
         format_h_31(hMLRY_proj[i]);
         hMLRY_proj[i]->SetTitle("");
 
-        tab_of_bin_centers[i] = ((TAxis*)hMLRY->GetXaxis())->GetBinCenter(i+1);
+        tab_of_bin_centers[i] = ((TAxis*)hMLRY->GetXaxis())->GetBinCenter(i + 1);
         tab_of_means[i] = fgauss2->GetParameter(1);
     }
 
-    TGraph *gr1 = new TGraph (NBINSX, tab_of_bin_centers, tab_of_means);
+    TGraph* gr1 = new TGraph(NBINSX, tab_of_bin_centers, tab_of_means);
     can0->cd(2);
     gr1->Draw("P*,same");
     fline->SetParameters(100, 0);
-    gr1->Fit(fline, "", "", -0.25, 0.25);
+    gr1->Fit(fline, "", "", -0.5, 0.5);
     Float_t p0 = fline->GetParameter(0);
     Float_t p1 = fline->GetParameter(1);
 
-//     lambda = 1/p1;
-//     a0 = p0;
+    //     lambda = 1/p1;
+    //     a0 = p0;
     lambda = p1;
-    a0 = -p0/p1;
+    a0 = -p0 / p1;
 
     printf("PARAMETERS: a0 = %f    lambda = %f\n", a0, lambda);
 
@@ -199,12 +203,10 @@ int hitfinder_calibration(const char* datafile = 0, const char* paramfile = "par
     pHitFinderPar->print();
 
     pm()->setParamDest(params_file);
-//     pm()->setParamDest("calibrated.txt");
+    //     pm()->setParamDest("calibrated.txt");
     pm()->writeDestination();
 
     return 0;
 }
 
-int main() {
-    return hitfinder_calibration();
-}
+int main() { return hitfinder_calibration(); }
