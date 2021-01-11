@@ -31,31 +31,31 @@ void SGeantTrack::clear()
     TLorentzVector::Clear();
 
     start.Clear();
-//     start.px = 0.;
-//     start.py = 0.;
-//     start.pz = 0.;
-//     start.E = -1000.;
+    //     start.px = 0.;
+    //     start.py = 0.;
+    //     start.pz = 0.;
+    //     start.E = -1000.;
 
-//     stop.x = 0.;
-//     stop.y = 0.;
-//     stop.z = 0.;
-//     stop.px = 0.;
-//     stop.py = 0.;
-//     stop.pz = 0.;
-//     stop.E = -1000.;
+    //     stop.x = 0.;
+    //     stop.y = 0.;
+    //     stop.z = 0.;
+    //     stop.px = 0.;
+    //     stop.py = 0.;
+    //     stop.pz = 0.;
+    //     stop.E = -1000.;
 
-//     scattering                          = false;
-//     processes.clear();
-//     g4Id                                = 0;
-//     stopInDetector                      = false;
-//     secondariesID.clear();
-//     trackID                             = 0;
-//     parentID                            = -1;
-//     generationProcess                   = "";
-//     inAcceptance                        = kFALSE;
-//     proc_arr[COMPTON]                   = kFALSE;
-//     proc_arr[INELASTIC]                 = kFALSE;
-//     proc_arr[ATREST]                    = kFALSE;
+    //     scattering                          = false;
+    //     processes.clear();
+    //     g4Id                                = 0;
+    //     stopInDetector                      = false;
+    //     secondariesID.clear();
+    //     trackID                             = 0;
+    //     parentID                            = -1;
+    //     generationProcess                   = "";
+    //     inAcceptance                        = kFALSE;
+    //     proc_arr[COMPTON]                   = kFALSE;
+    //     proc_arr[INELASTIC]                 = kFALSE;
+    //     proc_arr[ATREST]                    = kFALSE;
 }
 
 // /**
@@ -67,7 +67,7 @@ void SGeantTrack::clear()
 // {
 //     processes.push_back(name);
 // }
-// 
+//
 // /**
 //  * Add child ID
 //  *
@@ -89,7 +89,7 @@ void SGeantTrack::clear()
 //     TVector3 end_ = TVector3(stop.x, stop.y, stop.z) - ref;
 //     return end_.Mag();
 // }
-// 
+//
 // /**
 //  * Get range in the detector
 //  *
@@ -100,18 +100,18 @@ void SGeantTrack::clear()
 // {
 //     if (!stopInDetector)
 //         return -100.;
-// 
+//
 //     TVector3 sta = TVector3(start.x, start.y, start.z) - ref;
 //     TVector3 sto = TVector3(stop.x, stop.y, stop.z) - ref;
-// 
+//
 //     TVector3 psta = TVector3(start.px, start.py, start.pz);
 // //     TVector3 psto = TVector3(stop.px, stop.py, stop.pz);
-// 
+//
 //     psta *= 1.0/psta.Mag();
 // //     psto *= 1.0/psto.Mag();
-// 
+//
 //     Double_t t = 0.0;
-// 
+//
 //     const Double_t limit = ref.Y();
 //     while (true)
 //     {
@@ -122,12 +122,12 @@ void SGeantTrack::clear()
 //         {
 //             break;
 //         }
-// 
+//
 //         t += 0.1;
 //     }
-// 
+//
 //     TVector3 intsec(sta + psta * t);
-// 
+//
 // //     printf("start = %f,%f,%f\n", sta.X(), sta.Y(), sta.Z());
 // //     printf("  end = %f,%f,%f\n", end.X(), end.Y(), end.Z());
 // //     printf("  int = %f,%f,%f\n", intsec.X(), intsec.Y(), intsec.Z());
@@ -141,10 +141,10 @@ void SGeantTrack::clear()
 // {
 //     TVector3 psta = TVector3(start.px, start.py, start.pz);
 //     TVector3 psto = TVector3(stop.px, stop.py, stop.pz);
-// 
+//
 //     psta *= 1.0/psta.Mag();
 //     psto *= 1.0/psto.Mag();
-// 
+//
 //     printf("##### particle #####\n");
 //     printf("  pos sta=(%f,%f,%f)  sto=(%f,%f,%f)\n", start.x, start.y, start.z, stop.x, stop.y, stop.z);
 //     printf("  dir sta=(%f,%f,%f)  sto=(%f,%f,%f)\n", psta.X(), psta.Y(), psta.Z(), psto.X(), psto.Y(), psto.Z());

@@ -10,4 +10,5 @@ SIFI_GENERATE_LIBRARY(
         SGeantTrack.h
     LIBRARIES
         ROOT::Core
+        ROOT::Physics
 )
