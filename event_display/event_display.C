@@ -727,7 +727,7 @@ void sifi_read()
 
         ghits->SetPoint(j, pCalSim->getGeantX(), pCalSim->getGeantY(), pCalSim->getGeantZ());
 
-        if (l % 2 == 0)
+        if (pGeomPar->getLayerRotation(m, l) == 0)
         {
             Float_t verts[24] = {
                 // clang-format off
@@ -760,7 +760,7 @@ void sifi_read()
             fired_fibers->AddBox(verts);
         }
 
-        if (l % 2 == 0)
+        if (pGeomPar->getLayerRotation(m, l) == 0)
         {
             Float_t verts1[24] = {
                 // clang-format off
