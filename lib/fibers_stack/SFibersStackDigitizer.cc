@@ -10,12 +10,12 @@
  *************************************************************************/
 
 #include "SFibersStackDigitizer.h"
+#include "SCategory.h"
+#include "SFibersStackCalSim.h"
 #include "SFibersStackDigitizerPar.h"
 #include "SFibersStackGeomPar.h"
 #include "SGeantFibersRaw.h"
-#include "SFibersStackCalSim.h"
 #include "SParManager.h"
-#include "SCategory.h"
 #include "SiFi.h"
 
 #include <iostream>
@@ -33,9 +33,8 @@ A digitizer task.
  * Constructor
  */
 SFibersStackDigitizer::SFibersStackDigitizer()
-    : STask()
-    , catGeantFibersRaw(nullptr), catFibersCalSim(nullptr)
-    , pDigiPar(nullptr), pGeomPar(nullptr)
+    : STask(), catGeantFibersRaw(nullptr), catFibersCalSim(nullptr), pDigiPar(nullptr),
+      pGeomPar(nullptr)
 {
 }
 
@@ -49,18 +48,19 @@ bool SFibersStackDigitizer::init()
     catGeantFibersRaw = sifi()->getCategory(SCategory::CatGeantFibersRaw);
     if (!catGeantFibersRaw)
     {
-        std::cerr << "No CatGeantFibersRaw category" << "\n";
+        std::cerr << "No CatGeantFibersRaw category" << std::endl;
         return false;
     }
 
     catFibersCalSim = sifi()->buildCategory(SCategory::CatFibersStackCal);
     if (!catFibersCalSim)
     {
-        std::cerr << "No CatFibersStackCal category" << "\n";
+        std::cerr << "No CatFibersStackCal category" << std::endl;
         return false;
     }
 
-    pGeomPar = dynamic_cast<SFibersStackGeomPar*>(pm()->getParameterContainer("SFibersStackGeomPar"));
+    pGeomPar =
+        dynamic_cast<SFibersStackGeomPar*>(pm()->getParameterContainer("SFibersStackGeomPar"));
     if (!pGeomPar)
     {
         std::cerr << "Parameter container 'SFibersStackGeomPar' was not obtained!" << std::endl;
@@ -93,7 +93,7 @@ bool SFibersStackDigitizer::execute()
     int size = catGeantFibersRaw->getEntries();
     for (int i = 0; i < size; ++i)
     {
-        SGeantFibersRaw * pHit = dynamic_cast<SGeantFibersRaw *>(catGeantFibersRaw->getObject(i));
+        SGeantFibersRaw* pHit = dynamic_cast<SGeantFibersRaw*>(catGeantFibersRaw->getObject(i));
         if (!pHit)
         {
             printf("Hit doesnt exists!\n");
@@ -114,7 +114,7 @@ bool SFibersStackDigitizer::execute()
             {
                 lay = l;
                 if (l > 0)
-                    fib = address - layer_fiber_limit[mod][l-1];
+                    fib = address - layer_fiber_limit[mod][l - 1];
                 else
                     fib = address;
                 break;
@@ -126,10 +126,11 @@ bool SFibersStackDigitizer::execute()
         loc[1] = lay;
         loc[2] = fib;
 
-        SFibersStackCalSim * pCal = dynamic_cast<SFibersStackCalSim *>(catFibersCalSim->getObject(loc));
+        SFibersStackCalSim* pCal =
+            dynamic_cast<SFibersStackCalSim*>(catFibersCalSim->getObject(loc));
         if (!pCal)
         {
-            pCal = dynamic_cast<SFibersStackCalSim *>(catFibersCalSim->getSlot(loc));
+            pCal = dynamic_cast<SFibersStackCalSim*>(catFibersCalSim->getSlot(loc));
             new (pCal) SFibersStackCalSim;
             pCal->Clear();
         }
@@ -138,7 +139,7 @@ bool SFibersStackDigitizer::execute()
         pCal->setQDCL(pHit->getLightL());
         pCal->setQDCR(pHit->getLightR());
         pCal->setGeantEnergyLoss(pHit->getEnergyLoss());
-        pCal->setGeantX(0.);    // FIXME fetch data from geant
+        pCal->setGeantX(0.); // FIXME fetch data from geant
         pCal->setGeantY(0.);
         pCal->setGeantZ(0.);
     }
@@ -151,7 +152,4 @@ bool SFibersStackDigitizer::execute()
  * \sa STask::finalize()
  * \return success
  */
-bool SFibersStackDigitizer::finalize()
-{
-    return true;
-}
+bool SFibersStackDigitizer::finalize() { return true; }

@@ -10,10 +10,10 @@
  *************************************************************************/
 
 #include "SLoop.h"
-#include "SiFi.h"
 #include "SEvent.h"
-#include "SRootFileHeader.h"
 #include "SProgressBar.h"
+#include "SRootFileHeader.h"
+#include "SiFi.h"
 
 #include <TChain.h>
 #include <TFile.h>
@@ -30,12 +30,8 @@
 */
 
 SLoop::SLoop()
-    : current_file(nullptr)
-    , current_tree(nullptr)
-    , current_event(0)
-    , event(nullptr)
-    , file_header(nullptr)
-    , tree_cache_size(8000)
+    : current_file(nullptr), current_tree(nullptr), current_event(0), event(nullptr),
+      file_header(nullptr), tree_cache_size(8000)
 {
     chain = new TChain("S");
     event = new SEvent;
@@ -43,7 +39,7 @@ SLoop::SLoop()
     sifi()->setTree(chain);
     sifi()->setEvent(event);
 
-    memset(categories, 0, SCategory::CatLimitDoNotUse*2 * sizeof(SCategory*));
+    memset(categories, 0, SCategory::CatLimitDoNotUse * 2 * sizeof(SCategory*));
 }
 
 SLoop::~SLoop()
@@ -65,8 +61,10 @@ bool SLoop::addFile(const std::string& file)
         std::cout << "Add file : " << file << std::endl;
         chain->AddFile(file.c_str());
         return true;
-    } else {
-//         Error("addFile()","File = %s not found! Will be skipped .... ",infile.Data());
+    }
+    else
+    {
+        //         Error("addFile()","File = %s not found! Will be skipped .... ",infile.Data());
         return false;
     }
 }
@@ -80,11 +78,10 @@ bool SLoop::addFile(const std::string& file)
  */
 bool SLoop::addFiles(const std::vector<std::string>& files)
 {
-    for (const auto &file : files)
+    for (const auto& file : files)
     {
         bool rc = addFile(file);
-        if (rc)
-            return false;
+        if (rc) return false;
     }
 
     return true;
@@ -105,30 +102,31 @@ void SLoop::setInput(std::initializer_list<SCategory::Cat> categories)
 
     current_tree = chain->GetTree();
 
-    TFile * f = chain->GetCurrentFile();
+    TFile* f = chain->GetCurrentFile();
     f->GetObject("FileHeader", file_header);
 
-    if (!file_header) {
+    if (!file_header)
+    {
         std::cerr << "File header does not exists!" << std::endl;
         abort();
     }
 
-    for (auto & cn : file_header->catName)
+    for (auto& cn : file_header->catName)
     {
         printf("Read category %s\n", cn.second.Data());
 
-        TBranch * br = current_tree->GetBranch(Form("%s", cn.second.Data())); // FIXME add .
-        if(!br)
+        TBranch* br = current_tree->GetBranch(Form("%s", cn.second.Data())); // FIXME add .
+        if (!br)
         {
-    //         Error("setInput()","Branch not found : %s !",Form("%s.",catname.Data()));
-    //         return kFALSE;
+            //         Error("setInput()","Branch not found : %s !",Form("%s.",catname.Data()));
+            //         return kFALSE;
         }
         else
         {
             int pos = SiFi::getCategoryIndex(cn.first, sifi()->isSimulation());
             chain->SetBranchAddress(Form("%s", cn.second.Data()), &(this->categories[pos]));
-            chain->SetBranchStatus (Form("%s", cn.second.Data()),1);
-            chain->SetBranchStatus (Form("%s", cn.second.Data()),1);
+            chain->SetBranchStatus(Form("%s", cn.second.Data()), 1);
+            chain->SetBranchStatus(Form("%s", cn.second.Data()), 1);
 
             sifi()->getCurrentEvent()->addCategory(cn.first, this->categories[pos]);
         }
@@ -140,10 +138,7 @@ void SLoop::setInput(std::initializer_list<SCategory::Cat> categories)
  *
  * \return number of entries
  */
-size_t SLoop::getEntries() const
-{
-    return chain->GetEntries();
-}
+size_t SLoop::getEntries() const { return chain->GetEntries(); }
 
 /**
  * Fetch the next event from the #chain. If the event reaches end of the tree,
@@ -167,7 +162,8 @@ Int_t SLoop::nextEvent()
  * \param event event number
  * \return 0 indicates error, >0 is a number of read bytes.
  */
-Int_t SLoop::getEvent(ulong event) {
+Int_t SLoop::getEvent(ulong event)
+{
     sifi()->getCurrentEvent()->clearCategories();
     return chain->GetEntry(event);
 }

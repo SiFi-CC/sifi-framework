@@ -22,9 +22,6 @@
 namespace SCategoryManager
 {
 
-SCategory* getCategory(SCategory::Cat cat)
-{
-    return sifi()->getCurrentEvent()->getCategory(cat);
-}
+SCategory* getCategory(SCategory::Cat cat) { return sifi()->getCurrentEvent()->getCategory(cat); }
 
 }; // namespace SCategoryManager

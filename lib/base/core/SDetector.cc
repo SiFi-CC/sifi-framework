@@ -29,8 +29,7 @@ on maximal number of steps, but 32 steps seems sufficient for most of the cases.
  *
  * \param name detector name
  */
-SDetector::SDetector(const std::string & name)
-    : TNamed(name.c_str(), name.c_str()), task_mask(0xff)
+SDetector::SDetector(const std::string& name) : TNamed(name.c_str(), name.c_str()), task_mask(0xff)
 {
 }
 
@@ -42,9 +41,8 @@ SDetector::SDetector(const std::string & name)
  * \param task task to execute
  * \param step task step value
  */
-void SDetector::addTask(STask * task, Int_t step)
+void SDetector::addTask(STask* task, Int_t step)
 {
     // add task only is mask allows for it
-    if (task_mask & (1 << step))
-        STaskManager::instance()->addTask(task, step);
+    if (task_mask & (1 << step)) STaskManager::instance()->addTask(task, step);
 }

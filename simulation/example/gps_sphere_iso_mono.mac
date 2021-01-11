@@ -1,7 +1,0 @@
-/gps/particle proton
-/gps/pos/type Surface
-/gps/pos/shape Sphere
-/gps/pos/centre 0. 3.5 0. cm
-/gps/pos/radius 7 cm
-/gps/ang/type cos
-/gps/energy 50.0 MeV

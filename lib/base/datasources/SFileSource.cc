@@ -15,40 +15,39 @@
 #include <iostream>
 #include <map>
 
-SFileSource::SFileSource() : SDataSource()
-    , subevent(0x0000), input(), istream(), buffer_size(0)
-{
-}
+SFileSource::SFileSource() : SDataSource(), subevent(0x0000), input(), istream(), buffer_size(0) {}
 
 bool SFileSource::open()
 {
     printf("File name = |%s|\n", input.c_str());
     istream.open(input.c_str(), std::ios::binary);
-    if (!istream.is_open()) {
+    if (!istream.is_open())
+    {
         std::cerr << "##### Error in SFileSource::open()! Could not open input file!" << std::endl;
         std::cerr << input << std::endl;
         return false;
     }
 
-    if (unpackers.size() == 0)
-        return false;
+    if (unpackers.size() == 0) return false;
 
     if (subevent != 0x0000)
     {
         if (!unpackers[subevent]) abort();
 
         bool res = unpackers[subevent]->init();
-        if (!res) {
+        if (!res)
+        {
             printf("Forced unpacker %#x not initalized\n", subevent);
             abort();
         }
     }
     else
     {
-        for (auto & unp : unpackers)
+        for (auto& unp : unpackers)
         {
             bool res = unp.second->init();
-            if (!res) {
+            if (!res)
+            {
                 printf("Unpacker %#x not initalized\n", unp.first);
                 abort();
             }
@@ -68,7 +67,7 @@ bool SFileSource::close()
     }
     else
     {
-        std::map<uint16_t, SUnpacker *>::iterator iter = unpackers.begin();
+        std::map<uint16_t, SUnpacker*>::iterator iter = unpackers.begin();
         for (; iter != unpackers.end(); ++iter)
             iter->second->finalize();
     }
@@ -79,15 +78,13 @@ bool SFileSource::close()
 
 bool SFileSource::readCurrentEvent()
 {
-    if (unpackers.size() == 0)
-        return false;
+    if (unpackers.size() == 0) return false;
 
-    void * buffer[buffer_size];
+    void* buffer[buffer_size];
     istream.read((char*)&buffer, buffer_size);
     bool flag = istream.good();
 
-    if (!flag)
-        return false;
+    if (!flag) return false;
 
     if (subevent != 0x0000)
     {
@@ -96,7 +93,7 @@ bool SFileSource::readCurrentEvent()
     }
     else
     {
-        for (auto & unp : unpackers)
+        for (auto& unp : unpackers)
             unp.second->execute(0, 0, unp.first, buffer, buffer_size);
     }
 
@@ -109,7 +106,8 @@ bool SFileSource::readCurrentEvent()
  * \param filename file name
  * \param buffer_size sizeof the data chunk in the file
  */
-void SFileSource::setInput(const std::string& filename, size_t buffer_size) {
+void SFileSource::setInput(const std::string& filename, size_t buffer_size)
+{
     input = filename;
     this->buffer_size = buffer_size;
 }

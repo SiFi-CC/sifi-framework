@@ -24,7 +24,6 @@ A container for Fibers Stack Raw data
  */
 SFibersStackCluster::SFibersStackCluster() : SFibersStackHit() {}
 
-
 /**
  * Clear object
  * Parameter options are ignored, for ROOT compatibility.
@@ -45,7 +44,7 @@ void SFibersStackCluster::print() const
     printf("CLUSTER HIT m,l,f=%d,%d,%d  x,y,z= %f,%f,%f (%f,%f,%f)  E= %f +- %f  Time= %f +- %f\n",
            module, layer, fiber, x, y, z, sx, sy, sz, E, sE, t, st);
     printf("       HITS:");
-    for (auto & h : hits)
+    for (auto& h : hits)
         printf(" %d", h);
     printf("\n");
 }

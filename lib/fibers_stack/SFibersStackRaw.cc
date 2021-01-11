@@ -21,7 +21,6 @@ A container for Fibers Stack Raw data
 
 */
 
-
 /**
  * Clear object
  * Parameter options are ignored, for ROOT compatibility.
@@ -45,6 +44,6 @@ void SFibersStackRaw::Clear(Option_t* /*opt*/)
  */
 void SFibersStackRaw::print() const
 {
-    printf("fiber m,l,f=%d,%d,%d  L: QDC=%f  Time=%f   R: QDC=%f  Time=%f\n",
-           module, layer, fiber, qdc_l, time_l, qdc_r, time_r);
+    printf("fiber m,l,f=%d,%d,%d  L: QDC=%f  Time=%f   R: QDC=%f  Time=%f\n", module, layer, fiber,
+           qdc_l, time_l, qdc_r, time_r);
 }

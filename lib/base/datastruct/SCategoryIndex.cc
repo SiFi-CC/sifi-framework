@@ -11,8 +11,8 @@
 
 #include <iostream>
 
-#include <TBuffer.h>
 #include <TArrayI.h>
+#include <TBuffer.h>
 #include <TClass.h>
 #include <TClonesArray.h>
 
@@ -29,10 +29,7 @@ of the linear array to the number of elements.
 */
 
 /// Constructor
-SCategoryIndex::SCategoryIndex() : TObject(), compressed(kFALSE)
-{
-    clear();
-}
+SCategoryIndex::SCategoryIndex() : TObject(), compressed(kFALSE) { clear(); }
 
 /**
  * Map uncompressed index pos into compressed index val.
@@ -43,8 +40,7 @@ SCategoryIndex::SCategoryIndex() : TObject(), compressed(kFALSE)
  */
 Bool_t SCategoryIndex::setMapIndex(Int_t pos, Int_t val)
 {
-    if (compressed)
-        return kFALSE;
+    if (compressed) return kFALSE;
 
     idxmap[pos] = val;
 
@@ -59,9 +55,8 @@ Bool_t SCategoryIndex::setMapIndex(Int_t pos, Int_t val)
  */
 Int_t SCategoryIndex::getMapIndex(Int_t pos) const
 {
-    const auto & it = idxmap.find(pos);
-    if (it == idxmap.end())
-        return -1;
+    const auto& it = idxmap.find(pos);
+    if (it == idxmap.end()) return -1;
     return it->second;
 }
 
@@ -80,13 +75,13 @@ void SCategoryIndex::clear()
  * updated. The compression is linear though the mapped indexes receive new
  * values based of their order in the map.
  * Set compressed flag to true.
- * 
+ *
  * \sa SCategory::compress()
  */
 void SCategoryIndex::compress()
 {
     Int_t j = 0;
-    for (auto & i : idxmap)
+    for (auto& i : idxmap)
         i.second = j++;
 
     compressed = kTRUE;

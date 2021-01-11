@@ -31,7 +31,8 @@ SDDSamples::SDDSamples() : TObject() {}
  * Parameter options are ignored, for ROOT compatibility.
  * \param opt options
  */
-void SDDSamples::Clear(Option_t* /*opt*/) {
+void SDDSamples::Clear(Option_t* /*opt*/)
+{
     module = -1;
     layer = -1;
     fiber = -1;
@@ -42,12 +43,14 @@ void SDDSamples::Clear(Option_t* /*opt*/) {
     signal_r.Clear();
 }
 
-void SDDSamples::fillSamplesL(float* samples, size_t length) {
+void SDDSamples::fillSamplesL(float* samples, size_t length)
+{
     size_t limit = length <= 1024 ? length : 1024;
     memcpy(this->samples_l, samples, limit * sizeof(float));
 }
 
-void SDDSamples::fillSamplesR(float* samples, size_t length) {
+void SDDSamples::fillSamplesR(float* samples, size_t length)
+{
     size_t limit = length <= 1024 ? length : 1024;
     memcpy(this->samples_r, samples, limit * sizeof(float));
 }
@@ -55,7 +58,8 @@ void SDDSamples::fillSamplesR(float* samples, size_t length) {
 /**
  * Print category
  */
-void SDDSamples::print() const {
+void SDDSamples::print() const
+{
     printf("fiber m,l,f=%d,%d,%d\n", module, layer, fiber);
     printf("samples:");
     for (int i = 0; i < 1024; ++i)
@@ -69,12 +73,15 @@ void SDDSamples::print() const {
 //------------------------------------------------------------------
 /// Default constructor.
 SDDSignal::SDDSignal()
-    : fAmp(-100), fT0(-100), fTOT(-100), fCharge(-100), fPE(-100), fBL(-100),
-      fBL_sigma(-100), fPileUp(-100), fVeto(-100) {}
+    : fAmp(-100), fT0(-100), fTOT(-100), fCharge(-100), fPE(-100), fBL(-100), fBL_sigma(-100),
+      fPileUp(-100), fVeto(-100)
+{
+}
 
 //------------------------------------------------------------------
 /// Sets all values of signals parameters to their default values.
-void SDDSignal::Clear(void) {
+void SDDSignal::Clear(void)
+{
     fAmp = -100.;
     fT0 = -100.;
     fTOT = -100.;
@@ -87,21 +94,19 @@ void SDDSignal::Clear(void) {
 }
 //------------------------------------------------------------------
 /// Prints details of the SDDSignal class object.
-void SDDSignal::Print(void) const {
-    std::cout << "\n\n------------------------------------------------"
-              << std::endl;
+void SDDSignal::Print(void) const
+{
+    std::cout << "\n\n------------------------------------------------" << std::endl;
     std::cout << "This is Print() for SDDSignal class object" << std::endl;
     std::cout << "Amplitude = " << fAmp << " mV" << std::endl;
     std::cout << "T0 = " << fT0 << " ns" << std::endl;
     std::cout << "Time over threshold = " << fTOT << " ns" << std::endl;
     std::cout << "Charge (signal integral) = " << fCharge << std::endl;
     std::cout << "Calibrated charge = " << fPE << " P.E. / keV" << std::endl;
-    std::cout << "Baseline = " << fBL << " +/- " << fBL_sigma << " keV"
-              << std::endl;
+    std::cout << "Baseline = " << fBL << " +/- " << fBL_sigma << " keV" << std::endl;
     std::cout << "PileUp = " << fPileUp << std::endl;
     std::cout << "Veto = " << fVeto << std::endl;
-    std::cout << "------------------------------------------------\n"
-              << std::endl;
+    std::cout << "------------------------------------------------\n" << std::endl;
     return;
 }
 //------------------------------------------------------------------

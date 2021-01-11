@@ -44,13 +44,11 @@ int main(int argc, char** argv)
 
     while (1)
     {
-        static struct option long_options[] = {
-            { "ss", no_argument, &save_samples, 1 },
-            {"events", required_argument, 0, 'e'},
-            {"output", required_argument, 0, 'o'},
-            {"params_file", required_argument, 0, 'p'},
-            {0, 0, 0, 0}
-        };
+        static struct option long_options[] = {{"ss", no_argument, &save_samples, 1},
+                                               {"events", required_argument, 0, 'e'},
+                                               {"output", required_argument, 0, 'o'},
+                                               {"params_file", required_argument, 0, 'p'},
+                                               {0, 0, 0, 0}};
 
         int option_index = 0;
 
@@ -89,8 +87,7 @@ int main(int argc, char** argv)
 
             std::string saddr = inpstr.substr(0, pos1);
             std::string type = inpstr.substr(pos1 + 1, pos2 - pos1 - 1);
-            std::string name =
-                inpstr.substr(pos2 + 1, inpstr.length() - pos2 - 1);
+            std::string name = inpstr.substr(pos2 + 1, inpstr.length() - pos2 - 1);
 
             uint16_t addr = std::stoi(saddr, nullptr, 16);
 
@@ -112,11 +109,8 @@ int main(int argc, char** argv)
     int ev_limit = 0;
     if (events < 0) { ev_limit = sifi()->getEntries(); }
     else
-        ev_limit = events < sifi()->getEntries()
-                       ? events
-                       : sifi()->getEntries();
-    std::cout << sifi()->getEntries() << " events, analyze " << ev_limit
-              << std::endl;
+        ev_limit = events < sifi()->getEntries() ? events : sifi()->getEntries();
+    std::cout << sifi()->getEntries() << " events, analyze " << ev_limit << std::endl;
 
     sifi()->getCategory(SCategory::CatGeantTrack, true);
 
@@ -133,7 +127,9 @@ int main(int argc, char** argv)
     detm->initParameterContainers();
     detm->initCategories();
 
-    pm()->addLookupContainer("SFibersStackDDLookupTable", new SFibersStackLookupTable("SFibersStackDDLookupTable", 0x1000, 0x1fff, 32));
+    pm()->addLookupContainer(
+        "SFibersStackDDLookupTable",
+        new SFibersStackLookupTable("SFibersStackDDLookupTable", 0x1000, 0x1fff, 32));
 
     // initialize tasks
     STaskManager* tm = STaskManager::instance();
@@ -146,8 +142,8 @@ int main(int argc, char** argv)
 
     sifi()->save();
 
-//     pm()->setParamDest("p.txt");
-//     pm()->writeDestination();
+    //     pm()->setParamDest("p.txt");
+    //     pm()->writeDestination();
 
     return 0;
 }

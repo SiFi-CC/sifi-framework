@@ -73,13 +73,13 @@ bool SFibersStackDDUnpackerPar::getParams(SParContainer* parcont)
         return false;
     }
     fBLMode = _b;
-    
+
     if (!parcont->fill("nPolarity", nPolarity)) return false;
     if (!parcont->fill("nAnaMode", nAnaMode)) return false;
     if (!parcont->fill("nIntMode", nIntMode)) return false;
     if (!parcont->fill("nDeadTime", nDeadTime)) return false;
 
-    if( ! (nPolarity == 0 || nPolarity ==1) )
+    if (!(nPolarity == 0 || nPolarity == 1))
     {
         std::cerr << "Incorrect value of nPolarity!" << std::endl;
         std::cerr << "Possible values are: 0 - NEGATIVE or 1 - POSITIVE" << std::endl;
@@ -87,7 +87,7 @@ bool SFibersStackDDUnpackerPar::getParams(SParContainer* parcont)
         exit(EXIT_FAILURE);
     }
 
-    if( ! (nAnaMode == 0 || nAnaMode ==1) )
+    if (!(nAnaMode == 0 || nAnaMode == 1))
     {
         std::cerr << "Incorrect value of nAnaMode!" << std::endl;
         std::cerr << "Possible values are: 0 - Leading Edge or 1 - Constant Fraction" << std::endl;
@@ -95,7 +95,7 @@ bool SFibersStackDDUnpackerPar::getParams(SParContainer* parcont)
         exit(EXIT_FAILURE);
     }
 
-    if(nIntMode < 0)
+    if (nIntMode < 0)
     {
         std::cerr << "nIntMode cannot be smaller than 0!" << std::endl;
         std::cerr << "Possible values are: 0 - TOT or >0 - Limit" << std::endl;
@@ -103,7 +103,7 @@ bool SFibersStackDDUnpackerPar::getParams(SParContainer* parcont)
         exit(EXIT_FAILURE);
     }
 
-    if(nDeadTime < 0)
+    if (nDeadTime < 0)
     {
         std::cerr << "nDeadTime cannot be smaller than 0!" << std::endl;
         std::cerr << "nDeadTime = " << nDeadTime << std::endl;
@@ -119,10 +119,7 @@ bool SFibersStackDDUnpackerPar::getParams(SParContainer* parcont)
  * \param parcont pointer to container object
  * \return success
  */
-bool SFibersStackDDUnpackerPar::putParams(SParContainer* /*parcont*/) const
-{
-    return true;
-}
+bool SFibersStackDDUnpackerPar::putParams(SParContainer* /*parcont*/) const { return true; }
 
 /**
  * Print parameters
@@ -153,11 +150,11 @@ Float_t SFibersStackDDUnpackerPar::getThreshold(Int_t chan) const
 Float_t SFibersStackDDUnpackerPar::getVetoThreshold(Int_t chan) const
 {
     if (chan < 0 or chan > 15) abort();
-    return fVetoThreshold[chan]; 
+    return fVetoThreshold[chan];
 }
 
 Int_t SFibersStackDDUnpackerPar::getBLMode(Int_t chan) const
 {
     if (chan < 0 or chan > 15) abort();
-    return fBLMode[chan]; 
+    return fBLMode[chan];
 }

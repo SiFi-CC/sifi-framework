@@ -10,9 +10,9 @@
  *************************************************************************/
 
 #include "SFibersStackUnpacker.h"
+#include "SCategory.h"
 #include "SFibersStackRaw.h"
 #include "SParManager.h"
-#include "SCategory.h"
 #include "SiFi.h"
 
 #include <iostream>
@@ -29,9 +29,7 @@ A unpacker task.
 /**
  * Constructor
  */
-SFibersStackUnpacker::SFibersStackUnpacker() : STask(), catFibersRaw(nullptr)
-{
-}
+SFibersStackUnpacker::SFibersStackUnpacker() : STask(), catFibersRaw(nullptr) {}
 
 /**
  * Init task
@@ -43,7 +41,7 @@ bool SFibersStackUnpacker::init()
     catFibersRaw = sifi()->buildCategory(SCategory::CatFibersStackRaw);
     if (!catFibersRaw)
     {
-        std::cerr << "No CatFibersStackRaw category" << "\n";
+        std::cerr << "No CatFibersStackRaw category" << std::endl;
         return false;
     }
 
@@ -79,10 +77,10 @@ bool SFibersStackUnpacker::execute()
         loc[1] = lay;
         loc[2] = fib;
 
-        SFibersStackRaw * pRaw = dynamic_cast<SFibersStackRaw *>(catFibersRaw->getObject(loc));
+        SFibersStackRaw* pRaw = dynamic_cast<SFibersStackRaw*>(catFibersRaw->getObject(loc));
         if (!pRaw)
         {
-            pRaw = dynamic_cast<SFibersStackRaw *>(catFibersRaw->getSlot(loc));
+            pRaw = dynamic_cast<SFibersStackRaw*>(catFibersRaw->getSlot(loc));
             new (pRaw) SFibersStackRaw;
             pRaw->Clear();
         }
@@ -102,7 +100,4 @@ bool SFibersStackUnpacker::execute()
  * \sa STask::finalize()
  * \return success
  */
-bool SFibersStackUnpacker::finalize()
-{
-    return true;
-}
+bool SFibersStackUnpacker::finalize() { return true; }

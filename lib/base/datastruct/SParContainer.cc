@@ -35,9 +35,16 @@ parameters in the container and write to param file.
 \sa SFibersStackGeomPar
 */
 
-namespace {
+namespace
+{
 
-enum WhatNext { WNContainer, WNContainerOrParam, WNParam, WNParamCont };
+enum WhatNext
+{
+    WNContainer,
+    WNContainerOrParam,
+    WNParam,
+    WNParamCont
+};
 
 /**
  * Parse single value.
@@ -46,31 +53,22 @@ enum WhatNext { WNContainer, WNContainerOrParam, WNParam, WNParamCont };
  * \param values vector to store values
  * \return next parsing step
  */
-WhatNext parseValues(const std::string & str, std::vector<std::string> & values)
+WhatNext parseValues(const std::string& str, std::vector<std::string>& values)
 {
     size_t pos2 = 0;
-    while(true)
+    while (true)
     {
         size_t pos = str.find_first_not_of(' ', pos2);
 
         // if end of line
-        if (pos == str.npos)
-        {
-            break;
-        }
+        if (pos == str.npos) { break; }
 
         // if new line detected
-        if (str[pos] == '\\')
-        {
-            return WNParamCont;
-        }
+        if (str[pos] == '\\') { return WNParamCont; }
 
-        pos2 = str.find_first_of(' ', pos+1);
-        std::string match = str.substr(pos, pos2-pos);
-        if (isFloat(match))
-        {
-            values.push_back(match);
-        }
+        pos2 = str.find_first_of(' ', pos + 1);
+        std::string match = str.substr(pos, pos2 - pos);
+        if (isFloat(match)) { values.push_back(match); }
         else
         {
             std::cerr << "Value is not a number:" << std::endl << str << std::endl;
@@ -80,16 +78,14 @@ WhatNext parseValues(const std::string & str, std::vector<std::string> & values)
     return WNParam;
 }
 
-};
+}; // namespace
 
 /**
  * Constructor
  *
  * \param container container name
  */
-SParContainer::SParContainer(const std::string& container) : container(container), line_split(8)
-{
-}
+SParContainer::SParContainer(const std::string& container) : container(container), line_split(8) {}
 
 /**
  * Add key with integer value
@@ -98,7 +94,7 @@ SParContainer::SParContainer(const std::string& container) : container(container
  * \param val value
  * \return success
  */
-bool SParContainer::add(const std::string & name, Int_t val)
+bool SParContainer::add(const std::string& name, Int_t val)
 {
     std::stringstream buff;
     buff << "  " << val;
@@ -116,7 +112,7 @@ bool SParContainer::add(const std::string & name, Int_t val)
  * \param val value
  * \return success
  */
-bool SParContainer::add(const std::string & name, Float_t val)
+bool SParContainer::add(const std::string& name, Float_t val)
 {
     std::stringstream buff;
     buff << "  " << val;
@@ -134,7 +130,7 @@ bool SParContainer::add(const std::string & name, Float_t val)
  * \param val value
  * \return success
  */
-bool SParContainer::add(const std::string & name, Double_t val)
+bool SParContainer::add(const std::string& name, Double_t val)
 {
     std::stringstream buff;
     buff << "  " << val;
@@ -152,7 +148,7 @@ bool SParContainer::add(const std::string & name, Double_t val)
  * \param val value
  * \return success
  */
-bool SParContainer::add(const std::string & name, const TArrayI & val)
+bool SParContainer::add(const std::string& name, const TArrayI& val)
 {
     std::stringstream buff;
     std::vector<std::string> v;
@@ -173,10 +169,10 @@ bool SParContainer::add(const std::string & name, const TArrayI & val)
  * \param val value
  * \return success
  */
-bool SParContainer::add(const std::string & name, const TArrayF & val)
+bool SParContainer::add(const std::string& name, const TArrayF& val)
 {
-   std::stringstream buff;
-   std::vector<std::string> v;
+    std::stringstream buff;
+    std::vector<std::string> v;
     for (int i = 0; i < val.GetSize(); ++i)
     {
         buff << "  " << val[i];
@@ -194,7 +190,7 @@ bool SParContainer::add(const std::string & name, const TArrayF & val)
  * \param val value
  * \return success
  */
-bool SParContainer::add(const std::string & name, const TArrayD & val)
+bool SParContainer::add(const std::string& name, const TArrayD& val)
 {
     std::stringstream buff;
     std::vector<std::string> v;
@@ -215,13 +211,14 @@ bool SParContainer::add(const std::string & name, const TArrayD & val)
  * \param val value
  * \return success
  */
-bool SParContainer::fill(const std::string & name, Int_t& val)
+bool SParContainer::fill(const std::string& name, Int_t& val)
 {
     ParMap::const_iterator it = parameters.find(name);
 
     if (it == parameters.end())
     {
-        std::cerr << "Parameter name " << name << " doesn't exists in " << container << "!" << std::endl;
+        std::cerr << "Parameter name " << name << " doesn't exists in " << container << "!"
+                  << std::endl;
         return false;
     }
     if (it->second.first != "Int_t")
@@ -243,13 +240,14 @@ bool SParContainer::fill(const std::string & name, Int_t& val)
  * \param val value
  * \return success
  */
-bool SParContainer::fill(const std::string & name, Float_t& val)
+bool SParContainer::fill(const std::string& name, Float_t& val)
 {
     ParMap::const_iterator it = parameters.find(name);
 
     if (it == parameters.end())
     {
-        std::cerr << "Parameter name " << name << " doesn't exists in " << container << "!" << std::endl;
+        std::cerr << "Parameter name " << name << " doesn't exists in " << container << "!"
+                  << std::endl;
         return false;
     }
     if (it->second.first != "Float_t")
@@ -271,13 +269,14 @@ bool SParContainer::fill(const std::string & name, Float_t& val)
  * \param val value
  * \return success
  */
-bool SParContainer::fill(const std::string & name, Double_t& val)
+bool SParContainer::fill(const std::string& name, Double_t& val)
 {
     ParMap::const_iterator it = parameters.find(name);
 
     if (it == parameters.end())
     {
-        std::cerr << "Parameter name " << name << " doesn't exists in " << container << "!" << std::endl;
+        std::cerr << "Parameter name " << name << " doesn't exists in " << container << "!"
+                  << std::endl;
         return false;
     }
     if (it->second.first != "Double_t")
@@ -299,13 +298,14 @@ bool SParContainer::fill(const std::string & name, Double_t& val)
  * \param val value
  * \return success
  */
-bool SParContainer::fill(const std::string & name, TArrayI& val)
+bool SParContainer::fill(const std::string& name, TArrayI& val)
 {
     ParMap::const_iterator it = parameters.find(name);
 
     if (it == parameters.end())
     {
-        std::cerr << "Parameter name " << name << " doesn't exists in " << container << "!" << std::endl;
+        std::cerr << "Parameter name " << name << " doesn't exists in " << container << "!"
+                  << std::endl;
         return false;
     }
     if (it->second.first != "Int_t")
@@ -314,6 +314,7 @@ bool SParContainer::fill(const std::string & name, TArrayI& val)
         return false;
     }
 
+    val.Set(it->second.second.size());
     for (int i = 0; i < it->second.second.size(); ++i)
         val[i] = std::stoi(it->second.second[i].c_str());
 
@@ -327,13 +328,14 @@ bool SParContainer::fill(const std::string & name, TArrayI& val)
  * \param val value
  * \return success
  */
-bool SParContainer::fill(const std::string & name, TArrayF& val)
+bool SParContainer::fill(const std::string& name, TArrayF& val)
 {
     ParMap::const_iterator it = parameters.find(name);
 
     if (it == parameters.end())
     {
-        std::cerr << "Parameter name " << name << " doesn't exists in " << container << "!" << std::endl;
+        std::cerr << "Parameter name " << name << " doesn't exists in " << container << "!"
+                  << std::endl;
         return false;
     }
     if (it->second.first != "Float_t")
@@ -342,6 +344,7 @@ bool SParContainer::fill(const std::string & name, TArrayF& val)
         return false;
     }
 
+    val.Set(it->second.second.size());
     for (int i = 0; i < it->second.second.size(); ++i)
         val[i] = std::stof(it->second.second[i].c_str());
 
@@ -355,13 +358,14 @@ bool SParContainer::fill(const std::string & name, TArrayF& val)
  * \param val value
  * \return success
  */
-bool SParContainer::fill(const std::string & name, TArrayD& val)
+bool SParContainer::fill(const std::string& name, TArrayD& val)
 {
     ParMap::const_iterator it = parameters.find(name);
 
     if (it == parameters.end())
     {
-        std::cerr << "Parameter name " << name << " doesn't exists in " << container << "!" << std::endl;
+        std::cerr << "Parameter name " << name << " doesn't exists in " << container << "!"
+                  << std::endl;
         return false;
     }
     if (it->second.first != "Double_t")
@@ -370,6 +374,7 @@ bool SParContainer::fill(const std::string & name, TArrayD& val)
         return false;
     }
 
+    val.Set(it->second.second.size());
     for (int i = 0; i < it->second.second.size(); ++i)
         val[i] = std::stod(it->second.second[i].c_str());
 
@@ -382,7 +387,7 @@ bool SParContainer::fill(const std::string & name, TArrayD& val)
 void SParContainer::print() const
 {
     printf("Container [%s]\n", container.c_str());
-    for (const auto & p : parameters)
+    for (const auto& p : parameters)
     {
         printf("%s:  %s", p.first.c_str(), p.second.first.c_str());
         for (int i = 0; i < p.second.second.size(); ++i)
@@ -401,7 +406,8 @@ void SParContainer::print() const
  * \param values key values
  * \return success
  */
-bool SParContainer::initParam(const std::string& name, const std::string& type, const std::vector<std::string> & values)
+bool SParContainer::initParam(const std::string& name, const std::string& type,
+                              const std::vector<std::string>& values)
 {
     parameters[name] = TypeDataField(type, values);
     return true;
@@ -411,8 +417,9 @@ bool SParContainer::initParam(const std::string& name, const std::string& type, 
  * Parses all the parameters from the file. In case of parsing fail (broken
  * input file), the function aborts the execution of the calling process.
  */
-void SParContainer::fromContainer() {
-    SContainer * sc = pm()->getContainer(container);
+void SParContainer::fromContainer()
+{
+    SContainer* sc = pm()->getContainer(container);
     if (!sc) throw "No parameter container.";
 
     WhatNext wn = WNParam;
@@ -420,15 +427,13 @@ void SParContainer::fromContainer() {
     std::string type_name;
     std::vector<std::string> values;
 
-    for (auto line : sc->lines) {
+    for (auto line : sc->lines)
+    {
         trim(line);
         simplify(line);
 
         // skip comment or empty line
-        if (line[0] == '#' or (line.length() == 0 and wn != WNParamCont))
-        {
-            continue;
-        }
+        if (line[0] == '#' or (line.length() == 0 and wn != WNParamCont)) { continue; }
         else
         {
             size_t pos2 = 0;
@@ -444,20 +449,22 @@ void SParContainer::fromContainer() {
                 values.clear();
 
                 // find type name
-                pos = line.find_first_not_of(' ', pos+1);
+                pos = line.find_first_not_of(' ', pos + 1);
 
                 // type name must be in the same line like param name
                 if (line[pos] == '\\')
                 {
-                    std::cerr << "No type name detected in the param name line:" << std::endl << line << std::endl;
+                    std::cerr << "No type name detected in the param name line:" << std::endl
+                              << line << std::endl;
                     abort();
                 }
-                pos2 = line.find_first_of(' ', pos+1);
+                pos2 = line.find_first_of(' ', pos + 1);
 
-                type_name = line.substr(pos, pos2-pos);
+                type_name = line.substr(pos, pos2 - pos);
                 if (type_name != "Int_t" and type_name != "Float_t" and type_name != "Double_t")
                 {
-                    std::cerr << "Invalid param type '" << type_name << "' in line:" << std::endl << line << std::endl;
+                    std::cerr << "Invalid param type '" << type_name << "' in line:" << std::endl
+                              << line << std::endl;
                     abort();
                 }
 
@@ -492,30 +499,38 @@ void SParContainer::fromContainer() {
  * lines, each containing maximal of #line_split values. In that case each line
  * beside the last one is broke with `\` character.
  */
-void SParContainer::toContainer() const {
-    SContainer * sc = pm()->getContainer(container);
+void SParContainer::toContainer() const
+{
+    SContainer* sc = pm()->getContainer(container);
     if (!sc) throw "No parameter container.";
 
     sc->lines.clear();
 
     const size_t len = 1024;
     char buff[len];
-    for (const auto & p : parameters) {
+    for (const auto& p : parameters)
+    {
         snprintf(buff, len, "%s: %s ", p.first.c_str(), p.second.first.c_str());
         std::string s(buff);
-        const TypeDataField & df = p.second;
+        const TypeDataField& df = p.second;
         size_t len_d = df.second.size();
 
-        if (len_d <= line_split) {
-            for (const auto & pd : df.second) {
+        if (len_d <= line_split)
+        {
+            for (const auto& pd : df.second)
+            {
                 s += "  ";
                 s += pd;
             }
             sc->lines.push_back(s);
-        } else {
+        }
+        else
+        {
             size_t cnt = 0;
-            for (const auto & pd : df.second) {
-                if (cnt % line_split == 0) {
+            for (const auto& pd : df.second)
+            {
+                if (cnt % line_split == 0)
+                {
                     s += " \\";
                     sc->lines.push_back(s);
                     s.clear();

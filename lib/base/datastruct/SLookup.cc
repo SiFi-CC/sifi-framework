@@ -12,9 +12,9 @@
 #include "SLookup.h"
 #include "SParManager.h"
 
+#include <cassert>
 #include <cstdio>
 #include <iostream>
-#include <cassert>
 
 #include <inttypes.h>
 
@@ -83,7 +83,7 @@ uint SLookupChannel::write(char* buffer, size_t n) const
  * \param prefix a text which should be displayed before the content of the
  * channel params. If prefix is empty, then
  */
-void SLookupChannel::print(bool newline, const char * prefix) const
+void SLookupChannel::print(bool newline, const char* prefix) const
 {
     printf("%s %d %d %d", prefix, m, l, s);
     if (newline) putchar('\n');
@@ -128,19 +128,17 @@ void SLookupChannel::fromHash(uint64_t hash)
  *
  * \param addr,nchan address and channels number
  */
-SLookupBoard::SLookupBoard(uint addr, uint nchan) :
-    addr(addr), nchan(nchan)
+SLookupBoard::SLookupBoard(uint addr, uint nchan) : addr(addr), nchan(nchan)
 {
-    channels = new SLookupChannel*[nchan]{nullptr};
+    channels = new SLookupChannel* [nchan] { nullptr };
 }
 
 SLookupBoard::~SLookupBoard()
 {
     for (uint i = 0; i < nchan; ++i)
-        if (channels[i])
-            delete channels[i];
+        if (channels[i]) delete channels[i];
 
-    delete [] channels;
+    delete[] channels;
 }
 
 /**
@@ -158,25 +156,23 @@ void SLookupBoard::print()
 
 /**
  * Initialize lookup table from container named #container for given address
- * range of \p addr_min, \p addr_max. Defines that each board has no more channeel 
+ * range of \p addr_min, \p addr_max. Defines that each board has no more channeel
  * than specified in #channels.
  *
  * \param container container name
  * \param addr_min,addr_max lower and upper range of boards addresses
  * \param channels maximal number of channels in each board
  */
-SLookupTable::SLookupTable(const std::string& container, uint addr_min, uint addr_max, uint channels) :
-    container(container), a_min(addr_min), a_max(addr_max), channels(channels), is_init(false)
+SLookupTable::SLookupTable(const std::string& container, uint addr_min, uint addr_max,
+                           uint channels)
+    : container(container), a_min(addr_min), a_max(addr_max), channels(channels), is_init(false)
 {
     size_t nboards = addr_max - addr_min + 1;
     boards = new SLookupBoard*[nboards];
     memset(boards, 0, sizeof(SLookupBoard*) * nboards);
 }
 
-SLookupTable::~SLookupTable()
-{
-    delete [] boards;
-}
+SLookupTable::~SLookupTable() { delete[] boards; }
 
 /**
  * Initialize lookup table from the container. The container must exists
@@ -184,23 +180,23 @@ SLookupTable::~SLookupTable()
  */
 void SLookupTable::fromContainer()
 {
-    SContainer * lc = pm()->getContainer(container);
+    SContainer* lc = pm()->getContainer(container);
     if (!lc) throw "No lookup container.";
 
-    const std::vector<std::string> & lv = lc->lines;
+    const std::vector<std::string>& lv = lc->lines;
 
-    for (auto line: lv)
+    for (auto line : lv)
     {
         uint addr, chan, len;
         sscanf(line.c_str(), "%x %d%n", &addr, &chan, &len);
         if (addr < a_min or addr > a_max)
         {
-            std::cerr << "Can't add board " << addr << " inside (0x" << std::hex << a_min << ", 0x" << a_max << std::dec << "), skipping." << std::endl;
+            std::cerr << "Can't add board " << addr << " inside (0x" << std::hex << a_min << ", 0x"
+                      << a_max << std::dec << "), skipping." << std::endl;
             continue;
         }
         uint idx = addr - a_min;
-        if (boards[idx] == 0)
-            boards[idx] = new SLookupBoard(addr, channels);
+        if (boards[idx] == 0) boards[idx] = new SLookupBoard(addr, channels);
 
         boards[idx]->setChannel(chan, createChannel());
         boards[idx]->getChannel(chan)->read(line.c_str() + len);
@@ -216,7 +212,7 @@ void SLookupTable::fromContainer()
  */
 void SLookupTable::toContainer() const
 {
-    SContainer * sc = pm()->getContainer(container);
+    SContainer* sc = pm()->getContainer(container);
     if (!sc) throw "No lookup container.";
 
     sc->lines.clear();
@@ -224,13 +220,16 @@ void SLookupTable::toContainer() const
     const int len = 1024;
     char buff[len];
 
-    for (uint addr = a_min; addr < a_max; ++addr) {
+    for (uint addr = a_min; addr < a_max; ++addr)
+    {
         uint idx = addr - a_min;
         if (boards[idx])
         {
-            for (uint c = 0; c < channels; ++c) {
-                SLookupChannel * chan = boards[idx]->getChannel(c);
-                if (chan) {
+            for (uint c = 0; c < channels; ++c)
+            {
+                SLookupChannel* chan = boards[idx]->getChannel(c);
+                if (chan)
+                {
                     snprintf(buff, len, "  %#x  %3d\t\t", addr, c);
                     std::string s;
                     s.reserve(128);
@@ -253,10 +252,11 @@ void SLookupTable::toContainer() const
  * \param chan channel number
  * \return channel object or nullptr if boad or channel doesn't exists.
  */
-SLookupChannel * SLookupTable::getAddress(uint addr, uint chan) {
+SLookupChannel* SLookupTable::getAddress(uint addr, uint chan)
+{
     if (!is_init) fromContainer();
-    if (!boards[addr-a_min]) return nullptr;
-    return boards[addr-a_min]->getChannel(chan);
+    if (!boards[addr - a_min]) return nullptr;
+    return boards[addr - a_min]->getChannel(chan);
 }
 
 /**

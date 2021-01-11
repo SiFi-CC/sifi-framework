@@ -16,11 +16,9 @@
 
 #include "SDDUnpacker.h"
 
-bool SDDUnpacker::save_samples  = false;
+bool SDDUnpacker::save_samples = false;
 
-SDDUnpacker::SDDUnpacker() : data_length(0)
-{
-}
+SDDUnpacker::SDDUnpacker() : data_length(0) {}
 
 bool SDDUnpacker::init()
 {
@@ -33,31 +31,27 @@ bool SDDUnpacker::init()
     return true;
 }
 
-bool SDDUnpacker::reinit()
-{
-    return init();
-}
+bool SDDUnpacker::reinit() { return init(); }
 
-bool SDDUnpacker::execute(unsigned long /*event*/, unsigned long /*seq_number*/,
-                          uint16_t address, void * buffer, size_t length)
+bool SDDUnpacker::execute(unsigned long /*event*/, unsigned long /*seq_number*/, uint16_t address,
+                          void* buffer, size_t length)
 {
     if (length != data_length * sizeof(float))
-     {
-        std::cerr << "Buffer length " << data_length
-                  << " does not fit source length " << length
+    {
+        std::cerr << "Buffer length " << data_length << " does not fit source length " << length
                   << "." << std::endl;
         abort();
     }
 
-//     bool flag = false;
-//     printf("ifstream = 0x%x\n", istream);
-//     char [c];
-//     for (uint ii = 0; ii < sample_length; ++ii) {
-//         (*istream).read((char*)&sample_buffer, sizeof(sample_buffer[0])*sample_length);
-//         flag = (*istream).eof();
-//         if (flag)
-//             return false;
-//     }
+    //     bool flag = false;
+    //     printf("ifstream = 0x%x\n", istream);
+    //     char [c];
+    //     for (uint ii = 0; ii < sample_length; ++ii) {
+    //         (*istream).read((char*)&sample_buffer, sizeof(sample_buffer[0])*sample_length);
+    //         flag = (*istream).eof();
+    //         if (flag)
+    //             return false;
+    //     }
 
-    return decode(address, (float *)buffer, data_length);
+    return decode(address, (float*)buffer, data_length);
 }

@@ -10,16 +10,16 @@
  *************************************************************************/
 
 #include "SParManager.h"
-#include "SParContainer.h"
-#include "SPar.h"
 #include "SCalContainer.h"
 #include "SLookup.h"
+#include "SPar.h"
+#include "SParContainer.h"
 
 #include <algorithm>
-#include <iterator>
 #include <cctype>
 #include <fstream>
 #include <iostream>
+#include <iterator>
 #include <locale>
 #include <sstream>
 
@@ -45,10 +45,9 @@ the requested parameter containers exists.
  *
  * \param s string
  */
-static inline void ltrim(std::string &s) {
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch) {
-        return !std::isspace(ch);
-    }));
+static inline void ltrim(std::string& s)
+{
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch) { return !std::isspace(ch); }));
 }
 
 /**
@@ -56,10 +55,10 @@ static inline void ltrim(std::string &s) {
  *
  * \param s string
  */
-static inline void rtrim(std::string &s) {
-    s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) {
-        return !std::isspace(ch);
-    }).base(), s.end());
+static inline void rtrim(std::string& s)
+{
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) { return !std::isspace(ch); }).base(),
+            s.end());
 }
 
 /**
@@ -67,7 +66,8 @@ static inline void rtrim(std::string &s) {
  *
  * \param s string
  */
-void trim(std::string &s) {
+void trim(std::string& s)
+{
     ltrim(s);
     rtrim(s);
 }
@@ -78,7 +78,8 @@ void trim(std::string &s) {
  * \param s string
  * \return trimmed string
  */
-static inline std::string ltrim_copy(std::string s) {
+static inline std::string ltrim_copy(std::string s)
+{
     ltrim(s);
     return s;
 }
@@ -89,7 +90,8 @@ static inline std::string ltrim_copy(std::string s) {
  * \param s string
  * \return trimmed string
  */
-static inline std::string rtrim_copy(std::string s) {
+static inline std::string rtrim_copy(std::string s)
+{
     rtrim(s);
     return s;
 }
@@ -100,7 +102,8 @@ static inline std::string rtrim_copy(std::string s) {
  * \param s string
  * \return trimmed string
  */
-static inline std::string trim_copy(std::string s) {
+static inline std::string trim_copy(std::string s)
+{
     trim(s);
     return s;
 }
@@ -110,14 +113,13 @@ static inline std::string trim_copy(std::string s) {
  *
  * \param s string
  */
-void simplify(std::string & s)
+void simplify(std::string& s)
 {
     size_t pos = 0;
-    while(1)
+    while (1)
     {
         pos = s.find_first_of('\t', pos);
-        if (pos == s.npos)
-            return;
+        if (pos == s.npos) return;
         s.replace(pos, 1, " ");
     }
 }
@@ -130,7 +132,7 @@ void simplify(std::string & s)
  * \param str string
  * \return is float
  */
-bool isFloat(const std::string & str)
+bool isFloat(const std::string& str)
 {
     std::istringstream iss(str);
     float f;
@@ -138,17 +140,16 @@ bool isFloat(const std::string & str)
     return iss.eof() && !iss.fail();
 }
 
-SParManager * SParManager::pm = nullptr;
+SParManager* SParManager::pm = nullptr;
 
 /**
  * Returns instance of the Detector Manager class.
  *
  * \return manager instance
  */
-SParManager * SParManager::instance()
+SParManager* SParManager::instance()
 {
-    if (!pm)
-        pm = new SParManager;
+    if (!pm) pm = new SParManager;
 
     return pm;
 }
@@ -157,29 +158,26 @@ SParManager * SParManager::instance()
  * Shortcut
  * \return SParManager instance
  */
-SParManager * pm()
-{
-    return SParManager::instance();
-}
+SParManager* pm() { return SParManager::instance(); }
 
 /**
  * Destructor
  */
 SParManager::~SParManager()
 {
-    for (auto & c : parconts)
+    for (auto& c : parconts)
         delete c.second;
 
-    for (auto & c : lu_containers)
+    for (auto& c : lu_containers)
         delete c.second;
 
-    for (auto & c : cal_containers)
+    for (auto& c : cal_containers)
         delete c.second;
 
-    for (auto & c : par_containers)
+    for (auto& c : par_containers)
         delete c.second;
 
-    for (auto & c : containers)
+    for (auto& c : containers)
         delete c.second;
 }
 
@@ -191,14 +189,13 @@ SParManager::~SParManager()
 bool SParManager::parseSource()
 {
     std::ifstream ifs(source);
-    
-    if( ! ifs.is_open())
+
+    if (!ifs.is_open())
     {
-        std::cerr << "Source file " << source <<
-        " could not be opened!" << std::endl;
+        std::cerr << "Source file " << source << " could not be opened!" << std::endl;
         exit(EXIT_FAILURE);
     }
-    
+
     size_t length = 0;
     if (ifs)
     {
@@ -207,14 +204,20 @@ bool SParManager::parseSource()
         ifs.seekg(0, ifs.beg);
     }
 
-    char * cbuff = new char[length];
+    char* cbuff = new char[length];
 
-    enum WhatNext { WNContainer, WNContainerOrParam, WNParam, WNParamCont } wn = WNContainer;
+    enum WhatNext
+    {
+        WNContainer,
+        WNContainerOrParam,
+        WNParam,
+        WNParamCont
+    } wn = WNContainer;
 
     std::string cont_name;
-    SContainer * cont = nullptr;
+    SContainer* cont = nullptr;
 
-    while(!ifs.eof())
+    while (!ifs.eof())
     {
         ifs.getline(cbuff, length);
 
@@ -225,21 +228,19 @@ bool SParManager::parseSource()
         size_t pos = 0;
 
         // check if comment or empty line
-        if (str[0] == '#' or (str.length() == 0 and wn != WNParamCont))
-        {
-            continue;
-        }
-        // if container mark found, check whether it should be there, e.g. container after param new line is forbidden
+        if (str[0] == '#' or (str.length() == 0 and wn != WNParamCont)) { continue; }
+        // if container mark found, check whether it should be there, e.g. container after param new
+        // line is forbidden
         else if (str[0] == '[')
         {
             if (wn == WNContainer or wn == WNContainerOrParam)
             {
                 pos = str.find_first_of(']', 1);
-                cont_name = str.substr(1, pos-1);
+                cont_name = str.substr(1, pos - 1);
 
                 cont = new SContainer;
                 cont->name = cont_name;
-                containers.insert(std::pair<std::string, SContainer *>(cont_name, cont));
+                containers.insert(std::pair<std::string, SContainer*>(cont_name, cont));
 
                 wn = WNContainerOrParam;
                 continue;
@@ -247,7 +248,7 @@ bool SParManager::parseSource()
             else
             {
                 std::cerr << "Didn't expected container here: " << std::endl << str << std::endl;
-                delete [] cbuff;
+                delete[] cbuff;
                 return false;
             }
         }
@@ -257,7 +258,7 @@ bool SParManager::parseSource()
             if (wn == WNContainer)
             {
                 std::cerr << "Expected container name here: " << std::endl << str << std::endl;
-                delete [] cbuff;
+                delete[] cbuff;
                 return false;
             }
             else if (wn == WNParam or wn == WNContainerOrParam)
@@ -268,7 +269,7 @@ bool SParManager::parseSource()
         }
     }
 
-    delete [] cbuff;
+    delete[] cbuff;
     return true;
 }
 
@@ -281,14 +282,14 @@ void SParManager::writeDestination()
     std::vector<std::string> names;
     names.reserve(containers.size());
 
-    for (auto & p : parconts) {
-        SParContainer * pc = par_containers[p.first];
+    for (auto& p : parconts)
+    {
+        SParContainer* pc = par_containers[p.first];
         p.second->putParams(pc);
     }
 
-    std::transform(containers.begin(), containers.end(),
-        std::back_inserter(names), [](std::pair<std::string, SContainer *> const & e) {
-            return e.first; });
+    std::transform(containers.begin(), containers.end(), std::back_inserter(names),
+                   [](std::pair<std::string, SContainer*> const& e) { return e.first; });
 
     writeContainers(names);
 }
@@ -298,40 +299,42 @@ void SParManager::writeDestination()
  *
  * \param names vector of container names
  */
-void SParManager::writeContainers(const std::vector<std::string> & names)
+void SParManager::writeContainers(const std::vector<std::string>& names)
 {
-    for (const auto & pc : par_containers)
+    for (const auto& pc : par_containers)
         pc.second->toContainer();
 
-    for (const auto & cc : cal_containers)
+    for (const auto& cc : cal_containers)
         cc.second->toContainer();
 
-    for (const auto & lc : lu_containers)
+    for (const auto& lc : lu_containers)
         lc.second->toContainer();
 
-    if (!destination.size()) {
+    if (!destination.size())
+    {
         std::cerr << "Destination file name is empty!" << std::endl;
         abort();
     }
 
     std::ofstream ofs(destination);
-    if (ofs.is_open()) {
-        for (auto &c : names) {
+    if (ofs.is_open())
+    {
+        for (auto& c : names)
+        {
             ofs << "[" << c << "]" << std::endl;
-            for (const auto & l : containers.at(c)->lines)
+            for (const auto& l : containers.at(c)->lines)
                 ofs << l << std::endl;
         }
     }
     ofs.close();
 }
 
-
 /**
  * Print containers
  */
 void SParManager::print() const
 {
-    for (const auto & p : par_containers)
+    for (const auto& p : par_containers)
         p.second->print();
 }
 
@@ -341,9 +344,9 @@ void SParManager::print() const
  * \param cont_name container name
  * \return pointer to container
  */
-SContainer * SParManager::getContainer(const std::string& cont_name)
+SContainer* SParManager::getContainer(const std::string& cont_name)
 {
-    SContainer * cont = containers[cont_name];
+    SContainer* cont = containers[cont_name];
     if (!cont)
     {
         std::cerr << "Container " << cont_name << " doesn't exists!" << std::endl;
@@ -362,15 +365,16 @@ SContainer * SParManager::getContainer(const std::string& cont_name)
  */
 bool SParManager::addParameterContainer(const std::string& cont_name, SPar* parcont)
 {
-    SContainer * cont = containers[cont_name];
+    SContainer* cont = containers[cont_name];
     if (!cont)
     {
         std::cerr << "Container " << cont_name << " doesn't exists!" << std::endl;
         exit(EXIT_FAILURE);
     }
 
-    SParContainer * pc = par_containers[cont_name];
-    if (!pc) {
+    SParContainer* pc = par_containers[cont_name];
+    if (!pc)
+    {
         pc = new SParContainer(cont_name);
         par_containers[cont_name] = pc;
 
@@ -395,11 +399,10 @@ bool SParManager::addParameterContainer(const std::string& cont_name, SPar* parc
  * \param cont_name container name
  * \return pointer to container
  */
-SPar * SParManager::getParameterContainer(const std::string& cont_name)
+SPar* SParManager::getParameterContainer(const std::string& cont_name)
 {
     return parconts[cont_name];
 }
-
 
 /**
  * Add new lookup table container.
@@ -410,16 +413,14 @@ SPar * SParManager::getParameterContainer(const std::string& cont_name)
  */
 bool SParManager::addLookupContainer(const std::string& cont_name, SLookupTable* lucont)
 {
-    SContainer * cont = containers[cont_name];
+    SContainer* cont = containers[cont_name];
     if (!cont)
     {
         std::cerr << "Container " << cont_name << " doesn't exists!" << std::endl;
         exit(EXIT_FAILURE);
     }
 
-    if (lucont) {
-        lu_containers[cont_name] = lucont;
-    }
+    if (lucont) { lu_containers[cont_name] = lucont; }
 
     return true;
 }
@@ -430,7 +431,7 @@ bool SParManager::addLookupContainer(const std::string& cont_name, SLookupTable*
  * \param cont_name container name
  * \return pointer to container
  */
-SLookupTable * SParManager::getLookupContainer(const std::string& cont_name)
+SLookupTable* SParManager::getLookupContainer(const std::string& cont_name)
 {
     return lu_containers[cont_name];
 }
@@ -442,18 +443,17 @@ SLookupTable * SParManager::getLookupContainer(const std::string& cont_name)
  * \param calcont calibration object
  * \return success
  */
-bool SParManager::addCalibrationContainer(const std::string& cont_name, SVirtualCalContainer* calcont)
+bool SParManager::addCalibrationContainer(const std::string& cont_name,
+                                          SVirtualCalContainer* calcont)
 {
-    SContainer * cont = containers[cont_name];
+    SContainer* cont = containers[cont_name];
     if (!cont)
     {
         std::cerr << "Container " << cont_name << " doesn't exists!" << std::endl;
         exit(EXIT_FAILURE);
     }
 
-    if (calcont) {
-        cal_containers[cont_name] = calcont;
-    }
+    if (calcont) { cal_containers[cont_name] = calcont; }
 
     return true;
 }
@@ -464,7 +464,7 @@ bool SParManager::addCalibrationContainer(const std::string& cont_name, SVirtual
  * \param cont_name container name
  * \return pointer to container
  */
-SVirtualCalContainer * SParManager::getCalibrationContainer(const std::string& cont_name)
+SVirtualCalContainer* SParManager::getCalibrationContainer(const std::string& cont_name)
 {
     return cal_containers[cont_name];
 }

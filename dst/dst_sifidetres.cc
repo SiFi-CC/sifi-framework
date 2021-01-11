@@ -28,10 +28,10 @@
 
 #include "SDRSource.h"
 
-#include "SSiFiCCDetResImporter.h"
 #include "SFibersStackDDUnpacker.h"
 #include "SFibersStackDetector.h"
 #include "SFibersStackLookup.h"
+#include "SSiFiCCDetResImporter.h"
 
 #include "SProgressBar.h"
 
@@ -47,13 +47,11 @@ int main(int argc, char** argv)
 
     while (1)
     {
-        static struct option long_options[] = {
-            {"ss", no_argument, &save_samples, 1},
-            {"events", required_argument, 0, 'e'},
-            {"output", required_argument, 0, 'o'},
-            {"params_file", required_argument, 0, 'p'},
-            {0, 0, 0, 0}
-        };
+        static struct option long_options[] = {{"ss", no_argument, &save_samples, 1},
+                                               {"events", required_argument, 0, 'e'},
+                                               {"output", required_argument, 0, 'o'},
+                                               {"params_file", required_argument, 0, 'p'},
+                                               {0, 0, 0, 0}};
 
         int option_index = 0;
 
@@ -97,11 +95,8 @@ int main(int argc, char** argv)
     int ev_limit = 0;
     if (events < 0) { ev_limit = source1->getEntries(); }
     else
-        ev_limit = events < source1->getEntries()
-                       ? events
-                       : source1->getEntries();
-    std::cout << source1->getEntries() << " events, analyze " << ev_limit
-              << std::endl;
+        ev_limit = events < source1->getEntries() ? events : source1->getEntries();
+    std::cout << source1->getEntries() << " events, analyze " << ev_limit << std::endl;
 
     // initialize parameters
     pm()->setParamSource(params_file);
@@ -118,7 +113,9 @@ int main(int argc, char** argv)
     detm->initParameterContainers();
     detm->initTasks();
 
-    pm()->addLookupContainer("SFibersStackDDLookupTable", new SFibersStackLookupTable("SFibersStackDDLookupTable", 0x1000, 0x1fff, 32));
+    pm()->addLookupContainer(
+        "SFibersStackDDLookupTable",
+        new SFibersStackLookupTable("SFibersStackDDLookupTable", 0x1000, 0x1fff, 32));
 
     // initialize tasks
     STaskManager* tm = STaskManager::instance();
@@ -131,8 +128,8 @@ int main(int argc, char** argv)
 
     sifi()->save();
 
-//     pm()->setParamDest("p.txt");
-//     pm()->writeDestination();
+    //     pm()->setParamDest("p.txt");
+    //     pm()->writeDestination();
 
     return 0;
 }

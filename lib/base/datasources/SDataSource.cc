@@ -21,9 +21,10 @@
  * \param unpacker the unpacker object
  * \param address addresses which the unpacker must handle
  */
-void SDataSource::addUnpacker(SUnpacker * unpacker, const std::vector<uint16_t> & address)
+void SDataSource::addUnpacker(SUnpacker* unpacker, const std::vector<uint16_t>& address)
 {
-    for (auto addr : address) {
+    for (auto addr : address)
+    {
         printf("Add unpacker: 0x%x\n", addr);
         if (unpackers[addr] != nullptr)
         {
@@ -36,6 +37,6 @@ void SDataSource::addUnpacker(SUnpacker * unpacker, const std::vector<uint16_t> 
 
 SDataSource::~SDataSource()
 {
-    for (auto & unp : unpackers)
+    for (auto& unp : unpackers)
         delete unp.second;
 }

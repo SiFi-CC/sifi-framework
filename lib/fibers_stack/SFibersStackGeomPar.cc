@@ -28,24 +28,19 @@ A container for Fibers Stack geometry parameters
 /**
  * Constructor
  */
-SFibersStackGeomPar::SFibersStackGeomPar() : SPar(), mods(nullptr)
-{
-}
+SFibersStackGeomPar::SFibersStackGeomPar() : SPar(), mods(nullptr) {}
 
 /**
  * Destructor
  */
-SFibersStackGeomPar::~SFibersStackGeomPar()
-{
-    clear();
-}
+SFibersStackGeomPar::~SFibersStackGeomPar() { clear(); }
 
 /**
  * Clear parameters
  */
 void SFibersStackGeomPar::clear()
 {
-    delete [] mods;
+    delete[] mods;
     modules = 0;
 }
 
@@ -60,11 +55,11 @@ bool SFibersStackGeomPar::getParams(SParContainer* parcont)
 {
     if (!parcont->fill("nModules", modules)) return false;
 
-    if (modules) delete [] mods;
+    if (modules) delete[] mods;
     mods = new SingleModule[modules];
 
     // get layers
-    TArrayI _l(modules);
+    TArrayI _l;
     if (!parcont->fill("nLayers", _l)) return false;
     if (_l.GetSize() != modules)
     {
@@ -75,41 +70,41 @@ bool SFibersStackGeomPar::getParams(SParContainer* parcont)
     int n_layers = _l.GetSum();
 
     // get fibers
-    TArrayI _f(modules*n_layers);
+    TArrayI _f;
     if (!parcont->fill("nFibers", _f)) return false;
-    if (_f.GetSize() != (modules*n_layers))
+    if (_f.GetSize() != (n_layers))
     {
         std::cerr << "Size of nFibers doesn't match nModules*nLayers" << std::endl;
         return false;
     }
 
-    TArrayF _lr(modules*n_layers);
+    TArrayF _lr;
     if (!parcont->fill("fLayerRotation", _lr)) return false;
-    if (_lr.GetSize() != (modules*n_layers))
+    if (_lr.GetSize() != (n_layers))
     {
         std::cerr << "Size of fLayerRotation doesn't match nModules" << std::endl;
         return false;
     }
 
-    TArrayF _fox(modules*n_layers);
+    TArrayF _fox;
     if (!parcont->fill("fFiberOffsetX", _fox)) return false;
-    if (_fox.GetSize() != (modules*n_layers))
+    if (_fox.GetSize() != (n_layers))
     {
         std::cerr << "Size of fFiberOffsetX doesn't match nModules" << std::endl;
         return false;
     }
 
-    TArrayF _foy(modules*n_layers);
+    TArrayF _foy;
     if (!parcont->fill("fFiberOffsetY", _foy)) return false;
-    if (_foy.GetSize() != (modules*n_layers))
+    if (_foy.GetSize() != (n_layers))
     {
         std::cerr << "Size of fFiberOffsetY doesn't match nModules" << std::endl;
         return false;
     }
 
-    TArrayF _fsp(modules*n_layers);
+    TArrayF _fsp;
     if (!parcont->fill("fFibersPitch", _fsp)) return false;
-    if (_fsp.GetSize() != (modules*n_layers))
+    if (_fsp.GetSize() != (n_layers))
     {
         std::cerr << "Size of fFibersPitch doesn't match nModules" << std::endl;
         return false;
@@ -141,7 +136,7 @@ bool SFibersStackGeomPar::getParams(SParContainer* parcont)
         }
         cnt_layers += _l[m];
     }
-
+print();
     return true;
 }
 
@@ -152,10 +147,7 @@ bool SFibersStackGeomPar::getParams(SParContainer* parcont)
  * \param parcont pointer to container object
  * \return success
  */
-bool SFibersStackGeomPar::putParams(SParContainer* /*parcont*/) const
-{
-    return true;
-}
+bool SFibersStackGeomPar::putParams(SParContainer* /*parcont*/) const { return true; }
 
 /**
  * Print parameters

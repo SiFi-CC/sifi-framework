@@ -21,10 +21,7 @@
  * Constructor. Initializes array of objects, The array has doubel size of the
  * number of available categories to handle data and sim objects.
  */
-SEvent::SEvent() : TObject()
-{
-    categories = new TObjArray(SCategory::CatLimitDoNotUse * 2);
-}
+SEvent::SEvent() : TObject() { categories = new TObjArray(SCategory::CatLimitDoNotUse * 2); }
 
 SEvent::~SEvent()
 {
@@ -41,8 +38,7 @@ SEvent::~SEvent()
 void SEvent::addCategory(SCategory::Cat catid, SCategory* category)
 {
     int pos = SiFi::getCategoryIndex(catid, sifi()->isSimulation());
-    if (!categories->At(pos))
-        categories->AddAt(category, pos);
+    if (!categories->At(pos)) categories->AddAt(category, pos);
 }
 
 /**
@@ -51,10 +47,10 @@ void SEvent::addCategory(SCategory::Cat catid, SCategory* category)
  * \param catid category id
  * \return category object pointer
  */
-SCategory * SEvent::getCategory(SCategory::Cat catid)
+SCategory* SEvent::getCategory(SCategory::Cat catid)
 {
     int pos = SiFi::getCategoryIndex(catid, sifi()->isSimulation());
-    return dynamic_cast<SCategory *>(categories->At(pos));
+    return dynamic_cast<SCategory*>(categories->At(pos));
 }
 
 /**
@@ -65,7 +61,6 @@ void SEvent::clearCategories()
     size_t n = categories->GetEntries();
     for (uint i = 0; i < n; ++i)
     {
-        if (categories->At(i))
-            dynamic_cast<SCategory *>(categories->At(i))->clear();
+        if (categories->At(i)) dynamic_cast<SCategory*>(categories->At(i))->clear();
     }
 }

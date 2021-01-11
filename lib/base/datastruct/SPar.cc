@@ -34,14 +34,9 @@ parameters in the container and write to param file.
 /**
  * Default constructor
  */
-SPar::SPar() : parcont(nullptr)
-{
-}
+SPar::SPar() : parcont(nullptr) {}
 
 /**
  * Print container info
  */
-void SPar::print() const
-{
-    parcont->print();
-}
+void SPar::print() const { parcont->print(); }

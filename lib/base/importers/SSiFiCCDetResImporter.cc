@@ -11,17 +11,17 @@
 
 #include "SSiFiCCDetResImporter.h"
 #include "SCategory.h"
-#include "SGeantTrack.h"
-#include "SGeantFibersRaw.h"
 #include "SFibersStackCalSim.h"
 #include "SFibersStackGeomPar.h"
+#include "SGeantFibersRaw.h"
+#include "SGeantTrack.h"
 #include "SParManager.h"
 #include "SiFi.h"
 
 #include <algorithm>
 #include <iostream>
-#include <numeric>
 #include <math.h>
+#include <numeric>
 
 const Float_t adc_to_mv = 4.096;
 const Float_t sample_to_ns = 1.;
@@ -37,9 +37,7 @@ A unpacker task.
 /**
  * Constructor
  */
-SSiFiCCDetResImporter::SSiFiCCDetResImporter() : SUnpacker()
-{
-}
+SSiFiCCDetResImporter::SSiFiCCDetResImporter() : SUnpacker() {}
 
 /**
  * Init task
@@ -54,25 +52,26 @@ bool SSiFiCCDetResImporter::init()
     catGeantTrack = sifi()->buildCategory(SCategory::CatGeantTrack);
     if (!catGeantTrack)
     {
-        std::cerr << "No CatGeantTrack category" << "\n";
+        std::cerr << "No CatGeantTrack category" << std::endl;
         return false;
     }
 
     catGeantFibersRaw = sifi()->buildCategory(SCategory::CatGeantFibersRaw);
     if (!catGeantFibersRaw)
     {
-        std::cerr << "No CatGeantFibersRaw category" << "\n";
+        std::cerr << "No CatGeantFibersRaw category" << std::endl;
         return false;
     }
 
     catFibersCal = sifi()->buildCategory(SCategory::CatFibersStackCal);
     if (!catFibersCal)
     {
-        std::cerr << "No CatFibersStackCal category" << "\n";
+        std::cerr << "No CatFibersStackCal category" << std::endl;
         return false;
     }
 
-    pGeomPar = dynamic_cast<SFibersStackGeomPar*>(pm()->getParameterContainer("SFibersStackGeomPar"));
+    pGeomPar =
+        dynamic_cast<SFibersStackGeomPar*>(pm()->getParameterContainer("SFibersStackGeomPar"));
     if (!pGeomPar)
     {
         std::cerr << "Parameter container 'SFibersStackGeomPar' was not obtained!" << std::endl;
@@ -82,9 +81,8 @@ bool SSiFiCCDetResImporter::init()
     return true;
 }
 
-bool SSiFiCCDetResImporter::execute(ulong /*event*/, ulong /*seq_number*/,
-                                    uint16_t /*subevent*/, void* buffer,
-                                    size_t /*length*/)
+bool SSiFiCCDetResImporter::execute(ulong /*event*/, ulong /*seq_number*/, uint16_t /*subevent*/,
+                                    void* buffer, size_t /*length*/)
 {
     TREE_all* tree = static_cast<TREE_all*>(buffer);
     if (!tree) return false;
@@ -100,12 +98,12 @@ bool SSiFiCCDetResImporter::execute(ulong /*event*/, ulong /*seq_number*/,
     Float_t pos_z = tree->pos.Z();
 
     Float_t rot = pGeomPar->getLayerRotation(loc[0], loc[1]);
-    Float_t u = pos_x * cos(rot * M_PI/180) + pos_y * sin(rot * M_PI/180);
-    Float_t v = pos_x * sin(rot * M_PI/180) + pos_y * cos(rot * M_PI/180);
+    Float_t u = pos_x * cos(rot * M_PI / 180) + pos_y * sin(rot * M_PI / 180);
+    Float_t v = pos_x * sin(rot * M_PI / 180) + pos_y * cos(rot * M_PI / 180);
 
     for (auto t : tree->kine)
     {
-        SGeantTrack * pTrack = reinterpret_cast<SGeantTrack*>(catGeantTrack->getNewSlot());
+        SGeantTrack* pTrack = reinterpret_cast<SGeantTrack*>(catGeantTrack->getNewSlot());
         pTrack = new (pTrack) SGeantTrack;
         TVector3 v_p = t.dir;
         v_p.SetMag(t.E);
@@ -122,14 +120,16 @@ bool SSiFiCCDetResImporter::execute(ulong /*event*/, ulong /*seq_number*/,
     }
 
     pCal->setAddress(loc[0], loc[1], loc[2]);
-    if (side == 'l' and pCal->getQDCL() == 0.0) {
+    if (side == 'l' and pCal->getQDCL() == 0.0)
+    {
         pCal->setGeantX(u);
         pCal->setGeantY(v);
         pCal->setGeantZ(pos_z);
         pCal->setQDCL(tree->data.counts);
         pCal->setTimeL(tree->data.time);
     }
-    if (side == 'r' and pCal->getQDCR() == 0.0) {
+    if (side == 'r' and pCal->getQDCR() == 0.0)
+    {
         pCal->setGeantX(u);
         pCal->setGeantY(v);
         pCal->setGeantZ(pos_z);

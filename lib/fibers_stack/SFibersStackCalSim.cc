@@ -25,7 +25,7 @@ A container for Fibers Stack Calibrated simulation data
  *
  * \param opt options
  */
-void SFibersStackCalSim::Clear(Option_t * /*opt*/)
+void SFibersStackCalSim::Clear(Option_t* /*opt*/)
 {
     fGeantEloss = 0.0;
     fGeantX = 0.;
@@ -39,6 +39,6 @@ void SFibersStackCalSim::Clear(Option_t * /*opt*/)
 void SFibersStackCalSim::print() const
 {
     SFibersStackCal::print();
-    printf("  GEANT: position = %.2f,%.2f,%.2f  Eloss = %.2f\n",
-           fGeantX, fGeantY, fGeantZ, fGeantEloss);
+    printf("  GEANT: position = %.2f,%.2f,%.2f  Eloss = %.2f\n", fGeantX, fGeantY, fGeantZ,
+           fGeantEloss);
 }

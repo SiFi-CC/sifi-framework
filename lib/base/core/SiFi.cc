@@ -65,10 +65,9 @@ SiFi* sifi() { return SiFi::instance(); }
  * Default constructor
  */
 SiFi::SiFi()
-    : outputFile(nullptr), outputFileName("output.root"), outputTree(nullptr),
-      outputTreeName("S"), inputTree(nullptr), inputTreeName("S"),
-      numberOfEntries(-1), currentEntry(-1), event(nullptr), sim(false),
-      branches_set(false)
+    : outputFile(nullptr), outputFileName("output.root"), outputTree(nullptr), outputTreeName("S"),
+      inputTree(nullptr), inputTreeName("S"), numberOfEntries(-1), currentEntry(-1), event(nullptr),
+      sim(false), branches_set(false)
 {
 }
 
@@ -117,8 +116,7 @@ bool SiFi::book(bool with_tree)
 
     if (!outputFile->IsOpen())
     {
-        std::cerr << "[Error] in SiFi: could not create "
-                  << outputFileName.c_str() << std::endl;
+        std::cerr << "[Error] in SiFi: could not create " << outputFileName.c_str() << std::endl;
         return false;
     }
 
@@ -184,8 +182,7 @@ bool SiFi::open()
 
     if (inputTree == 0)
     {
-        std::cerr << "[Error] in SiFi: cannot open ROOT file"
-                  << "\n";
+        std::cerr << "[Error] in SiFi: cannot open ROOT file" << std::endl;
         return false;
     }
 
@@ -217,8 +214,8 @@ bool SiFi::open()
  * \param simulation simulation run
  * \return success
  */
-bool SiFi::registerCategory(SCategory::Cat cat, const std::string& name,
-                            size_t dim, size_t* sizes, bool simulation)
+bool SiFi::registerCategory(SCategory::Cat cat, const std::string& name, size_t dim, size_t* sizes,
+                            bool simulation)
 {
     int pos = getCategoryIndex(cat, simulation);
 
@@ -250,8 +247,7 @@ bool SiFi::registerCategory(SCategory::Cat cat, const std::string& name,
  * \param simulation simulation run
  * \return success
  */
-bool SiFi::registerCategory(SCategory::Cat cat, const std::string& name,
-                            size_t n, bool simulation)
+bool SiFi::registerCategory(SCategory::Cat cat, const std::string& name, size_t n, bool simulation)
 {
     int pos = getCategoryIndex(cat, simulation);
 
@@ -311,8 +307,8 @@ SCategory* SiFi::buildCategory(SCategory::Cat cat, bool persistent)
     if (cinfo.registered == false) return gNullSCategoryPtr;
 
     cinfo.persistent = persistent;
-    SCategory* cat_ptr = new SCategory(cinfo.name.c_str(), cinfo.dim,
-                                       cinfo.sizes, cinfo.simulation);
+    SCategory* cat_ptr =
+        new SCategory(cinfo.name.c_str(), cinfo.dim, cinfo.sizes, cinfo.simulation);
     cinfo.ptr = cat_ptr;
 
     if (cat_ptr)
@@ -359,9 +355,8 @@ void SiFi::getEntry(int i)
 {
     if (!inputTree)
     {
-        std::cerr << "[Warning] in SiFi: no input tree is opened. Cannot get "
-                     "any entry."
-                  << "\n";
+        std::cerr << "[Warning] in SiFi: no input tree is opened. Cannot get any entry."
+                  << std::endl;
         return;
     }
 
@@ -381,9 +376,8 @@ Long64_t SiFi::getEntries()
 {
     if (!inputTree)
     {
-        std::cerr << "[Warning] in SiFi: no input tree is opened. Cannot get "
-                     "any entry."
-                  << "\n";
+        std::cerr << "[Warning] in SiFi: no input tree is opened. Cannot get any entry."
+                  << std::endl;
         return -1;
     }
     numberOfEntries = inputTree->GetEntries();

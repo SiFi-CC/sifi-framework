@@ -9,11 +9,11 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
+#include "SFibersStackHitFinder.h"
 #include "SCategory.h"
 #include "SFibersStackCal.h"
 #include "SFibersStackGeomPar.h"
 #include "SFibersStackHit.h"
-#include "SFibersStackHitFinder.h"
 #include "SFibersStackHitFinderPar.h"
 #include "SLocator.h"
 #include "SLookup.h"
@@ -22,8 +22,8 @@
 #include <RtypesCore.h>
 
 #include <cstdio>
-#include <math.h> 
 #include <iostream>
+#include <math.h>
 
 /**
  * \class SFibersStackHitFinder
@@ -48,8 +48,7 @@ bool SFibersStackHitFinder::init()
     catFibersCal = sifi()->getCategory(SCategory::CatFibersStackCal);
     if (!catFibersCal)
     {
-        std::cerr << "No CatFibersStackCal category"
-                  << "\n";
+        std::cerr << "No CatFibersStackCal category" << std::endl;
         return false;
     }
 
@@ -57,37 +56,38 @@ bool SFibersStackHitFinder::init()
     catFibersHit = sifi()->buildCategory(SCategory::CatFibersStackHit);
     if (!catFibersHit)
     {
-        std::cerr << "No CatFibersStackHit category"
-                  << "\n";
+        std::cerr << "No CatFibersStackHit category" << std::endl;
         return false;
     }
 
     // get calibrator fiber parameters
-    pHitFinderFiberPar =
-    dynamic_cast<SCalContainer<2>*>(pm()->getCalibrationContainer("SFibersStackHitFinderFiberPar"));
+    pHitFinderFiberPar = dynamic_cast<SCalContainer<2>*>(
+        pm()->getCalibrationContainer("SFibersStackHitFinderFiberPar"));
     if (!pHitFinderFiberPar)
     {
-        std::cerr << "Parameter container 'SFibersStackHitFinderFiberPar' was not obtained!" << std::endl; exit(EXIT_FAILURE);
+        std::cerr << "Parameter container 'SFibersStackHitFinderFiberPar' was not obtained!"
+                  << std::endl;
+        exit(EXIT_FAILURE);
     }
 
-    SCalPar<2> * def = new SCalPar<2>();
+    SCalPar<2>* def = new SCalPar<2>();
     def->par[0] = 0.0;
     def->par[1] = 1.0;
 
     pHitFinderFiberPar->setDefault(def);
 
     // get calibrator parameters
-    pHitFinderPar = dynamic_cast<SFibersStackHitFinderPar*>(pm()->getParameterContainer(
-        "SFibersStackHitFinderPar"));
+    pHitFinderPar = dynamic_cast<SFibersStackHitFinderPar*>(
+        pm()->getParameterContainer("SFibersStackHitFinderPar"));
     if (!pHitFinderPar)
     {
-        std::cerr << "Parameter container 'SFibersStackHitFinderPar' was not "
-                     "obtained!"
+        std::cerr << "Parameter container 'SFibersStackHitFinderPar' was not obtained!"
                   << std::endl;
         exit(EXIT_FAILURE);
     }
 
-    pGeomPar = dynamic_cast<SFibersStackGeomPar*>(pm()->getParameterContainer("SFibersStackGeomPar"));
+    pGeomPar =
+        dynamic_cast<SFibersStackGeomPar*>(pm()->getParameterContainer("SFibersStackGeomPar"));
     if (!pGeomPar)
     {
         std::cerr << "Parameter container 'SFibersStackGeomPar' was not obtained!" << std::endl;
@@ -108,8 +108,7 @@ bool SFibersStackHitFinder::execute()
     int size = catFibersCal->getEntries(); // changed from Raw
     for (int i = 0; i < size; ++i)
     {
-        SFibersStackCal* pCal =
-            dynamic_cast<SFibersStackCal*>(catFibersCal->getObject(i));
+        SFibersStackCal* pCal = dynamic_cast<SFibersStackCal*>(catFibersCal->getObject(i));
         if (!pCal)
         {
             printf("FibersStackCal doesn't exists!\n");
@@ -135,7 +134,8 @@ bool SFibersStackHitFinder::execute()
         loc[2] = fib;
 
         SFibersStackHit* pHit = dynamic_cast<SFibersStackHit*>(catFibersHit->getObject(loc));
-        if (!pHit) {
+        if (!pHit)
+        {
             pHit = reinterpret_cast<SFibersStackHit*>(catFibersHit->getSlot(loc));
             new (pHit) SFibersStackHit;
             pHit->Clear();
@@ -152,10 +152,13 @@ bool SFibersStackHitFinder::execute()
         Float_t a0 = 0.0;
         Float_t lambda = 0.0;
 
-        if (sifi()->isSimulation()) {
+        if (sifi()->isSimulation())
+        {
             a0 = pHitFinderPar->getA0();
             lambda = pHitFinderPar->getLambda();
-        } else {
+        }
+        else
+        {
             SCalPar<2>* hfp = pHitFinderFiberPar->getPar(&chan);
             a0 = hfp->par[0];
             lambda = hfp->par[1];
@@ -164,13 +167,13 @@ bool SFibersStackHitFinder::execute()
         Float_t rot = pGeomPar->getLayerRotation(loc[0], loc[1]);
 
         // calculate position from MLR
-        Float_t u = (log(sqrt(qdc_r/qdc_l)) - a0) * lambda;
+        Float_t u = (log(sqrt(qdc_r / qdc_l)) - a0) * lambda;
 
         // the fiber is taken from geometry
         Float_t v = pGeomPar->getFiberOffsetX(mod, lay) + fib * pGeomPar->getFibersPitch(mod, lay);
 
-        Float_t x = v * cos(rot * M_PI/180) + u * sin(rot * M_PI/180);
-        Float_t y = v * sin(rot * M_PI/180) + u * cos(rot * M_PI/180);
+        Float_t x = v * cos(rot * M_PI / 180) + u * sin(rot * M_PI / 180);
+        Float_t y = v * sin(rot * M_PI / 180) + u * cos(rot * M_PI / 180);
         Float_t z = pGeomPar->getFiberOffsetY(mod, lay);
 
         pHit->setXYZ(x, y, z);

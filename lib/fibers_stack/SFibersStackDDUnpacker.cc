@@ -10,10 +10,10 @@
  *************************************************************************/
 
 #include "SFibersStackDDUnpacker.h"
-#include "SFibersStackDDUnpackerPar.h"
-#include "SFibersStackLookup.h"
 #include "SCategory.h"
 #include "SDDSamples.h"
+#include "SFibersStackDDUnpackerPar.h"
+#include "SFibersStackLookup.h"
 #include "SFibersStackRaw.h"
 #include "SParManager.h"
 #include "SiFi.h"
@@ -40,8 +40,7 @@ Float_t FindT0(Float_t* samples, size_t len, Float_t threshold, Int_t pol)
 
     for (uint i = 0; i < len; ++i)
     {
-        if ((pol == 0 and samples[i] < threshold) or
-            (pol == 1 and samples[i] > threshold))
+        if ((pol == 0 and samples[i] < threshold) or (pol == 1 and samples[i] > threshold))
         {
             istop = i;
             if (i == 0) t0 = 0.;
@@ -56,15 +55,14 @@ Float_t FindT0(Float_t* samples, size_t len, Float_t threshold, Int_t pol)
 
     if (istop != 0 and istop != len - 1)
     {
-        t0 = (istop - 1) + (threshold - samples[istop - 1]) /
-                               (samples[istop] - samples[istop - 1]);
+        t0 = (istop - 1) + (threshold - samples[istop - 1]) / (samples[istop] - samples[istop - 1]);
     }
 
     return t0;
 }
 
-Float_t FindTMax(Float_t* samples, size_t len, Float_t threshold, Int_t _t0,
-                 Int_t pol, Int_t deadtime, Int_t& pileup)
+Float_t FindTMax(Float_t* samples, size_t len, Float_t threshold, Int_t _t0, Int_t pol,
+                 Int_t deadtime, Int_t& pileup)
 {
 
     if (_t0 == -100) return -100.;
@@ -74,18 +72,15 @@ Float_t FindTMax(Float_t* samples, size_t len, Float_t threshold, Int_t _t0,
 
     for (Int_t ii = _t0; ii < len; ii++)
     {
-        if (tmax == -1. and ((pol == 0 and samples[ii] > threshold) or
-                             (pol == 1 and samples[ii] < threshold)))
+        if (tmax == -1. and
+            ((pol == 0 and samples[ii] > threshold) or (pol == 1 and samples[ii] < threshold)))
         {
-            tmax =
-                ii - 1 +
-                (threshold - samples[ii - 1]) / (samples[ii] - samples[ii - 1]);
+            tmax = ii - 1 + (threshold - samples[ii - 1]) / (samples[ii] - samples[ii - 1]);
             wait_for_pileup = 1;
         }
 
         if (wait_for_pileup and (ii < _t0 + deadtime) and
-            ((pol == 0 and samples[ii] < threshold) or
-             (pol == 1 and samples[ii] > threshold)))
+            ((pol == 0 and samples[ii] < threshold) or (pol == 1 and samples[ii] > threshold)))
         {
             pileup = 1;
             break;
@@ -96,21 +91,24 @@ Float_t FindTMax(Float_t* samples, size_t len, Float_t threshold, Int_t _t0,
     return tmax;
 }
 
-Int_t FindVeto(Float_t* samples, size_t limit, Float_t threshold, Int_t pol){
-    
-    if(pol==0){
-        for(int i=0; i<limit; i++){
-            if(samples[i] > threshold)
-                return 1;
+Int_t FindVeto(Float_t* samples, size_t limit, Float_t threshold, Int_t pol)
+{
+
+    if (pol == 0)
+    {
+        for (int i = 0; i < limit; i++)
+        {
+            if (samples[i] > threshold) return 1;
         }
     }
-    else if(pol==1){
-        for(int i=0; i<limit; i++){
-            if(samples[i] < threshold)
-                return 1;
+    else if (pol == 1)
+    {
+        for (int i = 0; i < limit; i++)
+        {
+            if (samples[i] < threshold) return 1;
         }
     }
-    
+
     return 0;
 }
 
@@ -118,9 +116,8 @@ Int_t FindVeto(Float_t* samples, size_t limit, Float_t threshold, Int_t pol){
  * Constructor
  */
 SFibersStackDDUnpacker::SFibersStackDDUnpacker()
-    : SDDUnpacker()
-    , catDDSamples(nullptr), catFibersRaw(nullptr)
-    , pDDUnpackerPar(nullptr), pLookUp(nullptr)
+    : SDDUnpacker(), catDDSamples(nullptr), catFibersRaw(nullptr), pDDUnpackerPar(nullptr),
+      pLookUp(nullptr)
 {
 }
 
@@ -139,39 +136,36 @@ bool SFibersStackDDUnpacker::init()
     sim_sizes[1] = 1;
     sim_sizes[2] = 16;
 
-    if (!sifi()->registerCategory(SCategory::CatDDSamples, "SDDSamples", 3,
-                                  sim_sizes, false))
+    if (!sifi()->registerCategory(SCategory::CatDDSamples, "SDDSamples", 3, sim_sizes, false))
         return false;
 
     catDDSamples = sifi()->buildCategory(SCategory::CatDDSamples);
     if (!catDDSamples)
     {
-        std::cerr << "No CatDDSamples category"
-                  << "\n";
+        std::cerr << "No CatDDSamples category" << std::endl;
         return false;
     }
 
     catFibersRaw = sifi()->buildCategory(SCategory::CatFibersStackRaw);
     if (!catFibersRaw)
     {
-        std::cerr << "No CatFibersStackRaw category"
-                  << "\n";
+        std::cerr << "No CatFibersStackRaw category" << std::endl;
         return false;
     }
 
     // get calibrator parameters
-    pDDUnpackerPar = dynamic_cast<SFibersStackDDUnpackerPar*>(pm()->getParameterContainer(
-        "SFibersStackDDUnpackerPar"));
+    pDDUnpackerPar = dynamic_cast<SFibersStackDDUnpackerPar*>(
+        pm()->getParameterContainer("SFibersStackDDUnpackerPar"));
     if (!pDDUnpackerPar)
     {
-        std::cerr << "Parameter container 'SFibersStackDDUnpackerPar' was not "
-                     "obtained!"
+        std::cerr << "Parameter container 'SFibersStackDDUnpackerPar' was not obtained!"
                   << std::endl;
         exit(EXIT_FAILURE);
     }
     pDDUnpackerPar->print();
 
-    pLookUp = dynamic_cast<SFibersStackLookupTable*>(pm()->getLookupContainer("SFibersStackDDLookupTable"));
+    pLookUp = dynamic_cast<SFibersStackLookupTable*>(
+        pm()->getLookupContainer("SFibersStackDDLookupTable"));
     pLookUp->print();
 
     return true;
@@ -199,11 +193,12 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
     Int_t blmode = pDDUnpackerPar->getBLMode(channel);
     Float_t veto_thr = pDDUnpackerPar->getVetoThreshold(channel);
 
-    SFibersStackChannel * lc = dynamic_cast<SFibersStackChannel *>(pLookUp->getAddress(fake_address, channel));
+    SFibersStackChannel* lc =
+        dynamic_cast<SFibersStackChannel*>(pLookUp->getAddress(fake_address, channel));
     SLocator loc(3);
-    loc[0] = lc->m;     // mod;
-    loc[1] = lc->l;     // lay;
-    loc[2] = lc->s;     // fib;
+    loc[0] = lc->m; // mod;
+    loc[1] = lc->l; // lay;
+    loc[2] = lc->s; // fib;
     char side = lc->side;
 
     SDDSamples* pSamples = dynamic_cast<SDDSamples*>(catDDSamples->getObject(loc));
@@ -225,8 +220,8 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
     // find baseline
     Float_t bl = -1;
     Float_t bl_sigma = 0;
-    
-    if(blmode == 0)
+
+    if (blmode == 0)
     {
         bl = std::accumulate(samples, samples + 50, 0.);
         bl /= 50.;
@@ -242,9 +237,8 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
     {
         bl = blmode;
     }
-    
-    std::transform(samples, samples+length, samples,
-        [bl](float f) { return f - bl; });
+
+    std::transform(samples, samples + length, samples, [bl](float f) { return f - bl; });
 
     Float_t threshold = 0;
     Float_t ampl = -100;
@@ -264,26 +258,27 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
     }
     Float_t t0 = FindT0(samples, limit, threshold, pol);
 
-    if (t0 >= 0) {
+    if (t0 >= 0)
+    {
         Float_t _mod = t0 - int(t0);
         Int_t _t0 = _mod > 0. ? int(t0 + 1) : int(t0);
 
-        Float_t tmax =
-            FindTMax(samples, limit, threshold, _t0, pol, deadtime, pileup);
+        Float_t tmax = FindTMax(samples, limit, threshold, _t0, pol, deadtime, pileup);
         tot = tmax - t0;
 
         Int_t _tmax = tmax;
         Int_t _len = intmode <= 0 ? _tmax - _t0 : intmode;
 
-        if (_len+_t0 >= 1024) _len = 1024 - _t0 - 1;
+        if (_len + _t0 >= 1024) _len = 1024 - _t0 - 1;
 
         size_t offset_start = _t0 <= 20 ? 0 : _t0 - 20;
-        size_t offset_stop = _len +_t0 >= 1024 ? 1024 - _t0 - 1 : _t0 + _len;
+        size_t offset_stop = _len + _t0 >= 1024 ? 1024 - _t0 - 1 : _t0 + _len;
 
-        charge = std::accumulate(samples + offset_start, samples + offset_stop, 0.); // backward integration here
+        charge = std::accumulate(samples + offset_start, samples + offset_stop,
+                                 0.); // backward integration here
         if (pol == 0) charge = -charge;
     }
-    
+
     Int_t veto = FindVeto(samples, limit, veto_thr, pol);
 
     SFibersStackRaw* pRaw = dynamic_cast<SFibersStackRaw*>(catFibersRaw->getObject(loc));
@@ -294,9 +289,9 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
     }
 
     pRaw->setAddress(loc[0], loc[1], loc[2]);
-    if (side == 'l') {
-        if (save_samples)
-            pSamples->fillSamplesL(data, length);
+    if (side == 'l')
+    {
+        if (save_samples) pSamples->fillSamplesL(data, length);
         pSamples->getSignalL()->SetAmplitude(ampl / adc_to_mv);
         pSamples->getSignalL()->SetT0(t0 /** sample_to_ns*/);
         pSamples->getSignalL()->SetTOT(tot /** sample_to_ns*/);
@@ -309,9 +304,9 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
         pRaw->setQDCL(charge / adc_to_mv);
         pRaw->setTimeL(t0);
     }
-    if (side == 'r') {
-        if (save_samples)
-            pSamples->fillSamplesR(data, length);
+    if (side == 'r')
+    {
+        if (save_samples) pSamples->fillSamplesR(data, length);
         pSamples->getSignalR()->SetAmplitude(ampl / adc_to_mv);
         pSamples->getSignalR()->SetT0(t0 /** sample_to_ns*/);
         pSamples->getSignalR()->SetTOT(tot /** sample_to_ns*/);

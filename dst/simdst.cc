@@ -1,29 +1,29 @@
 // STL includes
-#include <vector>
-#include <time.h>
-#include <string.h>
-#include <list>
-#include <iostream>
 #include <chrono>
+#include <iostream>
+#include <list>
+#include <string.h>
+#include <time.h>
+#include <vector>
 
 #include <getopt.h>
 
 // root includes
 #include <TDatabasePDG.h>
-#include <TVector3.h>
 #include <TFile.h>
-#include <TTree.h>
-#include <TMath.h>
 #include <TH1.h>
+#include <TMath.h>
+#include <TTree.h>
+#include <TVector3.h>
 
 // SiFi-Analysis framework includes
-#include "SGeantTrack.h"
 #include "SGeantFibersRaw.h"
+#include "SGeantTrack.h"
 
-#include "SiFi.h"
 #include "SDetectorManager.h"
-#include "STaskManager.h"
 #include "SParManager.h"
+#include "STaskManager.h"
+#include "SiFi.h"
 
 #include "SFibersStackDetector.h"
 
@@ -101,23 +101,19 @@ int simdst(const std::string & file, int events = 1000)
     return 0;
 }
 */
-int main(int argc,char** argv)
+int main(int argc, char** argv)
 {
     int events = 10000;
 
-    while(1)
+    while (1)
     {
-        static struct option long_options[] = {
-            { "events", required_argument, 0, 'e' },
-            { 0, 0, 0, 0 }
-        };
+        static struct option long_options[] = {{"events", required_argument, 0, 'e'}, {0, 0, 0, 0}};
 
         int option_index = 0;
 
         int c = getopt_long(argc, argv, "e:", long_options, &option_index);
 
-        if (c == -1)
-            break;
+        if (c == -1) break;
 
         switch (c)
         {
@@ -129,20 +125,21 @@ int main(int argc,char** argv)
         }
     }
 
-    std::vector< std::pair<std::string, int> > digi_status;
+    std::vector<std::pair<std::string, int>> digi_status;
     while (optind < argc)
     {
         std::cout << "Digitize " << argv[optind] << std::endl;
-//         int status = simdst(argv[optind], events);
+        //         int status = simdst(argv[optind], events);
         std::string f = argv[optind];
-//         digi_status.push_back({f, status});
+        //         digi_status.push_back({f, status});
         ++optind;
     }
 
     for (int i = 0; i < digi_status.size(); ++i)
     {
-        std::cout << "Digitizer for " << digi_status[i].first << " with status " << digi_status[i].second << std::endl;
-//         std::cout << "Output file is " << oname.Data() << std::endl;
+        std::cout << "Digitizer for " << digi_status[i].first << " with status "
+                  << digi_status[i].second << std::endl;
+        //         std::cout << "Output file is " << oname.Data() << std::endl;
     }
 
     return 0;

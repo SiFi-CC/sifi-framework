@@ -22,10 +22,7 @@ A container for Geant Fiber hits
 /**
  * Constructor
  */
-SGeantFibersRaw::SGeantFibersRaw()
-{
-    clear();
-}
+SGeantFibersRaw::SGeantFibersRaw() { clear(); }
 
 /**
  * Clear container
@@ -51,14 +48,9 @@ void SGeantFibersRaw::clear()
  * \sa TObject::Clear()
  * \param opt options, ignored.
  */
-void SGeantFibersRaw::Clear(Option_t* /*opt*/)
-{
-    clear();
-}
+void SGeantFibersRaw::Clear(Option_t* /*opt*/) { clear(); }
 
 /**
  * Print container
  */
-void SGeantFibersRaw::print() const
-{
-}
+void SGeantFibersRaw::print() const {}

@@ -35,17 +35,16 @@ required parameter containers exists.
 
 */
 
-SDetectorManager * SDetectorManager::detm = nullptr;
+SDetectorManager* SDetectorManager::detm = nullptr;
 
 /**
  * Returns instance of the Detector Manager class.
  *
  * \return manager instance
  */
-SDetectorManager * SDetectorManager::instance()
+SDetectorManager* SDetectorManager::instance()
 {
-    if (!detm)
-        detm = new SDetectorManager;
+    if (!detm) detm = new SDetectorManager;
 
     return detm;
 }
@@ -54,15 +53,12 @@ SDetectorManager * SDetectorManager::instance()
  * Shortcut
  * \return SDetectorManager instance
  */
-SDetectorManager * dm()
-{
-    return SDetectorManager::instance();
-}
+SDetectorManager* dm() { return SDetectorManager::instance(); }
 
-SDetectorManager::~SDetectorManager() {
-    for (auto & d: detectors)
-        if (d.second)
-            delete d.second;
+SDetectorManager::~SDetectorManager()
+{
+    for (auto& d : detectors)
+        if (d.second) delete d.second;
 }
 
 /**
@@ -82,9 +78,9 @@ void SDetectorManager::addDetector(SDetector* detector)
  * \param name detector name
  * \return pointer to the detector object
  */
-SDetector * SDetectorManager::getDetector(const std::string& name)
+SDetector* SDetectorManager::getDetector(const std::string& name)
 {
-    std::map<std::string, SDetector *>::iterator it = detectors.find(name);
+    std::map<std::string, SDetector*>::iterator it = detectors.find(name);
     if (it != detectors.end())
         return it->second;
     else
@@ -96,7 +92,7 @@ SDetector * SDetectorManager::getDetector(const std::string& name)
  */
 void SDetectorManager::initTasks()
 {
-    for (const auto & d: detectors)
+    for (const auto& d : detectors)
     {
         bool res = d.second->initTasks();
 
@@ -110,12 +106,12 @@ void SDetectorManager::initTasks()
 
 /**
  * Init all detectors parameter containers.
- * 
+ *
  * It must be called after the MParameterManager has been setup.
  */
 void SDetectorManager::initParameterContainers()
 {
-    for (const auto & d: detectors)
+    for (const auto& d : detectors)
     {
         bool res = d.second->initContainers();
 
@@ -129,13 +125,13 @@ void SDetectorManager::initParameterContainers()
 
 /**
  * Init all detectors categories.
- * 
+ *
  * It must be called before any detector categor is opened or created. See
  * SiFiManager and MCategory for details about categories.
  */
 void SDetectorManager::initCategories()
 {
-    for (const auto & d: detectors)
+    for (const auto& d : detectors)
     {
         bool res = d.second->initCategories();
 

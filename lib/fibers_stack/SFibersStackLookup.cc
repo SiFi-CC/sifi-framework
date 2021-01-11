@@ -20,7 +20,8 @@ A unpacker task.
 \sa STask
 */
 
-uint SFibersStackChannel::read(const char * buffer) {
+uint SFibersStackChannel::read(const char* buffer)
+{
     uint n;
     int cnt = sscanf(buffer, "%2" SCNu8 "%2" SCNu8 "%2" SCNu8 "%*[ ]%c %n", &m, &l, &s, &side, &n);
     assert(cnt == 4);
@@ -35,16 +36,19 @@ uint SFibersStackChannel::write(char* buffer, size_t n) const
     return cnt;
 }
 
-void SFibersStackChannel::print(bool newline, const char * prefix) const {
+void SFibersStackChannel::print(bool newline, const char* prefix) const
+{
     printf("%s %d  %d  %d  %c", prefix, m, l, s, side);
     if (newline) putchar('\n');
 }
 
-uint64_t SFibersStackChannel::quickHash() const {
+uint64_t SFibersStackChannel::quickHash() const
+{
     return SLookupChannel::quickHash() | (uint64_t)side << 32;
 }
 
-void SFibersStackChannel::fromHash(uint64_t hash) {
+void SFibersStackChannel::fromHash(uint64_t hash)
+{
     SLookupChannel::fromHash(hash);
     side = hash >> 32 & 0xff;
 }

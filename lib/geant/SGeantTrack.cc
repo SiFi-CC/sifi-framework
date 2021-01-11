@@ -21,10 +21,7 @@ A container for Geant tracks
 /**
  * Constructor
  */
-SGeantTrack::SGeantTrack() : TLorentzVector()
-{
-    clear();
-}
+SGeantTrack::SGeantTrack() : TLorentzVector() { clear(); }
 
 /**
  * Clear container
@@ -171,7 +168,8 @@ void SGeantTrack::clear()
 void SGeantTrack::print() const
 {
     printf("##### particle #####\n");
-    printf("  sta=(%f,%f,%f)  p=(%f,%f,%f)  E=%f  Type=%d\n", start.x(), start.y(), start.z(), Px(), Py(), Pz(), E(), type);
+    printf("  sta=(%f,%f,%f)  p=(%f,%f,%f)  E=%f  Type=%d\n", start.x(), start.y(), start.z(), Px(),
+           Py(), Pz(), E(), type);
 }
 
 /**
@@ -180,7 +178,4 @@ void SGeantTrack::print() const
  *
  * \param opt options
  */
-void SGeantTrack::Clear(Option_t* /*opt*/)
-{
-    clear();
-}
+void SGeantTrack::Clear(Option_t* /*opt*/) { clear(); }

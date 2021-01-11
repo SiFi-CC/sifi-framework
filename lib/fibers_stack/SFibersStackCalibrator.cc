@@ -42,8 +42,7 @@ interface description.
  * Default constructor
  */
 SFibersStackCalibrator::SFibersStackCalibrator()
-    : STask(), catFibersRaw(nullptr), catFibersCal(nullptr),
-      pCalibratorPar(nullptr)
+    : STask(), catFibersRaw(nullptr), catFibersCal(nullptr), pCalibratorPar(nullptr)
 {
 }
 
@@ -59,8 +58,7 @@ bool SFibersStackCalibrator::init()
     catFibersRaw = sifi()->getCategory(SCategory::CatFibersStackRaw);
     if (!catFibersRaw)
     {
-        std::cerr << "No CatFibersStackRaw category"
-                  << "\n";
+        std::cerr << "No CatFibersStackRaw category" << std::endl;
         return false;
     }
 
@@ -68,18 +66,16 @@ bool SFibersStackCalibrator::init()
     catFibersCal = sifi()->buildCategory(SCategory::CatFibersStackCal);
     if (!catFibersCal)
     {
-        std::cerr << "No CatFibersStackCal category"
-                  << "\n";
+        std::cerr << "No CatFibersStackCal category" << std::endl;
         return false;
     }
 
     // get calibrator parameters
-    pCalibratorPar = dynamic_cast<SCalContainer<3>*>(
-        pm()->getCalibrationContainer("SFibersStackCalibratorPar"));
+    pCalibratorPar =
+        dynamic_cast<SCalContainer<3>*>(pm()->getCalibrationContainer("SFibersStackCalibratorPar"));
     if (!pCalibratorPar)
     {
-        std::cerr << "Parameter container 'SFibersStackCalibratorPar' was not "
-                     "obtained!"
+        std::cerr << "Parameter container 'SFibersStackCalibratorPar' was not obtained!"
                   << std::endl;
         exit(EXIT_FAILURE);
     }
@@ -99,8 +95,7 @@ bool SFibersStackCalibrator::execute()
 
     for (int i = 0; i < size; ++i)
     {
-        SFibersStackRaw* pRaw =
-            dynamic_cast<SFibersStackRaw*>(catFibersRaw->getObject(i));
+        SFibersStackRaw* pRaw = dynamic_cast<SFibersStackRaw*>(catFibersRaw->getObject(i));
         if (!pRaw)
         {
             printf("FibersStackRaw doesn't exists!\n");
@@ -140,12 +135,10 @@ bool SFibersStackCalibrator::execute()
         loc[1] = lay;
         loc[2] = fib;
 
-        SFibersStackCal* pCal =
-            dynamic_cast<SFibersStackCal*>(catFibersCal->getObject(loc));
+        SFibersStackCal* pCal = dynamic_cast<SFibersStackCal*>(catFibersCal->getObject(loc));
         if (!pCal)
         {
-            pCal =
-                reinterpret_cast<SFibersStackCal*>(catFibersCal->getSlot(loc));
+            pCal = reinterpret_cast<SFibersStackCal*>(catFibersCal->getSlot(loc));
             new (pCal) SFibersStackCal;
             pCal->Clear();
         }

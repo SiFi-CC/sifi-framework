@@ -29,12 +29,9 @@ Display progress of the analysis.
  * \param bar_width number of points per line
  */
 SProgressBar::SProgressBar(ulong limit, uint point_width, uint bar_width)
-    : cnt_current(0), cnt_previous(0), cnt_limit(limit)
-    , point_width(point_width), bar_width(bar_width)
-    , new_bar(true), new_bar_line(true)
-    , line_running(false)
-    , line_prefix("==> Processing data ")
-    , bar_p('.'), alarm_p('!')
+    : cnt_current(0), cnt_previous(0), cnt_limit(limit), point_width(point_width),
+      bar_width(bar_width), new_bar(true), new_bar_line(true), line_running(false),
+      line_prefix("==> Processing data "), bar_p('.'), alarm_p('!')
 {
 }
 
@@ -43,11 +40,10 @@ SProgressBar::SProgressBar(ulong limit, uint point_width, uint bar_width)
  */
 void SProgressBar::finish()
 {
-    if (!line_running)
-        return;
+    if (!line_running) return;
 
-    double num_percent = 100.0*(cnt_current)/cnt_limit;
-    std::cout << " " << cnt_current << " (" << num_percent << "%)" << "\n" << std::flush;
+    double num_percent = 100.0 * (cnt_current) / cnt_limit;
+    std::cout << " " << cnt_current << " (" << num_percent << "%)" << std::endl << std::flush;
 
     line_running = false;
 }
@@ -90,21 +86,23 @@ void SProgressBar::render()
             new_bar_line = false;
         }
 
-        if (i != 0 and (i+1) % point_width == 0)
+        if (i != 0 and (i + 1) % point_width == 0)
         {
             if (i < cnt_limit)
                 std::cout << bar_p << std::flush;
             else
                 std::cout << alarm_p << std::flush;
             line_running = true;
-        } else {
+        }
+        else
+        {
             line_running = false;
         }
 
-        if ((i != 0  and (i+1) % (point_width * bar_width) == 0))
+        if ((i != 0 and (i + 1) % (point_width * bar_width) == 0))
         {
-            double num_percent = 100.0*(i+1)/cnt_limit;
-            std::cout << " " << i+1 << " (" << num_percent << "%) " << "\n" << std::flush;
+            double num_percent = 100.0 * (i + 1) / cnt_limit;
+            std::cout << " " << i + 1 << " (" << num_percent << "%) " << std::endl << std::flush;
 
             new_bar_line = true;
         }
@@ -115,7 +113,8 @@ void SProgressBar::render()
 /**
  * Reset the bar. First it will close running bar, and then reset counters to 0
  */
-void SProgressBar::reset() {
+void SProgressBar::reset()
+{
     finish();
 
     cnt_current = 0;
