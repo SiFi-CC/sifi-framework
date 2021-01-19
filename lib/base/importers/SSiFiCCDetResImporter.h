@@ -12,7 +12,6 @@
 #define SSIFICCDETRESIMPORTER_H
 
 #include "sifi_export.h"
-#include "SFibersStackLookup.h"
 #include "SDRSource.h"
 #include "SLookup.h"
 #include "SCategory.h"
@@ -22,7 +21,6 @@
 
 class SCategory;
 class SFibersStackGeomPar;
-class SFibersStackLookupTable;
 
 class SIFI_EXPORT SSiFiCCDetResImporter : public SUnpacker
 {

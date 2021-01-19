@@ -20,7 +20,6 @@
 #include "SGeantTrack.h"
 
 #include <ComptonCameraHitClass.hh>
-#include <DR_EventHandler.hh>
 
 #include <TClonesArray.h>
 #include <TObject.h>

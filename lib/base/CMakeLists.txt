@@ -1,24 +1,10 @@
 #----------------------------------------------------------------------------
 
-message(STATUS "Got it ${HAVE_SIFIDETRES_SUPPORT}")
-if(BUILD_SIFIDETRES_SUPPORT AND HAVE_SIFIDETRES_SUPPORT)
+if(BUILD_SIFIDETRES_SUPPORT)
     set(SDR_CC "datasources/SDRSource.cc")
     set(SDR_H "datasources/SDRSource.h")
-
     set(IMPORTER_SIFIDETRES_CC "importers/SSiFiCCDetResImporter.cc")
     set(IMPORTER_SIFIDETRES_H "importers/SSiFiCCDetResImporter.h")
-    include_directories(importers)
-
-    find_library(OPLIB OPHitLib HINTS ${CMAKE_INSTALL_PREFIX})
-    message(STATUS "OP Library = ${OPLIB} ${OPLIB_FOUND}")
-    set(EXTRA_DEPS ${OPLIB})
-
-    set(EXTRA_INCLUDES ../fibers_stack/)
-    find_library(GEOMLIB SiFiGeomLib HINTS ${CMAKE_INSTALL_PREFIX})
-    message(STATUS "Struct Library = ${GEOMLIB} ${GEOMLIB_FOUND}")
-    list(APPEND EXTRA_DEPS ${GEOMLIB})
-
-    message(STATUS "EXTRA_DEPS: ${EXTRA_DEPS}")
 endif()
 
 SIFI_GENERATE_LIBRARY(
@@ -90,7 +76,6 @@ SIFI_GENERATE_LIBRARY(
         util/SLoop.h
         util/SRootFileHeader.h
     LIBRARIES
-        ${EXTRA_DEPS}
         ROOT::Core
         ROOT::Tree
         Geant
@@ -100,7 +85,22 @@ SIFI_GENERATE_LIBRARY(
         datasources
         datastruct
         event
-        importers
         util
-        ${EXTRA_INCLUDES}
 )
+
+if (BUILD_SIFIDETRES_SUPPORT)
+    find_package(CCDetectorResponse REQUIRED)
+
+    target_include_directories(SiFi PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/lib/importers>
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/lib/fibers_stack>
+    )
+    target_include_directories(G__${ARG_TARGET}_cc PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/lib/importers>
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/lib/fibers_stack>
+    )
+
+    target_link_libraries(SiFi PRIVATE
+        CCDR::CCDetRes
+    )
+endif()

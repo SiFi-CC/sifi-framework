@@ -30,4 +30,8 @@
 
 // event
 #pragma link C++ class SEvent+;
+
+// importer
+#pragma link C++ class std::map<int, TVector3>+;
+
 #endif

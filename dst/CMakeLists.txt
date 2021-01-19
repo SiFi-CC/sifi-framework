@@ -10,8 +10,8 @@ target_link_libraries(sifi_dst SiFi FibersStack SiFiTools)
 install(TARGETS sifi_simdst sifi_dst DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 
-if(BUILD_SIFIDETRES_SUPPORT AND HAVE_SIFIDETRES_SUPPORT)
+if(BUILD_SIFIDETRES_SUPPORT)
     add_executable(sifi_detres_importer dst_sifidetres.cc)
-    target_link_libraries(sifi_detres_importer SiFi FibersStack Geant SiFiTools)
+    target_link_libraries(sifi_detres_importer SiFi FibersStack Geant SiFiTools CCDR::CCDetRes)
     install(TARGETS sifi_detres_importer DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()

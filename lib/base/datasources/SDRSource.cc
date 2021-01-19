@@ -10,11 +10,11 @@
  *************************************************************************/
 
 #include "SDRSource.h"
-#include "SFibersStackCalSim.h"
 #include "SSiFiCCDetResImporter.h"
 #include "SUnpacker.h"
 
 #include <DR_CCSetup.hh>
+#include <DRSiPMModel.hh>
 
 #include <TChain.h>
 
@@ -54,6 +54,11 @@ SDRSource::SDRSource() : SRootSource("Events"), subevent(0)
 
     chain->SetBranchAddress("EInteractions", &fElectronInteractions);
     chain->SetBranchAddress("PInteractions", &fPhotonInteractions);
+
+    tree.events.fHitArray = new TClonesArray("OPHit",50000);
+    fPxPosPhot = new std::map<int,TVector3>;
+    fPxPosElec = new std::map<int,TVector3>;
+    fPxPosScin = new std::map<int,TVector3>;
 
     // "DetectorEvent" tree
     chain2->SetBranchAddress("Hitsarray", &tree.events.fHitArray);

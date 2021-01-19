@@ -1,8 +1,5 @@
 #----------------------------------------------------------------------------
 # Setup the project
-cmake_policy(PUSH)
-cmake_policy(SET CMP0048 NEW)
-cmake_policy(POP)
 cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
 project(SiFi
     VERSION 0.1.0
@@ -93,7 +90,7 @@ include(tools)
 
 clang_format(format ${ALL_SOURCES})
 include_what_you_use(-Xiwyu)
-message(WARNING "ALL sources: ${ALL_SOURCES} FIXME")
+#message(WARNING "ALL sources: ${ALL_SOURCES} FIXME")
 
 option(ROOT_DOC_XREF "Root Cross-reference in doc" OFF)
 
@@ -132,23 +129,10 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 include_directories(
     ${CMAKE_BINARY_DIR}
 )
-# Link directories for libgeometry.so
-# link_directories(${PROJECT_SOURCE_DIR}/geometry/build)
-# include_directories(${PROJECT_SOURCE_DIR}/geometry/include)
 
 option(BUILD_SIFIDETRES_SUPPORT "Build SiFi Detector Response" OFF)
 if (BUILD_SIFIDETRES_SUPPORT)
-    set(SIFIDETRES_PATH "" CACHE PATH "Installation or source directory of SiFi Detector Response")
-    find_file(HAVE_SIFIDETRES_SUPPORT
-        NAMES DR_Cluster.hh
-        PATHS ${SIFIDETRES_PATH}
-        PATH_SUFFIXES include
-        REQUIRED)
-    if (HAVE_SIFIDETRES_SUPPORT)
-        get_filename_component(SIFIDETRES_INCLUDE ${HAVE_SIFIDETRES_SUPPORT} DIRECTORY)
-        message(STATUS "SiFi Det Res = ${HAVE_SIFIDETRES_SUPPORT}")
-        include_directories(${SIFIDETRES_INCLUDE})
-    endif()
+    find_package(CCDetectorResponse)
 endif()
 
 #----------------------------------------------------------------------------
@@ -206,11 +190,6 @@ export(PACKAGE SIFI)
 enable_testing()
 add_subdirectory(tests)
 
-# # Install the export set for use with the install-tree
-# install(TARGETS SiFi Fibers GeantSim
-#     EXPORT ${CMAKE_PROJECT_NAME}Targets
-#     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#     COMPONENT shlib COMPONENT dev)
 
 install(EXPORT ${CMAKE_PROJECT_NAME}Targets
     DESTINATION ${CMAKE_INSTALL_CMAKEDIR}
