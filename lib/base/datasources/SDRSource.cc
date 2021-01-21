@@ -85,8 +85,7 @@ bool SDRSource::open()
     // create fibers map
     ccsetup = new DRSiFiCCSetup(chain3, false);
     const size_t modules = ccsetup->GetNumberOfDetectors();
-    size_t acc_layers = 0;
-    size_t id_offset = 0;
+
     for (int m = 0; m < modules; ++m)
     {
         const size_t layers = ccsetup->GetLayerAmount(m);
@@ -96,18 +95,10 @@ bool SDRSource::open()
         {
             for (int f = 0; f < fibers; ++f)
             {
-                size_t base_l = id_offset + (l * fibers + f);
-                size_t base_r = id_offset + layers * fibers + (l * fibers + f);
-
-                sipm_map[base_l] = {m, l, f, 'l'};
-                sipm_map[base_r] = {m, l, f, 'r'};
-                fiber_map[base_l] = acc_layers * fibers + l * fibers + f;
-                fiber_map[base_r] = acc_layers * fibers + l * fibers + f;
+                sipm_map[sipm_fold] = {m, l, f, 'l'};
+                ++sipm_fold;
             }
         }
-
-        acc_layers += layers;
-        id_offset += layers * fibers * 2;
     }
     ccsetup->GetDetectorPosition(0).Print();
     ccsetup->GetDetectorPosition(1).Print();
@@ -249,7 +240,7 @@ bool SDRSource::readCurrentEvent()
             tree.address = sipm_map[c.first];
             tree.data.counts = c.second;
             tree.data.time = times[c.first];
-            // int fiber_id = fiber_map[c.first];
+            // int fiber_id = c.first % sipm_fold;
 
             if (unp) unp->execute(0, 0, subevent, &tree, 1);
             tree.kine.clear();
@@ -262,10 +253,7 @@ bool SDRSource::readCurrentEvent()
             SSiFiCCDetResImporter* unp = dynamic_cast<SSiFiCCDetResImporter*>(u.second);
             for (auto& c : counts)
             {
-                tree.address = sipm_map[c.first];
-                tree.data.counts = c.second;
-                tree.data.time = times[c.first];
-                int fiber_id = fiber_map[c.first];
+                int fiber_id = c.first % sipm_fold;
                 std::map<int, TVector3>::iterator iter;
 
                 if ((iter = fPxPosPhot->find(fiber_id)) != fPxPosPhot->end())
@@ -285,9 +273,14 @@ bool SDRSource::readCurrentEvent()
                 }
                 else
                 {
-                    std::cerr << "does not work\n";
+                    std::cerr << "Corresponding hit not found: SiPmID = " << c.first << std::endl;
                     continue;
                 }
+
+                tree.address = sipm_map[fiber_id];
+                if (c.first >= sipm_fold) tree.address.s = 'r';
+                tree.data.counts = c.second;
+                tree.data.time = times[c.first];
 
                 if (unp) unp->execute(0, 0, u.first, &tree, 1);
                 tree.kine.clear();

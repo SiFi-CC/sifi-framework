@@ -113,8 +113,8 @@ private:
     std::vector<int>* fElectronInteractions;            //!< interactions to the recoilelectrons and
 
     // helper
-    std::map<int, int> fiber_map;
     std::map<int, TREE_Address> sipm_map;
+    int sipm_fold{0};                                   // index at which counting for right side starts
 
     // for "DetectorEvent" in chain2
     std::map<int,TVector3> * fPxPosPhot{nullptr};
