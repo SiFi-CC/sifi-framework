@@ -92,11 +92,11 @@ if (BUILD_SIFIDETRES_SUPPORT)
     find_package(CCDetectorResponse REQUIRED)
 
     target_include_directories(SiFi PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/lib/importers>
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/lib/base/importers>
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/lib/fibers_stack>
     )
     target_include_directories(G__${ARG_TARGET}_cc PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/lib/importers>
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/lib/base/importers>
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/lib/fibers_stack>
     )
 
