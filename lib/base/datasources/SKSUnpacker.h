@@ -1,3 +1,4 @@
+
 // @(#)lib/base/datasources:$Id$
 // Author: Rafal Lalik  18/11/2017
 
@@ -9,8 +10,8 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#ifndef SDDUNPACKER_H
-#define SDDUNPACKER_H
+#ifndef SKSUNPACKER_H
+#define SKSUNPACKER_H
 
 #include "sifi_export.h"
 
@@ -29,10 +30,10 @@
  * Unpacker for Desktop Digitizer data. It is a abstract base class which must
  * provide implementation to the data, mainly lookup table.
  */
-class SIFI_EXPORT SDDUnpacker : public SUnpacker
+class SIFI_EXPORT SKSUnpacker : public SUnpacker
 {
 public:
-    SDDUnpacker();
+    SKSUnpacker();
 
     // methods
     /// Initialize task
@@ -73,4 +74,4 @@ private:
     size_t data_length;         ///< data buffer length
 };
 
-#endif /* SDDUNPACKER_H */
+#endif /* SKSUNPACKER_H */

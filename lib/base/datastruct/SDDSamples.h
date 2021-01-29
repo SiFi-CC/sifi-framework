@@ -108,8 +108,10 @@ class SIFI_EXPORT SDDSamples : public TObject
     Int_t layer;                ///< address - layer
     Int_t fiber;                ///< address - fiber
 
-    Float_t samples_l[1024];    ///< samples read on ou the left side
-    Float_t samples_r[1024];    ///< samples read on ou the right side
+    //Float_t * samples_l = new Float_t[nsamples];    ///< samples read on ou the left side
+    //Float_t * samples_r = new Float_t[nsamples];    ///< samples read on ou the right side
+    Float_t samples_l[1024];
+    Float_t samples_r[1024];
 
     SDDSignal signal_l;          ///< signal from the left side, backward comp.
     SDDSignal signal_r;          ///< signal from the right side, backward comp.

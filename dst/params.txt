@@ -3,6 +3,7 @@ fThreshold: Float_t \
  -22 -22 -50 0 0 0 0 0 \
  0 0 0 0 0 0 0 0
 nPolarity: Int_t 0
+nSamples: Int_t 1024
 nAnaMode: Int_t 0
 nIntMode: Int_t 300
 nDeadTime: Int_t 400

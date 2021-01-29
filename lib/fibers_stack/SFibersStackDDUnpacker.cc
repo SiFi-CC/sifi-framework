@@ -187,6 +187,7 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
 
     Float_t thr = pDDUnpackerPar->getThreshold(channel);
     Int_t pol = pDDUnpackerPar->getPolarity();
+    Int_t samp = pDDUnpackerPar->getNSamples();
     Int_t anamode = pDDUnpackerPar->getAnaMode();
     Int_t intmode = pDDUnpackerPar->getIntMode();
     Int_t deadtime = pDDUnpackerPar->getDeadTime();

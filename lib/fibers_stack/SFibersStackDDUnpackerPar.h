@@ -28,7 +28,8 @@ class SFibersStackDDUnpackerPar : public SPar
     Int_t nPolarity;    ///< 0 - neg, 1 - pos
     Int_t nAnaMode;     ///< 0 - LE, 1 - CF
     Int_t nIntMode;     ///< 0 - TOT, >0 - Limit
-    Int_t nDeadTime;    ///< fDeadTime     
+    Int_t nDeadTime;    ///< fDeadTime
+    Int_t nSamples;     ///< Number of samples per one signal
 
   public:
     bool getParams(SParContainer* parcont) override;
@@ -60,6 +61,9 @@ class SFibersStackDDUnpackerPar : public SPar
     /// \param chan channel
     /// \return base line subtraction mode 
     Int_t getBLMode(Int_t chan) const;
+    /// Returns number of samples per signal
+    /// \return number of samples per signal
+    Int_t getNSamples() const { return nSamples; }
 };
 
 #endif /* SFIBERSSTACKDDUNPACKERPAR_H */
