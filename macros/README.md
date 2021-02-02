@@ -80,13 +80,14 @@ $ root
 ## Internal functions
 
 ```c++
-Float_t GetT0(TH1F *h, Float_t thr)
+Float_t GetT0(TH1F *h, Float_t thr, Bool_t BL_flag)
 ```
 where arguments are:
 - `h` - signal histogram
 - `thr` - threshold value [mV]
+- `BL_flag` - flag indicating whether base line was subtracted
 
-This function finds and returns T0 value for given histogram `h` and threshold `thr`.  This function was not meant to be used independently and was written as a tool for `SignalsViewer()` function.
+This function finds and returns T0 value for given histogram `h` and threshold `thr`. The flag `BL_flag` indicating base line subtraction is needed to correctly determine polarity of the signal. This function was not meant to be used independently and was written as a tool for `SignalsViewer()` function.
 
 ```c++
 TH1F* ReadOneSignal(std::ifstream &input, Int_t infile, SDDSignal *sptr )

@@ -55,7 +55,7 @@ enum CutType // Enumeration representing different types of cuts:
 // thr - threshold value [mV]
 //-----------------------------------------------------------------
 
-Float_t GetT0(TH1F* h, Float_t thr)
+Float_t GetT0(TH1F* h, Float_t thr, Bool_t BL_flag)
 {
     Float_t t0 = 0.;
     Int_t istop = -1;
@@ -67,15 +67,16 @@ Float_t GetT0(TH1F* h, Float_t thr)
     Float_t min = h->GetBinContent(h->GetMinimumBin());
     Float_t max = h->GetBinContent(h->GetMaximumBin());
 
-    if (fabs(min) > max)
+    if (((fabs(min) > fabs(max)) && BL_flag) ||
+        ((fabs(min) < fabs(max)) && !BL_flag))
         polarity = "NEGATIVE";
     else
         polarity = "POSITIVE";
-
+    
     //----- determine t0
     if (polarity == "NEGATIVE")
     {
-        for (Int_t i = 0; i < IPOINTS; i++)
+        for (Int_t i = 1; i < IPOINTS+1; i++)
         {
             if (samples[i] < thr)
             {
@@ -92,7 +93,7 @@ Float_t GetT0(TH1F* h, Float_t thr)
 
     if (polarity == "POSITIVE")
     {
-        for (Int_t i = 0; i < IPOINTS; i++)
+        for (Int_t i = 1; i < IPOINTS+1; i++)
         {
             if (samples[i] > thr)
             {
@@ -163,6 +164,7 @@ Bool_t SignalsViewer(TString path = ".", Int_t ch = 0, Int_t thr = -164, Bool_t 
 
     Int_t counter = 0;
     Float_t baseline = 0.;
+    Float_t true_thr = 0.;
     Float_t t0 = 0.;
 
     float x;
@@ -172,6 +174,7 @@ Bool_t SignalsViewer(TString path = ".", Int_t ch = 0, Int_t thr = -164, Bool_t 
     {
         counter++;
         baseline = 0.;
+        true_thr = 0.;
 
         //----- filling non-base-line-subtracted histogram
         for (Int_t i = 0; i < IPOINTS; i++)
@@ -181,18 +184,25 @@ Bool_t SignalsViewer(TString path = ".", Int_t ch = 0, Int_t thr = -164, Bool_t 
         }
 
         //----- calculating and subtracting base line
+        for (Int_t i = 1; i < IBL + 1; i++)
+            baseline += h->GetBinContent(i);
+
+        baseline = baseline / IBL;  //mV
+        
         if (BL_flag)
         {
-            for (Int_t i = 1; i < IBL + 1; i++)
-                baseline += h->GetBinContent(i);
-
-            baseline = baseline / IBL;
-
             for (Int_t i = 0; i < IPOINTS; i++)
                 h->SetBinContent(i + 1, h->GetBinContent(i + 1) - baseline);
-
-            t0 = GetT0(h, thr / MV);
+            
+            true_thr = thr / MV;  //mV
         }
+        else
+        {
+            true_thr = baseline + thr / MV;  //mV
+            
+        }
+
+        t0 = GetT0(h, true_thr, BL_flag);
 
         //----- drawing
         gPad->SetGrid(1, 1);
@@ -202,8 +212,8 @@ Bool_t SignalsViewer(TString path = ".", Int_t ch = 0, Int_t thr = -164, Bool_t 
 
         Float_t min = h->GetBinContent(h->GetMinimumBin());
         Float_t max = h->GetBinContent(h->GetMaximumBin());
-        line_t0.DrawLine(t0, min + 0.1 * min, t0, max + 0.1 * max);
-        line_thr.DrawLine(0, thr / MV, IPOINTS, thr / MV);
+        line_t0.DrawLine(t0, min, t0, max);
+        line_thr.DrawLine(0, true_thr, IPOINTS, true_thr);
 
         can->Update();
         can->WaitPrimitive();
@@ -294,11 +304,11 @@ Bool_t SignalsViewer(TString path = ".", std::vector<Int_t> ch_list = {0, 1},
             for (Int_t i = 1; i < IBL + 1; i++)
             {
                 for (Int_t j = 0; j < n_channels; j++)
-                    baseline[j] += h[j]->GetBinContent(i);
+                    baseline[j] += h[j]->GetBinContent(i);  //mV
             }
 
             for (Int_t j = 0; j < n_channels; j++)
-                baseline[j] = baseline[j] / IBL;
+                baseline[j] = baseline[j] / IBL;  //mV
 
             for (Int_t i = 1; i < IPOINTS + 1; i++)
             {
@@ -321,8 +331,6 @@ Bool_t SignalsViewer(TString path = ".", std::vector<Int_t> ch_list = {0, 1},
 
         Float_t min_axis = *std::min_element(min.begin(), min.end());
         Float_t max_axis = *std::max_element(max.begin(), max.end());
-
-        std::cout << min_axis << "\t" << max_axis << std::endl;
 
         for (Int_t j = 0; j < n_channels; j++)
         {
@@ -540,7 +548,7 @@ Bool_t CutAndView(TString path = ".", Int_t ch = 0, Int_t thr = -164, CutType cu
             SDDSignal* sigR = (SDDSignal*)samples->getSignalR();
             samples->getAddress(m, l, f);
 
-            TH1* hptr = new TH1F();
+            TH1F* hptr = new TH1F();
             SDDSignal* sptr = nullptr;
 
             if (mod == m && layer == l && fiber == f)
@@ -596,7 +604,7 @@ Bool_t CutAndView(TString path = ".", Int_t ch = 0, Int_t thr = -164, CutType cu
                         break;
 
                     case CutType::fT0: // T0 cut, provide min and max
-                        if (sptr->GetT0() > range[0] && sptr->GetT0() < range[1])
+                        if (t0 > range[0] && t0 < range[1])
                         {
                             hptr = ReadOneSignal(input, i, sptr);
                             draw_flag = kTRUE;
@@ -604,7 +612,7 @@ Bool_t CutAndView(TString path = ".", Int_t ch = 0, Int_t thr = -164, CutType cu
                         break;
 
                     case CutType::fTOT: // TOT cut, provide min and max
-                        if (sptr->GetT0() > range[0] && sptr->GetT0() < range[1])
+                        if (sptr->GetTOT() > range[0] && sptr->GetTOT() < range[1])
                         {
                             hptr = ReadOneSignal(input, i, sptr);
                             draw_flag = kTRUE;
@@ -628,7 +636,7 @@ Bool_t CutAndView(TString path = ".", Int_t ch = 0, Int_t thr = -164, CutType cu
                         break;
 
                     case CutType::fVeto: // veto flag cut, provide 0 or 1 as bool value
-                        if (sptr->GetBLSigma() == range[0])
+                        if (sptr->GetVeto() == range[0])
                         {
                             hptr = ReadOneSignal(input, i, sptr);
                             draw_flag = kTRUE;
@@ -690,8 +698,10 @@ Bool_t CutAndView(TString path = ".", Int_t ch = 0, Int_t thr = -164, CutType cu
 
                     Float_t min = hptr->GetBinContent(hptr->GetMinimumBin());
                     Float_t max = hptr->GetBinContent(hptr->GetMaximumBin());
+                    Float_t t0_draw = GetT0(hptr, thr / MV, 1);
 
-                    line_t0.DrawLine(t0, min + (0.1 * fabs(min)), t0, max + (0.1 * fabs(max)));
+                    line_t0.DrawLine(t0_draw, min + (0.1 * fabs(min)), 
+                                     t0_draw, max + (0.1 * fabs(max)));
                     line_thr.DrawLine(0, thr / MV, IPOINTS, thr / MV);
 
                     counter++;
