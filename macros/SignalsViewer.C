@@ -63,15 +63,28 @@ Float_t GetT0(TH1F* h, Float_t thr, Bool_t BL_flag)
     Float_t* samples = h->GetArray();
 
     //----- determine signal polarity
+    Float_t sum = h->Integral(); 
+    Float_t size = h->GetNbinsX();
+    Float_t av = sum/size; 
+
     TString polarity;
     Float_t min = h->GetBinContent(h->GetMinimumBin());
     Float_t max = h->GetBinContent(h->GetMaximumBin());
 
-    if (((fabs(min) > fabs(max)) && BL_flag) ||
-        ((fabs(min) < fabs(max)) && !BL_flag))
-        polarity = "NEGATIVE";
+    if(BL_flag)
+    {
+        if(fabs(min) > fabs(max))
+            polarity = "NEGATIVE";
+        else 
+            polarity = "POSITIVE";
+    }
     else
-        polarity = "POSITIVE";
+    {
+        if(fabs(min-av) > fabs(max-av))
+            polarity = "NEGATIVE";
+        else
+            polarity = "POSITIVE";
+    }
     
     //----- determine t0
     if (polarity == "NEGATIVE")
