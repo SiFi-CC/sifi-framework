@@ -44,5 +44,4 @@ private:
     std::ifstream istream;      ///< input file stream
     size_t buffer_size;         ///< data buffer size
 };
-
 #endif /* SDDSOURCE_H */

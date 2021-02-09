@@ -60,4 +60,5 @@ protected:
     std::map<uint16_t, SUnpacker *> unpackers;  ///< store unpackers and its addresses
 };
 
+
 #endif /* SDATASOURCE_H */

@@ -26,6 +26,7 @@
 #include "STaskManager.h"
 #include "SiFi.h"
 
+#include "SDataSource.h"
 #include "SDDSource.h"
 #include "SKSSource.h"
 
@@ -110,49 +111,64 @@ int main(int argc, char** argv)
                 "SFibersStackDDLookupTable",
                 new SFibersStackLookupTable("SFibersStackDDLookupTable", 0x1000, 0x1fff, 32));
 
-// SFibersStackDDUnpackerPar * pDDUnpackerPar;
-// pDDUnpackerPar = dynamic_cast<SFibersStackDDUnpackerPar*>(
-//         pm()->getParameterContainer("SFibersStackDDUnpackerPar"));
-//     if (!pDDUnpackerPar)
-//     {
-//         std::cerr << "Parameter container 'SFibersStackDDUnpackerPar' was not obtained!"
-//                   << std::endl;
-//         exit(EXIT_FAILURE);
-//     }
-//     pDDUnpackerPar->print();
+SFibersStackDDUnpackerPar * pDDUnpackerPar;
+pDDUnpackerPar = dynamic_cast<SFibersStackDDUnpackerPar*>(
+        pm()->getParameterContainer("SFibersStackDDUnpackerPar"));
+    if (!pDDUnpackerPar)
+    {
+        std::cerr << "Parameter container 'SFibersStackDDUnpackerPar' was not obtained!"
+                  << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    pDDUnpackerPar->print();
 
-//             Int_t samp = pDDUnpackerPar->getNSamples();       
+//             Int_t sample_to_ns = pDDUnpackerPar->getSampleToNs();       
+//                     std::cout << "samplesssss_to_ns:" << sample_to_ns
+//                   << std::endl;
             
-           
-//             SDataSource *source; //auto source
+            //SDataSource *source; //auto source
 //             if(ext == ".dat")
 //             {
+//                 //SFibersStackDDUnpackerPar = 4.096;
 //                 std::cout << "data extention \".dat\"" << std::endl;
-//                 source = new SDDSource(addr);
-//                             unp->setDataLen(1024);
-//             source->addUnpacker(unp, {addr});
-//             source->setInput(name, 1024 * sizeof(float));
-//             sifi()->addSource(source);
+//                 //std::cout << SFibersStackDDUnpackerPar::getADCtoMV() << std::endl;
+//                 SDDSource* source = new SDDSource(addr);
+//                 unp->setDataLen(1024);
+//                 source->addUnpacker(unp, {addr});
+//                 source->setInput(name, 1024 * sizeof(float));
+//                 sifi()->addSource(source);
 // 
 //             }
 //             else if(ext == ".csv")
 //             {
-//                 std::cout << "data extention\".csv\")" << std::endl;
-//                 source = new SKSSource(addr);
-//                             unp->setDataLen(1024);
-//             source->addUnpacker(unp, {addr});
-//             source->setInput(name, 1024 * sizeof(float));
-//             sifi()->addSource(source);
+//                 std::cout << "data extention \".csv\"" << std::endl;
+//                 SKSSource* source = new SKSSource(addr);
+//                 
+//                 //unp->setDataLen(0); //if lenght ==0 read from file ()
+//                 unp->setDataLen(640);
+//                 source->addUnpacker(unp, {addr});
+//                 //source->setInput(name, 0 * sizeof(float));
+//                 source->setInput(name, 640 * sizeof(float));
+//                 sifi()->addSource(source);
 //             }
 //             else 
 //             {
 //                 std::cout << "Incorrect data extention (should be \".dat\" or \".csv\")" << std::endl;
 //             }
- 
-            SDDSource* source = new SDDSource(addr);
-            unp->setDataLen(1024);
+//  
+    
+    
+    
+//             SDDSource* source = new SDDSource(addr);
+//             unp->setDataLen(1024);
+//             source->addUnpacker(unp, {addr});
+//             source->setInput(name, 1024 * sizeof(float));
+//             sifi()->addSource(source);
+            
+            SKSSource* source = new SKSSource(addr);
+            unp->setDataLen(640);
             source->addUnpacker(unp, {addr});
-            source->setInput(name, 1024 * sizeof(float));
+            source->setInput(name, 640 * sizeof(float));
             sifi()->addSource(source);
         
         }

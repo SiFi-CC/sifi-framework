@@ -37,7 +37,7 @@ void SFibersStackDDUnpackerPar::clear()
     nAnaMode = 0;
     nIntMode = 0;
     nDeadTime = 0;
-    nSamples = 0;
+    fSampleToNs = 0.0;
 }
 
 /**
@@ -68,7 +68,7 @@ bool SFibersStackDDUnpackerPar::getParams(SParContainer* parcont)
 
     TArrayI _b(16);
     if (!parcont->fill("fBLMode", _b)) return false;
-    if (_v.GetSize() != 16)
+    if (_b.GetSize() != 16)
     {
         std::cerr << "Size of fBLMode doesn't match 16" << std::endl;
         return false;
@@ -79,7 +79,7 @@ bool SFibersStackDDUnpackerPar::getParams(SParContainer* parcont)
     if (!parcont->fill("nAnaMode", nAnaMode)) return false;
     if (!parcont->fill("nIntMode", nIntMode)) return false;
     if (!parcont->fill("nDeadTime", nDeadTime)) return false;
-    if (!parcont->fill("nSamples", nSamples)) return false;
+    if (!parcont->fill("fSampleToNs", fSampleToNs)) return false;
 
     if (!(nPolarity == 0 || nPolarity == 1))
     {
@@ -112,10 +112,10 @@ bool SFibersStackDDUnpackerPar::getParams(SParContainer* parcont)
         exit(EXIT_FAILURE);
     }
 
-    if (nSamples < 0)
+    if (fSampleToNs < 0)
     {
-        std::cerr << "nSamples cannot be smaller than 0!" << std::endl;
-        std::cerr << "nSamples = " << nSamples << std::endl;
+        std::cerr << "fSampleToNs cannot be smaller than 0!" << std::endl;
+        std::cerr << "fSampleToNs = " << fSampleToNs << std::endl;
         exit(EXIT_FAILURE);
      }
     return true;
@@ -148,7 +148,7 @@ void SFibersStackDDUnpackerPar::print() const
     printf(" anamode = %d\n", nAnaMode);
     printf(" intmode = %d\n", nIntMode);
     printf(" deadtime = %d\n", nDeadTime);
-    printf(" nsamples = %d\n", nSamples);
+    printf(" sampletons = %f\n", fSampleToNs);
 }
 
 Float_t SFibersStackDDUnpackerPar::getThreshold(Int_t chan) const

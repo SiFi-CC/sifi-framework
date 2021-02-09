@@ -14,7 +14,13 @@
 #include "SUnpacker.h"
 
 #include <iostream>
+#include <sstream>
 #include <map>
+#include <string>
+#include <vector>
+
+static Int_t static_var = 5;
+static Int_t nSamples;
 
 /**
  * Constructor. Requires subevent id for unpacked source.
@@ -34,13 +40,36 @@ SKSSource::SKSSource(uint16_t subevent) : SDataSource()
 bool SKSSource::open()
 {
 //     istream.open(input.c_str(), std::ios::binary);
+    //std::ifstream input(path_name);
     istream.open(input.c_str(), std::ios::in);
+//     istream.open(input);
     if (!istream.is_open()) {
         std::cerr << "##### Error in SKSSource::open()! Could not open input file!" << std::endl;
         std::cerr << input << std::endl;
         return false;
     }
 
+//     std::string csvLine = " ";
+//     std::string tmp = " ";
+    //static Int_t nSamples;
+
+    nSamples = getNSamples();
+    std::cout << "\n\n-----------" << std::endl;
+    std::cout << "Number of samples: " << nSamples << std::endl;
+    std::cout <<  "----------\n" << std::endl;
+// 
+//     
+//     istream >> tmp >> tmp >> nSamples;
+//     std::getline(istream, csvLine);
+//     std::getline(istream, csvLine);
+//     std::getline(istream, csvLine);
+// 
+//     std::cout << "\n\n-----------------------------------------" << std::endl;
+//     std::cout << "Number of samples: " << nSamples << std::endl;
+//     std::cout <<  "-----------------------------------------\n" << std::endl;
+//     
+    
+    
     if (unpackers.size() == 0)
         return false;
 
@@ -92,10 +121,64 @@ bool SKSSource::close()
 bool SKSSource::readCurrentEvent()
 {
     if (unpackers.size() == 0)
-        return false;
+    return false;
+    
+// Version 1 - csvRow is a vector    
+    std::string csvLine  = " ";
+    std::string tmp      = " ";
+    std::vector <std::string> csvRow;
+    std::string csvElement;
+    void* buffer[nSamples*sizeof(float)];
+    for (Int_t i = 0; i < nSamples; i++)
+    {
+        csvRow.clear();
+        getline(istream, csvLine);
+        std::stringstream stream(csvLine);
+        
+        while(getline(stream, csvElement, ','))
+        {
+            csvRow.push_back(csvElement);
+        }
+        buffer[i] = (void*)&(csvRow.at(1));
+        std::cout << buffer[i] << " " << &buffer[i] << std::endl;
+        //std::cout << csvRow.at(0) << " " << csvRow.at(1) << " " << csvRow.at(2) << " " << csvRow.at(3) << " " << csvRow.at(4) << std::endl;
+    }
+//     buffer_size = nSamples;
 
-    void * buffer[buffer_size];
-    istream.read((char*)&buffer, buffer_size);
+    
+// Version 2 - csvRow is a Float_t   
+//     Int_t osc_ch  = 1; //change to parameter from params.txt
+//     std::string csvLine  = " ";
+//     void* buffer[buffer_size];
+//     Float_t csvRow[5];
+//     std::string csvElement;
+//     float csvSignal[nSamples];
+// 
+//     for (Int_t i = 0; i < nSamples; i++)
+//     {
+//         //csvRow.clear();
+//         std::getline(istream, csvLine);
+//         std::stringstream stream(csvLine);
+//         int j = 0;
+//         while(j<5)
+//         {
+//             std::getline(stream, csvElement, ',');
+//             //csvRow[j] = std::stof(csvElement);
+//             j++;
+//         }
+//                 
+//         csvSignal[i] =static_cast<float>(csvRow[osc_ch]);
+// //         buffer[i] = &csvSignal[i]; 
+//         buffer[i] = static_cast<void*>(&csvSignal[i]);
+//         std::cout << buffer[i] << " " << &buffer[i] << std::endl; //type 
+//     }
+
+//     void* buffer[buffer_size];
+//     istream.read((char*)&buffer, buffer_size);
+    
+    
+    
+    
     bool flag = istream.good();
 
     if (!flag)
@@ -125,4 +208,19 @@ bool SKSSource::readCurrentEvent()
 void SKSSource::setInput(const std::string& filename, size_t length) {
     input = filename;
     buffer_size = length;
+}
+
+int SKSSource::getNSamples()
+{
+    std::string csvLine = " ";
+    std::string tmp = " ";
+    static Int_t nnSamples = 0;
+    istream >> tmp >> tmp >> nnSamples;
+    std::getline(istream, csvLine);
+    std::getline(istream, csvLine);
+    std::getline(istream, csvLine);
+    std::cout << "\n\n-----------------------------------------" << std::endl;
+    std::cout << "Number of samples: " << nnSamples << std::endl;
+    std::cout <<  "-----------------------------------------\n" << std::endl;
+    return nnSamples;
 }

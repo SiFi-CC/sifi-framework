@@ -12,13 +12,15 @@
 #ifndef SFIBERSSTACKDDUNPACKERPAR_H
 #define SFIBERSSTACKDDUNPACKERPAR_H
 
+#include "sifi_export.h"
+
 #include "SPar.h"
 
 #include <Rtypes.h>
 #include <TArrayF.h>
 #include <TArrayI.h>
 
-class SFibersStackDDUnpackerPar : public SPar
+class SIFI_EXPORT SFibersStackDDUnpackerPar : public SPar
 {
   private:
     // members
@@ -29,7 +31,8 @@ class SFibersStackDDUnpackerPar : public SPar
     Int_t nAnaMode;     ///< 0 - LE, 1 - CF
     Int_t nIntMode;     ///< 0 - TOT, >0 - Limit
     Int_t nDeadTime;    ///< fDeadTime
-    Int_t nSamples;     ///< Number of samples per one signal
+    Float_t fSampleToNs;     ///< Number of samples per one signal
+    static Float_t fADCtoMV;   ///< ADC to milivolts - amplitude calibration factor
 
   public:
     bool getParams(SParContainer* parcont) override;
@@ -61,9 +64,12 @@ class SFibersStackDDUnpackerPar : public SPar
     /// \param chan channel
     /// \return base line subtraction mode 
     Int_t getBLMode(Int_t chan) const;
-    /// Returns number of samples per signal
-    /// \return number of samples per signal
-    Int_t getNSamples() const { return nSamples; }
+    /// Returns samples to ns
+    /// \return samples to ns
+    Float_t getSampleToNs() const { return fSampleToNs; }
+    /// Returns ADC to milivolts - amplitude calibration factor
+    /// \return ADC to milivolts - amplitude calibration factor
+    static Float_t getADCtoMV() { return fADCtoMV; }
 };
 
 #endif /* SFIBERSSTACKDDUNPACKERPAR_H */

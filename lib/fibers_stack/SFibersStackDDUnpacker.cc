@@ -187,7 +187,7 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
 
     Float_t thr = pDDUnpackerPar->getThreshold(channel);
     Int_t pol = pDDUnpackerPar->getPolarity();
-    Int_t samp = pDDUnpackerPar->getNSamples();
+    Float_t sample_to_ns = pDDUnpackerPar->getSampleToNs();
     Int_t anamode = pDDUnpackerPar->getAnaMode();
     Int_t intmode = pDDUnpackerPar->getIntMode();
     Int_t deadtime = pDDUnpackerPar->getDeadTime();
@@ -211,7 +211,7 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
     }
 
     pSamples->setAddress(loc[0], loc[1], loc[2]);
-
+    //if(getNSamples() == 0) read from file?
     // copy samples
     Float_t samples[1024];
     size_t limit = length <= 1024 ? length : 1024;
@@ -224,15 +224,14 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
 
     if (blmode == 0)
     {
-        bl = std::accumulate(samples, samples + 50, 0.);
-        bl /= 50.;
-
+        bl = std::accumulate(samples, samples + 100, 0.);
+        bl /= 100.;
         bl_sigma = 0;
-        for (int i = 0; i < 50; ++i)
+        for (int i = 0; i < 100; ++i)
         {
             bl_sigma += (bl - samples[i]) * (bl - samples[i]);
         }
-        bl_sigma = sqrt(bl_sigma / 50.);
+        bl_sigma = sqrt(bl_sigma / 100.);
     }
     else
     {
