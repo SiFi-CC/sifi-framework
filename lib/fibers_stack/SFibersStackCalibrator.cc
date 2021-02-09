@@ -125,8 +125,10 @@ bool SFibersStackCalibrator::execute()
         Float_t time_r = pRaw->getTimeR();
 
         // do your magic here with u, y and qdc
-        Float_t energy_l = cp_l->par[0] * qdc_l + cp_l->par[1];
-        Float_t energy_r = cp_r->par[0] * qdc_r + cp_r->par[1];
+        //Float_t energy_l = cp_l->par[0] * qdc_l + cp_l->par[1]; // calibration - multiplication
+        //Float_t energy_r = cp_r->par[0] * qdc_r + cp_r->par[1];
+        Float_t energy_l = (qdc_l/cp_l->par[0]) + cp_l->par[1];   // calibration - division
+        Float_t energy_r = (qdc_r/cp_r->par[0]) + cp_r->par[1];
         time_l += cp_l->par[2];
         time_r += cp_r->par[2];
 
