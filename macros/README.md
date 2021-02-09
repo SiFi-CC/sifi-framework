@@ -1,42 +1,138 @@
 # SignalsViewer.C
-This macro allows to plot signals recorded with the CAEN Desktop Digitzer .  It is possible to view subsequent signals, compare signals from different channels as well as filter signals of desired parameters.
+This macro allows to plot signals recorded with the CAEN Desktop Digitzer and Keysight oscilloscope.  It is possible to view subsequent signals, compare signals from different channels as well as filter signals of desired parameters.
 
 ## Viewing subsequent signals
+
 Use function
 ```c++
-Bool_t SignalsViewer(TSring path, Int_t ch, Int_t thr, Bool_t BL_flag)
+Bool_t SignalsViewer(TString path_name, Int_t ch, Float_t thr, Bool_t BL_flag)
+```
+where arguments are:
+- `path_name` - path to the experimental data: for Desktop Digitizer path to the directory only, for oscilloscope path along with the file name
+- `ch` - channel number: for Desktop Digitizer [0-15], for oscilloscope [0-3]
+- `thr` - threshold value: for Desktop Digitizer given in [ADC channels], for oscilloscope given in [mV]
+- `BL_flag` - flag indicating base line subtraction: if `kTRUE` base line will be calculated and subtracted, if `kFALSE` base line will be ignored; base line is calculated as average of first 50 samples in the signal
+
+This is interface function to view subsequent signals recorded from one, chosen channel `ch`. Signals recorded with the Desktop Digitizer as well as oscilloscope can be viewed. Threshold level `thr` will be plotted along with the associated T0. To view next signal double click on the canvas. When done exit ROOT by choosing `File` and `Quit ROOT` on the canvas toolbar.
+
+Usage example (Desktop Digitizer):
+```
+$root
+[] .L SignalsViewer.C+
+[] SignalsViewer("/home/path/to/data/2021_01_01_01_01/", 0, -164, 1)
+```
+Usage example (oscilloscope):
+```
+$root
+[] .L SignalsViewer.C+
+[] SignalsViewer("/home/path/to/data/2021_01_01_01_01/file.csv", 0, -1, 1)
+```
+
+
+Alternatively use function (Desktop Digitizer only):
+```c++
+Bool_t SignalsViewerDD(TSring path, Int_t ch, Int_t thr, Bool_t BL_flag)
 ```
 where arguments are:
 - `path` - path to the directory containing experimental data; directory must contain `wave_x.dat` files recorded by the Desktop Digitizer
-- `ch` - channel number
+- `ch` - channel number [0-15]
 - `thr `- threshold value [ADC channels]
-- `BL_flag` - if `kTRUE` base line will be calculated and subtracted, if `kFALSE` base line will be ignored; base line is calculated as average of first 50 samples in the signal
+- `BL_flag` - flag indicating whether base line should be subtracted or not; if `kTRUE` base line will be calculated and subtracted, if `kFALSE` base line will be ignored; base line is calculated as average of first 50 samples in the signal
 
-This function allows to view subsequent signals recorded from one, chosen channel `ch`. Threshold level `thr` will be plotted along with the associated T0 value. To view next signal double click on the canvas. When done exit ROOT by choosing `File` and ` Quit ROOT` on the canvas toolbar.
+This function allows to view subsequent signals recorded from one, chosen channel `ch` of the Desktop Digitizer. Threshold level `thr` will be plotted along with the associated T0 value. To view next signal double click on the canvas. When done exit ROOT by choosing `File` and `Quit ROOT` on the canvas toolbar.
 
-Usage example:
+This function can be used indirectly via `SignalsViewer(path, ch, thr, BL_flag)`.
+It can be also used directly as follows:
 ```
 $ root
-[ ] .L SignalsViewer.C+
-[ ] SignalsViewer("/home/path/to/data/2021_01_01_01_01",  0,  -164,  kTRUE)
+[] .L SignalsViewer.C+
+[] SignalsViewerDD("/home/path/to/data/2021_01_01_01_01",  0,  -164,  kTRUE)
 ```
-## Comparing signals from different channels
-Use function
+
+Alternatively use function (oscilloscope only):
 ```c++
-Bool_t SignalsViewer(TString path, std::vector <Int_t> ch_list, Bool_t BL_flag)
+Bool_t SignalsViewerOsc(TString path_name, Int_t ch, Float_t thr, Bool_t BL_flag)
+```
+where arguments are:
+- `path_name` - full path and name of the `*.csv` file containing recorded data
+- `ch` - channel number [0-3]
+- `thr` - threshold value given in [mV]
+- `BL_flag` - flag indicating whether base line should be subtracted or not; if `kTRUE` base line will be calculated and subtracted, if `kFALSE` base line will be ignored; base line is calculated as average of first 50 samples in the signal
+
+Function to view subsequent signals recorded from one, chosen channel `ch` of the oscilloscope. Threshold level `thr` will be plotted along with the associated T0. To view next signal double click on the canvas. When done exit ROOT by choosing `File` and `Quit ROOT` on the canvas toolbar.
+
+This function can be used indirectly via `SignalsViewer(path, ch, thr, BL_flag)`.
+It can be also used directly as follows:
+```
+$root
+[] .L SignalsViewer.C+
+[] SignalsViewerOsc("/home/path/to/data/2021_01_01_01_01/file.csv", 0, -1, 1)
+```
+
+## Comparing signals from different channels
+
+Use function:
+```c++
+Bool_t SignalsViewer(TString path_name, Int_t ch,  Bool_t BL_flag)
+```
+where arguments are:
+- `path_name` - path to the experimental data: for Desktop Digitizer path to the directory only, for oscilloscope path along with the name of the file
+- `ch_list` - vector containing list of channel numbers: for Desktop Digitizer [0-15], for oscilloscope [0-3]
+- `BL_flag` - flag indicating whether base line should be subtracted or not; if `kTRUE` base line will be calculated and subtracted, if `kFALSE` base line will be ignored; base line is calculated as average of first 50 samples in the signal
+
+This is interface function to view signals from many channels simultaneously. For the Desktop Digitizer maximum of 16 channels can be viewed at the same time. For the oscilloscope maximum of 4 channels can be viewed at the same time. To view next set of signals double click on the canvas. To examine threshold levels and T0 more carefully use `SignalsViewer()` function for a single channel. When done exit ROOT by choosing `File` and `Quit ROOT` on the canvas toolbar.
+
+Usage example (Desktop Digitizer):
+```
+$root
+[] .L SignalsViewer.C+
+[] SignalsViewer("/home/path/to/data/2021_01_01_01_01/", {0,1}, 1)
+```
+Usage example (oscilloscope):
+```
+$root
+[] .L SignalsViewer.C+
+[] SignalsViewer("/home/path/to/data/2021_01_01_01_01/file.csv", {0,1}, 1)
+```
+
+
+Alternatively use function (Desktop Digitizer only):
+```c++
+Bool_t SignalsViewerDD(TString path, std::vector <Int_t> ch_list, Bool_t BL_flag)
 ```
 where argumets are:
 - `path` - path to the directory containing experimental data; directory must contain `wave_x.dat` files recorded by the Desktop Digitizer
-- `ch_list` - list of channels given as standard vector;  up to 16 channels can be viewed at the same time
-- if `kTRUE` base line will be calculated and subtracted, if `kFALSE` base line will be ignored; base line is calculated as average of first 50 samples in the signal
+- `ch_list` - list of channels given as standard vector; up to 16 channels can be viewed at the same time [0-15]
+- `BL_flag` - flag indicating whether base line should be subtracted or not; if `kTRUE` base line will be calculated and subtracted, if `kFALSE` base line will be ignored; base line is calculated as average of first 50 samples in the signal
 
-This function allows to view signals from many channels simultaneously. Maximum of 16 channels can be viewed at the same time. To view next set of signals double click on the canvas.  When done exit ROOT by choosing `File` and ` Quit ROOT` on the canvas toolbar. To examine threshold levels and T0 more carefully use `SignalsViewer()` function for a single channel.
+This function allows to view signals from many channels simultaneously. Maximum of 16 channels can be viewed at the same time. To view next set of signals double click on the canvas.  When done exit ROOT by choosing `File` and `Quit ROOT` on the canvas toolbar. To examine threshold levels and T0 more carefully use `SignalsViewer()` function for a single channel.
 
-Usage example:
+This function can be used indirectly via `SignalsViewer(path, ch_list, BL_flag)`.
+It can be also used directly as follows:
 ```
 $ root
-[ ] .L SignalsViewer.C+
-[ ] SignalsViewer("/home/path/to/data/2021_01_01_01_01/",  {0,1},  1)
+[] .L SignalsViewer.C+
+[] SignalsViewerDD("/home/path/to/data/2021_01_01_01_01/",  {0,1},  1)
+```
+
+
+Alternatively use function (oscilloscope only):
+```c++
+Bool_t SignalsViewerOsc(TString path, std::vector <Int_t> ch_list, Bool_t BL_flag)
+```
+where arguments are:
+- `path` - full path and name of the `*.csv` file containing recorded data
+- `ch_list` - vector containing list of channel numbers; up to 4 channels can be viewed at the same time [0-3]
+- `BL_flag` - flag indicating whether base line should be subtracted or not; if `kTRUE` base line will be calculated and subtracted, if `kFALSE` base line will be ignored; base line is calculated as average of first 50 samples in the signal
+
+This function allows to view signals recorded by the oscilloscope from many channels simultaneously. Maximum of 4 channels can be viewed at the same time. To view next set of signals double click on the canvas.  When done exit ROOT by choosing `File` and `Quit ROOT` on the canvas toolbar. To examine threshold levels and T0 more carefully use SignalsViewer() function for a single channel.
+
+This function can be used indirectly via `SignalsViewer(path, ch_list, BL_flag)`.
+It can be also used directly as follows:
+```
+$ root
+[] .L SignalsViewer.C+
+[] SignalsViewerOsc("/home/path/to/data/2021_01_01_01_01/file.csv", {0,1}, 1)
 ```
 
 ## Plotting signals of chosen parameters
@@ -46,14 +142,14 @@ Bool_t CutAndView(TString path, Int_t ch, Int_t thr, CutType cut, std::vector <F
 ```
 where arguments are:
 - `path` - path to the directory containing experimental data; the directory must contain `wave_x.dat` files recorded by the Desktop Digitizer as well as ROOT files produced by the `sifi-framework` and associated params.txt file
-- `ch` - channel number
+- `ch` - channel number [0-16]
 - `thr` - threshold value [ADC channels]
 - `cut` - type of cut given as enumeration `CutType` (see below)
 - `range` - ranges for imposed cut given as standard vector; ranges should be given in order from min to max; when cut concerns more than one parameter provide ranges in order given in the enumeration name, i.e. for fAmpPE order is: min amplitude,  max amplitude, min PE, max PE
 - `first` - number of the first signal fulfilling the cut to be plotted
 - `last` - number of the last signal fulfilling the cut to be plotted
 
-This function allows to plot signals of chosen parameters.  Signals are plotted on one canvas, but separate pads. Threshold  level as well as T0 are marked. Base line is always subtracted.
+This function allows to plot signals of chosen parameters. At the moment only Desktop Digitizer file format is supported. Signals are plotted on one canvas, but separate pads. Threshold  level as well as T0 are marked. Base line, calculated from first 50 samples in the signal, is always subtracted.
 
 In order to select desired signals enumeration `CutType` representing different  types of cuts  is provided. The following enumerators are defined:
 - `fAmp` - cut on amplitude; provide amplitude min and max
@@ -70,11 +166,11 @@ In order to select desired signals enumeration `CutType` representing different 
 - `fAmpPESigVeto` - cut on amplitude, PE, base line sigma and veto flag; provide amplitude min and max, PE min and max and BL sigma max; veto flag is assumed to be 0.
 
 
- Usage example:
+Usage example:
 ```c++
 $ root
-[ ] .L SignalsViewer.C+
-[ ] CutAndView("/home/path/to/data/2021_01_01_01_01", 0, -164, CutType::fAmp, {100,200}, 1, 10)
+[] .L SignalsViewer.C+
+[] CutAndView("/home/path/to/data/2021_01_01_01_01", 0, -164, CutType::fAmp, {100,200}, 1, 10)
 ```
 
 ## Internal functions
