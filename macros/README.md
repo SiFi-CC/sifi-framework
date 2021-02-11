@@ -194,3 +194,42 @@ where arguments are:
 - `sptr` - pointer to SDDSignal object corresponding to the chosen signal
 
 This function allows to read single, chosen signal from the binary file. Chosen signal is returned in a form of histogram. Base line is subtracted. This function is not meant to be used independently, it was written as a tool for `CutAndView()` function. 
+
+# profile.sh
+This script sets paths necessary for sifi-framework to work:
+
+- `SIFIDIR` - path to the current official installation of the sifi-framework on scratch
+- `PATH`  - path to current official executables
+- `ROOTLOGON` - path tou your rootlogon.C script
+
+At the end of the file currently used installation of ROOT is loaded. At the moment we are using ROOT v. 6.22.06 installed on scratch.
+
+You should adjust this file according to your needs.
+
+Every time you need to use ROOT or sifi-framework run this script in your terminal:
+```
+. profile.sh
+```
+Alternatively add it to your `.bashrc` file, so it will be loaded automatically in every new bash session. Open `.bashrc` file:
+```
+kate ~/.bashrc &
+```
+Add path to your `profile.sh` at the end of the file:
+```
+. /home/user/path/to/profile.sh
+```
+Save and close.
+
+# rootlogon.C
+This script loads all necessary libraries to ROOT session. If it is present in your working directory it will be loaded automatically when you start ROOT. You can also set environment such that `rootlogon.C` will be loaded in every directory. For that you need to have `ROOTLOGON` variable correctly set in your `profile.sh`. Then open `.rootrc` file:
+```
+kate ~/.rootrc &
+```
+and add the following line:
+```
+Rint.Logon: $(ROOTLOGON)
+```
+Save and close. If `.rootrc` file doesn't exist create it first in your home directory.
+
+# params.txt
+This is examplary file containing parameters for sifi_dst. It contains parameters for unpackers, calibrators, lookup tables and detector geometry. Modify this file according to your needs. 
