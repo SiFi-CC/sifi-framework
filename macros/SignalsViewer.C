@@ -1177,6 +1177,13 @@ Bool_t CutAndView(TString path, Int_t ch, Int_t thr, CutType cut, std::vector<Fl
             }
         }
     }
+    
+    if(counter < (nsig - 1))
+    {
+        std::cout << "Warning in CutAndView()! Less signals found!" << std::endl;
+        std::cout << "Requested number of signals: " << nsig-1 << std::endl;
+        std::cout << "Found number of signals: " << counter << std::endl;
+    }
 
     input.close();
     return kTRUE;
