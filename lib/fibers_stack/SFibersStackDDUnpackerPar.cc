@@ -37,7 +37,6 @@ void SFibersStackDDUnpackerPar::clear()
     nAnaMode = 0;
     nIntMode = 0;
     nDeadTime = 0;
-    fSampleToNs = 0.0;
 }
 
 /**
@@ -79,7 +78,6 @@ bool SFibersStackDDUnpackerPar::getParams(SParContainer* parcont)
     if (!parcont->fill("nAnaMode", nAnaMode)) return false;
     if (!parcont->fill("nIntMode", nIntMode)) return false;
     if (!parcont->fill("nDeadTime", nDeadTime)) return false;
-    if (!parcont->fill("fSampleToNs", fSampleToNs)) return false;
 
     if (!(nPolarity == 0 || nPolarity == 1))
     {
@@ -112,12 +110,6 @@ bool SFibersStackDDUnpackerPar::getParams(SParContainer* parcont)
         exit(EXIT_FAILURE);
     }
 
-    if (fSampleToNs < 0)
-    {
-        std::cerr << "fSampleToNs cannot be smaller than 0!" << std::endl;
-        std::cerr << "fSampleToNs = " << fSampleToNs << std::endl;
-        exit(EXIT_FAILURE);
-     }
     return true;
 }
 
@@ -148,7 +140,6 @@ void SFibersStackDDUnpackerPar::print() const
     printf(" anamode = %d\n", nAnaMode);
     printf(" intmode = %d\n", nIntMode);
     printf(" deadtime = %d\n", nDeadTime);
-    printf(" sampletons = %f\n", fSampleToNs);
 }
 
 Float_t SFibersStackDDUnpackerPar::getThreshold(Int_t chan) const

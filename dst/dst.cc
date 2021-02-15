@@ -26,7 +26,6 @@
 #include "STaskManager.h"
 #include "SiFi.h"
 
-#include "SDataSource.h"
 #include "SDDSource.h"
 #include "SKSSource.h"
 
@@ -75,9 +74,6 @@ int main(int argc, char** argv)
         }
     }
 
-    SFibersStackDDUnpacker* unp = new SFibersStackDDUnpacker();
-    SFibersStackDDUnpacker::saveSamples(save_samples);
-
     while (optind < argc)
     {
         std::string inpstr(argv[optind]);
@@ -93,89 +89,41 @@ int main(int argc, char** argv)
             std::string name = inpstr.substr(pos2 + 1, inpstr.length() - pos2 - 1);
             std::string ext = name.substr(name.size() - 4,name.size()-1);
             uint16_t addr = std::stoi(saddr, nullptr, 16);
-            
-            // initialize parameters
-            pm()->setParamSource(params_file);
-            pm()->parseSource();
 
-            // initialize detectors
-            SDetectorManager* detm = SDetectorManager::instance();
+            if (ext == ".dat")
+            {
+                SFibersStackDDUnpacker* unp = new SFibersStackDDUnpacker();
+                SFibersStackDDUnpacker::saveSamples(save_samples);
 
-            detm->addDetector(new SFibersStackDetector("FibersStack"));
-
-            detm->initTasks();
-            detm->initParameterContainers();
-            detm->initCategories();
-
-            pm()->addLookupContainer(
-                "SFibersStackDDLookupTable",
-                new SFibersStackLookupTable("SFibersStackDDLookupTable", 0x1000, 0x1fff, 32));
-
-SFibersStackDDUnpackerPar * pDDUnpackerPar;
-pDDUnpackerPar = dynamic_cast<SFibersStackDDUnpackerPar*>(
-        pm()->getParameterContainer("SFibersStackDDUnpackerPar"));
-    if (!pDDUnpackerPar)
-    {
-        std::cerr << "Parameter container 'SFibersStackDDUnpackerPar' was not obtained!"
-                  << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    pDDUnpackerPar->print();
-
-//             Int_t sample_to_ns = pDDUnpackerPar->getSampleToNs();       
-//                     std::cout << "samplesssss_to_ns:" << sample_to_ns
-//                   << std::endl;
-            
-            //SDataSource *source; //auto source
-//             if(ext == ".dat")
-//             {
-//                 //SFibersStackDDUnpackerPar = 4.096;
-//                 std::cout << "data extention \".dat\"" << std::endl;
-//                 //std::cout << SFibersStackDDUnpackerPar::getADCtoMV() << std::endl;
-//                 SDDSource* source = new SDDSource(addr);
-//                 unp->setDataLen(1024);
-//                 source->addUnpacker(unp, {addr});
-//                 source->setInput(name, 1024 * sizeof(float));
-//                 sifi()->addSource(source);
-// 
-//             }
-//             else if(ext == ".csv")
-//             {
-//                 std::cout << "data extention \".csv\"" << std::endl;
-//                 SKSSource* source = new SKSSource(addr);
-//                 
-//                 //unp->setDataLen(0); //if lenght ==0 read from file ()
-//                 unp->setDataLen(640);
-//                 source->addUnpacker(unp, {addr});
-//                 //source->setInput(name, 0 * sizeof(float));
-//                 source->setInput(name, 640 * sizeof(float));
-//                 sifi()->addSource(source);
-//             }
-//             else 
-//             {
-//                 std::cout << "Incorrect data extention (should be \".dat\" or \".csv\")" << std::endl;
-//             }
-//  
-    
-    
-    
-//             SDDSource* source = new SDDSource(addr);
-//             unp->setDataLen(1024);
-//             source->addUnpacker(unp, {addr});
-//             source->setInput(name, 1024 * sizeof(float));
-//             sifi()->addSource(source);
-            
-            SKSSource* source = new SKSSource(addr);
-            unp->setDataLen(640);
-            source->addUnpacker(unp, {addr});
-            source->setInput(name, 640 * sizeof(float));
-            sifi()->addSource(source);
-        
+                SDDSource* source = new SDDSource(addr);
+                unp->setDataLen(1024);
+                source->addUnpacker(unp, {addr});
+                source->setInput(name, 1024 * sizeof(float));
+                sifi()->addSource(source);
+            }
+            else if (ext == ".csv")
+            {
+                SFibersStackDDUnpacker* unp = new SFibersStackDDUnpacker();
+                SFibersStackDDUnpacker::saveSamples(save_samples);
+                
+                SKSSource* source = new SKSSource(addr);
+                unp->setDataLen(640);
+                source->addUnpacker(unp, {addr});
+                source->setInput(name, 640 /* sizeof(float)*/);
+                sifi()->addSource(source);
+            }
+            else
+            {
+                std::cerr << "##### Error in dst: unknown data file extension!" << std::endl;
+                std::cerr << "Acceptable extensions: *.dat and *.csv" << std::endl;
+                std::cerr << "Given data file: " << name << std::endl;
+                std::exit(EXIT_FAILURE);
+            }
         }
 
         ++optind;
     }
-
+    
     // output files
     sifi()->setOutputFileName(output);
     sifi()->book();
@@ -189,27 +137,27 @@ pDDUnpackerPar = dynamic_cast<SFibersStackDDUnpackerPar*>(
 
     sifi()->getCategory(SCategory::CatGeantTrack, true);
 
-//     // initialize parameters
-//     pm()->setParamSource(params_file);
-//     pm()->parseSource();
-    
-//     // initialize detectors
-//     SDetectorManager* detm = SDetectorManager::instance();
-// 
-//     detm->addDetector(new SFibersStackDetector("FibersStack"));
-// 
-//     detm->initTasks();
-//     detm->initParameterContainers();
-//     detm->initCategories();
-// 
-//     pm()->addLookupContainer(
-//         "SFibersStackDDLookupTable",
-//         new SFibersStackLookupTable("SFibersStackDDLookupTable", 0x1000, 0x1fff, 32));
+    // initialize parameters
+    pm()->setParamSource(params_file);
+    pm()->parseSource();
+   
+    // initialize detectors
+    SDetectorManager* detm = SDetectorManager::instance();
+
+    detm->addDetector(new SFibersStackDetector("FibersStack"));
+ 
+    detm->initTasks();
+    detm->initParameterContainers();
+    detm->initCategories();
+ 
+    pm()->addLookupContainer(
+        "SFibersStackDDLookupTable",
+        new SFibersStackLookupTable("SFibersStackDDLookupTable", 0x1000, 0x1fff, 32));
 
     // initialize tasks
     STaskManager* tm = STaskManager::instance();
     tm->initTasks();
-
+    
     sifi()->setTree(new TTree());
     sifi()->loop(/*ev_limit*/ events);
 

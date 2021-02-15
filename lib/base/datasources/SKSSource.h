@@ -38,12 +38,9 @@ public:
     virtual bool readCurrentEvent() override;
     virtual void setInput(const std::string & filename, size_t length);
     virtual int getNSamples();
-    /// Returns number of samples
-    /// \return number of samples
-//     static Int_t getSampleToNs() { return nSamples; }
 
 private:
-//     static Int_t nSamples;
+    int samples;
     uint16_t subevent;          ///< subevent id
     std::string input;          ///< source file name
     std::ifstream istream;      ///< input file stream

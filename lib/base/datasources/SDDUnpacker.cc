@@ -38,8 +38,8 @@ bool SDDUnpacker::execute(unsigned long /*event*/, unsigned long /*seq_number*/,
 {
     if (length != data_length * sizeof(float))
     {
-        std::cerr << "Buffer length " << data_length << " does not fit source length " << length
-                  << "." << std::endl;
+        std::cerr << "SDDUnpacker: Buffer length " << data_length * sizeof(float) 
+                  << " does not fit source length " << length << "." << std::endl;
         abort();
     }
 

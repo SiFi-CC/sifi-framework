@@ -56,6 +56,18 @@ public:
     /// Finalize task
     /// \return success
     virtual bool finalize() { return true; };
+    
+    void setTimeBin(float bin_value) { time_bin = bin_value; }
+    
+    void setADCtomV(float coeff) { ADC_to_mV = coeff; }
+    
+    float getTimeBin(void) { return time_bin; }
+    
+    float getADCtomV(void) { return ADC_to_mV;}
+    
+private:
+    float  time_bin;
+    float  ADC_to_mV;
 };
 
 #endif /* SUNPACKER_H */
