@@ -102,13 +102,19 @@ bool SDDSource::readCurrentEvent()
     if (subevent != 0x0000)
     {
         if (!unpackers[subevent]) abort();
+        unpackers[subevent]->setTimeBin(1.);
+        unpackers[subevent]->setADCtomV(4.096);
         // TODO must pass event number to the execute
         unpackers[subevent]->execute(0, 0, subevent, buffer, buffer_size);
     }
     else
     {
         for (const auto& u : unpackers)
+        {
+            u.second->setTimeBin(1.);
+            u.second->setADCtomV(4.096);
             u.second->execute(0, 0, u.first, buffer, buffer_size);
+        }
     }
 
     return true;
