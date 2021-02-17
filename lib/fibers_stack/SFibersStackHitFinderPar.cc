@@ -44,6 +44,7 @@ bool SFibersStackHitFinderPar::getParams(SParContainer* parcont)
 {
     if (!parcont->fill("fA0", fA0)) return false;
     if (!parcont->fill("fLambda", fLambda)) return false;
+    if (!parcont->fill("fAlpha", fAlpha)) return false;
 
     return true;
 }
@@ -58,6 +59,7 @@ bool SFibersStackHitFinderPar::putParams(SParContainer* parcont) const
 {
     if (!parcont->add("fA0", fA0)) return false;
     if (!parcont->add("fLambda", fLambda)) return false;
+    if (!parcont->add("fAlpha", fAlpha)) return false;
 
     return true;
 }
@@ -69,4 +71,5 @@ void SFibersStackHitFinderPar::print() const
 {
     printf(" fA0 = %f\n", fA0);
     printf(" fLambda = %f\n", fLambda);
+    printf(" fAlpha = %f\n", fLambda);
 }

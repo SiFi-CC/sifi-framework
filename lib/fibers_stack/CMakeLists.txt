@@ -9,6 +9,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersStackLookup.cc
         SFibersStackDDUnpacker.cc
         SFibersStackDDUnpackerPar.cc
+        SFibersStackDDCalibratorPar.cc
         SFibersStackRaw.cc
         SFibersStackCalibrator.cc
         SFibersStackCalibratorPar.cc
@@ -27,6 +28,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersStackLookup.h
         SFibersStackDDUnpacker.h
         SFibersStackDDUnpackerPar.h
+        SFibersStackDDCalibratorPar.h
         SFibersStackRaw.h
         SFibersStackCalibrator.h
         SFibersStackCalibratorPar.h

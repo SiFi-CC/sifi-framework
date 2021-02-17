@@ -61,7 +61,7 @@ bool SFibersStackHitFinder::init()
     }
 
     // get calibrator fiber parameters
-    pHitFinderFiberPar = dynamic_cast<SCalContainer<2>*>(
+    pHitFinderFiberPar = dynamic_cast<SCalContainer<3>*>(
         pm()->getCalibrationContainer("SFibersStackHitFinderFiberPar"));
     if (!pHitFinderFiberPar)
     {
@@ -70,9 +70,10 @@ bool SFibersStackHitFinder::init()
         exit(EXIT_FAILURE);
     }
 
-    auto def = new SCalPar<2>();
+    auto def = new SCalPar<3>();
     (*def)[0] = 0.0;
     (*def)[1] = 1.0;
+    (*def)[2] = 1.0;
 
     pHitFinderFiberPar->setDefault(def);
 
@@ -151,17 +152,20 @@ bool SFibersStackHitFinder::execute()
 
         Float_t a0 = 0.0;
         Float_t lambda = 0.0;
+        Float_t alpha = 0.0;
 
         if (sifi()->isSimulation())
         {
             a0 = pHitFinderPar->getA0();
             lambda = pHitFinderPar->getLambda();
+            alpha = pHitFinderPar->getAlpha();
         }
         else
         {
-            SCalPar<2>* hfp = pHitFinderFiberPar->getPar(&chan);
+            auto* hfp = pHitFinderFiberPar->getPar(&chan);
             a0 = (*hfp)[0];
             lambda = (*hfp)[1];
+            alpha = (*hfp)[2];
         }
 
         Float_t rot = pGeomPar->getLayerRotation(loc[0], loc[1]);
@@ -178,6 +182,10 @@ bool SFibersStackHitFinder::execute()
 
         pHit->setXYZ(x, y, z);
         pHit->setU(u);
+
+        // calculate energy
+        Float_t E = alpha * sqrt(qdc_r * qdc_l);
+        pHit->setE(E, 0);
 
         // calculate position from times (inacccurate)
         Float_t v_p = 3e8 * 1e3 * 1e-9 / 1.82; // c * m/mm * ns/s / n_scint
