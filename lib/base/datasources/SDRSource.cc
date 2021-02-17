@@ -36,7 +36,27 @@ SDRSource::SDRSource() : SRootSource("Events"), subevent(0)
     tree.address.f = 0;
     tree.address.s = 'l';
 
-    // "Events" tree
+    fPrimEnergy = new std::vector<double>;
+    fSourcePosition = new std::vector<TVector3>;
+    fSourceDirection = new std::vector<TVector3>;
+
+    fComptonPosition = new TVector3;
+    // TVector3* fPhotonPosition{nullptr};
+    // TVector3* fElectronPosition{nullptr};
+
+    fPhotonDirection = new TVector3;
+
+    fPhotonPositions = new std::vector<TVector3>;
+    fElectronPositions = new std::vector<TVector3>;
+
+    fPhotonInteractions = new std::vector<int>;
+    fElectronInteractions = new std::vector<int>;
+
+    fPxPosPhot = new std::map<int,TVector3>;
+    fPxPosElec = new std::map<int,TVector3>;
+    fPxPosScin = new std::map<int,TVector3>;
+
+    // Define odjects for branches
     chain->SetBranchAddress("PrimEnergy", &fPrimEnergy);
     chain->SetBranchAddress("SourcePos", &fSourcePosition);
     chain->SetBranchAddress("SDir", &fSourceDirection);
