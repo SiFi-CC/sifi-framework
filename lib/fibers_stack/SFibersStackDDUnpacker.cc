@@ -22,8 +22,9 @@
 #include <iostream>
 #include <numeric>
 
-const Float_t adc_to_mv = 4.096;
-const Float_t sample_to_ns = 1.;
+ const Float_t adc_to_mv = 4.096; //TODO 
+ const Float_t sample_to_ns = 1.;
+ 
 /**
  * \class SFibersStackDDUnpacker
 \ingroup lib_fibers_stack
@@ -192,7 +193,7 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
     Int_t deadtime = pDDUnpackerPar->getDeadTime();
     Int_t blmode = pDDUnpackerPar->getBLMode(channel);
     Float_t veto_thr = pDDUnpackerPar->getVetoThreshold(channel);
-
+    
     SFibersStackChannel* lc =
         dynamic_cast<SFibersStackChannel*>(pLookUp->getAddress(fake_address, channel));
     SLocator loc(3);
@@ -211,7 +212,7 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
 
     pSamples->setAddress(loc[0], loc[1], loc[2]);
 
-    Float_t samples[1024];
+    Float_t samples[1024]; // TODO 
     size_t limit = length <= 1024 ? length : 1024;
 
     memcpy(samples, data, limit * sizeof(float));
@@ -219,17 +220,18 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
     // find baseline
     Float_t bl = -1;
     Float_t bl_sigma = 0;
+    Int_t samples_for_bl = 50; //TODO parameter?
 
     if (blmode == 0)
     {
-        bl = std::accumulate(samples, samples + 100, 0.);
-        bl /= 100.;
+        bl = std::accumulate(samples, samples + samples_for_bl, 0.);
+        bl /= samples_for_bl;
         bl_sigma = 0;
-        for (int i = 0; i < 100; ++i)
+        for (int i = 0; i < samples_for_bl; ++i)
         {
             bl_sigma += (bl - samples[i]) * (bl - samples[i]);
         }
-        bl_sigma = sqrt(bl_sigma / 100.);
+        bl_sigma = sqrt(bl_sigma / samples_for_bl);
     }
     else
     {

@@ -130,7 +130,7 @@ bool SKSSource::readCurrentEvent()
         if (i == samples-1) 
             time_stop = std::stof(csvRow[0]);
         
-        buffer[i] = stof(csvRow.at(1)); //TODO only channel 0 digitized at the moment
+        buffer[i] = std::stof(csvRow.at(1)); //TODO only channel 0 digitized at the moment
     }
     
     
