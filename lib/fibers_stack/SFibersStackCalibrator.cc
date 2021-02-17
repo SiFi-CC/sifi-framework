@@ -115,8 +115,8 @@ bool SFibersStackCalibrator::execute()
         SFibersStackChannel chan_r = chan_l;
         chan_r.side = 'r';
 
-        SCalPar<3>* cp_l = pCalibratorPar->getPar(&chan_l);
-        SCalPar<3>* cp_r = pCalibratorPar->getPar(&chan_r);
+        auto cp_l = *pCalibratorPar->getPar(&chan_l);
+        auto cp_r = *pCalibratorPar->getPar(&chan_r);
 
         // calc laboratory coordinates from digi data
         Float_t qdc_l = pRaw->getQDCL();
@@ -127,10 +127,10 @@ bool SFibersStackCalibrator::execute()
         // do your magic here with u, y and qdc
         //Float_t energy_l = cp_l->par[0] * qdc_l + cp_l->par[1]; // calibration - multiplication
         //Float_t energy_r = cp_r->par[0] * qdc_r + cp_r->par[1];
-        Float_t energy_l = (qdc_l/cp_l->par[0]) + cp_l->par[1];   // calibration - division
-        Float_t energy_r = (qdc_r/cp_r->par[0]) + cp_r->par[1];
-        time_l += cp_l->par[2];
-        time_r += cp_r->par[2];
+        Float_t energy_l = (qdc_l/cp_l[0]) + cp_l[1];   // calibration - division
+        Float_t energy_r = (qdc_r/cp_r[0]) + cp_r[1];
+        time_l += cp_l[2];
+        time_r += cp_r[2];
 
         SLocator loc(3);
         loc[0] = mod;

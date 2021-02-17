@@ -22,6 +22,7 @@
 class SCategory;
 class SFibersStackGeomPar;
 class SFibersStackDDUnpackerPar;
+class SFibersStackDDCalibratorPar;
 class SFibersStackLookupTable;
 
 class SIFI_EXPORT SFibersStackDDUnpacker : public SDDUnpacker
@@ -31,6 +32,7 @@ protected:
     SCategory * catDDSamples;                   ///< fibers raw category
     SCategory * catFibersRaw;                   ///< fibers raw category
     SFibersStackDDUnpackerPar * pDDUnpackerPar; ///< calibrator parameters
+    SFibersStackDDCalibratorPar * pDDCalPar;
     SFibersStackLookupTable * pLookUp;          ///< lookup table
 
 public:

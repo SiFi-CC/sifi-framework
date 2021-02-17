@@ -70,9 +70,9 @@ bool SFibersStackHitFinder::init()
         exit(EXIT_FAILURE);
     }
 
-    SCalPar<2>* def = new SCalPar<2>();
-    def->par[0] = 0.0;
-    def->par[1] = 1.0;
+    auto def = new SCalPar<2>();
+    (*def)[0] = 0.0;
+    (*def)[1] = 1.0;
 
     pHitFinderFiberPar->setDefault(def);
 
@@ -160,8 +160,8 @@ bool SFibersStackHitFinder::execute()
         else
         {
             SCalPar<2>* hfp = pHitFinderFiberPar->getPar(&chan);
-            a0 = hfp->par[0];
-            lambda = hfp->par[1];
+            a0 = (*hfp)[0];
+            lambda = (*hfp)[1];
         }
 
         Float_t rot = pGeomPar->getLayerRotation(loc[0], loc[1]);

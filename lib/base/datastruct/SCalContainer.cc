@@ -86,6 +86,22 @@ template <int N> uint SCalPar<N>::write(char* buffer, size_t n) const
     return 0;
 }
 
+template <int N> float & SCalPar<N>::operator[](int n) {
+    if (n < 0 or n > N-1) {
+        std::cerr << "SCalPar<N>::operator[]: Index n=" << n << " outside range(0;" << N-1 << ")" << std::endl;
+        abort();
+    }
+    return par[n];
+}
+
+template <int N> const float SCalPar<N>::operator[](int n) const {
+    if (n < 0 or n > N-1) {
+        std::cerr << "SCalPar<N>::operator[]: Index n=" << n << " outside range(0;" << N-1 << ")" << std::endl;
+        abort();
+    }
+    return par[n];
+}
+
 /**
  * Prints the calibration parameters. See SLookupChannel::print() for details.
  *
@@ -225,5 +241,7 @@ template <int N> void SCalContainer<N>::print()
     }
 }
 
+template class SCalPar<2>;
+template class SCalPar<3>;
 template class SCalContainer<2>;
 template class SCalContainer<3>;

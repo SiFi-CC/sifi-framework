@@ -13,6 +13,7 @@
 
 #include "SCalContainer.h"
 
+#include "SFibersStackDDCalibratorPar.h"
 #include "SFibersStackCalibratorPar.h"
 #include "SFibersStackDigitizerPar.h"
 #include "SFibersStackGeomPar.h"
@@ -101,6 +102,8 @@ bool SFibersStackDetector::initContainers()
     else
     {
         pm()->addParameterContainer("SFibersStackDDUnpackerPar", new SFibersStackDDUnpackerPar());
+        pm()->addCalibrationContainer("SFibersStackDDCalibratorPar",
+                                      new SFibersStackDDCalibratorPar("SFibersStackDDCalibratorPar"));
         pm()->addCalibrationContainer("SFibersStackCalibratorPar",
                                       new SFibersStackCalibratorPar("SFibersStackCalibratorPar"));
     }
