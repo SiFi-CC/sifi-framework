@@ -293,7 +293,9 @@ bool SDRSource::readCurrentEvent()
                 }
                 else
                 {
-                    std::cerr << "Corresponding hit not found: SiPmID = " << c.first << std::endl;
+                    std::cerr << "Corresponding fiber_id not found: " << fiber_id
+                              << " for SiPmID: " << c.first
+                              << " with SiPmID fold: " << sipm_fold << std::endl;
                     continue;
                 }
 

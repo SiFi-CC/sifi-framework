@@ -103,6 +103,8 @@ bool SSiFiCCDetResImporter::execute(ulong /*event*/, ulong /*seq_number*/, uint1
 
     for (auto t : tree->kine)
     {
+        if (t.dir.Mag() == 0) continue;
+
         SGeantTrack* pTrack = reinterpret_cast<SGeantTrack*>(catGeantTrack->getNewSlot());
         pTrack = new (pTrack) SGeantTrack;
         TVector3 v_p = t.dir;

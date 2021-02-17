@@ -96,7 +96,7 @@ void SiFi::setSimulation(bool simulation)
     {
         // Here register all detector independen categories
         size_t sizes[1];
-        sizes[0] = 200;
+        sizes[0] = 250;
         registerCategory(SCategory::CatGeantTrack, "SGeantTrack", 1, sizes, true);
     }
 }
