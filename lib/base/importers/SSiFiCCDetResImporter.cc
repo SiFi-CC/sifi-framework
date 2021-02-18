@@ -124,19 +124,17 @@ bool SSiFiCCDetResImporter::execute(ulong /*event*/, ulong /*seq_number*/, uint1
     pCal->setAddress(loc[0], loc[1], loc[2]);
     if (side == 'l' and pCal->getQDCL() == 0.0)
     {
-        pCal->setGeantX(u);
-        pCal->setGeantY(v);
-        pCal->setGeantZ(pos_z);
+        pCal->setGeantPoint({u, v, pos_z});
         pCal->setQDCL(tree->data.counts);
         pCal->setTimeL(tree->data.time);
+        pCal->setGeantEnergyLoss(tree->energy_dep);
     }
     if (side == 'r' and pCal->getQDCR() == 0.0)
     {
-        pCal->setGeantX(u);
-        pCal->setGeantY(v);
-        pCal->setGeantZ(pos_z);
+        pCal->setGeantPoint({u, v, pos_z});
         pCal->setQDCR(tree->data.counts);
         pCal->setTimeR(tree->data.time);
+        pCal->setGeantEnergyLoss(tree->energy_dep);
     }
 
     return true;

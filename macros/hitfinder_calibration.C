@@ -147,7 +147,7 @@ int hitfinder_calibration(const char* datafile = 0, const char* paramfile = "par
 
             SFibersStackCalSim* pCalSim = (SFibersStackCalSim*)pCatCalSim->getObject(loc);
 
-            y_sim = pCalSim->getGeantY();
+            y_sim = pCalSim->getGeantPoint().Y();
 
             hPosSim->Fill(y_sim);
             hMLRY->Fill(MLR, y_sim);

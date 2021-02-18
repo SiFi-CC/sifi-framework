@@ -139,9 +139,7 @@ bool SFibersStackDigitizer::execute()
         pCal->setQDCL(pHit->getLightL());
         pCal->setQDCR(pHit->getLightR());
         pCal->setGeantEnergyLoss(pHit->getEnergyLoss());
-        pCal->setGeantX(0.); // FIXME fetch data from geant
-        pCal->setGeantY(0.);
-        pCal->setGeantZ(0.);
+        pCal->setGeantPoint({0., 0., 0.}); // FIXME fetch data from geant
     }
 
     return true;

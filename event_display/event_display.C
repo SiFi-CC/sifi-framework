@@ -148,6 +148,7 @@ struct MultiView
 #include "SFibersStackDetector.h"
 #include "SFibersStackGeomPar.h"
 #include "SFibersStackHit.h"
+#include "SFibersStackCluster.h"
 #include "SGeantTrack.h"
 #include "SLocator.h"
 #include "SLoop.h"
@@ -183,9 +184,10 @@ Int_t sifi_event_id = 0; ///< Current event id.
 
 SLoop* loop = nullptr;
 SFibersStackGeomPar* pGeomPar = nullptr;
+SCategory* pCatGeantTrack = nullptr;
 SCategory* pCatCalSim = nullptr;
 SCategory* pCatHitSim = nullptr;
-SCategory* pCatGeantTrack = nullptr;
+SCategory* pCatCluster = nullptr;
 
 // TEveTrackList* gTrackList = nullptr;
 
@@ -249,6 +251,7 @@ void event_display(const char* datafile = 0, const char* paramfile = "params.txt
     pCatGeantTrack = SCategoryManager::getCategory(SCategory::CatGeantTrack);
     pCatCalSim = SCategoryManager::getCategory(SCategory::CatFibersStackCal);
     pCatHitSim = SCategoryManager::getCategory(SCategory::CatFibersStackHit);
+    pCatCluster = SCategoryManager::getCategory(SCategory::CatFibersStackClus);
 
     Bool_t load = 0;
 
@@ -414,7 +417,7 @@ TEveGeoTopNode* make_geometry()
                                           pGeomPar->getLayerRotation(i, j) == 0 ? rot0 : rot90));
         }
 
-        top->AddNode(m, i, new TGeoTranslation(0, 0, 200 + 200 * i));
+        top->AddNode(m, i, new TGeoTranslation(0, 0, pGeomPar->getModuleZ(i)));
     }
 
     //--- close the gGeometry
@@ -714,9 +717,10 @@ void sifi_read()
         // printf("EVENT: %d, %d/%d  %d %d %d  GEO: %#x (%#x)\n", sifi_event_id, j, nn, m,
         // l, f, all_fibers[h], h);
 
-        Float_t x = pHit->getX();
-        Float_t y = pHit->getY();
-        Float_t z = 200 + m * 200. + pHit->getZ();
+        TVector3 pt = pHit->getPoint();
+        Float_t x = pt.X();
+        Float_t y = pt.Y();
+        Float_t z = pt.Z();
 
         hits->SetPoint(j, x, y, z);
         // pHit->print();
@@ -725,7 +729,9 @@ void sifi_read()
         Float_t ql = pCalSim->getQDCL() / scale;
         Float_t qr = pCalSim->getQDCR() / scale;
 
-        ghits->SetPoint(j, pCalSim->getGeantX(), pCalSim->getGeantY(), pCalSim->getGeantZ());
+        ghits->SetPoint(j, pCalSim->getGeantPoint().X(),
+                           pCalSim->getGeantPoint().Y(),
+                           pCalSim->getGeantPoint().Z());
 
         if (pGeomPar->getLayerRotation(m, l) == 0)
         {
@@ -940,4 +946,36 @@ void sifi_read()
         }
         gEve->AddElement(list);
     }
+
+    // clusters
+
+    size_t n_clus = pCatCluster->getEntries();
+    printf("Clusters # = %d\n", n_clus);
+
+    auto clusters = new TEveBoxSet("Clusters");
+    clusters->UseSingleColor();
+    clusters->SetMainColor(charge_color);
+    clusters->Reset(TEveBoxSet::kBT_AABox, kFALSE, 64);
+
+    float clus_dx = 5.;
+    float clus_dy = 5.;
+    float clus_dz = 5.;
+
+    for (uint j = 0; j < n_clus; ++j)
+    {
+        SFibersStackCluster* pClus = (SFibersStackCluster*)pCatCluster->getObject(j);
+
+//         pClus->getAddress(m, l, f);
+//         loc[0] = m;
+//         loc[1] = l;
+//         loc[2] = f;
+
+        TVector3 point = pClus->getPoint();
+        Float_t x = point.X();
+        Float_t y = point.Y();
+        Float_t z = point.Z();
+
+        clusters->AddBox(x-clus_dx, y-clus_dy, z-clus_dz, clus_dx*2, clus_dy*2, clus_dz*2);
+    }
+    gEve->AddElement(clusters);
 }

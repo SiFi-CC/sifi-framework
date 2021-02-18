@@ -11,9 +11,9 @@
 
 #include "SFibersStackHitFinder.h"
 #include "SCategory.h"
-#include "SFibersStackCal.h"
+#include "SFibersStackCalSim.h"
 #include "SFibersStackGeomPar.h"
-#include "SFibersStackHit.h"
+#include "SFibersStackHitSim.h"
 #include "SFibersStackHitFinderPar.h"
 #include "SLocator.h"
 #include "SLookup.h"
@@ -138,7 +138,10 @@ bool SFibersStackHitFinder::execute()
         if (!pHit)
         {
             pHit = reinterpret_cast<SFibersStackHit*>(catFibersHit->getSlot(loc));
-            new (pHit) SFibersStackHit;
+            if (sifi()->isSimulation())
+                pHit = new (pHit) SFibersStackHitSim;
+            else
+                pHit = new (pHit) SFibersStackHit;
             pHit->Clear();
         }
 
@@ -172,26 +175,34 @@ bool SFibersStackHitFinder::execute()
 
         // calculate position from MLR
         Float_t u = (log(sqrt(qdc_r / qdc_l)) - a0) * lambda;
+        Float_t s_u = 5.;
 
         // the fiber is taken from geometry
         Float_t v = pGeomPar->getFiberOffsetX(mod, lay) + fib * pGeomPar->getFibersPitch(mod, lay);
+        Float_t s_v = 1;
 
         Float_t x = v * cos(rot * M_PI / 180) + u * sin(rot * M_PI / 180);
         Float_t y = v * sin(rot * M_PI / 180) + u * cos(rot * M_PI / 180);
-        Float_t z = pGeomPar->getFiberOffsetY(mod, lay);
 
-        pHit->setXYZ(x, y, z);
-        pHit->setU(u);
+        Float_t s_x = s_v * cos(rot * M_PI / 180) + s_u * sin(rot * M_PI / 180);
+        Float_t s_y = s_v * sin(rot * M_PI / 180) + s_u * cos(rot * M_PI / 180);
+
+        Float_t z = pGeomPar->getFiberOffsetY(mod, lay) + pGeomPar->getModuleZ(mod);
+        Float_t s_z = 1.;
+
+        pHit->getPoint().SetXYZ(x, y, z);
+        pHit->getErrors().SetXYZ(s_x, s_y, s_z);
+        pHit->setU(u, 10.);
 
         // calculate energy
         Float_t E = alpha * sqrt(qdc_r * qdc_l);
         pHit->setE(E, 0);
 
-        // calculate position from times (inacccurate)
-        Float_t v_p = 3e8 * 1e3 * 1e-9 / 1.82; // c * m/mm * ns/s / n_scint
-        Float_t hitPosTime = ((time_l - time_r) * v_p) / 2;
-        pHit->setXt(hitPosTime);
-        pHit->setXtError(0.0);
+        SFibersStackCalSim * pCalSim = dynamic_cast<SFibersStackCalSim*>(pCal);
+        if (sifi()->isSimulation() && pCalSim) {
+            ((SFibersStackHitSim*)pHit)->setGeantEnergyLoss(pCalSim->getGeantEnergyLoss());
+            ((SFibersStackHitSim*)pHit)->getGeantPoint() = pCalSim->getGeantPoint();
+        }
     }
 
     return true;

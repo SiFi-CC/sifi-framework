@@ -58,6 +58,15 @@ bool SFibersStackGeomPar::getParams(SParContainer* parcont)
     if (modules) delete[] mods;
     mods = new SingleModule[modules];
 
+    // get module z
+    TArrayF _mz;
+    if (!parcont->fill("fModuleZ", _mz)) return false;
+    if (_mz.GetSize() != (modules))
+    {
+        std::cerr << "Size of fModuleZ doesn't match nModules" << std::endl;
+        return false;
+    }
+
     // get layers
     TArrayI _l;
     if (!parcont->fill("nLayers", _l)) return false;
@@ -113,6 +122,7 @@ bool SFibersStackGeomPar::getParams(SParContainer* parcont)
     int cnt_layers = 0;
     for (int m = 0; m < modules; ++m)
     {
+        mods[m].module_z = _mz[m];
         mods[m].layers = _l[m];
         mods[m].fibers.Set(mods[m].layers);
         mods[m].layer_rotation.Set(mods[m].layers);
@@ -157,6 +167,7 @@ void SFibersStackGeomPar::print() const
     printf("Number of modules = %d\n", modules);
     for (int m = 0; m < modules; ++m)
     {
+        printf(" [%2d] module z: %f", m, mods[m].module_z);
         printf(" +++\n layers = %d\n", mods[m].layers);
         printf(" fibers:");
         for (int l = 0; l < mods[m].layers; ++l)
@@ -175,6 +186,20 @@ void SFibersStackGeomPar::print() const
             printf(" %#.2f", mods[m].fibers_pitch[l]);
         putchar('\n');
     }
+}
+
+/**
+ * Get module z
+ *
+ * \param m module
+ * \return z-coordinate
+ */
+Float_t SFibersStackGeomPar::getModuleZ(Int_t m) const
+{
+    if (mods and m < modules)
+        return mods[m].module_z;
+    else
+        return -1;
 }
 
 /**

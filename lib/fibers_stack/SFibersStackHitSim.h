@@ -9,26 +9,24 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#ifndef SFIBERSSTACKCALSIM_H
-#define SFIBERSSTACKCALSIM_H
+#ifndef SFIBERSSTACKHITSIM_H
+#define SFIBERSSTACKHITSIM_H
 
-#include "SFibersStackCal.h"
+#include "SFibersStackHit.h"
 
-#include <TVector3.h>
-
-class SIFI_EXPORT SFibersStackCalSim : public SFibersStackCal
+class SIFI_EXPORT SFibersStackHitSim : public SFibersStackHit
 {
 public:
     // data members
-    Float_t fGeantEloss{0};         ///< energy loss from Geant
+    Float_t fGeantEloss{0};     ///< energy loss from Geant
     TVector3 fGeantPoint{0,0,0};    ///< geant X,Y,Z
     enum InteractionType { PHOTON, ELECTRON, SCINT } type;
 
 public:
     // constructors
-    SFibersStackCalSim() = default;
+    SFibersStackHitSim() = default;
     // detructor
-    virtual ~SFibersStackCalSim() = default;
+    virtual ~SFibersStackHitSim() = default;
 
     // inherited from ROOT
     virtual void Clear(Option_t* opt = "") override;
@@ -48,10 +46,10 @@ public:
     TVector3 & getGeantPoint() { return fGeantPoint; }
     const TVector3 & getGeantPoint() const { return fGeantPoint; }
 
-    void print() const override;
+    virtual void print() const override;
 
 private:
-    ClassDefOverride(SFibersStackCalSim, 1);
+    ClassDefOverride(SFibersStackHitSim, 1);
 };
 
-#endif /* SFIBERSSTACKCALSIM_H */
+#endif /* SFIBERSSTACKHITSIM_H */

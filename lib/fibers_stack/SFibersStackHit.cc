@@ -31,8 +31,8 @@ void SFibersStackHit::Clear(Option_t* /*opt*/)
     layer = -1;
     fiber = -1;
 
-    x = y = z = 0.;
-    sx = sy = sz = 0.;
+    point.Clear();
+    errors.Clear();
     E = sE = 0.;
     t = st = 0.;
 }
@@ -42,7 +42,7 @@ void SFibersStackHit::Clear(Option_t* /*opt*/)
  */
 void SFibersStackHit::print() const
 {
-    printf("FIBER HIT m,l,f=%d,%d,%d  x,y,z= %.2f,%.2f,%.2f (%.2f,%.2f,%.2f)  u=%.2f (%.2f)  "
-           "E= %.2f +- %.2f  Time= %.2f +- %.2f    z_t = %.2f +- %.2f\n",
-           module, layer, fiber, x, y, z, sx, sy, sz, u, su, E, sE, t, st, xt, sxt);
+    printf("FIBER HIT m,l,f=%2d,%2d,%2d  x,y,z= % 6.2f,% 6.2f,% 7.2f (%4.2f,%4.2f,%4.2f)  u= % 6.2f (%4.2f)  "
+           "E= %7.2f +- %5.2f  Time= %4.2f +- %4.2f\n",
+           module, layer, fiber, point.x(), point.y(), point.z(), errors.x(), errors.y(), errors.z(), u, su, E, sE, t, st);
 }

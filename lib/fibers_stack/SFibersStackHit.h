@@ -15,6 +15,7 @@
 #include "sifi_export.h"
 
 #include <TObject.h>
+#include <TVector3.h>
 
 class SIFI_EXPORT SFibersStackHit : public TObject
 {
@@ -24,16 +25,10 @@ protected:
     Int_t layer{-1};    ///< address - layer
     Int_t fiber{-1};    ///< address - fiber
 
-    Float_t x{0};       ///< x-coord in the lab system, reconstructed from M_LR
-    Float_t y{0};       ///< y-coord in the lab system
-    Float_t z{0};       ///< z-coord in the lab system
-    Float_t xt{0};      ///< x-coord in the lab system, reconstructed from times
-    Float_t u{0};       ///< u-coord along the fiber
+    TVector3 point;
+    TVector3 errors;
 
-    Float_t sx{0};      ///< sigma of x
-    Float_t sy{0};      ///< sigma of y
-    Float_t sz{0};      ///< sigma of z
-    Float_t sxt{0};     ///< sigma of xt
+    Float_t u{0};       ///< u-coord along the fiber
     Float_t su{0};      ///< sigma of u
 
     Float_t E{0};       ///< Energy
@@ -72,43 +67,12 @@ public:
         f = fiber;
     }
 
-    /// Set hit coordinates
-    /// \param _x x coordinate
-    /// \param _y x coordinate
-    /// \param _z x coordinate
-    void setXYZ ( Float_t _x, Float_t _y, Float_t _z )
-    {
-        x = _x;
-        y = _y;
-        z = _z;
-    }
-    /// Set x-hit coordinate reconstructed from times
-    /// \param _xt x coordinate
-    void setXt ( Float_t _xt )
-    {
-        xt = _xt;
-    }
     /// Set u-hit coordinate reconstructed from times
     /// \param _u u coordinate
-    void setU ( Float_t _u )
+    void setU ( Float_t _u, Float_t _su )
     {
         u = _u;
-    }
-    /// Set hit coordinate errors
-    /// \param _sx x-coordinate error
-    /// \param _sy x-coordinate error
-    /// \param _sz x-coordinate error
-    void setXYZErrors ( Float_t _sx, Float_t _sy, Float_t _sz )
-    {
-        sx = _sx;
-        sy = _sy;
-        sz = _sz;
-    }
-    /// Set hit xt-coordinate errors
-    /// \param _sxt xt-coordinate error
-    void setXtError ( Float_t _sxt )
-    {
-        sxt = _sxt;
+        su = _su;
     }
     /// Set Energy value
     /// \param _E energy
@@ -127,52 +91,19 @@ public:
         st = _st;
     }
 
-    /// Get x-cooridnate
-    /// \return transverse coordinate
-    Float_t getX() const
-    {
-        return x;
-    }
-    /// Get y-cooridnate
-    /// \return longnitudal coordinate
-    Float_t getY() const
-    {
-        return y;
-    }
-    /// Get z-cooridnate
-    /// \return ... coordinate
-    Float_t getZ() const
-    {
-        return z;
-    }
-    /// Get z-cooridnate
-    /// \return ... coordinate
-    Float_t getXt() const
-    {
-        return xt;
-    }
     /// Get u-cooridnate
     /// \return ... coordinate
     Float_t getU() const
     {
         return u;
     }
-    /// Get XYZ errors
-    /// \param _sx sigma of x
-    /// \param _sy sigma of y
-    /// \param _sz sigma of z
-    void getXYZErrors ( Float_t & _sx, Float_t & _sy, Float_t & _sz ) const
+    /// Get sigma of u-coordinate
+    /// \return U
+    Float_t getUError() const
     {
-        _sx = sx;
-        _sy = sy;
-        _sz = sz;
+        return su;
     }
-    /// Get Xt errors
-    /// \return xt error
-    Float_t getXtError() const
-    {
-        return sxt;
-    }
+
     /// Get Energy value
     /// \return qdc
     Float_t getE() const
@@ -198,7 +129,15 @@ public:
         return sE;
     }
 
-    void print() const;
+    // get point vector
+    TVector3 & getPoint() { return point; }
+    const TVector3 & getPoint() const { return point; }
+
+    // get point errors vector
+    TVector3 & getErrors() { return errors; }
+    const TVector3 & getErrors() const { return errors; }
+
+    virtual void print() const;
 
     ClassDef ( SFibersStackHit, 1 ); // container for fibers stack raw data
 };
