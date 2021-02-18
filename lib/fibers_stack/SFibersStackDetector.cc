@@ -128,6 +128,11 @@ bool SFibersStackDetector::initCategories()
     sizes[0] = modules;
     sizes[1] = layers;
     sizes[2] = fibers;
+
+    size_t sizes_clus[2];
+    sizes_clus[0] = modules;
+    sizes_clus[1] = 10;
+
     if (isSimulation())
     {
         if (!dm->registerCategory(SCategory::CatGeantFibersRaw, "SGeantFibersRaw", 250, true))

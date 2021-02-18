@@ -14,14 +14,18 @@
 
 #include "sifi_export.h"
 
-#include "SFibersStackHit.h"
-
 #include <TObject.h>
+#include <TVector3.h>
 
 class SIFI_EXPORT SFibersStackCluster : public TObject
 {
   protected:
     // members
+    Int_t module{-1};  ///< address - module
+    Int_t cluster{-1}; ///< address - layer
+
+    TVector3 point;
+    TVector3 errors;
     std::vector<int> hits;
 
   public:
@@ -37,12 +41,20 @@ class SIFI_EXPORT SFibersStackCluster : public TObject
     /// \param m module
     /// \param l layer
     /// \param f fiber
-    void setAddress(Int_t m, Int_t l, Int_t f) { module = m; layer = l; fiber = f; }
+    void setAddress(Int_t m, Int_t c)
+    {
+        module = m;
+        cluster = c;
+    }
     /// Get address
     /// \param m module
     /// \param l layer
     /// \param f fiber
-    void getAddress(Int_t & m, Int_t & l, Int_t & f) const { m = module; l = layer; f = fiber; }
+    void getAddress(Int_t& m, Int_t& c) const
+    {
+        m = module;
+        c = cluster;
+    }
 
     /// Add cluster component id
     /// \param id hit id
@@ -50,7 +62,15 @@ class SIFI_EXPORT SFibersStackCluster : public TObject
 
     /// Get cluster components
     /// \return hits id vector
-    const std::vector<int> & getHitsArray() { return hits; }
+    const std::vector<int>& getHitsArray() { return hits; }
+
+    // get point vector
+    TVector3& getPoint() { return point; }
+    const TVector3& getPoint() const { return point; }
+
+    // get point errors vector
+    TVector3& getErrors() { return errors; }
+    const TVector3& getErrors() const { return errors; }
 
     void print() const;
 

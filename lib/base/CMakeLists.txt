@@ -80,6 +80,7 @@ SIFI_GENERATE_LIBRARY(
     PRIVATE_LIBRARIES
         ROOT::Core
         ROOT::Tree
+        SiFiTools
     INCLUDE_DIRS
         core
         datasources

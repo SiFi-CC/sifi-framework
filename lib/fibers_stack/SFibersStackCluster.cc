@@ -22,12 +22,11 @@ A container for Fibers Stack Raw data
 /**
  * Clear object
  * Parameter options are ignored, for ROOT compatibility.
- *
- * \param opt options
  */
-void SFibersStackCluster::Clear(Option_t* opt)
+void SFibersStackCluster::Clear(Option_t* /*opt*/)
 {
-    SFibersStackHit::Clear(opt);
+    point.Clear();
+    errors.Clear();
     hits.clear();
 }
 
