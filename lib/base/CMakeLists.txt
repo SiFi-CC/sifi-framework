@@ -42,6 +42,7 @@ SIFI_GENERATE_LIBRARY(
 
         util/SLoop.cc
         util/SRootFileHeader.cc
+
     HEADERS
         core/SiFi.h
         core/SCategoryManager.h
@@ -75,11 +76,10 @@ SIFI_GENERATE_LIBRARY(
 
         util/SLoop.h
         util/SRootFileHeader.h
-    LIBRARIES
+
+    PRIVATE_LIBRARIES
         ROOT::Core
         ROOT::Tree
-        Geant
-        SiFiTools
     INCLUDE_DIRS
         core
         datasources

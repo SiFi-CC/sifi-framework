@@ -40,7 +40,7 @@ managing all data operations. It loads a root tree from specified file.
 SCategory* gNullSCategoryPtr = 0;
 
 SiFi* SiFi::mm = nullptr;
-SiFi::CategoryInfo SiFi::cinfovec[SCategory::CatLimitDoNotUse * 2] = {};
+SiFi::CategoryInfo SiFi::cinfovec[SCategory::CatLimitDoNotUse] = {};
 
 /**
  * Returns instance of the Detector Manager class.
@@ -309,10 +309,10 @@ SCategory* SiFi::buildCategory(SCategory::Cat cat, bool persistent)
     cinfo.persistent = persistent;
     SCategory* cat_ptr =
         new SCategory(cinfo.name.c_str(), cinfo.dim, cinfo.sizes, cinfo.simulation);
-    cinfo.ptr = cat_ptr;
 
     if (cat_ptr)
     {
+        cinfo.ptr = cat_ptr;
         categories[cat] = cat_ptr;
         fileHeader.catName[cat] = cinfo.name;
         return cat_ptr;

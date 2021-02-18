@@ -31,7 +31,7 @@ A Category abstract interface
 TObject* pNullSCategoryPtr = nullptr;
 
 /// Default consructor
-SCategory::SCategory() : TObject(), data(nullptr), entries(0)
+SCategory::SCategory() : TObject(), data(nullptr)
 {
     header.clear();
     index.clear();
@@ -46,7 +46,7 @@ SCategory::SCategory() : TObject(), data(nullptr), entries(0)
  * \param simulation set tru if category for simulation data
  */
 SCategory::SCategory(const char* name, size_t dim, size_t* sizes, bool simulation)
-    : TObject(), data(nullptr), entries(0)
+    : TObject(), data(nullptr)
 {
     header.clear();
     index.clear();
@@ -130,7 +130,7 @@ TObject*& SCategory::getSlot(const SLocator& n)
         return pNullSCategoryPtr;
     }
 
-    if (!getObject(n)) ++entries;
+    if (!getObject(n)) {};
 
     return data->operator[](pos);
 }

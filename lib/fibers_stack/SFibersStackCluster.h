@@ -18,15 +18,15 @@
 
 #include <TObject.h>
 
-class SIFI_EXPORT SFibersStackCluster : public SFibersStackHit
+class SIFI_EXPORT SFibersStackCluster : public TObject
 {
-protected:
+  protected:
     // members
     std::vector<int> hits;
 
-public:
+  public:
     // constructor
-    SFibersStackCluster();
+    SFibersStackCluster() = default;
     virtual ~SFibersStackCluster() = default;
 
     // inherited from ROOT
@@ -54,7 +54,7 @@ public:
 
     void print() const;
 
-    ClassDef(SFibersStackCluster, 1);   // container for fibers stack raw data
+    ClassDef(SFibersStackCluster, 1); // container for fibers stack raw data
 };
 
 #endif /* SFIBERSSTACKCLUSTER_H */

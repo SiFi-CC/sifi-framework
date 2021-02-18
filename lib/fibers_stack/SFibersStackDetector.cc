@@ -148,7 +148,7 @@ bool SFibersStackDetector::initCategories()
             return false;
     }
 
-    if (!dm->registerCategory(SCategory::CatFibersStackClus, "SFibersStackClus", 10, false))
+    if (!dm->registerCategory(SCategory::CatFibersStackClus, "SFibersStackCluster", 2, sizes_clus, false))
         return false;
 
     return true;

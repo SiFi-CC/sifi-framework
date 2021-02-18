@@ -42,7 +42,8 @@ SIFI_GENERATE_LIBRARY(
         SFibersStackHit.h
         SFibersStackHitSim.h
         SFibersStackCluster.h
-    LIBRARIES
+
+    PRIVATE_LIBRARIES
         ROOT::Core
         SiFi
         Geant

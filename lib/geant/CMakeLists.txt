@@ -8,7 +8,7 @@ SIFI_GENERATE_LIBRARY(
     HEADERS
         SGeantFibersRaw.h
         SGeantTrack.h
-    LIBRARIES
+    PRIVATE_LIBRARIES
         ROOT::Core
         ROOT::Physics
 )
