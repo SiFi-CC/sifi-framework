@@ -282,17 +282,7 @@ bool SDRSource::readCurrentEvent()
                 int fiber_id = c.first % sipm_fold;
                 std::map<int, TVector3>::iterator iter;
 
-                if ((iter = fPxPosPhot->find(fiber_id)) != fPxPosPhot->end())
-                {
-                    tree.pos = iter->second;
-                    tree.type = SFibersStackCalSim::InteractionType::PHOTON;
-                }
-                else if ((iter = fPxPosElec->find(fiber_id)) != fPxPosElec->end())
-                {
-                    tree.pos = iter->second;
-                    tree.type = SFibersStackCalSim::InteractionType::ELECTRON;
-                }
-                else if ((iter = fPxPosScin->find(fiber_id)) != fPxPosScin->end())
+                if ((iter = fPxPosScin->find(fiber_id)) != fPxPosScin->end())
                 {
                     tree.pos = iter->second;
                     tree.type = SFibersStackCalSim::InteractionType::SCINT;
@@ -307,15 +297,7 @@ bool SDRSource::readCurrentEvent()
 
                 std::map<int, double>::iterator iter_e;
 
-                if ((iter_e = fPxEnPhot->find(fiber_id)) != fPxEnPhot->end())
-                {
-                    tree.energy_dep = iter_e->second;
-                }
-                else if ((iter_e = fPxEnElec->find(fiber_id)) != fPxEnElec->end())
-                {
-                    tree.energy_dep = iter_e->second;
-                }
-                else if ((iter_e = fPxEnScin->find(fiber_id)) != fPxEnScin->end())
+                if ((iter_e = fPxEnScin->find(fiber_id)) != fPxEnScin->end())
                 {
                     tree.energy_dep = iter_e->second;
                 }
