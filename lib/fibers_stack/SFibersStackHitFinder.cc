@@ -179,7 +179,7 @@ bool SFibersStackHitFinder::execute()
 
         // the fiber is taken from geometry
         Float_t v = pGeomPar->getFiberOffsetX(mod, lay) + fib * pGeomPar->getFibersPitch(mod, lay);
-        Float_t s_v = 1;
+        Float_t s_v = 0.65;
 
         Float_t x = v * cos(rot * M_PI / 180) + u * sin(rot * M_PI / 180);
         Float_t y = v * sin(rot * M_PI / 180) + u * cos(rot * M_PI / 180);
@@ -188,7 +188,7 @@ bool SFibersStackHitFinder::execute()
         Float_t s_y = s_v * sin(rot * M_PI / 180) + s_u * cos(rot * M_PI / 180);
 
         Float_t z = pGeomPar->getFiberOffsetY(mod, lay) + pGeomPar->getModuleZ(mod);
-        Float_t s_z = 1.;
+        Float_t s_z = 0.65;
 
         pHit->getPoint().SetXYZ(x, y, z);
         pHit->getErrors().SetXYZ(s_x, s_y, s_z);
@@ -199,7 +199,7 @@ bool SFibersStackHitFinder::execute()
         pHit->setE(E, 0);
 
         SFibersStackCalSim * pCalSim = dynamic_cast<SFibersStackCalSim*>(pCal);
-        if (sifi()->isSimulation() && pCalSim) {
+        if (sifi()->isSimulation() and pCalSim) {
             ((SFibersStackHitSim*)pHit)->setGeantEnergyLoss(pCalSim->getGeantEnergyLoss());
             ((SFibersStackHitSim*)pHit)->getGeantPoint() = pCalSim->getGeantPoint();
         }

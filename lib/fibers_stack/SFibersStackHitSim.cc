@@ -37,6 +37,6 @@ void SFibersStackHitSim::Clear(Option_t* /*opt*/)
 void SFibersStackHitSim::print() const
 {
     SFibersStackHit::print();
-    printf("  GEANT: position = %.2f,%.2f,%.2f  Eloss = %.2f\n",
-           fGeantPoint.X(), fGeantPoint.Y(), fGeantPoint.Z(), fGeantEloss);
+    printf("    GEANT                 x,y,z= % 6.2f,% 6.2f,% 6.2f               Eloss= %7.2f\n",
+           fGeantPoint.X(), fGeantPoint.Y(), fGeantPoint.Z(), fGeantEloss * 1000);
 }

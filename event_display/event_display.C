@@ -201,7 +201,11 @@ TGeoVolume* fiber = nullptr;       ///< Fiber volume object
 Int_t marker_type = 3;             ///< Hit marker type
 Int_t fiber_color = kWhite;        ///< active fibers color
 Int_t active_fiber_color = kGreen; ///< active fibers color
+Int_t active_fiber_alpha = 50;        ///< active fibers color
 Int_t charge_color = kMagenta;     ///< deposited charge color
+Int_t cluster_color = kYellow;     ///< deposited charge color
+Int_t cluster_alpha = 95;
+Int_t cluster_scale = 1;
 
 void make_gui();
 TEveGeoTopNode* make_geometry();
@@ -486,41 +490,77 @@ class QuickJumpNavHandler
     TGNumberEntry* l_evt_jump;
 };
 
-class FibersPropHandler
+class MaterialPropHandler
 {
   public:
-    FibersPropHandler(TGeoMaterial* material) : material(material), transparency_label(nullptr) {}
-
-    void SetTransparencyLabel(TGLabel* l) { transparency_label = l; }
+    MaterialPropHandler(TGeoMaterial* material) : material(material) {}
 
     void PositionChanged(Int_t n)
     {
         material->SetTransparency(n);
-        if (transparency_label) transparency_label->SetText(TString::Format("% 3d", n));
+        if (alpha_label) alpha_label->SetText(TString::Format("% 3d", n));
         gEve->FullRedraw3D(kFALSE);
     }
 
-    void FiberColorSelected(Pixel_t c)
+    void ColorSelected(Pixel_t c)
     {
         if (fiber) fiber->SetLineColor(TColor::GetColor(c));
         gEve->FullRedraw3D(kFALSE);
     }
 
-    void ActiveFiberColorSelected(Pixel_t c)
-    {
-        if (fiber) active_fiber_color = TColor::GetColor(c);
-        load_event();
-    }
-
-    void ChargeColorSelected(Pixel_t c)
-    {
-        if (fiber) charge_color = TColor::GetColor(c);
-        load_event();
-    }
+    void SetAlphaLabel(TGLabel* l) { alpha_label = l; }
 
   private:
     TGeoMaterial* material;
-    TGLabel* transparency_label;
+    TGLabel* alpha_label;
+};
+
+class ObstaclePropHandler
+{
+  private:
+    int * color;
+    int * alpha;
+    int * scale;
+    TGLabel* alpha_label;
+    TGLabel* scale_label;
+
+  public:
+    ObstaclePropHandler(int * _color = nullptr, int * _alpha = nullptr, int * _scale = nullptr)
+    : color(_color)
+    , alpha(_alpha)
+    , scale(_scale)
+    , alpha_label(nullptr)
+    , scale_label(nullptr)
+    {}
+
+    void SetAlphaLabel(TGLabel* l) { alpha_label = l; }
+    void SetScaleLabel(TGLabel* l) { scale_label = l; }
+
+    void ColorSelected(Pixel_t c)
+    {
+        if (color) {
+            *color = TColor::GetColor(c);
+            load_event();
+        }
+    }
+
+    void AlphaChanged(Int_t n)
+    {
+        if (alpha) {
+            *alpha = n;
+            load_event();
+        }
+        if (alpha_label) alpha_label->SetText(TString::Format("% 3d", n));
+    }
+
+    void ScaleChanged(Int_t n)
+    {
+        if (scale) {
+            *scale = n;
+            load_event();
+        }
+        if (scale_label) scale_label->SetText(TString::Format("% 3d", n));
+    }
 };
 
 void make_gui()
@@ -602,7 +642,7 @@ void make_gui()
     frmMain->AddFrame(groupFrame2, new TGLayoutHints(kLHintsExpandX));
 
     // Fibers properties
-    FibersPropHandler* fph = new FibersPropHandler(matFiber);
+    MaterialPropHandler* mph = new MaterialPropHandler(matFiber);
 
     TGGroupFrame* groupFrame3 = new TGGroupFrame(frmMain, "Fibers Properties", kVerticalFrame);
     groupFrame3->SetTitlePos(TGGroupFrame::kLeft);
@@ -614,14 +654,15 @@ void make_gui()
 
         TGHSlider* hslider = new TGHSlider(hf, 100, kSlider1 | kScaleDownRight, 1);
         hslider->SetRange(80, 100);
-        hslider->Connect("PositionChanged(Int_t)", "FibersPropHandler", fph,
+        hslider->Connect("PositionChanged(Int_t)", "MaterialPropHandler", mph,
                          "PositionChanged(Int_t)");
-        hslider->SetPosition(95);
         hf->AddFrame(hslider, new TGLayoutHints(kLHintsExpandX, 0, 0, 0, 0));
 
         l = new TGLabel(hf, "xxx");
         hf->AddFrame(l, new TGLayoutHints(kLHintsLeft | kLHintsCenterY, 0, 0, 0, 0));
-        fph->SetTransparencyLabel(l);
+        mph->SetAlphaLabel(l);
+        hslider->SetPosition(95);
+        mph->PositionChanged(95);
     }
     groupFrame3->AddFrame(hf, new TGLayoutHints(kLHintsExpandX, 0, 0, 0, 0));
 
@@ -631,11 +672,15 @@ void make_gui()
         hf->AddFrame(l, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 0, 0, 0, 0));
 
         TGColorSelect* csel = new TGColorSelect(hf, TColor::Number2Pixel(fiber_color), 100);
-        csel->Connect("ColorSelected(Pixel_t)", "FibersPropHandler", fph,
-                      "FiberColorSelected(Pixel_t)");
+        csel->Connect("ColorSelected(Pixel_t)", "MaterialPropHandler", mph,
+                      "ColorSelected(Pixel_t)");
         hf->AddFrame(csel, new TGLayoutHints(kLHintsLeft | kLHintsCenterY, 5, 2, 2, 2));
     }
     groupFrame3->AddFrame(hf, new TGLayoutHints(kLHintsExpandX, 0, 0, 0, 0));
+
+
+    // Active Fiber Properties
+    ObstaclePropHandler * fiber_oph = new ObstaclePropHandler(&active_fiber_color, &active_fiber_alpha);
 
     hf = new TGHorizontalFrame(groupFrame3);
     {
@@ -643,11 +688,33 @@ void make_gui()
         hf->AddFrame(l, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 0, 0, 0, 0));
 
         TGColorSelect* csel = new TGColorSelect(hf, TColor::Number2Pixel(active_fiber_color), 100);
-        csel->Connect("ColorSelected(Pixel_t)", "FibersPropHandler", fph,
-                      "ActiveFiberColorSelected(Pixel_t)");
+        csel->Connect("ColorSelected(Pixel_t)", "ObstaclePropHandler", fiber_oph,
+                      "ColorSelected(Pixel_t)");
         hf->AddFrame(csel, new TGLayoutHints(kLHintsLeft | kLHintsCenterY, 5, 2, 2, 2));
     }
     groupFrame3->AddFrame(hf, new TGLayoutHints(kLHintsExpandX, 0, 0, 0, 0));
+
+    hf = new TGHorizontalFrame(groupFrame3);
+    {
+        TGLabel* l = new TGLabel(hf, "Alpha");
+        hf->AddFrame(l, new TGLayoutHints(kLHintsLeft | kLHintsCenterY, 0, 0, 0, 0));
+
+        TGHSlider* hslider = new TGHSlider(hf, 100, kSlider1 | kScaleDownRight, 1);
+        hslider->SetRange(0, 100);
+        hslider->Connect("PositionChanged(Int_t)", "ObstaclePropHandler", fiber_oph,
+                         "AlphaChanged(Int_t)");
+        hf->AddFrame(hslider, new TGLayoutHints(kLHintsExpandX, 0, 0, 0, 0));
+
+        l = new TGLabel(hf, "xxx");
+        hf->AddFrame(l, new TGLayoutHints(kLHintsLeft | kLHintsCenterY, 0, 0, 0, 0));
+        fiber_oph->SetAlphaLabel(l);
+        hslider->SetPosition(active_fiber_alpha);
+        fiber_oph->AlphaChanged(active_fiber_alpha);
+    }
+    groupFrame3->AddFrame(hf, new TGLayoutHints(kLHintsExpandX, 0, 0, 0, 0));
+
+    // Charge deposition
+    ObstaclePropHandler * charge_oph = new ObstaclePropHandler(&charge_color);
 
     hf = new TGHorizontalFrame(groupFrame3);
     {
@@ -655,11 +722,66 @@ void make_gui()
         hf->AddFrame(l, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 0, 0, 0, 0));
 
         TGColorSelect* csel = new TGColorSelect(hf, TColor::Number2Pixel(charge_color), 100);
-        csel->Connect("ColorSelected(Pixel_t)", "FibersPropHandler", fph,
-                      "ChargeColorSelected(Pixel_t)");
+        csel->Connect("ColorSelected(Pixel_t)", "ObstaclePropHandler", charge_oph,
+                      "ColorSelected(Pixel_t)");
         hf->AddFrame(csel, new TGLayoutHints(kLHintsLeft | kLHintsCenterY, 5, 2, 2, 2));
     }
     groupFrame3->AddFrame(hf, new TGLayoutHints(kLHintsExpandX, 0, 0, 0, 0));
+
+
+    // CLUSTER
+    ObstaclePropHandler * cluster_oph = new ObstaclePropHandler(&cluster_color, &cluster_alpha, &cluster_scale);
+
+    hf = new TGHorizontalFrame(groupFrame3);
+    {
+        TGLabel* l = new TGLabel(hf, "Cluster Box Color");
+        hf->AddFrame(l, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 0, 0, 0, 0));
+
+        TGColorSelect* csel = new TGColorSelect(hf, TColor::Number2Pixel(cluster_color), 100);
+        csel->Connect("ColorSelected(Pixel_t)", "ObstaclePropHandler", cluster_oph,
+                      "ColorSelected(Pixel_t)");
+        hf->AddFrame(csel, new TGLayoutHints(kLHintsLeft | kLHintsCenterY, 5, 2, 2, 2));
+    }
+    groupFrame3->AddFrame(hf, new TGLayoutHints(kLHintsExpandX, 0, 0, 0, 0));
+
+    hf = new TGHorizontalFrame(groupFrame3);
+    {
+        TGLabel* l = new TGLabel(hf, "Alpha");
+        hf->AddFrame(l, new TGLayoutHints(kLHintsLeft | kLHintsCenterY, 0, 0, 0, 0));
+
+        TGHSlider* hslider = new TGHSlider(hf, 100, kSlider1 | kScaleDownRight, 1);
+        hslider->SetRange(0, 100);
+        hslider->Connect("PositionChanged(Int_t)", "ObstaclePropHandler", cluster_oph,
+                         "AlphaChanged(Int_t)");
+        hf->AddFrame(hslider, new TGLayoutHints(kLHintsExpandX, 0, 0, 0, 0));
+
+        l = new TGLabel(hf, "xxx");
+        hf->AddFrame(l, new TGLayoutHints(kLHintsLeft | kLHintsCenterY, 0, 0, 0, 0));
+        cluster_oph->SetAlphaLabel(l);
+        hslider->SetPosition(cluster_alpha);
+        cluster_oph->AlphaChanged(cluster_alpha);
+    }
+    groupFrame3->AddFrame(hf, new TGLayoutHints(kLHintsExpandX, 0, 0, 0, 0));
+
+    hf = new TGHorizontalFrame(groupFrame3);
+    {
+        TGLabel* l = new TGLabel(hf, "Scale");
+        hf->AddFrame(l, new TGLayoutHints(kLHintsLeft | kLHintsCenterY, 0, 0, 0, 0));
+
+        TGHSlider* hslider = new TGHSlider(hf, 100, kSlider1 | kScaleDownRight, 1);
+        hslider->SetRange(1, 100);
+        hslider->Connect("PositionChanged(Int_t)", "ObstaclePropHandler", cluster_oph,
+                         "ScaleChanged(Int_t)");
+        hf->AddFrame(hslider, new TGLayoutHints(kLHintsExpandX, 0, 0, 0, 0));
+
+        l = new TGLabel(hf, "xxx");
+        hf->AddFrame(l, new TGLayoutHints(kLHintsLeft | kLHintsCenterY, 0, 0, 0, 0));
+        cluster_oph->SetScaleLabel(l);
+        hslider->SetPosition(cluster_scale);
+        cluster_oph->ScaleChanged(cluster_scale);
+    }
+    groupFrame3->AddFrame(hf, new TGLayoutHints(kLHintsExpandX, 0, 0, 0, 0));
+
 
     frmMain->AddFrame(groupFrame3, new TGLayoutHints(kLHintsExpandX));
 
@@ -694,6 +816,7 @@ void sifi_read()
     auto fired_fibers = new TEveBoxSet("Fired fibers");
     fired_fibers->UseSingleColor();
     fired_fibers->SetMainColor(active_fiber_color);
+    fired_fibers->SetMainAlpha(active_fiber_alpha * 0.01);
     fired_fibers->Reset(TEveBoxSet::kBT_FreeBox, kFALSE, 64);
 
     auto charges = new TEveBoxSet("Collected signals");
@@ -846,7 +969,6 @@ void sifi_read()
         list->SetLineWidth(2);
 
         int n = pCatGeantTrack->getEntries();
-        printf("n = %d\n", n);
 
         TEveTrack* prim = nullptr;
         TEveTrack* elec = nullptr;
@@ -950,16 +1072,12 @@ void sifi_read()
     // clusters
 
     size_t n_clus = pCatCluster->getEntries();
-    printf("Clusters # = %d\n", n_clus);
 
     auto clusters = new TEveBoxSet("Clusters");
     clusters->UseSingleColor();
-    clusters->SetMainColor(charge_color);
+    clusters->SetMainColor(cluster_color);
+    clusters->SetMainAlpha(cluster_alpha * 0.01);
     clusters->Reset(TEveBoxSet::kBT_AABox, kFALSE, 64);
-
-    float clus_dx = 5.;
-    float clus_dy = 5.;
-    float clus_dz = 5.;
 
     for (uint j = 0; j < n_clus; ++j)
     {
@@ -975,7 +1093,12 @@ void sifi_read()
         Float_t y = point.Y();
         Float_t z = point.Z();
 
-        clusters->AddBox(x-clus_dx, y-clus_dy, z-clus_dz, clus_dx*2, clus_dy*2, clus_dz*2);
+        TVector3 err = pClus->getErrors();
+        Float_t ex = err.X()*cluster_scale;
+        Float_t ey = err.Y()*cluster_scale;
+        Float_t ez = err.Z()*cluster_scale;
+
+        clusters->AddBox(x-ex, y-ey, z-ez, ex*2, ey*2, ez*2);
     }
     gEve->AddElement(clusters);
 }

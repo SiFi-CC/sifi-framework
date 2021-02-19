@@ -26,6 +26,9 @@
 #include "SFibersStackHitFinder.h"
 #include "SFibersStackHitFinderPar.h"
 
+#include "SFibersStackClusterFinder.h"
+#include "SFibersStackClusterFinderPar.h"
+
 #include "SCalContainer.h"
 
 #include "SiFi.h"
@@ -74,12 +77,14 @@ bool SFibersStackDetector::initTasks()
     {
         //         addTask(new SFibersStackDigitizer(), 0); FIXME collides with DR Importer
         addTask(new SFibersStackHitFinder(), 2);
+        addTask(new SFibersStackClusterFinder(), 3);
     }
     else
     {
         addTask(new SFibersStackUnpacker(), 0);
         addTask(new SFibersStackCalibrator(), 1);
         addTask(new SFibersStackHitFinder(), 2);
+        addTask(new SFibersStackClusterFinder(), 3);
     }
 
     return true;
@@ -111,6 +116,9 @@ bool SFibersStackDetector::initContainers()
     pm()->addCalibrationContainer("SFibersStackHitFinderFiberPar",
                                   new SCalContainer<3>("SFibersStackHitFinderFiberPar"));
     pm()->addParameterContainer("SFibersStackHitFinderPar", new SFibersStackHitFinderPar());
+
+    pm()->addParameterContainer("SFibersStackClusterFinderPar", new SFibersStackClusterFinderPar());
+
     return true;
 }
 
