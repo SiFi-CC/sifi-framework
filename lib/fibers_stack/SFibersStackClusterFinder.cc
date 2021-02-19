@@ -19,8 +19,6 @@
 #include "SLookup.h"
 #include "SiFi.h"
 
-#include "MeanShift.h"
-
 #include <RtypesCore.h>
 
 #include <cstdio>
@@ -119,8 +117,6 @@ bool SFibersStackClusterFinder::execute()
     std::vector<std::vector<double>> points;
 
     const size_t max_mod = pGeomPar->getModules();
-//     std::vector<std::vector<MeanShift::Point>> m_points(max_mod);
-
 
     struct Cluster {
         int id{-1};
@@ -248,12 +244,11 @@ bool SFibersStackClusterFinder::execute()
             }
             else if (mode == 2) {       // FF
                 if (ff_z == 0. or h->getPoint().Z() < ff_z) {
-                    TVector3 e = h->getErrors();e.Print();
+                    TVector3 e = h->getErrors();
                     TVector3 np = h->getPoint();
                     TVector3 weight(h->getE() / e.X() / e.X(),
                                     h->getE() / e.Y() / e.Y(),
                                     h->getE() / e.Z() / e.Z());
-                    weight.Print();
 
                     np.SetX(np.X() * weight.X());
                     np.SetY(np.Y() * weight.Y());
@@ -311,30 +306,6 @@ bool SFibersStackClusterFinder::execute()
             printf("Cluster of m=%ld with id=%ld could not be add.\n", loc[0], loc[1]);
         }
     }
-//     for (int i = 0; i < max_mod; ++i)
-//     {
-//         if (!m_points[i].size()) continue;
-//         MeanShift ms;
-//         auto clus = ms.cluster(m_points[i], 5);
-// 
-//         SLocator loc(2);
-//         loc[0] = i;
-//         loc[1] = 0;
-// 
-//         for (auto c : clus) {
-//             printf("CLUSTER: %f  %f  %f\n", c.mode[0], c.mode[1], c.mode[2]);
-// 
-//             SFibersStackCluster* pCluster = reinterpret_cast<SFibersStackCluster*>(catFibersCluster->getSlot(loc));
-//             if (pCluster) pCluster = new (pCluster) SFibersStackCluster;
-// 
-//             if (pCluster) {
-//                 pCluster->setAddress(loc[0], loc[1]);
-//                 pCluster->getPoint().SetXYZ(c.mode[0], c.mode[1], c.mode[2]);
-//                 ++loc[1];
-//             }
-//         }
-//     }
-
 
     return true;
 }
