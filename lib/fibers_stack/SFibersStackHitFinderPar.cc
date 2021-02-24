@@ -32,6 +32,12 @@ void SFibersStackHitFinderPar::clear()
 {
     fA0 = 0.0;
     fLambda = 0.0;
+    fCalibPos.Reset();
+    fCalibPosErr.Reset();
+    fCalibEne.Reset();
+    fCalibEneErr.Reset();
+    fResPos.Reset();
+    fResEne.Reset();
 }
 
 /**
@@ -46,6 +52,47 @@ bool SFibersStackHitFinderPar::getParams(SParContainer* parcont)
     if (!parcont->fill("fLambda", fLambda)) return false;
     if (!parcont->fill("fAlpha", fAlpha)) return false;
 
+    if (!parcont->fill("fCalibPos", fCalibPos) ) return false;
+    if (fCalibPos.GetSize() != numOfCalibPars)
+    {
+        std::cerr << "Size of fCalibPos doesn't match numOfCalibPars" << std::endl;
+        return false;
+    }
+
+    if (!parcont->fill("fCalibPosErr", fCalibPosErr) ) return false;
+    if (fCalibPosErr.GetSize() != numOfCalibPars)
+    {
+        std::cerr << "Size of fCalibPosErr doesn't match numOfCalibPars" << std::endl;
+        return false;
+    }
+
+    if (!parcont->fill("fCalibEne", fCalibEne) ) return false;
+    if (fCalibEne.GetSize() != numOfCalibPars)
+    {
+        std::cerr << "Size of fCalibEne doesn't match numOfCalibPars" << std::endl;
+        return false;
+    }
+
+    if (!parcont->fill("fCalibEneErr", fCalibEneErr) ) return false;
+    if (fCalibEneErr.GetSize() != numOfCalibPars)
+    {
+        std::cerr << "Size of fCalibEneErr doesn't match numOfCalibPars" << std::endl;
+        return false;
+    }
+
+    if (!parcont->fill("fResPos", fResPos) ) return false;
+    if (fResPos.GetSize() != numOfResPars)
+    {
+        std::cerr << "Size of fResPos doesn't match numOfResPars" << std::endl;
+        return false;
+    }
+
+    if (!parcont->fill("fResEne", fResEne) ) return false;
+    if (fResEne.GetSize() != numOfResPars)
+    {
+        std::cerr << "Size of fResEne doesn't match numOfResPars" << std::endl;
+        return false;
+    }
     return true;
 }
 
@@ -69,7 +116,26 @@ bool SFibersStackHitFinderPar::putParams(SParContainer* parcont) const
  */
 void SFibersStackHitFinderPar::print() const
 {
-    printf(" fA0 = %f\n", fA0);
-    printf(" fLambda = %f\n", fLambda);
-    printf(" fAlpha = %f\n", fLambda);
+    //printf(" fA0 = %f\n", fA0);
+    //printf(" fLambda = %f\n", fLambda);
+    //printf(" fAlpha = %f\n", fLambda);
+    printf(" fCalibPos:");
+    for(int l=0; l < numOfCalibPars; ++l)
+	    printf(" %f", fCalibPos[l]);
+    printf("\n fCalibPosErr:");
+    for(int l=0; l < numOfCalibPars; ++l)
+	    printf(" %f", fCalibPosErr[l]);
+    printf("\n fCalibEne:");
+    for(int l=0; l < numOfCalibPars; ++l)
+	    printf(" %f", fCalibEne[l]);
+    printf("\n fCalibEneErr:");
+    for(int l=0; l < numOfCalibPars; ++l)
+	    printf(" %f", fCalibEneErr[l]);
+    printf("\n fResPos:");
+    for(int l=0; l < numOfResPars; ++l)
+	    printf(" %f", fResPos[l]);
+    printf("\n fResEne:");
+    for(int l=0; l < numOfResPars; ++l)
+	    printf(" %f", fResEne[l]);
+    printf("\n");
 }

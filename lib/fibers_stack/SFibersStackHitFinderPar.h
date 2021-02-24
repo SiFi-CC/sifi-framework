@@ -28,6 +28,15 @@ class SIFI_EXPORT SFibersStackHitFinderPar : public SPar
     Float_t fLambda{0.0};
     Float_t fAlpha{0.0};
 
+    Int_t numOfCalibPars = 2;
+    Int_t numOfResPars = 3;
+    TArrayF fCalibPos;
+    TArrayF fCalibPosErr;
+    TArrayF fCalibEne;
+    TArrayF fCalibEneErr;
+    TArrayF fResPos;
+    TArrayF fResEne;
+
   public:
     bool getParams(SParContainer* parcont) override;
     bool putParams(SParContainer* parcont) const override;
@@ -41,6 +50,13 @@ class SIFI_EXPORT SFibersStackHitFinderPar : public SPar
     void setA0(Float_t v) { fA0 = v; }
     void setLambda(Float_t v) { fLambda = v; }
     void setAlpha(Float_t v) { fAlpha = v; }
+
+    void setCalibPos(TArrayF f) { fCalibPos = f; }
+    void setCalibPosErr(TArrayF f) { fCalibPosErr = f; }
+    void setResPos(TArrayF f) { fResPos = f; }
+    void setCalibEne(TArrayF f) { fCalibEne = f; }
+    void setCalibEneErr(TArrayF f) { fCalibEneErr = f; }
+    void setResEne(TArrayF f) { fResEne = f; }
 };
 
 #endif /* SFIBERSSTACKHITFINDERPAR_H */

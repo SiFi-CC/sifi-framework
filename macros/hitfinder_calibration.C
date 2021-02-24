@@ -46,7 +46,305 @@
 #define PR(x)                                                                                      \
     std::cout << "++DEBUG: " << #x << " = |" << x << "| (" << __FILE__ << ", " << __LINE__ << ")\n";
 using namespace std;
+void position_calibration(SLoop *loop, SCategory *pCatHitSim, SCategory *pCatCalSim, double calibPos[7]) {
+    Int_t yNumBins = 100;
+    Int_t yMin = -50;
+    Int_t yMax = 50;
+    Int_t yBinSize = yNumBins/(yMax-yMin);
+    const char *mlrStr = "Log(#sqrt{q_{r} / q_{l} })";
+    TH2D *hYQ = new TH2D("hYQ", Form(";%s;Y[mm]", mlrStr), 200, -.5, .5, yNumBins, yMin, yMax);
+    TH2D *hYYfit = new TH2D("hYYfit", ";Y[mm];Y_{fit}[mm]", yNumBins, yMin, yMax, yNumBins, yMin, yMax);
+    TH2D *hYYres = new TH2D("hYYres", ";Y[mm];Y_{fit}-Y[mm]", yNumBins, yMin, yMax, yNumBins, yMin, yMax);
+    TH2D *haE3 = new TH2D("haE3", ";E[MeV];Y_{fit}-Y[mm]", 100, 0, 5, yNumBins, yMin, yMax);
+    SLocator loc(3);
+    int n = loop->getEntries();
+    for (int i = 0; i < n; ++i)
+    {
+        size_t nn = pCatHitSim->getEntries();
+        for (uint j = 0; j < nn; ++j)
+        {
+            SFibersStackHit* pHit = (SFibersStackHit*)pCatHitSim->getObject(j);
+            Float_t MLR = pHit->getU();
+            Int_t m, l, f;
+            pHit->getAddress(m, l, f);
+            loc[0] = m;
+            loc[1] = l;
+            loc[2] = f;
 
+            SFibersStackCalSim* pCalSim = (SFibersStackCalSim*)pCatCalSim->getObject(loc);
+	    Float_t ql = pCalSim->getQDCL();
+	    Float_t qr = pCalSim->getQDCR();
+	    Float_t Eloss = pCalSim->getGeantEnergyLoss();
+	    Float_t mlr = TMath::Log(TMath::Sqrt(qr/ql) );
+            TVector3 point = pCalSim->getGeantPoint();
+	    if(ql!=0 && qr !=0 && Eloss > 0.) {
+		    hYQ->Fill(mlr, point.Y() );
+	    }
+        }
+        loop->nextEvent();
+    }
+
+    TGraphErrors *g = new TGraphErrors();
+    g->GetYaxis()->SetTitle("Y[mm]");
+    g->GetXaxis()->SetTitle(Form("%s", mlrStr) );
+    for(Int_t p=0; p < yNumBins; ++p) {
+	    TH1D *h = hYQ->ProjectionX("h", p, p);
+	    TFitResultPtr res = h->Fit("gaus", "SQ");
+	    if(!res) {
+		    Float_t mean = res->Parameter(1);
+		    g->SetPoint(p, mean, yMin + p);
+		    g->SetPointError(p, res->ParError(1), yBinSize/2.);
+	    }
+	    delete h;
+    }
+    gStyle->SetOptFit();
+    TF1 *fit = new TF1("fit", "pol1", 0, 4000);
+    fit->SetParameters(-0.1438, 296.1);
+    TFitResultPtr fitres = g->Fit("fit", "SQ");
+    calibPos[0] = fitres->Parameter(0);
+    calibPos[1] = fitres->Parameter(1);
+    calibPos[2] = fitres->ParError(0);
+    calibPos[3] = fitres->ParError(1);
+
+    for (int i = 0; i < n; ++i)
+    {
+	loop->getEvent(i);
+        size_t nn = pCatHitSim->getEntries();
+        for (uint j = 0; j < nn; ++j)
+        {
+            SFibersStackHit* pHit = (SFibersStackHit*)pCatHitSim->getObject(j);
+            Int_t m, l, f;
+            pHit->getAddress(m, l, f);
+            loc[0] = m;
+            loc[1] = l;
+            loc[2] = f;
+
+            SFibersStackCalSim* pCalSim = (SFibersStackCalSim*)pCatCalSim->getObject(loc);
+	    Float_t ql = pCalSim->getQDCL();
+	    Float_t qr = pCalSim->getQDCR();
+	    Float_t Eloss = pCalSim->getGeantEnergyLoss();
+            TVector3 point = pCalSim->getGeantPoint();
+	    if(ql!=0 && qr !=0 && Eloss > 0.) {
+		    Float_t fitY = fitres->Parameter(0) + fitres->Parameter(1)*TMath::Log(TMath::Sqrt(qr/ql) );
+		    hYYfit->Fill(fitY, point.Y() );
+		    hYYres->Fill(point.Y(), fitY-point.Y() );
+		    haE3->Fill(Eloss, fitY-point.Y() );
+	    }
+        }
+        //loop->nextEvent();
+    }
+
+    TGraphErrors *g2 = new TGraphErrors();
+    g2->SetName("gYYresMean");
+    g2->GetYaxis()->SetTitle("#mu[mm]");
+    g2->GetXaxis()->SetTitle("Y[mm]");
+    TGraphErrors *g3 = new TGraphErrors();
+    g3->SetName("gYYresSigma");
+    g3->GetYaxis()->SetTitle("#sigma[mm]");
+    g3->GetXaxis()->SetTitle("Y[mm]");
+    for(Int_t p=0; p < 100; ++p) {
+	    TH1D *h = hYYres->ProjectionY("h", p, p);
+	    TFitResultPtr res = h->Fit("gaus", "SQ");
+	    if(!res) {
+		    Float_t sigma = res->Parameter(2);
+		    g2->SetPoint(p, yMin + p, sigma/(p*0.025) );
+		    g2->SetPointError(p, 1/2., res->ParError(2) );
+		    g3->SetPoint(p, yMin + p, sigma);
+		    g3->SetPointError(p, 1/2., res->ParError(2) );
+	    }
+	    delete h;
+    }
+
+    TGraphErrors *g4 = new TGraphErrors();
+    g4->SetName("gaE3");
+    g4->GetYaxis()->SetTitle("#sigma[mm]");
+    g4->GetXaxis()->SetTitle("E[MeV]");
+    for(Int_t p=0; p < 60; ++p) {
+	    TH1D *h = haE3->ProjectionY("h", p, p);
+	    TFitResultPtr res = h->Fit("gaus", "SQ");
+	    if(!res) {
+		    g4->SetPoint(p, p*0.05, res->Parameter(2) );
+		    g4->SetPointError(p, 0.025, res->ParError(2) );
+	    }
+	    delete h;
+    }
+    TF1 *fit4 = new TF1("fit4", "[0] + [1]/TMath::Sqrt(x) + [2]/(x*TMath::Sqrt(x) )", 0.1, 1.7);
+    fit4->SetParameters(8, 3, .3);
+    TFitResultPtr res4 = g4->Fit("fit4", "RSQ");
+    calibPos[4] = res4->Parameter(0);
+    calibPos[5] = res4->Parameter(1);
+    calibPos[6] = res4->Parameter(2);
+
+    gStyle->SetOptStat(0);
+    TCanvas *d = new TCanvas("positionCalibration", "position calibration", 1000, 1000);
+    d->Divide(3, 4);
+    d->cd(1);
+    hYQ->Draw("colz");
+    d->cd(2);
+    g->Draw("AP");
+    d->cd(3);
+    hYYfit->Draw("colz");
+    d->cd(4);
+    hYYres->Draw("colz");
+    d->cd(5);
+    g2->Draw("AP");
+    g2->GetYaxis()->SetMaxDigits(3);
+    d->cd(6);
+    d->cd(7);
+    d->cd(8);
+    g3->Draw("AP");
+    d->cd(9);
+    d->cd(10);
+    haE3->Draw("colz");
+    d->cd(11);
+    g4->Draw("AP");
+    d->cd(12);
+    TLatex text2;
+    text2.DrawLatex(0.2, 0.5, Form("Entries: %zu", loop->getEntries() ) );
+    d->Draw();
+}
+void energy_calibration(SLoop *loop, SCategory *pCatHitSim, SCategory *pCatCalSim, double calibEne[7]) {
+	TH1D *hE = new TH1D("hE", ";E[MeV]", 100, 0, 5);
+	TH1D *hQ = new TH1D("hQ", ";#sqrt{q_{l}q_{r} }", 100, 0, 5e3);
+	TH2D *hEQ = new TH2D("hEQ", ";#sqrt{q_{l}q_{r} };E_{dep}", 200, 0, 5e3, 200, 0, 5);
+	TH2D *haE2 = new TH2D("haE", "E_{fit} vs E;E[MeV];E_{fit}[MeV]", 200, 0, 5, 200, 0, 5);
+	TH2D *haE2pos = new TH2D("haEpos", ";Y[mm];E_{fit}-E[MeV]", 100, -50, 50, 100, -.5, .5);
+	TH2D *haE2ene = new TH2D("haEposEne", ";E[MeV];E_{fit}-E[MeV]", 200, 0, 5, 100, -.5, .5);
+	SLocator loc(3);
+	int n = loop->getEntries();
+	for (int i = 0; i < n; ++i)
+	{
+		loop->getEvent(i);
+		size_t nn = pCatHitSim->getEntries();
+		for (uint j = 0; j < nn; ++j)
+		{
+			SFibersStackHit* pHit = (SFibersStackHit*)pCatHitSim->getObject(j);
+			Float_t MLR = pHit->getU();
+			Int_t m, l, f;
+			pHit->getAddress(m, l, f);
+			loc[0] = m;
+			loc[1] = l;
+			loc[2] = f;
+
+			SFibersStackCalSim* pCalSim = (SFibersStackCalSim*)pCatCalSim->getObject(loc);
+			Float_t ql = pCalSim->getQDCL();
+			Float_t qr = pCalSim->getQDCR();
+			Float_t Eloss = pCalSim->getGeantEnergyLoss();
+			if(ql!=0 && qr !=0 && Eloss > 0.) {
+				hQ->Fill(TMath::Sqrt(ql*qr) );
+				hEQ->Fill(TMath::Sqrt(ql*qr), Eloss);
+			}
+		}
+		//loop->nextEvent();
+	}
+
+	TGraphErrors *eg = new TGraphErrors();
+	eg->GetYaxis()->SetTitle("E[MeV]");
+	eg->GetXaxis()->SetTitle("#sqrt{q_{l}q_{r} }");
+	eg->SetName("egEQ");
+	for(Int_t p=0; p < 120; ++p) {
+		TH1D *h = hEQ->ProjectionX("h", p, p);
+		TFitResultPtr res = h->Fit("gaus", "SQ");
+		if(!res) {
+			Float_t mean = res->Parameter(1);
+			eg->SetPoint(p, mean, p*5./200);
+			eg->SetPointError(p, res->ParError(1), 0.0125);
+		}
+		delete h;
+	}
+	gStyle->SetOptFit();
+	TF1 *efit = new TF1("efit", "pol1", 0, 4000);
+	efit->SetParameters(0.019144, 0.0011331);
+	TFitResultPtr fitres = eg->Fit("efit", "SQ");
+	calibEne[0] = fitres->Parameter(0);
+	calibEne[1] = fitres->Parameter(1);
+	calibEne[2] = fitres->ParError(0);
+	calibEne[3] = fitres->ParError(1);
+
+	for (int i = 0; i < n; ++i)
+	{
+		loop->getEvent(i);
+		size_t nn = pCatHitSim->getEntries();
+		for (uint j = 0; j < nn; ++j)
+		{
+			SFibersStackHit* pHit = (SFibersStackHit*)pCatHitSim->getObject(j);
+			Int_t m, l, f;
+			pHit->getAddress(m, l, f);
+			loc[0] = m;
+			loc[1] = l;
+			loc[2] = f;
+
+			SFibersStackCalSim* pCalSim = (SFibersStackCalSim*)pCatCalSim->getObject(loc);
+			Float_t ql = pCalSim->getQDCL();
+			Float_t qr = pCalSim->getQDCR();
+			Float_t Eloss = pCalSim->getGeantEnergyLoss();
+			TVector3 point = pCalSim->getGeantPoint();
+			if(ql!=0 && qr !=0 && Eloss > 0.) {
+				Float_t Efit = fitres->Parameter(0) + fitres->Parameter(1)*TMath::Sqrt(ql*qr);
+				haE2->Fill(Efit, Eloss);
+				haE2pos->Fill(point.Y(), Efit-Eloss);
+				haE2ene->Fill(Eloss, Efit-Eloss);
+			}
+		}
+		//loop->nextEvent();
+	}
+	TGraphErrors *eg2 = new TGraphErrors(); eg2->SetName("gaE2posError");
+	eg2->SetName("eg2");
+	eg2->GetYaxis()->SetTitle("#sigma[mm]");
+	eg2->GetXaxis()->SetTitle("Y[mm]");
+	for(Int_t p=0; p < 100; ++p) {
+		TH1D *h2 = haE2pos->ProjectionY("h", p, p);
+		TFitResultPtr res = h2->Fit("gaus", "SQ");
+		if(!res) {
+			Float_t sigma = res->Parameter(2);
+			eg2->SetPoint(p, -50 + p, sigma);
+			eg2->SetPointError(p, 1/2., res->ParError(2) );
+		}
+		delete h2;
+	}
+
+	TGraphErrors *eg3 = new TGraphErrors(); eg3->SetName("gaE2eneError");
+	eg3->SetName("eg3");
+	eg3->GetYaxis()->SetTitle("#sigma/E");
+	eg3->GetXaxis()->SetTitle("E[MeV]");
+	for(Int_t p=0; p < 120; ++p) {
+		TH1D *h = haE2ene->ProjectionY("h", p, p);
+		TFitResultPtr res = h->Fit("gaus", "SQ");
+		if(!res) {
+			Float_t sigma = res->Parameter(2);
+			eg3->SetPoint(p, p*5./200, sigma/(p*0.025) );
+			eg3->SetPointError(p, 0.0125, res->ParError(2) );
+		}
+		delete h;
+	}
+	TF1 *fit4 = new TF1("fit4", "[0] + [1]/TMath::Sqrt(x) + [2]/(x*TMath::Sqrt(x) )", 0.1, 1.7);
+	fit4->SetParameters(8, 3, .3);
+	TFitResultPtr res4 = eg3->Fit("fit4", "RSQ");
+	calibEne[4] = res4->Parameter(0);
+	calibEne[5] = res4->Parameter(1);
+	calibEne[6] = res4->Parameter(2);
+
+	gStyle->SetOptStat(0);
+	TCanvas *cv = new TCanvas("energyCalibration", "energy calibration", 1000, 1000);
+	cv->Divide(3, 4);
+	cv->cd(1);
+	hEQ->Draw("colz");
+	cv->cd(2);
+	eg->Draw("AP");
+	cv->cd(3);
+	haE2->Draw("colz");
+	cv->cd(4);
+	haE2pos->Draw("colz");
+	cv->cd(5);
+	eg2->Draw("AP");
+	cv->cd(6);
+	cv->cd(7);
+	haE2ene->Draw("colz");
+	cv->cd(8);
+	eg3->Draw("AP");
+	cv->Draw();
+
+}
 void format_h_31(TH1* h)
 {
     h->GetXaxis()->SetLabelSize(0.06);
@@ -67,9 +365,6 @@ void format_h_31(TH1* h)
 int hitfinder_calibration(const char* datafile = 0, const char* paramfile = "params.txt")
 {
     gStyle->SetOptStat(0);
-    gStyle->SetPalette(57);
-    gStyle->SetLabelSize(10);
-
     SLoop* loop = new SLoop();
     if (datafile)
     {
@@ -108,98 +403,39 @@ int hitfinder_calibration(const char* datafile = 0, const char* paramfile = "par
         exit(EXIT_FAILURE);
     }
 
+    //results from the sifi-framework, which can be directly piped into the pHitFinderPar
+    //once ready with enough statistics
+    //0: p0 (calib)
+    //1: p1 (calib)
+    //2: p0_err (calib)
+    //3: p1_err (calib)
+    //4: p0 (res)
+    //5: p1 (res)
+    //6: p2 (res)
+    double calibPos[7] = {0};
+    position_calibration(loop, pCatHitSim, pCatCalSim, calibPos);
+    double calibEne[7] = {0};
+    energy_calibration(loop, pCatHitSim, pCatCalSim, calibEne);
 
-    Float_t a0 = pHitFinderPar->getA0();
-    Float_t lambda = pHitFinderPar->getLambda();
-    Double_t y_sim, MLR;
-    Double_t tab_of_means[NBINSX], tab_of_bin_centers[NBINSX];
+    //hardcoded from Jonas's presentation
+    Float_t array[2] = {0.041824, 300.025};
+    pHitFinderPar->setCalibPos(TArrayF(2, array) );
+    array[0] = 0.00323534;
+    array[1] = 0.0559682;
+    pHitFinderPar->setCalibPosErr(TArrayF(2, array) );
+    array[0] = 0.000883848;
+    array[1] = 0.00117205;
+    pHitFinderPar->setCalibEne(TArrayF(2, array) );
+    array[0] = 1.28109e-05;
+    array[1] = 1.82952e-08;
+    pHitFinderPar->setCalibEneErr(TArrayF(2, array) );
+    Float_t res[3] = {2.21091e-01, 9.14159e+00, 1.00452e-01};
+    pHitFinderPar->setResPos(TArrayF(3, res) );
+    res[0] = -8.67453e-04;
+    res[1] = 4.36927e-02;
+    res[2] = 2.73421e-05;
+    pHitFinderPar->setResEne(TArrayF(3, res) );
 
-    TH1D* hPosSim;
-    TH2D* hMLRY;
-    TH1D* hMLRY_proj[NBINSX];
-
-    TF1* fline = new TF1("fline", "pol1", -0.5, 0.5);
-    TF1* fgauss2 = new TF1("fgauss2", "gaus(0)+pol2(3)", -50, 50);
-
-    fgauss2->SetParameters(200., 0, 5., 100, 0, 0);
-    hPosSim = new TH1D("hPosSim", "hPosSim", NBINS, XLOW, XUP);
-    hMLRY = new TH2D("hMLRY", "hMLRY", NBINSX, -0.5, 0.5, NBINSY, -50, 50);
-
-    int n = loop->getEntries();
-    int m, l, f;
-    SLocator loc(3);
-
-    TCanvas* can0 = new TCanvas("can0", "can0", 800, 400);
-    can0->Divide(2, 1);
-
-    for (int i = 0; i < n; ++i)
-    {
-        size_t nn = pCatHitSim->getEntries();
-        for (uint j = 0; j < nn; ++j)
-        {
-            SFibersStackHit* pHit = (SFibersStackHit*)pCatHitSim->getObject(j);
-            MLR = pHit->getU();
-
-            pHit->getAddress(m, l, f);
-            loc[0] = m;
-            loc[1] = l;
-            loc[2] = f;
-
-            SFibersStackCalSim* pCalSim = (SFibersStackCalSim*)pCatCalSim->getObject(loc);
-
-            y_sim = pCalSim->getGeantPoint().Y();
-
-            hPosSim->Fill(y_sim);
-            hMLRY->Fill(MLR, y_sim);
-        }
-        loop->nextEvent();
-    }
-    can0->cd(1);
-    format_h_31(hPosSim);
-    hPosSim->Draw();
-    can0->cd(2);
-    format_h_31(hMLRY);
-    hMLRY->Draw("colz");
-
-    TCanvas* can1 = new TCanvas("can1", "can1", 1400, 600);
-    can1->DivideSquare(NBINSX);
-
-    for (int i = 0; i < NBINSX; i++)
-    {
-        can1->cd(i + 1);
-        hMLRY_proj[i] = hMLRY->ProjectionY(Form("bin%d", i + 1), i + 1, i + 1);
-
-        Int_t bm = hMLRY_proj[i]->GetMaximumBin();
-        fgauss2->SetParameters(200., 0, 5., 100, 0, 0);
-        fgauss2->SetParameter(1, hMLRY_proj[i]->GetBinCenter(bm));
-
-        hMLRY_proj[i]->Fit(fgauss2, "", "", -50, 50);
-        hMLRY_proj[i]->Draw();
-
-        format_h_31(hMLRY_proj[i]);
-        hMLRY_proj[i]->SetTitle("");
-
-        tab_of_bin_centers[i] = ((TAxis*)hMLRY->GetXaxis())->GetBinCenter(i + 1);
-        tab_of_means[i] = fgauss2->GetParameter(1);
-    }
-
-    TGraph* gr1 = new TGraph(NBINSX, tab_of_bin_centers, tab_of_means);
-    can0->cd(2);
-    gr1->Draw("P*,same");
-    fline->SetParameters(100, 0);
-    gr1->Fit(fline, "", "", -0.5, 0.5);
-    Float_t p0 = fline->GetParameter(0);
-    Float_t p1 = fline->GetParameter(1);
-
-    //     lambda = 1/p1;
-    //     a0 = p0;
-    lambda = p1;
-    a0 = -p0 / p1;
-
-    printf("PARAMETERS: a0 = %f    lambda = %f\n", a0, lambda);
-
-    pHitFinderPar->setA0(a0);
-    pHitFinderPar->setLambda(lambda);
     pHitFinderPar->print();
 
     pm()->setParamDest(params_file);
