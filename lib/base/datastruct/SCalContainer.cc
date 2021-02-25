@@ -243,5 +243,7 @@ template <int N> void SCalContainer<N>::print()
 
 template class SCalPar<2>;
 template class SCalPar<3>;
+template class SCalPar<6>;
 template class SCalContainer<2>;
 template class SCalContainer<3>;
+template class SCalContainer<6>;

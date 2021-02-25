@@ -17,7 +17,7 @@
 
 #include <Rtypes.h>
 
-class SFibersStackCalibratorPar : public SCalContainer<3>
+class SFibersStackCalibratorPar : public SCalContainer<6>
 {
 public:
     using SCalContainer::SCalContainer;
