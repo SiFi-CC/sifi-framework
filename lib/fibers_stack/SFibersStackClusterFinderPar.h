@@ -9,8 +9,8 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#ifndef SFIBERSSTACKHITFINDERPAR_H
-#define SFIBERSSTACKHITFINDERPAR_H
+#ifndef SFIBERSSTACKCLUSTERFINDERPAR_H
+#define SFIBERSSTACKCLUSTERFINDERPAR_H
 
 #include "sifi_export.h"
 
@@ -20,13 +20,11 @@
 #include <TArrayF.h>
 #include <TArrayI.h>
 
-class SIFI_EXPORT SFibersStackHitFinderPar : public SPar
+class SIFI_EXPORT SFibersStackClusterFinderPar : public SPar
 {
   private:
     // members
-    Float_t fA0{0.0};
-    Float_t fLambda{0.0};
-    Float_t fAlpha{0.0};
+    Int_t fClusterMode{0};    // 0 - AC; 1 - HF; 2 - FF
 
   public:
     bool getParams(SParContainer* parcont) override;
@@ -34,13 +32,9 @@ class SIFI_EXPORT SFibersStackHitFinderPar : public SPar
     void clear() override;
     void print() const override;
 
-    Float_t getA0() const { return fA0; }
-    Float_t getLambda() const { return fLambda; }
-    Float_t getAlpha() const { return fAlpha; }
+    Int_t getClusterMode() const { return fClusterMode; }
 
-    void setA0(Float_t v) { fA0 = v; }
-    void setLambda(Float_t v) { fLambda = v; }
-    void setAlpha(Float_t v) { fAlpha = v; }
+    void setClusterMode(Int_t m) { fClusterMode = m; }
 };
 
-#endif /* SFIBERSSTACKHITFINDERPAR_H */
+#endif /* SFIBERSSTACKCLUSTERFINDERPAR_H */

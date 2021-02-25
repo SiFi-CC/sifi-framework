@@ -28,9 +28,7 @@ A container for Fibers Stack Calibrated simulation data
 void SFibersStackCalSim::Clear(Option_t* /*opt*/)
 {
     fGeantEloss = 0.0;
-    fGeantX = 0.;
-    fGeantY = 0.;
-    fGeantZ = 0.;
+    fGeantPoint.Clear();
 }
 
 /**
@@ -39,6 +37,6 @@ void SFibersStackCalSim::Clear(Option_t* /*opt*/)
 void SFibersStackCalSim::print() const
 {
     SFibersStackCal::print();
-    printf("  GEANT: position = %.2f,%.2f,%.2f  Eloss = %.2f\n", fGeantX, fGeantY, fGeantZ,
-           fGeantEloss);
+    printf("  GEANT: position = %.2f,%.2f,%.2f  Eloss = %.2f\n",
+           fGeantPoint.X(), fGeantPoint.Y(), fGeantPoint.Z(), fGeantEloss);
 }

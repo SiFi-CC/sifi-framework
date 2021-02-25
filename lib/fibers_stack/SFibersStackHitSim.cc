@@ -9,40 +9,34 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#include "SFibersStackHit.h"
+#include "SFibersStackHitSim.h"
 
 /**
- * \class SFibersStackHit
+ * \class SFibersStackHitSim
 \ingroup lib_fibers_stack
 
-A container for Fibers Stack Raw data
+A container for Fibers Stack Hitibrated simulation data
 
 */
 
 /**
- * Clear object
+ * Clear object.
  * Parameter options are ignored, for ROOT compatibility.
  *
  * \param opt options
  */
-void SFibersStackHit::Clear(Option_t* /*opt*/)
+void SFibersStackHitSim::Clear(Option_t* /*opt*/)
 {
-    module = -1;
-    layer = -1;
-    fiber = -1;
-
-    point.Clear();
-    errors.Clear();
-    E = sE = 0.;
-    t = st = 0.;
+    fGeantEloss = 0.0;
+    fGeantPoint.Clear();
 }
 
 /**
- * Print category
+ * Print category.
  */
-void SFibersStackHit::print() const
+void SFibersStackHitSim::print() const
 {
-    printf("FIBER HIT m,l,f=%2d,%2d,%2d  x,y,z= % 6.2f,% 6.2f,% 7.2f (%4.2f,%4.2f,%4.2f)  E= %7.2f +- %5.2f  "
-           "u= % 6.2f (%4.2f)  Time= %4.2f +- %4.2f\n",
-           module, layer, fiber, point.x(), point.y(), point.z(), errors.x(), errors.y(), errors.z(), E, sE, u, su, t, st);
+    SFibersStackHit::print();
+    printf("    GEANT                 x,y,z= % 6.2f,% 6.2f,% 6.2f               Eloss= %7.2f\n",
+           fGeantPoint.X(), fGeantPoint.Y(), fGeantPoint.Z(), fGeantEloss * 1000);
 }

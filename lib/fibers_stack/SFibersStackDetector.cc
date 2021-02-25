@@ -13,6 +13,7 @@
 
 #include "SCalContainer.h"
 
+#include "SFibersStackDDCalibratorPar.h"
 #include "SFibersStackCalibratorPar.h"
 #include "SFibersStackDigitizerPar.h"
 #include "SFibersStackGeomPar.h"
@@ -24,6 +25,9 @@
 #include "SFibersStackDDUnpackerPar.h"
 #include "SFibersStackHitFinder.h"
 #include "SFibersStackHitFinderPar.h"
+
+#include "SFibersStackClusterFinder.h"
+#include "SFibersStackClusterFinderPar.h"
 
 #include "SCalContainer.h"
 
@@ -73,12 +77,14 @@ bool SFibersStackDetector::initTasks()
     {
         //         addTask(new SFibersStackDigitizer(), 0); FIXME collides with DR Importer
         addTask(new SFibersStackHitFinder(), 2);
+        addTask(new SFibersStackClusterFinder(), 3);
     }
     else
     {
         addTask(new SFibersStackUnpacker(), 0);
         addTask(new SFibersStackCalibrator(), 1);
         addTask(new SFibersStackHitFinder(), 2);
+        addTask(new SFibersStackClusterFinder(), 3);
     }
 
     return true;
@@ -101,13 +107,18 @@ bool SFibersStackDetector::initContainers()
     else
     {
         pm()->addParameterContainer("SFibersStackDDUnpackerPar", new SFibersStackDDUnpackerPar());
+        pm()->addCalibrationContainer("SFibersStackDDCalibratorPar",
+                                      new SFibersStackDDCalibratorPar("SFibersStackDDCalibratorPar"));
         pm()->addCalibrationContainer("SFibersStackCalibratorPar",
                                       new SFibersStackCalibratorPar("SFibersStackCalibratorPar"));
     }
 
     pm()->addCalibrationContainer("SFibersStackHitFinderFiberPar",
-                                  new SCalContainer<2>("SFibersStackHitFinderFiberPar"));
+                                  new SCalContainer<3>("SFibersStackHitFinderFiberPar"));
     pm()->addParameterContainer("SFibersStackHitFinderPar", new SFibersStackHitFinderPar());
+
+    pm()->addParameterContainer("SFibersStackClusterFinderPar", new SFibersStackClusterFinderPar());
+
     return true;
 }
 
@@ -125,14 +136,19 @@ bool SFibersStackDetector::initCategories()
     sizes[0] = modules;
     sizes[1] = layers;
     sizes[2] = fibers;
+
+    size_t sizes_clus[2];
+    sizes_clus[0] = modules;
+    sizes_clus[1] = 10;
+
     if (isSimulation())
     {
-        if (!dm->registerCategory(SCategory::CatGeantFibersRaw, "SGeantFibersRaw", 1000, true))
+        if (!dm->registerCategory(SCategory::CatGeantFibersRaw, "SGeantFibersRaw", 250, true))
             return false;
         if (!dm->registerCategory(SCategory::CatFibersStackCal, "SFibersStackCalSim", 3, sizes,
                                   true))
             return false;
-        if (!dm->registerCategory(SCategory::CatFibersStackHit, "SFibersStackHit", 3, sizes, true))
+        if (!dm->registerCategory(SCategory::CatFibersStackHit, "SFibersStackHitSim", 3, sizes, true))
             return false;
     }
     else
@@ -145,7 +161,7 @@ bool SFibersStackDetector::initCategories()
             return false;
     }
 
-    if (!dm->registerCategory(SCategory::CatFibersStackClus, "SFibersStackClus", 10, false))
+    if (!dm->registerCategory(SCategory::CatFibersStackClus, "SFibersStackCluster", 2, sizes_clus, false))
         return false;
 
     return true;

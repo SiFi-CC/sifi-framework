@@ -26,6 +26,7 @@ protected:
     Int_t modules;                  ///< number of modules
     struct SingleModule             ///< single module configuration
     {
+        Float_t module_z;           ///< z-coordinate of the module reference point (center)
         Int_t layers;               ///< numbre of layers
         TArrayI fibers;             ///< number of fibers
         TArrayF layer_rotation;     ///< layer rotation around the axis
@@ -48,6 +49,7 @@ public:
     /// Get number of modules
     /// \return number of modules
     Int_t getModules() const { return modules; }
+    Float_t getModuleZ(Int_t m) const;
     Int_t getLayers(Int_t m) const;
     Int_t getFibers(Int_t m, Int_t l) const;
     Float_t getLayerRotation(Int_t m, Int_t l) const;

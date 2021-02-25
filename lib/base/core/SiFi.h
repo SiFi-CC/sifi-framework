@@ -59,7 +59,7 @@ protected:
         size_t dim;                 ///< Dimension of ctageory
         size_t sizes[16];           ///< Sizes of dimension
         SCategory * ptr = nullptr;  ///< Pointer to category object
-    }   cinfovec[SCategory::CatLimitDoNotUse * 2];  ///< Category info array
+    }   cinfovec[SCategory::CatLimitDoNotUse];  ///< Category info array
 
 
     std::map<SCategory::Cat, SCategory *> categories;   ///< Map of categories
@@ -134,8 +134,8 @@ public:
     /// \param cat category kind
     /// \param simulation simulation flag
     /// \return linearised index of the category
-    static int getCategoryIndex(SCategory::Cat cat, int simulation) {
-        return (cat * 2) + (int)simulation; }
+    static int getCategoryIndex(SCategory::Cat cat, int /*simulation*/) { return cat; }
+
 
 private:
     SIFI_NO_EXPORT void initBranches();

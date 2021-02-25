@@ -157,13 +157,14 @@ Int_t SLoop::nextEvent()
 
 /**
  * Fetch the given event from the #chain. If event number is outside teh chain,
- * it returns 0. See TChain::GetEntry() for details.
+ * it returns 0. See TChain::GetEntry() for details. Sets SLoop::current_event to event.
  *
  * \param event event number
  * \return 0 indicates error, >0 is a number of read bytes.
  */
 Int_t SLoop::getEvent(ulong event)
 {
+    current_event = event;
     sifi()->getCurrentEvent()->clearCategories();
     return chain->GetEntry(event);
 }

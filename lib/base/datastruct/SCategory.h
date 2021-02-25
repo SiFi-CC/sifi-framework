@@ -29,7 +29,6 @@ protected:
     SCategoryIndex index;       ///< index information
     /// holds category data
     TClonesArray * data;        //-> data
-    ULong_t entries;            ///< number of entries
 
 public:
     /// List of all categories
@@ -44,7 +43,6 @@ public:
         CatFibersStackCal,      ///< fibers cal data
         CatFibersStackHit,      ///< fibers hit
         CatFibersStackClus,     ///< fibers cluster
-        CatFiberTrack,          ///< fibers track
         // tracks
         // Limit 
         CatLimitDoNotUse,       ///< holds size of the category list

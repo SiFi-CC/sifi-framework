@@ -9,6 +9,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersStackLookup.cc
         SFibersStackDDUnpacker.cc
         SFibersStackDDUnpackerPar.cc
+        SFibersStackDDCalibratorPar.cc
         SFibersStackRaw.cc
         SFibersStackCalibrator.cc
         SFibersStackCalibratorPar.cc
@@ -19,6 +20,9 @@ SIFI_GENERATE_LIBRARY(
         SFibersStackHitFinder.cc
         SFibersStackHitFinderPar.cc
         SFibersStackHit.cc
+        SFibersStackHitSim.cc
+        SFibersStackClusterFinder.cc
+        SFibersStackClusterFinderPar.cc
         SFibersStackCluster.cc
     HEADERS
         SFibersStackDetector.h
@@ -27,6 +31,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersStackLookup.h
         SFibersStackDDUnpacker.h
         SFibersStackDDUnpackerPar.h
+        SFibersStackDDCalibratorPar.h
         SFibersStackRaw.h
         SFibersStackCalibrator.h
         SFibersStackCalibratorPar.h
@@ -37,8 +42,12 @@ SIFI_GENERATE_LIBRARY(
         SFibersStackHitFinder.h
         SFibersStackHitFinderPar.h
         SFibersStackHit.h
+        SFibersStackHitSim.h
+        SFibersStackClusterFinder.h
+        SFibersStackClusterFinderPar.h
         SFibersStackCluster.h
-    LIBRARIES
+
+    PRIVATE_LIBRARIES
         ROOT::Core
         SiFi
         Geant

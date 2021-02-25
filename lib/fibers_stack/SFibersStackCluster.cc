@@ -20,19 +20,13 @@ A container for Fibers Stack Raw data
 */
 
 /**
- * Constructor
- */
-SFibersStackCluster::SFibersStackCluster() : SFibersStackHit() {}
-
-/**
  * Clear object
  * Parameter options are ignored, for ROOT compatibility.
- *
- * \param opt options
  */
-void SFibersStackCluster::Clear(Option_t* opt)
+void SFibersStackCluster::Clear(Option_t* /*opt*/)
 {
-    SFibersStackHit::Clear(opt);
+    point.Clear();
+    errors.Clear();
     hits.clear();
 }
 
@@ -41,10 +35,10 @@ void SFibersStackCluster::Clear(Option_t* opt)
  */
 void SFibersStackCluster::print() const
 {
-    printf("CLUSTER HIT m,l,f=%d,%d,%d  x,y,z= %f,%f,%f (%f,%f,%f)  E= %f +- %f  Time= %f +- %f\n",
-           module, layer, fiber, x, y, z, sx, sy, sz, E, sE, t, st);
-    printf("       HITS:");
-    for (auto& h : hits)
-        printf(" %d", h);
-    printf("\n");
+//     printf("CLUSTER HIT m,l,f=%d,%d,%d  x,y,z= %f,%f,%f (%f,%f,%f)  E= %f +- %f  Time= %f +- %f\n",
+//            module, layer, fiber, x, y, z, sx, sy, sz, E, sE, t, st);
+//     printf("       HITS:");
+//     for (auto& h : hits)
+//         printf(" %d", h);
+//     printf("\n");
 }

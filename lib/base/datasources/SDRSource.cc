@@ -36,7 +36,27 @@ SDRSource::SDRSource() : SRootSource("Events"), subevent(0)
     tree.address.f = 0;
     tree.address.s = 'l';
 
-    // "Events" tree
+    fPrimEnergy = new std::vector<double>;
+    fSourcePosition = new std::vector<TVector3>;
+    fSourceDirection = new std::vector<TVector3>;
+
+    fComptonPosition = new TVector3;
+    // TVector3* fPhotonPosition{nullptr};
+    // TVector3* fElectronPosition{nullptr};
+
+    fPhotonDirection = new TVector3;
+
+    fPhotonPositions = new std::vector<TVector3>;
+    fElectronPositions = new std::vector<TVector3>;
+
+    fPhotonInteractions = new std::vector<int>;
+    fElectronInteractions = new std::vector<int>;
+
+    fPxPosPhot = new std::map<int,TVector3>;
+    fPxPosElec = new std::map<int,TVector3>;
+    fPxPosScin = new std::map<int,TVector3>;
+
+    // Define odjects for branches
     chain->SetBranchAddress("PrimEnergy", &fPrimEnergy);
     chain->SetBranchAddress("SourcePos", &fSourcePosition);
     chain->SetBranchAddress("SDir", &fSourceDirection);
@@ -59,12 +79,18 @@ SDRSource::SDRSource() : SRootSource("Events"), subevent(0)
     fPxPosPhot = new std::map<int,TVector3>;
     fPxPosElec = new std::map<int,TVector3>;
     fPxPosScin = new std::map<int,TVector3>;
+    fPxEnPhot = new std::map<int,double>;
+    fPxEnElec = new std::map<int,double>;
+    fPxEnScin = new std::map<int,double>;
 
     // "DetectorEvent" tree
     chain2->SetBranchAddress("Hitsarray", &tree.events.fHitArray);
     chain2->SetBranchAddress("Pixel_Position_Photon", &fPxPosPhot);
     chain2->SetBranchAddress("Pixel_Position_Electron", &fPxPosElec);
     chain2->SetBranchAddress("Pixel_Position_Scin", &fPxPosScin);
+    chain2->SetBranchAddress("Pixel_Energy_Photon", &fPxEnPhot);
+    chain2->SetBranchAddress("Pixel_Energy_Electron", &fPxEnElec);
+    chain2->SetBranchAddress("Pixel_Energy_Scin", &fPxEnScin);
 
     pmmodel = new DRSiPMModel(0.4, 0.06, 3e6, 500, 10, false);
 }
@@ -256,24 +282,30 @@ bool SDRSource::readCurrentEvent()
                 int fiber_id = c.first % sipm_fold;
                 std::map<int, TVector3>::iterator iter;
 
-                if ((iter = fPxPosPhot->find(fiber_id)) != fPxPosPhot->end())
-                {
-                    tree.pos = iter->second;
-                    tree.type = SFibersStackCalSim::InteractionType::PHOTON;
-                }
-                else if ((iter = fPxPosElec->find(fiber_id)) != fPxPosElec->end())
-                {
-                    tree.pos = iter->second;
-                    tree.type = SFibersStackCalSim::InteractionType::ELECTRON;
-                }
-                else if ((iter = fPxPosScin->find(fiber_id)) != fPxPosScin->end())
+                if ((iter = fPxPosScin->find(fiber_id)) != fPxPosScin->end())
                 {
                     tree.pos = iter->second;
                     tree.type = SFibersStackCalSim::InteractionType::SCINT;
                 }
                 else
                 {
-                    std::cerr << "Corresponding hit not found: SiPmID = " << c.first << std::endl;
+                    std::cerr << "POSITION: Corresponding fiber_id not found: " << fiber_id
+                              << " for SiPmID: " << c.first
+                              << " with SiPmID fold: " << sipm_fold << std::endl;
+                    continue;
+                }
+
+                std::map<int, double>::iterator iter_e;
+
+                if ((iter_e = fPxEnScin->find(fiber_id)) != fPxEnScin->end())
+                {
+                    tree.energy_dep = iter_e->second;
+                }
+                else
+                {
+                    std::cerr << "ENERGY: Corresponding fiber_id not found: " << fiber_id
+                              << " for SiPmID: " << c.first
+                              << " with SiPmID fold: " << sipm_fold << std::endl;
                     continue;
                 }
 

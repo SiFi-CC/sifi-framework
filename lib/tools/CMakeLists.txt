@@ -6,6 +6,6 @@ SIFI_GENERATE_LIBRARY(
         SProgressBar.cc
     HEADERS
         SProgressBar.h
-    LIBRARIES
+    PRIVATE_LIBRARIES
         ROOT::Core
 )

@@ -9,14 +9,14 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#include "SFibersStackHitFinderPar.h"
+#include "SFibersStackClusterFinderPar.h"
 
 #include "SParContainer.h"
 
 #include <iostream>
 
 /**
- * \class SFibersStackHitFinderPar
+ * \class SFibersStackClusterFinderPar
 \ingroup lib_fibers_stack
 
 A container for Fibers Stack Calibrator parameters
@@ -28,10 +28,9 @@ A container for Fibers Stack Calibrator parameters
 /**
  * Clear parameters
  */
-void SFibersStackHitFinderPar::clear()
+void SFibersStackClusterFinderPar::clear()
 {
-    fA0 = 0.0;
-    fLambda = 0.0;
+    fClusterMode = 0;
 }
 
 /**
@@ -40,11 +39,9 @@ void SFibersStackHitFinderPar::clear()
  * \param parcont pointer to container object
  * \return success
  */
-bool SFibersStackHitFinderPar::getParams(SParContainer* parcont)
+bool SFibersStackClusterFinderPar::getParams(SParContainer* parcont)
 {
-    if (!parcont->fill("fA0", fA0)) return false;
-    if (!parcont->fill("fLambda", fLambda)) return false;
-    if (!parcont->fill("fAlpha", fAlpha)) return false;
+    if (!parcont->fill("fClusterMode", fClusterMode)) return false;
 
     return true;
 }
@@ -55,11 +52,9 @@ bool SFibersStackHitFinderPar::getParams(SParContainer* parcont)
  * \param parcont pointer to container object
  * \return success
  */
-bool SFibersStackHitFinderPar::putParams(SParContainer* parcont) const
+bool SFibersStackClusterFinderPar::putParams(SParContainer* parcont) const
 {
-    if (!parcont->add("fA0", fA0)) return false;
-    if (!parcont->add("fLambda", fLambda)) return false;
-    if (!parcont->add("fAlpha", fAlpha)) return false;
+    if (!parcont->add("fClusterMode", fClusterMode)) return false;
 
     return true;
 }
@@ -67,9 +62,7 @@ bool SFibersStackHitFinderPar::putParams(SParContainer* parcont) const
 /**
  * Print parameters
  */
-void SFibersStackHitFinderPar::print() const
+void SFibersStackClusterFinderPar::print() const
 {
-    printf(" fA0 = %f\n", fA0);
-    printf(" fLambda = %f\n", fLambda);
-    printf(" fAlpha = %f\n", fLambda);
+    printf(" fClusterMode = %d\n", fClusterMode);
 }

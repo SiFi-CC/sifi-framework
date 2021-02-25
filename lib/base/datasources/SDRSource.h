@@ -67,6 +67,7 @@ struct TREE_all {
     TREE_Events events;
     TREE_hit data;
     TVector3 pos;
+    Float_t energy_dep;
     SFibersStackCalSim::InteractionType type;
     std::vector<TREE_Kine> kine;
 };
@@ -120,6 +121,9 @@ private:
     std::map<int,TVector3> * fPxPosPhot{nullptr};
     std::map<int,TVector3> * fPxPosElec{nullptr};
     std::map<int,TVector3> * fPxPosScin{nullptr};
+    std::map<int,double> * fPxEnPhot{nullptr};
+    std::map<int,double> * fPxEnElec{nullptr};
+    std::map<int,double> * fPxEnScin{nullptr};
 
     TREE_all tree;
     DRSiFiCCSetup * ccsetup{nullptr};

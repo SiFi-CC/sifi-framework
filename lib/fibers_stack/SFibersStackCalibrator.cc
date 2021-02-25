@@ -72,7 +72,8 @@ bool SFibersStackCalibrator::init()
 
     // get calibrator parameters
     pCalibratorPar =
-        dynamic_cast<SCalContainer<3>*>(pm()->getCalibrationContainer("SFibersStackCalibratorPar"));
+        dynamic_cast<SCalContainer<6>*>(pm()->getCalibrationContainer("SFibersStackCalibratorPar"));
+
     if (!pCalibratorPar)
     {
         std::cerr << "Parameter container 'SFibersStackCalibratorPar' was not obtained!"
@@ -115,22 +116,31 @@ bool SFibersStackCalibrator::execute()
         SFibersStackChannel chan_r = chan_l;
         chan_r.side = 'r';
 
-        SCalPar<3>* cp_l = pCalibratorPar->getPar(&chan_l);
-        SCalPar<3>* cp_r = pCalibratorPar->getPar(&chan_r);
-
+        auto cp_l = *pCalibratorPar->getPar(&chan_l);
+        auto cp_r = *pCalibratorPar->getPar(&chan_r);
+        // parameters in cp_l/cp_r:
+        // [0] - lambda
+        // [1] - eta_r
+        // [2] - eta_l
+        // [3] - ksi
+        // [4] - length
+        // [5] - time offset
+        
         // calc laboratory coordinates from digi data
         Float_t qdc_l = pRaw->getQDCL();
         Float_t qdc_r = pRaw->getQDCR();
         Float_t time_l = pRaw->getTimeL();
         Float_t time_r = pRaw->getTimeR();
 
-        // do your magic here with u, y and qdc
-        //Float_t energy_l = cp_l->par[0] * qdc_l + cp_l->par[1]; // calibration - multiplication
-        //Float_t energy_r = cp_r->par[0] * qdc_r + cp_r->par[1];
-        Float_t energy_l = (qdc_l/cp_l->par[0]) + cp_l->par[1];   // calibration - division
-        Float_t energy_r = (qdc_r/cp_r->par[0]) + cp_r->par[1];
-        time_l += cp_l->par[2];
-        time_r += cp_r->par[2];
+        //calibration: measured signal -> direct signal
+        Float_t e = exp(cp_l[0]/cp_l[4]);
+        Float_t energy_l = (e * (e * cp_l[3] * qdc_l - (qdc_r * cp_l[1]))) /
+                           (cp_l[3] * (pow(e, 2) - (cp_l[1] * cp_l[2])));
+        Float_t energy_r = - (e * (-e * qdc_r + (cp_r[3] * qdc_l * cp_r[2]))) /
+                           (cp_r[3] * (pow(e, 2) - (cp_r[1] * cp_r[2])));
+        
+        time_l += cp_l[5];
+        time_r += cp_r[5];
 
         SLocator loc(3);
         loc[0] = mod;

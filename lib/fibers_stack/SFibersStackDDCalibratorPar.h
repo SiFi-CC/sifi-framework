@@ -9,19 +9,19 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#ifndef SFIBERSSTACKCALIBRATORPAR_H
-#define SFIBERSSTACKCALIBRATORPAR_H
+#ifndef SFIBERSSTACKDDCALIBRATORPAR_H
+#define SFIBERSSTACKDDCALIBRATORPAR_H
 
 #include "SCalContainer.h"
 #include "SFibersStackLookup.h"
 
 #include <Rtypes.h>
 
-class SFibersStackCalibratorPar : public SCalContainer<6>
+class SFibersStackDDCalibratorPar : public SCalContainer<2>
 {
 public:
     using SCalContainer::SCalContainer;
 
     SLookupChannel * createChannel() const override { return new SFibersStackChannel; }
 };
-#endif /* SFIBERSSTACKCALIBRATORPAR_H */
+#endif /* SFIBERSSTACKDDCALIBRATORPAR_H */

@@ -13,6 +13,7 @@
 #include "SCategory.h"
 #include "SDDSamples.h"
 #include "SFibersStackDDUnpackerPar.h"
+#include "SFibersStackDDCalibratorPar.h"
 #include "SFibersStackLookup.h"
 #include "SFibersStackRaw.h"
 #include "SParManager.h"
@@ -164,6 +165,16 @@ bool SFibersStackDDUnpacker::init()
     }
     pDDUnpackerPar->print();
 
+    // get calibrator parameters
+    pDDCalPar =
+        dynamic_cast<SFibersStackDDCalibratorPar*>(pm()->getCalibrationContainer("SFibersStackDDCalibratorPar"));
+    if (!pDDCalPar)
+    {
+        std::cerr << "Parameter container 'SFibersStackDDCalibratorPar' was not obtained!"
+                  << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
     pLookUp = dynamic_cast<SFibersStackLookupTable*>(
         pm()->getLookupContainer("SFibersStackDDLookupTable"));
     pLookUp->print();
@@ -200,6 +211,8 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
     loc[1] = lc->l; // lay;
     loc[2] = lc->s; // fib;
     char side = lc->side;
+
+    auto cp = *pDDCalPar->getPar(lc);
 
     SDDSamples* pSamples = dynamic_cast<SDDSamples*>(catDDSamples->getObject(loc));
     if (!pSamples)
@@ -291,30 +304,34 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
     pRaw->setAddress(loc[0], loc[1], loc[2]);
     if (side == 'l')
     {
+        float tmp_charge = charge / adc_to_mv;
         if (save_samples) pSamples->fillSamplesL(data, length);
         pSamples->getSignalL()->SetAmplitude(ampl / adc_to_mv);
         pSamples->getSignalL()->SetT0(t0 /** sample_to_ns*/);
         pSamples->getSignalL()->SetTOT(tot /** sample_to_ns*/);
-        pSamples->getSignalL()->SetCharge(charge / adc_to_mv);
+        pSamples->getSignalL()->SetCharge(tmp_charge);
         pSamples->getSignalL()->SetBL(bl);
         pSamples->getSignalL()->SetBLSigma(bl_sigma);
         pSamples->getSignalL()->SetPileUp(pileup);
         pSamples->getSignalL()->SetVeto(veto);
+        pSamples->getSignalL()->SetPE(tmp_charge / cp[0] + cp[1]);
 
         pRaw->setQDCL(charge / adc_to_mv);
         pRaw->setTimeL(t0);
     }
     if (side == 'r')
     {
+        float tmp_charge = charge / adc_to_mv;
         if (save_samples) pSamples->fillSamplesR(data, length);
         pSamples->getSignalR()->SetAmplitude(ampl / adc_to_mv);
         pSamples->getSignalR()->SetT0(t0 /** sample_to_ns*/);
         pSamples->getSignalR()->SetTOT(tot /** sample_to_ns*/);
-        pSamples->getSignalR()->SetCharge(charge / adc_to_mv);
+        pSamples->getSignalR()->SetCharge(tmp_charge);
         pSamples->getSignalR()->SetBL(bl);
         pSamples->getSignalR()->SetBLSigma(bl_sigma);
         pSamples->getSignalR()->SetPileUp(pileup);
         pSamples->getSignalR()->SetVeto(veto);
+        pSamples->getSignalR()->SetPE(tmp_charge / cp[0] + cp[1]);
 
         pRaw->setQDCR(charge / adc_to_mv);
         pRaw->setTimeR(t0);
