@@ -32,12 +32,26 @@ void SFibersStackHitFinderPar::clear()
 {
     fA0 = 0.0;
     fLambda = 0.0;
-    fCalibPos.Reset();
-    fCalibPosErr.Reset();
-    fCalibEne.Reset();
-    fCalibEneErr.Reset();
     fResPos.Reset();
     fResEne.Reset();
+}
+
+Float_t SFibersStackHitFinderPar::getResPos(Int_t i) const
+{
+	Float_t ret = 0.;
+	if(i>=0 && i < fResPos.GetSize() ) {
+		ret = fResPos[i];
+	}
+	return ret;
+}
+
+Float_t SFibersStackHitFinderPar::getResEne(Int_t i) const
+{
+	Float_t ret = 0.;
+	if(i>=0 && i < fResEne.GetSize() ) {
+		ret = fResEne[i];
+	}
+	return ret;
 }
 
 /**
@@ -48,37 +62,10 @@ void SFibersStackHitFinderPar::clear()
  */
 bool SFibersStackHitFinderPar::getParams(SParContainer* parcont)
 {
+    Int_t numOfResPars = 3;
     if (!parcont->fill("fA0", fA0)) return false;
     if (!parcont->fill("fLambda", fLambda)) return false;
     if (!parcont->fill("fAlpha", fAlpha)) return false;
-
-    if (!parcont->fill("fCalibPos", fCalibPos) ) return false;
-    if (fCalibPos.GetSize() != numOfCalibPars)
-    {
-        std::cerr << "Size of fCalibPos doesn't match numOfCalibPars" << std::endl;
-        return false;
-    }
-
-    if (!parcont->fill("fCalibPosErr", fCalibPosErr) ) return false;
-    if (fCalibPosErr.GetSize() != numOfCalibPars)
-    {
-        std::cerr << "Size of fCalibPosErr doesn't match numOfCalibPars" << std::endl;
-        return false;
-    }
-
-    if (!parcont->fill("fCalibEne", fCalibEne) ) return false;
-    if (fCalibEne.GetSize() != numOfCalibPars)
-    {
-        std::cerr << "Size of fCalibEne doesn't match numOfCalibPars" << std::endl;
-        return false;
-    }
-
-    if (!parcont->fill("fCalibEneErr", fCalibEneErr) ) return false;
-    if (fCalibEneErr.GetSize() != numOfCalibPars)
-    {
-        std::cerr << "Size of fCalibEneErr doesn't match numOfCalibPars" << std::endl;
-        return false;
-    }
 
     if (!parcont->fill("fResPos", fResPos) ) return false;
     if (fResPos.GetSize() != numOfResPars)
@@ -116,26 +103,14 @@ bool SFibersStackHitFinderPar::putParams(SParContainer* parcont) const
  */
 void SFibersStackHitFinderPar::print() const
 {
-    //printf(" fA0 = %f\n", fA0);
-    //printf(" fLambda = %f\n", fLambda);
-    //printf(" fAlpha = %f\n", fLambda);
-    printf(" fCalibPos:");
-    for(int l=0; l < numOfCalibPars; ++l)
-	    printf(" %f", fCalibPos[l]);
-    printf("\n fCalibPosErr:");
-    for(int l=0; l < numOfCalibPars; ++l)
-	    printf(" %f", fCalibPosErr[l]);
-    printf("\n fCalibEne:");
-    for(int l=0; l < numOfCalibPars; ++l)
-	    printf(" %f", fCalibEne[l]);
-    printf("\n fCalibEneErr:");
-    for(int l=0; l < numOfCalibPars; ++l)
-	    printf(" %f", fCalibEneErr[l]);
+    printf(" fA0 = %f\n", fA0);
+    printf(" fLambda = %f\n", fLambda);
+    printf(" fAlpha = %f\n", fAlpha);
     printf("\n fResPos:");
-    for(int l=0; l < numOfResPars; ++l)
+    for(int l=0; l < fResPos.GetSize(); ++l)
 	    printf(" %f", fResPos[l]);
     printf("\n fResEne:");
-    for(int l=0; l < numOfResPars; ++l)
+    for(int l=0; l < fResPos.GetSize(); ++l)
 	    printf(" %f", fResEne[l]);
     printf("\n");
 }

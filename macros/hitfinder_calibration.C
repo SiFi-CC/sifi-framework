@@ -64,7 +64,6 @@ void position_calibration(SLoop *loop, SCategory *pCatHitSim, SCategory *pCatCal
         for (uint j = 0; j < nn; ++j)
         {
             SFibersStackHit* pHit = (SFibersStackHit*)pCatHitSim->getObject(j);
-            Float_t MLR = pHit->getU();
             Int_t m, l, f;
             pHit->getAddress(m, l, f);
             loc[0] = m;
@@ -219,7 +218,6 @@ void energy_calibration(SLoop *loop, SCategory *pCatHitSim, SCategory *pCatCalSi
 		for (uint j = 0; j < nn; ++j)
 		{
 			SFibersStackHit* pHit = (SFibersStackHit*)pCatHitSim->getObject(j);
-			Float_t MLR = pHit->getU();
 			Int_t m, l, f;
 			pHit->getAddress(m, l, f);
 			loc[0] = m;
@@ -418,17 +416,17 @@ int hitfinder_calibration(const char* datafile = 0, const char* paramfile = "par
     energy_calibration(loop, pCatHitSim, pCatCalSim, calibEne);
 
     //hardcoded from Jonas's presentation
+    //position
     Float_t array[2] = {0.041824, 300.025};
-    pHitFinderPar->setCalibPos(TArrayF(2, array) );
+    pHitFinderPar->setA0(array[0]);
+    pHitFinderPar->setLambda(array[1]);
+    //energy
     array[0] = 0.00323534;
     array[1] = 0.0559682;
-    pHitFinderPar->setCalibPosErr(TArrayF(2, array) );
+    pHitFinderPar->setAlpha(array[1]);
     array[0] = 0.000883848;
     array[1] = 0.00117205;
-    pHitFinderPar->setCalibEne(TArrayF(2, array) );
-    array[0] = 1.28109e-05;
-    array[1] = 1.82952e-08;
-    pHitFinderPar->setCalibEneErr(TArrayF(2, array) );
+    //resolutions
     Float_t res[3] = {2.21091e-01, 9.14159e+00, 1.00452e-01};
     pHitFinderPar->setResPos(TArrayF(3, res) );
     res[0] = -8.67453e-04;
