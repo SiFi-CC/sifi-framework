@@ -233,3 +233,59 @@ Save and close. If `.rootrc` file doesn't exist create it first in your home dir
 
 # params.txt
 This is examplary file containing parameters for sifi_dst. It contains parameters for unpackers, calibrators, lookup tables and detector geometry. Modify this file according to your needs. 
+
+## Syntax
+
+## Structure
+
+### [SFibersStackGeomPar]
+- `fModuleZ: Float_t`
+- `nModules: Int_t`
+- `nLayers: Int_t`
+- `nFibers: Int_t`
+- `fLayerRotation: Float_t`
+- `fFiberOffsetX: Float_t`
+- `fFiberOffsetY: Float_t`
+- `fFibersPitch: Float_t`
+
+### [SFibersStackDDUnpackerPar]
+- `fThreshold: Float_t`
+- `fPolarity: Int_t`
+- `fAnaMode: Int_t`
+- `fIntMode: Int_t`
+- `fDeadTime: Int_t`
+- `fVetoThreshold: Float_t`
+- `fBLMode: Int_t`
+
+### [SFibersStackDDLookupTable]
+- FTAB ID channel
+- module
+- layer
+- fiber
+- side
+
+### [SFibersStackDDCalibratorPar]
+- address: module, layer, fiber, side
+- gain
+- offset
+
+### [SFibersStackCalibratorPar]
+- address: module, layer, fiber, side
+- lambda
+- eta_r
+- eta_l
+- ksi
+- length
+- time offset
+
+### [SFibersStackHitFinderPar]
+- `fA0: Float_t`
+- `fLambda: Float_t`
+- `fAlpha: Float_t`
+
+### [SFibersStackClusterFinderPar]
+- `fClusterMode: Int_t`
+
+### [SFibersStackDigitizerPar]
+
+### [SFibersStackHitFinderFiberPar]
