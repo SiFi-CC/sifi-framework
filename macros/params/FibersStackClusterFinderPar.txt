@@ -1,0 +1,2 @@
+[FibersStackClusterFinderPar]
+fClusterMode: Int_t  2

@@ -1,0 +1,6 @@
+[FiberStackCalibratorPar]
+# mod  layer  fiber  side lambda  eta_r   eta_l   ksi    length  time_offset
+0      0      0      l    123.85  0.653   0.854   1.029  100     0
+0      0      0      r    123.85  0.653   0.854   1.029  100     0
+0      0      1      l    1.0     0.5     0.5     1.0    100     0
+0      0      1      r    1.0     0.5     0.5     1.0    100     0

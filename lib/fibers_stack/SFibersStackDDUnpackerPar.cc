@@ -33,10 +33,10 @@ void SFibersStackDDUnpackerPar::clear()
     fThreshold = 0.0;
     fVetoThreshold = 0.0;
     fBLMode = 0;
-    nPolarity = 0;
-    nAnaMode = 0;
-    nIntMode = 0;
-    nDeadTime = 0;
+    fPolarity = 0;
+    fAnaMode = 0;
+    fIntMode = 0;
+    fDeadTime = 0;
 }
 
 /**
@@ -74,39 +74,39 @@ bool SFibersStackDDUnpackerPar::getParams(SParContainer* parcont)
     }
     fBLMode = _b;
 
-    if (!parcont->fill("nPolarity", nPolarity)) return false;
-    if (!parcont->fill("nAnaMode", nAnaMode)) return false;
-    if (!parcont->fill("nIntMode", nIntMode)) return false;
-    if (!parcont->fill("nDeadTime", nDeadTime)) return false;
+    if (!parcont->fill("fPolarity", fPolarity)) return false;
+    if (!parcont->fill("fAnaMode", fAnaMode)) return false;
+    if (!parcont->fill("fIntMode", fIntMode)) return false;
+    if (!parcont->fill("fDeadTime", fDeadTime)) return false;
 
-    if (!(nPolarity == 0 || nPolarity == 1))
+    if (!(fPolarity == 0 || fPolarity == 1))
     {
-        std::cerr << "Incorrect value of nPolarity!" << std::endl;
+        std::cerr << "Incorrect value of fPolarity!" << std::endl;
         std::cerr << "Possible values are: 0 - NEGATIVE or 1 - POSITIVE" << std::endl;
-        std::cerr << "nPolarity = " << nPolarity << std::endl;
+        std::cerr << "fPolarity = " << fPolarity << std::endl;
         exit(EXIT_FAILURE);
     }
 
-    if (!(nAnaMode == 0 || nAnaMode == 1))
+    if (!(fAnaMode == 0 || fAnaMode == 1))
     {
-        std::cerr << "Incorrect value of nAnaMode!" << std::endl;
+        std::cerr << "Incorrect value of fAnaMode!" << std::endl;
         std::cerr << "Possible values are: 0 - Leading Edge or 1 - Constant Fraction" << std::endl;
-        std::cerr << "nAnaMode = " << nAnaMode << std::endl;
+        std::cerr << "fAnaMode = " << fAnaMode << std::endl;
         exit(EXIT_FAILURE);
     }
 
-    if (nIntMode < 0)
+    if (fIntMode < 0)
     {
-        std::cerr << "nIntMode cannot be smaller than 0!" << std::endl;
+        std::cerr << "fIntMode cannot be smaller than 0!" << std::endl;
         std::cerr << "Possible values are: 0 - TOT or >0 - Limit" << std::endl;
-        std::cerr << "nIntMode = " << nIntMode << std::endl;
+        std::cerr << "fIntMode = " << fIntMode << std::endl;
         exit(EXIT_FAILURE);
     }
 
-    if (nDeadTime < 0)
+    if (fDeadTime < 0)
     {
-        std::cerr << "nDeadTime cannot be smaller than 0!" << std::endl;
-        std::cerr << "nDeadTime = " << nDeadTime << std::endl;
+        std::cerr << "fDeadTime cannot be smaller than 0!" << std::endl;
+        std::cerr << "fDeadTime = " << fDeadTime << std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -135,10 +135,10 @@ void SFibersStackDDUnpackerPar::print() const
     printf("\n Baseline modes =");
     for (int i = 0; i < 16; ++i)
         printf(" %d", fBLMode[i]);
-    printf("\n polarity = %d\n", nPolarity);
-    printf(" anamode = %d\n", nAnaMode);
-    printf(" intmode = %d\n", nIntMode);
-    printf(" deadtime = %d\n", nDeadTime);
+    printf("\n polarity = %d\n", fPolarity);
+    printf(" anamode = %d\n", fAnaMode);
+    printf(" intmode = %d\n", fIntMode);
+    printf(" deadtime = %d\n", fDeadTime);
 }
 
 Float_t SFibersStackDDUnpackerPar::getThreshold(Int_t chan) const

@@ -25,10 +25,10 @@ class SFibersStackDDUnpackerPar : public SPar
     TArrayF fThreshold;     ///< Threshold in ADC (LE) or % (CF)
     TArrayF fVetoThreshold; ///< Threshold for determination of fVeto flag (in ADC)
     TArrayI fBLMode;        ///< 0 - dynamic BL subtraction, >0 - constant BL, given value subtracted
-    Int_t nPolarity;    ///< 0 - neg, 1 - pos
-    Int_t nAnaMode;     ///< 0 - LE, 1 - CF
-    Int_t nIntMode;     ///< 0 - TOT, >0 - Limit
-    Int_t nDeadTime;    ///< fDeadTime     
+    Int_t fPolarity;    ///< 0 - neg, 1 - pos
+    Int_t fAnaMode;     ///< 0 - LE, 1 - CF
+    Int_t fIntMode;     ///< 0 - TOT, >0 - Limit
+    Int_t fDeadTime;    ///< fDeadTime     
 
   public:
     bool getParams(SParContainer* parcont) override;
@@ -46,16 +46,16 @@ class SFibersStackDDUnpackerPar : public SPar
     Float_t getVetoThreshold(Int_t chan) const;
     /// Returns polarity
     /// \return polarity
-    Int_t getPolarity() const { return nPolarity; }
+    Int_t getPolarity() const { return fPolarity; }
     /// Returns analysis mode
     /// \return analysis mode
-    Int_t getAnaMode() const { return nAnaMode; }
+    Int_t getAnaMode() const { return fAnaMode; }
     /// Returns integration mode
     /// \return integration mode
-    Int_t getIntMode() const { return nIntMode; }
+    Int_t getIntMode() const { return fIntMode; }
     /// Returns dead time
     /// \return dead time
-    Int_t getDeadTime() const { return nDeadTime; }
+    Int_t getDeadTime() const { return fDeadTime; }
     /// Returns baseline subtraction mode
     /// \param chan channel
     /// \return base line subtraction mode 
