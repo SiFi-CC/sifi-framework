@@ -22,12 +22,10 @@ SDDUnpacker::SDDUnpacker() : data_length(0) {}
 
 bool SDDUnpacker::init()
 {
-    if (!data_length)
-    {
-        std::cerr << "Data length not configured." << std::endl;
-        abort();
-    }
 
+    if (!data_length)
+        std::cout << " Warning in SDDUnpacker::init(). Data length not configured." << std::endl;
+   
     return true;
 }
 

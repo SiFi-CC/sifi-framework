@@ -57,16 +57,16 @@ public:
     /// \return success
     virtual bool finalize() { return true; };
     
-    void setTimeBin(float bin_value) { time_bin = bin_value; }
+    void setSampleTons(float bin_value) { sample_to_ns = bin_value; }
     
-    void setADCtomV(float coeff) { ADC_to_mV = coeff; }
+    void setADCTomV(float coeff) { ADC_to_mV = coeff; }
     
-    float getTimeBin(void) { return time_bin; }
+    float getSampleTons(void) { return sample_to_ns; }
     
-    float getADCtomV(void) { return ADC_to_mV;}
+    float getADCTomV(void) { return ADC_to_mV;}
     
 private:
-    float  time_bin;
+    float  sample_to_ns;
     float  ADC_to_mV;
 };
 

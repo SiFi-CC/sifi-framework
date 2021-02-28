@@ -21,9 +21,6 @@
 #include <algorithm>
 #include <iostream>
 #include <numeric>
-
- const Float_t adc_to_mv = 4.096; //TODO 
- const Float_t sample_to_ns = 1.;
  
 /**
  * \class SFibersStackDDUnpacker
@@ -212,15 +209,17 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
 
     pSamples->setAddress(loc[0], loc[1], loc[2]);
 
-    Float_t samples[1024]; // TODO 
-    size_t limit = length <= 1024 ? length : 1024;
-
+    //Float_t samples[1024];
+    //size_t limit = length <= 1024 ? length : 1024;
+    Float_t samples[length];
+    size_t limit = length;
+    
     memcpy(samples, data, limit * sizeof(float));
 
     // find baseline
     Float_t bl = -1;
     Float_t bl_sigma = 0;
-    Int_t samples_for_bl = 50; //TODO parameter?
+    Int_t samples_for_bl = 50;
 
     if (blmode == 0)
     {
@@ -288,35 +287,38 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
         new (pRaw) SFibersStackRaw;
     }
 
+    float ADC_to_mV = getADCTomV();
+    float sample_to_ns = getSampleTons();
+    
     pRaw->setAddress(loc[0], loc[1], loc[2]);
     if (side == 'l')
     {
         if (save_samples) pSamples->fillSamplesL(data, length);
-        pSamples->getSignalL()->SetAmplitude(ampl / adc_to_mv);
-        pSamples->getSignalL()->SetT0(t0 /** sample_to_ns*/);
-        pSamples->getSignalL()->SetTOT(tot /** sample_to_ns*/);
-        pSamples->getSignalL()->SetCharge(charge / adc_to_mv);
+        pSamples->getSignalL()->SetAmplitude(ampl / ADC_to_mV);
+        pSamples->getSignalL()->SetT0(t0 * sample_to_ns);
+        pSamples->getSignalL()->SetTOT(tot * sample_to_ns);
+        pSamples->getSignalL()->SetCharge(charge / ADC_to_mV);
         pSamples->getSignalL()->SetBL(bl);
         pSamples->getSignalL()->SetBLSigma(bl_sigma);
         pSamples->getSignalL()->SetPileUp(pileup);
         pSamples->getSignalL()->SetVeto(veto);
 
-        pRaw->setQDCL(charge / adc_to_mv);
+        pRaw->setQDCL(charge / ADC_to_mV);
         pRaw->setTimeL(t0);
     }
     if (side == 'r')
     {
         if (save_samples) pSamples->fillSamplesR(data, length);
-        pSamples->getSignalR()->SetAmplitude(ampl / adc_to_mv);
-        pSamples->getSignalR()->SetT0(t0 /** sample_to_ns*/);
-        pSamples->getSignalR()->SetTOT(tot /** sample_to_ns*/);
-        pSamples->getSignalR()->SetCharge(charge / adc_to_mv);
+        pSamples->getSignalR()->SetAmplitude(ampl / ADC_to_mV);
+        pSamples->getSignalR()->SetT0(t0 * sample_to_ns);
+        pSamples->getSignalR()->SetTOT(tot * sample_to_ns);
+        pSamples->getSignalR()->SetCharge(charge / ADC_to_mV);
         pSamples->getSignalR()->SetBL(bl);
         pSamples->getSignalR()->SetBLSigma(bl_sigma);
         pSamples->getSignalR()->SetPileUp(pileup);
         pSamples->getSignalR()->SetVeto(veto);
 
-        pRaw->setQDCR(charge / adc_to_mv);
+        pRaw->setQDCR(charge / ADC_to_mV);
         pRaw->setTimeR(t0);
     }
 

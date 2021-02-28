@@ -88,6 +88,7 @@ SIFI_GENERATE_LIBRARY(
         datastruct
         event
         util
+	../fibers_stack
 )
 
 if (BUILD_SIFIDETRES_SUPPORT)

@@ -12,15 +12,13 @@
 
 #include "SKSSource.h"
 #include "SUnpacker.h"
+#include "SFibersStackDDUnpacker.h"
 
 #include <iostream>
 #include <sstream>
 #include <map>
 #include <string>
 #include <vector>
-
-static Int_t static_var = 5;
-static Int_t nSamples;
 
 /**
  * Constructor. Requires subevent id for unpacked source.
@@ -41,17 +39,32 @@ bool SKSSource::open()
 {
     istream.open(input.c_str(), std::ios::in);
     if (!istream.is_open()) {
-        std::cerr << "##### Error in SKSSource::open()! Could not open input file!" << std::endl;
+        std::cerr << "Error in SKSSource::open()! Could not open input file!" << std::endl;
         std::cerr << input << std::endl;
         return false;
     }
    
-   samples = getNSamples();
+    std::string tmp;
+    samples = 0;
+    
+    istream.seekg(std::ios_base::beg);  // getting length of the signal
+    istream >> tmp >> tmp >> samples;
+    
+    getline(istream, tmp);  // getting max channels
+    getline(istream, tmp);
+    
+    std::string max_channel_str = tmp.substr(tmp.length()-1, tmp.length());
+    max_channels = std::stoi(max_channel_str);
+    channel = subevent & 0x0f;  // getting channel number
+
+    if (channel > max_channels)
+    {
+        std::cerr << "Error in SKSSource::open()! Incorrect channel number!" << std::endl;
+        std::cerr << "channel = " << channel << "\t max_channel = " << max_channels << std::endl;
+        return false;
+    }
    
-   std::string line;
-   
-   for(int i=0; i<3; ++i)
-       getline(istream, line);
+   getline(istream, tmp);  // reading remaining line before data starts
    
     if (unpackers.size() == 0)
         return false;
@@ -65,6 +78,9 @@ bool SKSSource::open()
             printf("Forced unpacker %#x not initalized\n", subevent);
             abort();
         }
+        auto ddUnp = dynamic_cast<SFibersStackDDUnpacker*> (unpackers[subevent]);
+        if (ddUnp)
+            ddUnp->setDataLen(samples);
     }
     else
     {
@@ -76,6 +92,9 @@ bool SKSSource::open()
                 printf("Unpacker %#x not initalized\n", iter->first);
                 abort();
             }
+            auto ddUnp = dynamic_cast<SFibersStackDDUnpacker*> (iter->second);
+            if (ddUnp)
+                ddUnp->setDataLen(samples);
         }
     }
     return true;
@@ -104,7 +123,7 @@ bool SKSSource::close()
 bool SKSSource::readCurrentEvent()
 {
     if (unpackers.size() == 0)
-    return false;
+        return false;
        
     std::string csvLine;    
     std::string csvElement;
@@ -114,49 +133,51 @@ bool SKSSource::readCurrentEvent()
     float time_stop;
     
     float* buffer = new float [samples];
+    
+    Int_t nSamples = 0;
 
-    for (Int_t i = 0; i < samples; i++)
+    for (nSamples = 0; nSamples < samples; nSamples++)
     {
         csvRow.clear();
         getline(istream, csvLine);
+        if (istream.eof()) break;
+
         std::stringstream stream(csvLine);
         while(getline(stream, csvElement, ','))
         {
             csvRow.push_back(csvElement);
         }
-        
-        if (i == 0) 
+
+        if (nSamples == 0) 
             time_start = std::stof(csvRow[0]);
-        if (i == samples-1) 
+        if (nSamples == samples-1) 
             time_stop = std::stof(csvRow[0]);
-        
-        buffer[i] = std::stof(csvRow.at(1)); //TODO only channel 0 digitized at the moment
+
+        buffer[nSamples] = std::stof(csvRow.at(channel + 1));
     }
     
-    
     float time_bin = 1e9*(time_stop-time_start)/(samples-1); //ns
-    buffer_size = samples;
     
     bool flag = istream.good();
 
-    if (!flag)
+    if (!flag or nSamples < samples)
         return false;
 
     if (subevent != 0x0000)
     {
         if (!unpackers[subevent]) abort();
-        unpackers[subevent]->setTimeBin(time_bin);
-        unpackers[subevent]->setADCtomV(1.);
+        unpackers[subevent]->setSampleTons(time_bin);
+        unpackers[subevent]->setADCTomV(1.);
         // TODO must pass event number to the execute
-        unpackers[subevent]->execute(0, 0, subevent, buffer, buffer_size * sizeof(buffer[0]));
+        unpackers[subevent]->execute(0, 0, subevent, buffer, nSamples * sizeof(buffer[0]));
     }
     else
     {
         for (const auto & u : unpackers)
         {
-            u.second->setTimeBin(time_bin);
-            u.second->setADCtomV(1.);
-            u.second->execute(0, 0, u.first, buffer, buffer_size * sizeof(buffer[0]));
+            u.second->setSampleTons(time_bin);
+            u.second->setADCTomV(1.);
+            u.second->execute(0, 0, u.first, buffer, nSamples * sizeof(buffer[0]));
         }
     }
 
@@ -167,25 +188,7 @@ bool SKSSource::readCurrentEvent()
  * Set input for the source.
  *
  * \param filename input file name
- * \param length length of buffer to read
  */
-void SKSSource::setInput(const std::string& filename, size_t length) {
+void SKSSource::setInput(const std::string& filename) {
     input = filename;
-    buffer_size = length;
-}
-
-int SKSSource::getNSamples()
-{
-    std::string tmp;
-    int nSamples = 0;
-    
-    if (!istream.good())
-    {
-        std::cerr << "##### Error in SKSSource::getNSamples()! Input file not opened!" << std::endl;
-    }
-    
-    istream.seekg(std::ios_base::beg);
-    istream >> tmp >> tmp >> nSamples;
-
-    return nSamples;
 }

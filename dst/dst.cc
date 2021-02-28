@@ -107,9 +107,8 @@ int main(int argc, char** argv)
                 SFibersStackDDUnpacker::saveSamples(save_samples);
                 
                 SKSSource* source = new SKSSource(addr);
-                unp->setDataLen(640);
                 source->addUnpacker(unp, {addr});
-                source->setInput(name, 640 /* sizeof(float)*/);
+                source->setInput(name);
                 sifi()->addSource(source);
             }
             else
