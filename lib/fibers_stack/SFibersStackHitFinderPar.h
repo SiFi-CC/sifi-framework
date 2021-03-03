@@ -24,12 +24,12 @@ class SIFI_EXPORT SFibersStackHitFinderPar : public SPar
 {
   private:
     // members
-    Float_t fA0{0.0};
-    Float_t fLambda{0.0};
-    Float_t fAlpha{0.0};
-
-    TArrayF fResPos;
-    TArrayF fResEne;
+    Float_t fA0{0.0};		//position fit parameter y-intercept
+    Float_t fLambda{0.0};	//position fit parameter slope
+    Float_t fAlpha{0.0};	//energy fit paramater slope
+    Int_t numOfResPars;		//number of resolution fit parameters
+    TArrayF fResPos;		//store position resolution fit parameters
+    TArrayF fResEne;		//store energy resolution fit parameters
 
   public:
     bool getParams(SParContainer* parcont) override;
@@ -41,15 +41,17 @@ class SIFI_EXPORT SFibersStackHitFinderPar : public SPar
     Float_t getLambda() const { return fLambda; }
     Float_t getAlpha() const { return fAlpha; }
 
-    Float_t getResPos(Int_t i) const;
-    Float_t getResEne(Int_t i) const;
+    UInt_t getNumOfResPars() const;
+    Float_t getResPos(UInt_t i) const;
+    Float_t getResEne(UInt_t i) const;
 
     void setA0(Float_t v) { fA0 = v; }
     void setLambda(Float_t v) { fLambda = v; }
     void setAlpha(Float_t v) { fAlpha = v; }
 
-    void setResPos(TArrayF f) { fResPos = f; }
-    void setResEne(TArrayF f) { fResEne = f; }
+    void setNumOfResPars(UInt_t i);
+    void setResPos(Float_t f, UInt_t i);
+    void setResEne(Float_t f, UInt_t i);
 };
 
 #endif /* SFIBERSSTACKHITFINDERPAR_H */
