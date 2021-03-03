@@ -416,6 +416,7 @@ int hitfinder_calibration(const char* datafile = 0, const char* paramfile = "par
     energy_calibration(loop, pCatHitSim, pCatCalSim, calibEne);
 
     //hardcoded from Jonas's presentation
+    //will be changed once we get enough statistics from MC
     //position
     Float_t array[2] = {0.041824, 300.025};
     pHitFinderPar->setA0(array[0]);
@@ -428,11 +429,15 @@ int hitfinder_calibration(const char* datafile = 0, const char* paramfile = "par
     array[1] = 0.00117205;
     //resolutions
     Float_t res[3] = {2.21091e-01, 9.14159e+00, 1.00452e-01};
-    pHitFinderPar->setResPos(TArrayF(3, res) );
+    pHitFinderPar->setResPos(0, res[0]);
+    pHitFinderPar->setResPos(1, res[1]);
+    pHitFinderPar->setResPos(2, res[2]);
     res[0] = -8.67453e-04;
     res[1] = 4.36927e-02;
     res[2] = 2.73421e-05;
-    pHitFinderPar->setResEne(TArrayF(3, res) );
+    pHitFinderPar->setResEne(0, res[0]);
+    pHitFinderPar->setResEne(1, res[1]);
+    pHitFinderPar->setResEne(2, res[2]);
 
     pHitFinderPar->print();
 

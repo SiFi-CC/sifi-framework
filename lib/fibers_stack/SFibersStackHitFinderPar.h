@@ -27,7 +27,6 @@ class SIFI_EXPORT SFibersStackHitFinderPar : public SPar
     Float_t fA0{0.0};		//position fit parameter y-intercept
     Float_t fLambda{0.0};	//position fit parameter slope
     Float_t fAlpha{0.0};	//energy fit paramater slope
-    Int_t numOfResPars;		//number of resolution fit parameters
     TArrayF fResPos;		//store position resolution fit parameters
     TArrayF fResEne;		//store energy resolution fit parameters
 
@@ -41,7 +40,6 @@ class SIFI_EXPORT SFibersStackHitFinderPar : public SPar
     Float_t getLambda() const { return fLambda; }
     Float_t getAlpha() const { return fAlpha; }
 
-    UInt_t getNumOfResPars() const;
     Float_t getResPos(UInt_t i) const;
     Float_t getResEne(UInt_t i) const;
 
@@ -49,9 +47,8 @@ class SIFI_EXPORT SFibersStackHitFinderPar : public SPar
     void setLambda(Float_t v) { fLambda = v; }
     void setAlpha(Float_t v) { fAlpha = v; }
 
-    void setNumOfResPars(UInt_t i);
-    void setResPos(Float_t f, UInt_t i);
-    void setResEne(Float_t f, UInt_t i);
+    void setResPos(UInt_t i, Float_t f);
+    void setResEne(UInt_t i, Float_t f);
 };
 
 #endif /* SFIBERSSTACKHITFINDERPAR_H */

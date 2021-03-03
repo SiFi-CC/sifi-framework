@@ -24,7 +24,10 @@ A container for Fibers Stack Calibrator parameters
 \sa SPar
 
 */
-
+/**
+ * Number of parameters for the resolution fit, fixed to 3
+ */
+Int_t numOfResPars = 3;
 /**
  * Clear parameters
  */
@@ -35,17 +38,12 @@ void SFibersStackHitFinderPar::clear()
     fResPos.Reset();
     fResEne.Reset();
 }
+
 /**
  * The resolution equations are typically f(x) = p0/x + p1/x^{1/2} + p2/x^{3/2}
  * from Poisson statistics.
- * Here we can set/get the number of resolution parameters (default=3) and the
- * parameters themselves
+ * Here we can set/get the parameters themselves
  */
-UInt_t SFibersStackHitFinderPar::getNumOfResPars() const
-{
-	return numOfResPars;
-}
-
 Float_t SFibersStackHitFinderPar::getResPos(UInt_t i) const
 {
 	Float_t ret = 0.;
@@ -70,20 +68,16 @@ Float_t SFibersStackHitFinderPar::getResEne(UInt_t i) const
 	return ret;
 }
 
-void SFibersStackHitFinderPar::setNumOfResPars(UInt_t i) {
-	numOfResPars = i;
-}
-
-void SFibersStackHitFinderPar::setResPos(Float_t f, UInt_t i) {
-	if(i < getNumOfResPars() ) {
+void SFibersStackHitFinderPar::setResPos(UInt_t i, Float_t f) {
+	if(i < numOfResPars ) {
 		fResPos.SetAt(f, i);
 	} else {
         	std::cerr << "TArrayF index is more than allowed in numOfResPars" << std::endl;
 	}
 }
 
-void SFibersStackHitFinderPar::setResEne(Float_t f, UInt_t i) {
-	if(i < getNumOfResPars() ) {
+void SFibersStackHitFinderPar::setResEne(UInt_t i, Float_t f) {
+	if(i < numOfResPars ) {
 		fResEne.SetAt(f, i);
 	} else {
         	std::cerr << "TArrayF index is more than allowed in numOfResPars" << std::endl;
@@ -98,7 +92,6 @@ void SFibersStackHitFinderPar::setResEne(Float_t f, UInt_t i) {
  */
 bool SFibersStackHitFinderPar::getParams(SParContainer* parcont)
 {
-    if (!parcont->fill("numOfResPars", numOfResPars) ) return false;
     if (!parcont->fill("fA0", fA0)) return false;
     if (!parcont->fill("fLambda", fLambda)) return false;
     if (!parcont->fill("fAlpha", fAlpha)) return false;
