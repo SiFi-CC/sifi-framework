@@ -1,1 +1,1 @@
-[FibersStackDigitizerPar]
+[SFibersStackDigitizerPar]

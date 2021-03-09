@@ -1,4 +1,4 @@
-[FibersStackGeomPar]
+[SFibersStackGeomPar]
 fModuleZ: Float_t 200 400
 nModules: Int_t 2
 nLayers: Int_t 10 30

@@ -1,4 +1,4 @@
-[FibersStackDDLookupTable]
+[SFibersStackDDLookupTable]
 # FTAB ID   channel         mod     layer   fiber   side
 0x1000      0               0       0       0       l
 0x1000      1               0       0       0       r

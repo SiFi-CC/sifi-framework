@@ -1,4 +1,4 @@
-[FibersStackDDUnpackerPar]
+[SFibersStackDDUnpackerPar]
 fThreshold: Float_t \
 -164 -164 -41 0 0 0 0 0 \
 0 0 0 0 0 0 0 0 

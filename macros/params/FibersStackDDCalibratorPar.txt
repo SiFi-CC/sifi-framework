@@ -1,4 +1,4 @@
-[FibersStackDDCalibratorPar]
+[SFibersStackDDCalibratorPar]
 # mod layer fiber side gain    offset
 0     0     0     l    246.57  0.0
 0     0     0     r    237.59  0.0
