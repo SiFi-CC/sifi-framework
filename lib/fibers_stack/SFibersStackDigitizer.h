@@ -26,13 +26,13 @@ class SFibersStackDigitizer : public STask
 {
 private:
     // members
-    SCategory * catGeantFibersRaw;          ///< genat raw
-    SCategory * catFibersCalSim;            ///< fibers cal
+    SCategory* catGeantFibersRaw; ///< genat raw
+    SCategory* catFibersCalSim;   ///< fibers cal
 
-    SFibersStackDigitizerPar * pDigiPar;    ///< digitizer parameters
-    SFibersStackGeomPar * pGeomPar;         ///< geometry parameters
+    SFibersStackDigitizerPar* pDigiPar; ///< digitizer parameters
+    SFibersStackGeomPar* pGeomPar;      ///< geometry parameters
 
-    std::vector<std::vector<Int_t> > layer_fiber_limit; ///< store fibers offset
+    std::vector<std::vector<Int_t>> layer_fiber_limit; ///< store fibers offset
 
 public:
     // constructor

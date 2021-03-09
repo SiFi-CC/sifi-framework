@@ -22,8 +22,8 @@
 #include <TString.h>
 
 #include <cstddef>
-#include <string>
 #include <fstream>
+#include <string>
 
 /**
  * Extends SDataSOurce to read data from Desktop Digitizer.
@@ -36,12 +36,12 @@ public:
     virtual bool open() override;
     virtual bool close() override;
     virtual bool readCurrentEvent() override;
-    virtual void setInput(const std::string & filename, size_t length);
+    virtual void setInput(const std::string& filename, size_t length);
 
 private:
-    uint16_t subevent;          ///< subevent id
-    std::string input;          ///< source file name
-    std::ifstream istream;      ///< input file stream
-    size_t buffer_size;         ///< data buffer size
+    uint16_t subevent;     ///< subevent id
+    std::string input;     ///< source file name
+    std::ifstream istream; ///< input file stream
+    size_t buffer_size;    ///< data buffer size
 };
 #endif /* SDDSOURCE_H */

@@ -11,11 +11,11 @@
 #ifndef SSIFICCDETRESIMPORTER_H
 #define SSIFICCDETRESIMPORTER_H
 
-#include "sifi_export.h"
+#include "SCategory.h"
 #include "SDRSource.h"
 #include "SLookup.h"
-#include "SCategory.h"
 #include "SUnpacker.h"
+#include "sifi_export.h"
 
 #include <string>
 
@@ -26,10 +26,10 @@ class SIFI_EXPORT SSiFiCCDetResImporter : public SUnpacker
 {
 protected:
     // members
-    SCategory * catGeantTrack{nullptr};         ///< Geant4 tracks
-    SCategory * catGeantFibersRaw{nullptr};     ///< Geant fiber hits
-    SCategory * catFibersCal{nullptr};          ///< fibers raw category
-    SFibersStackGeomPar * pGeomPar{nullptr};    ///< fibers geometry
+    SCategory* catGeantTrack{nullptr};      ///< Geant4 tracks
+    SCategory* catGeantFibersRaw{nullptr};  ///< Geant fiber hits
+    SCategory* catFibersCal{nullptr};       ///< fibers raw category
+    SFibersStackGeomPar* pGeomPar{nullptr}; ///< fibers geometry
 
 public:
     // constructor
@@ -39,8 +39,8 @@ public:
 
     virtual bool init() override;
 
-    virtual bool execute(ulong event, ulong seq_number, uint16_t subevent,
-        void * buffer, size_t length) override;
+    virtual bool execute(ulong event, ulong seq_number, uint16_t subevent, void* buffer,
+                         size_t length) override;
 };
 
 #endif /* SSIFICCDETRESIMPORTER_H */

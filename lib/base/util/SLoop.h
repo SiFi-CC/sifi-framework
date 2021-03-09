@@ -32,14 +32,14 @@ class SIFI_EXPORT SLoop
 public:
     // constructor
     SIFI_EXPORT SLoop();
-    SLoop(const SLoop &) = delete;
+    SLoop(const SLoop&) = delete;
     // destructor
     virtual ~SLoop();
 
-    SLoop & operator=(const SLoop &) = delete;
+    SLoop& operator=(const SLoop&) = delete;
 
-    bool addFile(const std::string & file);
-    bool addFiles(const std::vector<std::string> & files);
+    bool addFile(const std::string& file);
+    bool addFiles(const std::vector<std::string>& files);
 
     void setInput(std::initializer_list<SCategory::Cat> categories);
 
@@ -48,16 +48,16 @@ public:
     Int_t getEvent(ulong event);
 
 private:
-    TChain * chain;                 ///< chain storing all input files
-    TFile * current_file;           ///< pointer to the current file
-    TTree * current_tree;           ///< pointer to the current tree
-    ulong current_event;            ///< number of current event
-    SCategory * categories[SCategory::CatLimitDoNotUse*2];  ///< list of categories
+    TChain* chain;                                          ///< chain storing all input files
+    TFile* current_file;                                    ///< pointer to the current file
+    TTree* current_tree;                                    ///< pointer to the current tree
+    ulong current_event;                                    ///< number of current event
+    SCategory* categories[SCategory::CatLimitDoNotUse * 2]; ///< list of categories
 
-    SEvent * event;                 ///< event data
-    SRootFileHeader * file_header;  ///< file header
+    SEvent* event;                ///< event data
+    SRootFileHeader* file_header; ///< file header
 
-    Long64_t tree_cache_size;       ///< tree cache size
+    Long64_t tree_cache_size; ///< tree cache size
 };
 
 #endif /* SLOOP_H */

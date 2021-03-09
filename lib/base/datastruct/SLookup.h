@@ -43,12 +43,12 @@ struct SIFI_EXPORT SLookupChannel
     virtual ~SLookupChannel() = default;
 
     ///@{
-    uint8_t m, l, s;    ///< component of virtual address
+    uint8_t m, l, s; ///< component of virtual address
     ///}@
 
-    virtual uint read(const char * buffer);
-    virtual uint write(char * buffer, size_t n) const;
-    virtual void print(bool newline = true, const char * prefix = 0) const;
+    virtual uint read(const char* buffer);
+    virtual uint write(char* buffer, size_t n) const;
+    virtual void print(bool newline = true, const char* prefix = 0) const;
     virtual uint64_t quickHash() const;
     virtual void fromHash(uint64_t hash);
 };
@@ -62,15 +62,15 @@ struct SIFI_EXPORT SLookupChannel
 class SLookupBoard
 {
 private:
-    uint addr;                      ///< board address
-    uint nchan;                     ///< number of channels
-    SLookupChannel ** channels;     ///< array of channels
+    uint addr;                 ///< board address
+    uint nchan;                ///< number of channels
+    SLookupChannel** channels; ///< array of channels
 
 public:
     SLookupBoard() = delete;
     SLookupBoard(uint addr, uint nchan);
-    SLookupBoard(const SLookupBoard &) = delete;
-    SLookupBoard & operator=(const SLookupBoard &) = delete;
+    SLookupBoard(const SLookupBoard&) = delete;
+    SLookupBoard& operator=(const SLookupBoard&) = delete;
 
     virtual ~SLookupBoard();
 
@@ -81,7 +81,8 @@ public:
      * \param chan channel number
      * \param c channel mapping object
      */
-    void setChannel(uint chan, SLookupChannel * c) {
+    void setChannel(uint chan, SLookupChannel* c)
+    {
         assert(chan < nchan);
         channels[chan] = c;
     }
@@ -93,7 +94,8 @@ public:
      * \param chan channel number
      * \return channel mapping object
      */
-    SLookupChannel * getChannel(uint chan) {
+    SLookupChannel* getChannel(uint chan)
+    {
         assert(chan < nchan);
         return channels[chan];
     }
@@ -133,19 +135,19 @@ public:
 class SIFI_EXPORT SLookupTable
 {
 protected:
-    std::string container;          ///< container name
-    uint a_min;                     ///< lower boundary of address range
-    uint a_max;                     ///< upper boundary of address range
-    uint channels;                  ///< maximal number of channels
-    bool is_init;                   ///< set if container was initialized
+    std::string container; ///< container name
+    uint a_min;            ///< lower boundary of address range
+    uint a_max;            ///< upper boundary of address range
+    uint channels;         ///< maximal number of channels
+    bool is_init;          ///< set if container was initialized
 
-    SLookupBoard ** boards;         ///< array of boards in a given range
+    SLookupBoard** boards; ///< array of boards in a given range
 
 public:
-    SLookupTable(const std::string & container, uint addr_min, uint addr_max, uint channels = 49);
+    SLookupTable(const std::string& container, uint addr_min, uint addr_max, uint channels = 49);
     /// Do not allow for copying the lookup table
-    SLookupTable(const SLookupTable &) = delete;
-    SLookupTable & operator=(const SLookupTable &) = delete;
+    SLookupTable(const SLookupTable&) = delete;
+    SLookupTable& operator=(const SLookupTable&) = delete;
 
     // destructor
     virtual ~SLookupTable();
@@ -160,9 +162,9 @@ public:
      *
      * \return empty object of channel lookup class
      */
-    virtual SLookupChannel * createChannel() const { return new SLookupChannel; }
+    virtual SLookupChannel* createChannel() const { return new SLookupChannel; }
 
-    SLookupChannel * getAddress(uint addr, uint chan);
+    SLookupChannel* getAddress(uint addr, uint chan);
 
     virtual void print();
 
@@ -171,7 +173,7 @@ protected:
     void toContainer() const;
 
     /* Have access to fromContainer() and toContainer() to SParManager */
-    friend void SParManager::writeContainers(const std::vector<std::string> & conts);
+    friend void SParManager::writeContainers(const std::vector<std::string>& conts);
 };
 
 #endif /* SLOOKUP_H */

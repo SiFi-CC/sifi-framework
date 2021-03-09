@@ -20,20 +20,20 @@ class SIFI_EXPORT SGeantFibersRaw : public TObject
 {
 protected:
     // members
-    Int_t module;                           ///< module
-    Int_t fiber;                            ///< fiber
+    Int_t module; ///< module
+    Int_t fiber;  ///< fiber
 
-    Double_t energyLoss;                    ///< energy loss
-    Double_t energyDeposition;              ///< energy deposition
-    Double_t energyDepositionQuenching;     ///< quenching
-    Double_t totalEnergy;                   ///< total energy
-    Double_t kineticEnergy;                 ///< kinetic energy
-    Int_t opticalPhotonCount;               ///< number of photons
-    Int_t fiberHits;                        ///< number of fibers hits
-    Float_t light_l;                        ///< light left
-    Float_t light_r;                        ///< light right
-    Float_t time_l;                         ///< time left
-    Float_t time_r;                         ///< time right
+    Double_t energyLoss;                ///< energy loss
+    Double_t energyDeposition;          ///< energy deposition
+    Double_t energyDepositionQuenching; ///< quenching
+    Double_t totalEnergy;               ///< total energy
+    Double_t kineticEnergy;             ///< kinetic energy
+    Int_t opticalPhotonCount;           ///< number of photons
+    Int_t fiberHits;                    ///< number of fibers hits
+    Float_t light_l;                    ///< light left
+    Float_t light_r;                    ///< light right
+    Float_t time_l;                     ///< time left
+    Float_t time_r;                     ///< time right
 
 public:
     // constrructor
@@ -50,11 +50,19 @@ public:
     /// Set address
     /// \param m module
     /// \param f fiber
-    void setAddress(Int_t m, Int_t f) { module = m; fiber = f; }
+    void setAddress(Int_t m, Int_t f)
+    {
+        module = m;
+        fiber = f;
+    }
     /// Get address
     /// \param m module
     /// \param f fiber
-    void getAddress(Int_t & m, Int_t & f) const { m = module; f = fiber; }
+    void getAddress(Int_t& m, Int_t& f) const
+    {
+        m = module;
+        f = fiber;
+    }
 
     /// Set energy loss
     /// \param e energy loss

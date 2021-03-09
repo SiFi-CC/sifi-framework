@@ -18,7 +18,7 @@
 
 namespace SCategoryManager
 {
-   SIFI_EXPORT SCategory * getCategory(SCategory::Cat cat);
+SIFI_EXPORT SCategory* getCategory(SCategory::Cat cat);
 }
 
 #endif /* STASKMANAGER_H */

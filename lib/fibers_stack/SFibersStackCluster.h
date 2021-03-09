@@ -37,12 +37,22 @@ public:
     /// \param m module
     /// \param l layer
     /// \param f fiber
-    void setAddress(Int_t m, Int_t l, Int_t f) { module = m; layer = l; fiber = f; }
+    void setAddress(Int_t m, Int_t l, Int_t f)
+    {
+        module = m;
+        layer = l;
+        fiber = f;
+    }
     /// Get address
     /// \param m module
     /// \param l layer
     /// \param f fiber
-    void getAddress(Int_t & m, Int_t & l, Int_t & f) const { m = module; l = layer; f = fiber; }
+    void getAddress(Int_t& m, Int_t& l, Int_t& f) const
+    {
+        m = module;
+        l = layer;
+        f = fiber;
+    }
 
     /// Add cluster component id
     /// \param id hit id
@@ -50,11 +60,11 @@ public:
 
     /// Get cluster components
     /// \return hits id vector
-    const std::vector<int> & getHitsArray() { return hits; }
+    const std::vector<int>& getHitsArray() { return hits; }
 
     void print() const;
 
-    ClassDef(SFibersStackCluster, 1);   // container for fibers stack raw data
+    ClassDef(SFibersStackCluster, 1); // container for fibers stack raw data
 };
 
 #endif /* SFIBERSSTACKCLUSTER_H */

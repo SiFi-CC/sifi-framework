@@ -21,7 +21,7 @@
 #include <algorithm>
 #include <iostream>
 #include <numeric>
- 
+
 /**
  * \class SFibersStackDDUnpacker
 \ingroup lib_fibers_stack
@@ -190,7 +190,7 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
     Int_t deadtime = pDDUnpackerPar->getDeadTime();
     Int_t blmode = pDDUnpackerPar->getBLMode(channel);
     Float_t veto_thr = pDDUnpackerPar->getVetoThreshold(channel);
-    
+
     SFibersStackChannel* lc =
         dynamic_cast<SFibersStackChannel*>(pLookUp->getAddress(fake_address, channel));
     SLocator loc(3);
@@ -209,11 +209,11 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
 
     pSamples->setAddress(loc[0], loc[1], loc[2]);
 
-    //Float_t samples[1024];
-    //size_t limit = length <= 1024 ? length : 1024;
+    // Float_t samples[1024];
+    // size_t limit = length <= 1024 ? length : 1024;
     Float_t samples[length];
     size_t limit = length;
-    
+
     memcpy(samples, data, limit * sizeof(float));
 
     // find baseline
@@ -289,7 +289,7 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
 
     float ADC_to_mV = getADCTomV();
     float sample_to_ns = getSampleTons();
-    
+
     pRaw->setAddress(loc[0], loc[1], loc[2]);
     if (side == 'l')
     {

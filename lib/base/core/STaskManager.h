@@ -26,8 +26,8 @@ class SIFI_EXPORT STaskManager
 {
 protected:
     // members
-    std::multimap<int, STask *> tasks;  ///< Tasks map
-    static STaskManager * tm;           ///< Instance of STaskManager
+    std::multimap<int, STask*> tasks; ///< Tasks map
+    static STaskManager* tm;          ///< Instance of STaskManager
 
 private:
     // constructors
@@ -35,19 +35,19 @@ private:
 
 public:
     /// Copy constructor
-    STaskManager(STaskManager const &) = delete;
+    STaskManager(STaskManager const&) = delete;
     // methods
     /// Assignment operator
     /// \return this object
-    STaskManager & operator=(STaskManager const &) = delete;
+    STaskManager& operator=(STaskManager const&) = delete;
 
     // instance method
-    static STaskManager * instance();
-    //destructor
+    static STaskManager* instance();
+    // destructor
     ~STaskManager();
 
     // methods
-    void addTask(STask * task, int step);
+    void addTask(STask* task, int step);
     void initTasks();
     void reinitTasks();
     void runTasks();

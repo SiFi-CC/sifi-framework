@@ -87,7 +87,7 @@ int main(int argc, char** argv)
             std::string saddr = inpstr.substr(0, pos1);
             std::string type = inpstr.substr(pos1 + 1, pos2 - pos1 - 1);
             std::string name = inpstr.substr(pos2 + 1, inpstr.length() - pos2 - 1);
-            std::string ext = name.substr(name.size() - 4,name.size()-1);
+            std::string ext = name.substr(name.size() - 4, name.size() - 1);
             uint16_t addr = std::stoi(saddr, nullptr, 16);
 
             if (ext == ".dat")
@@ -105,7 +105,7 @@ int main(int argc, char** argv)
             {
                 SFibersStackDDUnpacker* unp = new SFibersStackDDUnpacker();
                 SFibersStackDDUnpacker::saveSamples(save_samples);
-                
+
                 SKSSource* source = new SKSSource(addr);
                 source->addUnpacker(unp, {addr});
                 source->setInput(name);
@@ -122,7 +122,7 @@ int main(int argc, char** argv)
 
         ++optind;
     }
-    
+
     // output files
     sifi()->setOutputFileName(output);
     sifi()->book();
@@ -139,16 +139,16 @@ int main(int argc, char** argv)
     // initialize parameters
     pm()->setParamSource(params_file);
     pm()->parseSource();
-   
+
     // initialize detectors
     SDetectorManager* detm = SDetectorManager::instance();
 
     detm->addDetector(new SFibersStackDetector("FibersStack"));
- 
+
     detm->initTasks();
     detm->initParameterContainers();
     detm->initCategories();
- 
+
     pm()->addLookupContainer(
         "SFibersStackDDLookupTable",
         new SFibersStackLookupTable("SFibersStackDDLookupTable", 0x1000, 0x1fff, 32));
@@ -156,7 +156,7 @@ int main(int argc, char** argv)
     // initialize tasks
     STaskManager* tm = STaskManager::instance();
     tm->initTasks();
-    
+
     sifi()->setTree(new TTree());
     sifi()->loop(/*ev_limit*/ events);
 

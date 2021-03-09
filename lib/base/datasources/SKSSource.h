@@ -22,8 +22,8 @@
 #include <TString.h>
 
 #include <cstddef>
-#include <string>
 #include <fstream>
+#include <string>
 
 /**
  * Extends SDataSOurce to read data from the oscilloscope.
@@ -36,17 +36,15 @@ public:
     virtual bool open() override;
     virtual bool close() override;
     virtual bool readCurrentEvent() override;
-    virtual void setInput(const std::string & filename);
+    virtual void setInput(const std::string& filename);
 
 private:
     int samples;
     int max_channels;
     uint8_t channel;
-    uint16_t subevent;          ///< subevent id
-    std::string input;          ///< source file name
-    std::ifstream istream;      ///< input file stream
-    size_t buffer_size;         ///< data buffer size
-    
+    uint16_t subevent;     ///< subevent id
+    std::string input;     ///< source file name
+    std::ifstream istream; ///< input file stream
+    size_t buffer_size;    ///< data buffer size
 };
 #endif /* SKSSOURCE_H */
-

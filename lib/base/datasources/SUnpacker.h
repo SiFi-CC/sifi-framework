@@ -15,8 +15,8 @@
 #include "sifi_export.h"
 
 #include <cstddef>
-#include <string>
 #include <map>
+#include <string>
 
 #include <TArrayI.h>
 #include <TClonesArray.h>
@@ -51,23 +51,23 @@ public:
     /// \param buffer data buffer
     /// \param length size of teh buffer in bytes (uint8_t)
     /// \return success
-    virtual bool execute(ulong event, ulong seq_number, uint16_t subevent,
-        void * buffer, size_t length) = 0;
+    virtual bool execute(ulong event, ulong seq_number, uint16_t subevent, void* buffer,
+                         size_t length) = 0;
     /// Finalize task
     /// \return success
     virtual bool finalize() { return true; };
-    
+
     void setSampleTons(float bin_value) { sample_to_ns = bin_value; }
-    
+
     void setADCTomV(float coeff) { ADC_to_mV = coeff; }
-    
+
     float getSampleTons(void) { return sample_to_ns; }
-    
-    float getADCTomV(void) { return ADC_to_mV;}
-    
+
+    float getADCTomV(void) { return ADC_to_mV; }
+
 private:
-    float  sample_to_ns;
-    float  ADC_to_mV;
+    float sample_to_ns;
+    float ADC_to_mV;
 };
 
 #endif /* SUNPACKER_H */

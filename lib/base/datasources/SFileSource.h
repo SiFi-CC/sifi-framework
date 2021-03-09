@@ -22,8 +22,8 @@
 #include <TString.h>
 
 #include <cstddef>
-#include <string>
 #include <fstream>
+#include <string>
 
 /**
  * File source reads data from text or binary file. As the subevent id is not
@@ -40,17 +40,17 @@ public:
     virtual bool open() override;
     virtual bool close() override;
     virtual bool readCurrentEvent() override;
-    virtual void setInput(const std::string & filename, size_t buffer_size);
+    virtual void setInput(const std::string& filename, size_t buffer_size);
 
     /// Define unpacker address for the source
     /// \param address emulated subevent id
     virtual void forceUnpacker(uint16_t address) { subevent = address; }
 
 private:
-    uint16_t subevent;              ///< set address for unpacker
-    std::string input;              ///< file input
-    std::ifstream istream;          ///< file reader stream
-    size_t buffer_size;             ///< size of data chunk
+    uint16_t subevent;     ///< set address for unpacker
+    std::string input;     ///< file input
+    std::ifstream istream; ///< file reader stream
+    size_t buffer_size;    ///< size of data chunk
 };
 
 #endif /* SFILESOURCE_H */

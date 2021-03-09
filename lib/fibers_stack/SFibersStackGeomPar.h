@@ -14,8 +14,8 @@
 
 #include "sifi_export.h"
 
-#include <TArrayI.h>
 #include <TArrayF.h>
+#include <TArrayI.h>
 
 #include "SPar.h"
 
@@ -23,25 +23,25 @@ class SIFI_EXPORT SFibersStackGeomPar : public SPar
 {
 protected:
     // members
-    Int_t modules;                  ///< number of modules
-    struct SingleModule             ///< single module configuration
+    Int_t modules;      ///< number of modules
+    struct SingleModule ///< single module configuration
     {
-        Int_t layers;               ///< numbre of layers
-        TArrayI fibers;             ///< number of fibers
-        TArrayF layer_rotation;     ///< layer rotation around the axis
-        TArrayF fiber_offset_x;     ///< offset of the first fiber in the layer
-        TArrayF fiber_offset_y;     ///< offset of the layers
-        TArrayF fibers_pitch;       ///< fibers pitch in a layer
+        Int_t layers;           ///< numbre of layers
+        TArrayI fibers;         ///< number of fibers
+        TArrayF layer_rotation; ///< layer rotation around the axis
+        TArrayF fiber_offset_x; ///< offset of the first fiber in the layer
+        TArrayF fiber_offset_y; ///< offset of the layers
+        TArrayF fibers_pitch;   ///< fibers pitch in a layer
     };
 
-    SingleModule * mods;            ///< params for each module
+    SingleModule* mods; ///< params for each module
 
 public:
     SFibersStackGeomPar();
     virtual ~SFibersStackGeomPar();
 
-    bool getParams(SParContainer * parcont) override;
-    bool putParams(SParContainer * parcont) const override;
+    bool getParams(SParContainer* parcont) override;
+    bool putParams(SParContainer* parcont) const override;
     void clear() override;
     void print() const override;
 

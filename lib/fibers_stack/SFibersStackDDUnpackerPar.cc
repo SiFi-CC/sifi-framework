@@ -113,7 +113,6 @@ bool SFibersStackDDUnpackerPar::getParams(SParContainer* parcont)
     return true;
 }
 
-
 /**
  * Put parameters
  * \sa SPar::putParams()

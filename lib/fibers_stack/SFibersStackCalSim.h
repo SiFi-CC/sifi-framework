@@ -18,11 +18,16 @@ class SIFI_EXPORT SFibersStackCalSim : public SFibersStackCal
 {
 public:
     // data members
-    Float_t fGeantEloss{0};     ///< energy loss from Geant
-    Float_t fGeantX{0};         ///< geant X
-    Float_t fGeantY{0};         ///< geant Y
-    Float_t fGeantZ{0};         ///< geant Z
-    enum InteractionType { PHOTON, ELECTRON, SCINT } type;
+    Float_t fGeantEloss{0}; ///< energy loss from Geant
+    Float_t fGeantX{0};     ///< geant X
+    Float_t fGeantY{0};     ///< geant Y
+    Float_t fGeantZ{0};     ///< geant Z
+    enum InteractionType
+    {
+        PHOTON,
+        ELECTRON,
+        SCINT
+    } type;
 
 public:
     // constructors

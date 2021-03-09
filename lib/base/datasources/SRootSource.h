@@ -28,17 +28,17 @@
 class SIFI_EXPORT SRootSource : public SDataSource
 {
 public:
-    SRootSource(const std::string & tree_name);
+    SRootSource(const std::string& tree_name);
 
     virtual bool open() override;
     virtual bool close() override;
     virtual bool readCurrentEvent() override;
-    virtual void addInput(const std::string & filename);
+    virtual void addInput(const std::string& filename);
 
     virtual long getEntries() { return chain->GetEntries(); }
 
 protected:
-    TChain * chain;
+    TChain* chain;
 };
 
 #endif /* SROOTSOURCE_H */

@@ -15,16 +15,15 @@
 #include "STask.h"
 
 class SCategory;
-template<int N>
-class SCalContainer;
+template <int N> class SCalContainer;
 
 class SFibersStackCalibrator : public STask
 {
 protected:
     // members
-    SCategory * catFibersRaw;           ///< fibers raw category
-    SCategory * catFibersCal;           ///< fibers cal category
-    SCalContainer<3> * pCalibratorPar;  ///< calibrator parameters
+    SCategory* catFibersRaw;          ///< fibers raw category
+    SCategory* catFibersCal;          ///< fibers cal category
+    SCalContainer<3>* pCalibratorPar; ///< calibrator parameters
 
 public:
     // constructor

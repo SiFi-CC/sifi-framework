@@ -7,5 +7,6 @@ AllowShortIfStatementsOnASingleLine: true
 IndentCaseLabels: true
 ColumnLimit: 100
 PointerAlignment: Left
+AccessModifierOffset: -4
 
 TabWidth: 4

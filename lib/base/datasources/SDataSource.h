@@ -20,8 +20,8 @@
 #include <TString.h>
 
 #include <cstddef>
-#include <string>
 #include <map>
+#include <string>
 
 class SUnpacker;
 
@@ -51,14 +51,13 @@ public:
     void setCurrentEvent(long i) { current_event = i; }
     long getCurrentEvent() const { return current_event; }
 
-    void addUnpacker(SUnpacker * unpacker, const std::vector<uint16_t> & address);
+    void addUnpacker(SUnpacker* unpacker, const std::vector<uint16_t>& address);
 
 private:
     ulong current_event;
 
 protected:
-    std::map<uint16_t, SUnpacker *> unpackers;  ///< store unpackers and its addresses
+    std::map<uint16_t, SUnpacker*> unpackers; ///< store unpackers and its addresses
 };
-
 
 #endif /* SDATASOURCE_H */
