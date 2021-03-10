@@ -12,8 +12,8 @@
 #include "SFibersStackDDUnpacker.h"
 #include "SCategory.h"
 #include "SDDSamples.h"
-#include "SFibersStackDDUnpackerPar.h"
 #include "SFibersStackDDCalibratorPar.h"
+#include "SFibersStackDDUnpackerPar.h"
 #include "SFibersStackLookup.h"
 #include "SFibersStackRaw.h"
 #include "SParManager.h"
@@ -166,8 +166,8 @@ bool SFibersStackDDUnpacker::init()
     pDDUnpackerPar->print();
 
     // get calibrator parameters
-    pDDCalPar =
-        dynamic_cast<SFibersStackDDCalibratorPar*>(pm()->getCalibrationContainer("SFibersStackDDCalibratorPar"));
+    pDDCalPar = dynamic_cast<SFibersStackDDCalibratorPar*>(
+        pm()->getCalibrationContainer("SFibersStackDDCalibratorPar"));
     if (!pDDCalPar)
     {
         std::cerr << "Parameter container 'SFibersStackDDCalibratorPar' was not obtained!"

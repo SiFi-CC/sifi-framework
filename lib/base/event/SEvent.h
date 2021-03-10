@@ -31,13 +31,13 @@ public:
     SEvent();
     virtual ~SEvent();
 
-    void addCategory(SCategory::Cat catid, SCategory * category);
-    SCategory * getCategory(SCategory::Cat catid);
+    void addCategory(SCategory::Cat catid, SCategory* category);
+    SCategory* getCategory(SCategory::Cat catid);
 
     void clearCategories();
 
 private:
-    TObjArray * categories;         ///< Array of categories
+    TObjArray* categories; ///< Array of categories
 
     ClassDef(SEvent, 1);
 };

@@ -86,17 +86,23 @@ template <int N> uint SCalPar<N>::write(char* buffer, size_t n) const
     return 0;
 }
 
-template <int N> float & SCalPar<N>::operator[](int n) {
-    if (n < 0 or n > N-1) {
-        std::cerr << "SCalPar<N>::operator[]: Index n=" << n << " outside range(0;" << N-1 << ")" << std::endl;
+template <int N> float& SCalPar<N>::operator[](int n)
+{
+    if (n < 0 or n > N - 1)
+    {
+        std::cerr << "SCalPar<N>::operator[]: Index n=" << n << " outside range(0;" << N - 1 << ")"
+                  << std::endl;
         abort();
     }
     return par[n];
 }
 
-template <int N> const float SCalPar<N>::operator[](int n) const {
-    if (n < 0 or n > N-1) {
-        std::cerr << "SCalPar<N>::operator[]: Index n=" << n << " outside range(0;" << N-1 << ")" << std::endl;
+template <int N> const float SCalPar<N>::operator[](int n) const
+{
+    if (n < 0 or n > N - 1)
+    {
+        std::cerr << "SCalPar<N>::operator[]: Index n=" << n << " outside range(0;" << N - 1 << ")"
+                  << std::endl;
         abort();
     }
     return par[n];

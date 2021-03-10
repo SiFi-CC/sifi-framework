@@ -15,8 +15,8 @@
 #include "sifi_export.h"
 
 #include <cstddef>
-#include <string>
 #include <map>
+#include <string>
 
 #include <TArrayI.h>
 #include <TClonesArray.h>
@@ -27,8 +27,8 @@ class SIFI_EXPORT SLocator
 {
 private:
     // members
-    std::size_t dim;                ///< dimension of the locator
-    std::vector<size_t> addr;       ///< cooridnates of the locator
+    std::size_t dim;          ///< dimension of the locator
+    std::vector<size_t> addr; ///< cooridnates of the locator
 
 public:
     SLocator() = delete;
@@ -36,15 +36,15 @@ public:
     /// Constructor
     /// \param N dimension of the locator
     explicit SLocator(std::size_t N) : dim(N), addr(N) {}
-    //destructor
+    // destructor
     virtual ~SLocator() = default;
 
-    //methods
+    // methods
 
     /// Access coordinate at given position.
     /// \param n dimension position (0..N)
     /// \return coordinate
-    size_t & operator[](size_t n) { return addr[n]; }
+    size_t& operator[](size_t n) { return addr[n]; }
     /// Same as operator[]()
     /// \param n dimension position (0..N)
     /// \return coordinate

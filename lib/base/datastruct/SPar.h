@@ -18,10 +18,10 @@ class SParContainer;
 
 class SIFI_EXPORT SPar
 {
-    friend class SParManager;       ///< MParManager is friend
+    friend class SParManager; ///< MParManager is friend
 protected:
     // members
-    SParContainer * parcont;        ///< Pointer to object of parameter container
+    SParContainer* parcont; ///< Pointer to object of parameter container
 
 public:
     // constructor
@@ -38,11 +38,11 @@ protected:
     /// Get parameters from container
     /// \param parcont pointer to container object
     /// \return success
-    virtual bool getParams(SParContainer * parcont) = 0;
+    virtual bool getParams(SParContainer* parcont) = 0;
     /// Put parameters into container
     /// \param parcont pointer to container object
     /// \return success
-    virtual bool putParams(SParContainer * parcont) const = 0;
+    virtual bool putParams(SParContainer* parcont) const = 0;
 };
 
 #endif /* SPAR_H */

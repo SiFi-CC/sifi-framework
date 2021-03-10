@@ -125,20 +125,20 @@ bool SFibersStackCalibrator::execute()
         // [3] - ksi
         // [4] - length
         // [5] - time offset
-        
+
         // calc laboratory coordinates from digi data
         Float_t qdc_l = pRaw->getQDCL();
         Float_t qdc_r = pRaw->getQDCR();
         Float_t time_l = pRaw->getTimeL();
         Float_t time_r = pRaw->getTimeR();
 
-        //calibration: measured signal -> direct signal
-        Float_t e = exp(cp_l[0]/cp_l[4]);
+        // calibration: measured signal -> direct signal
+        Float_t e = exp(cp_l[0] / cp_l[4]);
         Float_t energy_l = (e * (e * cp_l[3] * qdc_l - (qdc_r * cp_l[1]))) /
                            (cp_l[3] * (pow(e, 2) - (cp_l[1] * cp_l[2])));
-        Float_t energy_r = - (e * (-e * qdc_r + (cp_r[3] * qdc_l * cp_r[2]))) /
+        Float_t energy_r = -(e * (-e * qdc_r + (cp_r[3] * qdc_l * cp_r[2]))) /
                            (cp_r[3] * (pow(e, 2) - (cp_r[1] * cp_r[2])));
-        
+
         time_l += cp_l[5];
         time_r += cp_r[5];
 

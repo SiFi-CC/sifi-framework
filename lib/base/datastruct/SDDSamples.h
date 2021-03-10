@@ -22,18 +22,18 @@
  */
 class SIFI_EXPORT SDDSignal
 {
-  public:
-    Float_t fAmp;       ///< Amplitude [mV]
-    Float_t fT0;        ///< Time T0 [ns]
-    Float_t fTOT;       ///< Time over threshold [ns]
-    Float_t fCharge;    ///< Uncalibrated charge [a.u.]
-    Float_t fPE;        ///< Calibrated charge [P.E.] or [keV]
-    Float_t fBL;        ///< extracted base line
-    Float_t fBL_sigma;  ///< sigma of the baseline
-    Int_t fPileUp;      ///< pile up flag
-    Int_t fVeto;        ///< veto flag
+public:
+    Float_t fAmp;      ///< Amplitude [mV]
+    Float_t fT0;       ///< Time T0 [ns]
+    Float_t fTOT;      ///< Time over threshold [ns]
+    Float_t fCharge;   ///< Uncalibrated charge [a.u.]
+    Float_t fPE;       ///< Calibrated charge [P.E.] or [keV]
+    Float_t fBL;       ///< extracted base line
+    Float_t fBL_sigma; ///< sigma of the baseline
+    Int_t fPileUp;     ///< pile up flag
+    Int_t fVeto;       ///< veto flag
 
-  public:
+public:
     SDDSignal();
 
     /// Sets signal amplitude in mV
@@ -55,7 +55,7 @@ class SIFI_EXPORT SDDSignal
     /// \param bl baseline
     void SetBL(Float_t bl) { fBL = bl; };
     /// Sets baselibe sigma value
-    /// \param bl_sig baseline sigma 
+    /// \param bl_sig baseline sigma
     void SetBLSigma(Float_t bl_sig) { fBL_sigma = bl_sig; };
     /// Sets pile up flag
     /// \param pileup pile up flag
@@ -63,7 +63,7 @@ class SIFI_EXPORT SDDSignal
     /// Sets veto flag
     /// \param veto veto flag
     void SetVeto(Int_t veto) { fVeto = veto; };
-    
+
     /// Returns signal amplitude in mV
     /// \return amplitude of the signal
     Float_t GetAmplitude() const { return fAmp; };
@@ -102,19 +102,19 @@ class SIFI_EXPORT SDDSignal
  */
 class SIFI_EXPORT SDDSamples : public TObject
 {
-  protected:
+protected:
     // members
-    Int_t module;               ///< address - module
-    Int_t layer;                ///< address - layer
-    Int_t fiber;                ///< address - fiber
+    Int_t module; ///< address - module
+    Int_t layer;  ///< address - layer
+    Int_t fiber;  ///< address - fiber
 
-    Float_t samples_l[1024];    ///< samples read on ou the left side
-    Float_t samples_r[1024];    ///< samples read on ou the right side
+    Float_t samples_l[1024]; ///< samples read on ou the left side
+    Float_t samples_r[1024]; ///< samples read on ou the right side
 
-    SDDSignal signal_l;          ///< signal from the left side, backward comp.
-    SDDSignal signal_r;          ///< signal from the right side, backward comp.
+    SDDSignal signal_l; ///< signal from the left side, backward comp.
+    SDDSignal signal_r; ///< signal from the right side, backward comp.
 
-  public:
+public:
     // constructor
     SDDSamples();
 

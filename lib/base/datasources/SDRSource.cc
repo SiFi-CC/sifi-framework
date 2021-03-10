@@ -13,8 +13,8 @@
 #include "SSiFiCCDetResImporter.h"
 #include "SUnpacker.h"
 
-#include <DR_CCSetup.hh>
 #include <DRSiPMModel.hh>
+#include <DR_CCSetup.hh>
 
 #include <TChain.h>
 
@@ -52,9 +52,9 @@ SDRSource::SDRSource() : SRootSource("Events"), subevent(0)
     fPhotonInteractions = new std::vector<int>;
     fElectronInteractions = new std::vector<int>;
 
-    fPxPosPhot = new std::map<int,TVector3>;
-    fPxPosElec = new std::map<int,TVector3>;
-    fPxPosScin = new std::map<int,TVector3>;
+    fPxPosPhot = new std::map<int, TVector3>;
+    fPxPosElec = new std::map<int, TVector3>;
+    fPxPosScin = new std::map<int, TVector3>;
 
     // Define odjects for branches
     chain->SetBranchAddress("PrimEnergy", &fPrimEnergy);
@@ -75,13 +75,13 @@ SDRSource::SDRSource() : SRootSource("Events"), subevent(0)
     chain->SetBranchAddress("EInteractions", &fElectronInteractions);
     chain->SetBranchAddress("PInteractions", &fPhotonInteractions);
 
-    tree.events.fHitArray = new TClonesArray("OPHit",50000);
-    fPxPosPhot = new std::map<int,TVector3>;
-    fPxPosElec = new std::map<int,TVector3>;
-    fPxPosScin = new std::map<int,TVector3>;
-    fPxEnPhot = new std::map<int,double>;
-    fPxEnElec = new std::map<int,double>;
-    fPxEnScin = new std::map<int,double>;
+    tree.events.fHitArray = new TClonesArray("OPHit", 50000);
+    fPxPosPhot = new std::map<int, TVector3>;
+    fPxPosElec = new std::map<int, TVector3>;
+    fPxPosScin = new std::map<int, TVector3>;
+    fPxEnPhot = new std::map<int, double>;
+    fPxEnElec = new std::map<int, double>;
+    fPxEnScin = new std::map<int, double>;
 
     // "DetectorEvent" tree
     chain2->SetBranchAddress("Hitsarray", &tree.events.fHitArray);
@@ -290,8 +290,8 @@ bool SDRSource::readCurrentEvent()
                 else
                 {
                     std::cerr << "POSITION: Corresponding fiber_id not found: " << fiber_id
-                              << " for SiPmID: " << c.first
-                              << " with SiPmID fold: " << sipm_fold << std::endl;
+                              << " for SiPmID: " << c.first << " with SiPmID fold: " << sipm_fold
+                              << std::endl;
                     continue;
                 }
 
@@ -304,8 +304,8 @@ bool SDRSource::readCurrentEvent()
                 else
                 {
                     std::cerr << "ENERGY: Corresponding fiber_id not found: " << fiber_id
-                              << " for SiPmID: " << c.first
-                              << " with SiPmID fold: " << sipm_fold << std::endl;
+                              << " for SiPmID: " << c.first << " with SiPmID fold: " << sipm_fold
+                              << std::endl;
                     continue;
                 }
 

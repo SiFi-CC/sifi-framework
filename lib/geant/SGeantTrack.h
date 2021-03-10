@@ -18,21 +18,30 @@
 #include <TRandom2.h>
 #include <TVector3.h>
 
-#include <string>
 #include <fstream>
+#include <string>
 
 class SIFI_EXPORT SGeantTrack : public TLorentzVector
 {
 public:
     /// List of recorderd physics processes
-    enum Process {
-        COMPTON,                        ///< COmpton scaterring
-        INELASTIC,                      ///< Inelastic scattering
-        ATREST                          ///< Stopped at rest
+    enum Process
+    {
+        COMPTON,   ///< COmpton scaterring
+        INELASTIC, ///< Inelastic scattering
+        ATREST     ///< Stopped at rest
     };
 
-    enum Type { G_PRIM, G_COMP, G_COMP_ABS, E_COMP, E_COMP_ABS, OTHER } type;  ///< track type
-    TVector3 start;                             ///< start point
+    enum Type
+    {
+        G_PRIM,
+        G_COMP,
+        G_COMP_ABS,
+        E_COMP,
+        E_COMP_ABS,
+        OTHER
+    } type;         ///< track type
+    TVector3 start; ///< start point
 
 protected:
 //     Point stop;                         ///< stop point
@@ -64,37 +73,22 @@ public:
     /// \param x x
     /// \param y y
     /// \param z z
-    void setStartXYZ ( Float_t x, Float_t y, Float_t z )
-    {
-        start.SetXYZ(x, y ,z);
-    }
+    void setStartXYZ(Float_t x, Float_t y, Float_t z) { start.SetXYZ(x, y, z); }
     /// Set start point
     /// \param p production vector
-    void setStartXYZ(const TVector3 & p) { start = p; }
+    void setStartXYZ(const TVector3& p) { start = p; }
     /// Get start x
     /// \return x
-    Float_t getStartX() const
-    {
-        return start.x();
-    }
+    Float_t getStartX() const { return start.x(); }
     /// Get start y
     /// \return y
-    Float_t getStartY() const
-    {
-        return start.y();
-    }
+    Float_t getStartY() const { return start.y(); }
     /// Get start z
     /// \return z
-    Float_t getStartZ() const
-    {
-        return start.z();
-    }
+    Float_t getStartZ() const { return start.z(); }
     /// Get start point
     /// \return production point
-    TVector3 getStart() const
-    {
-        return start;
-    }
+    TVector3 getStart() const { return start; }
 
     /// Set type
     /// \param t track type
@@ -216,8 +210,8 @@ public:
 //         return stop.E;
 //     }
 
-    Double_t getDistance ( const TVector3 & ref ) const;
-    Double_t getRange ( const TVector3 & ref ) const;
+    Double_t getDistance(const TVector3& ref) const;
+    Double_t getRange(const TVector3& ref) const;
 
 //     /// Get scattering
 //     /// \return scatteringp
@@ -387,11 +381,10 @@ public:
 //         return proc_arr[ATREST];
 //     }
 
-    void Clear ( Option_t * opt = "" );
+    void Clear(Option_t* opt = "");
 
 private:
-    ClassDef ( SGeantTrack, 1 );
+    ClassDef(SGeantTrack, 1);
 };
 
 #endif /* SGEANTTRACK_H */
-

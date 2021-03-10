@@ -17,8 +17,8 @@
 #include "SUnpacker.h"
 
 #include <cstddef>
-#include <string>
 #include <fstream>
+#include <string>
 
 #include <TArrayI.h>
 #include <TClonesArray.h>
@@ -48,12 +48,12 @@ public:
     /// \param buffer data buffer
     /// \param length buffer length
     /// \return success
-    virtual bool execute(ulong event, ulong seq_number, uint16_t subevent,
-                         void * buffer, size_t length) override;
+    virtual bool execute(ulong event, ulong seq_number, uint16_t subevent, void* buffer,
+                         size_t length) override;
 
     /// Set expected data len, we speak about floats not bytes.
     /// \param length size of the array in terms of floats
-    void setDataLen(size_t length) { data_length = length;}
+    void setDataLen(size_t length) { data_length = length; }
 
     static void saveSamples(bool save) { save_samples = save; }
 
@@ -64,13 +64,13 @@ protected:
     /// \param data data buffer
     /// \param length buffer length
     /// \return success
-    virtual bool decode(uint16_t subevent, float * data, size_t length) = 0;
+    virtual bool decode(uint16_t subevent, float* data, size_t length) = 0;
 
 protected:
     static bool save_samples;
 
 private:
-    size_t data_length;         ///< data buffer length
+    size_t data_length; ///< data buffer length
 };
 
 #endif /* SDDUNPACKER_H */

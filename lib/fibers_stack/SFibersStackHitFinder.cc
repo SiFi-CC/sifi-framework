@@ -13,8 +13,8 @@
 #include "SCategory.h"
 #include "SFibersStackCalSim.h"
 #include "SFibersStackGeomPar.h"
-#include "SFibersStackHitSim.h"
 #include "SFibersStackHitFinderPar.h"
+#include "SFibersStackHitSim.h"
 #include "SLocator.h"
 #include "SLookup.h"
 #include "SiFi.h"
@@ -198,8 +198,9 @@ bool SFibersStackHitFinder::execute()
         Float_t E = alpha * sqrt(qdc_r * qdc_l);
         pHit->setE(E, 0);
 
-        SFibersStackCalSim * pCalSim = dynamic_cast<SFibersStackCalSim*>(pCal);
-        if (sifi()->isSimulation() and pCalSim) {
+        SFibersStackCalSim* pCalSim = dynamic_cast<SFibersStackCalSim*>(pCal);
+        if (sifi()->isSimulation() and pCalSim)
+        {
             ((SFibersStackHitSim*)pHit)->setGeantEnergyLoss(pCalSim->getGeantEnergyLoss());
             ((SFibersStackHitSim*)pHit)->getGeantPoint() = pCalSim->getGeantPoint();
         }

@@ -22,6 +22,6 @@ class SFibersStackDDCalibratorPar : public SCalContainer<2>
 public:
     using SCalContainer::SCalContainer;
 
-    SLookupChannel * createChannel() const override { return new SFibersStackChannel; }
+    SLookupChannel* createChannel() const override { return new SFibersStackChannel; }
 };
 #endif /* SFIBERSSTACKDDCALIBRATORPAR_H */
