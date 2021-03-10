@@ -11,6 +11,10 @@
 
 #ifdef __CLING__
 
+// clang-format off
+
 #pragma link C++ class SProgressBar+;
+
+// clang-format on
 
 #endif

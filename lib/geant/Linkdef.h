@@ -11,7 +11,11 @@
 
 #ifdef __CLING__
 
+// clang-format off
+
 #pragma link C++ class SGeantTrack+;
 #pragma link C++ class SGeantFibersRaw+;
+
+// clang-format on
 
 #endif

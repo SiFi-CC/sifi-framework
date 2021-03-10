@@ -11,6 +11,8 @@
 
 #ifdef __CLING__
 
+// clang-format off
+
 #pragma link C++ class SLocator+;
 #pragma link C++ class SCategory+;
 #pragma link C++ class SCategoryHeader+;
@@ -33,5 +35,7 @@
 
 // importer
 #pragma link C++ class std::map<int, TVector3>+;
+
+// clang-format on
 
 #endif
