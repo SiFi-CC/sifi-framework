@@ -16,9 +16,9 @@
 
 #include "SLookup.h"
 
-#include <stdint.h>
-#include <cstdio>
 #include <cassert>
+#include <cstdio>
+#include <stdint.h>
 
 #include <inttypes.h>
 
@@ -32,11 +32,11 @@ class SLookupTable;
  */
 struct SIFI_EXPORT SFibersStackChannel : public SLookupChannel
 {
-    char side;          ///< side of a fiber, either 'l' or 'r'
+    char side; ///< side of a fiber, either 'l' or 'r'
 
-    virtual uint read(const char * buffer) override;
-    virtual uint write(char * buffer, size_t n) const override;
-    virtual void print(bool newline = true, const char * prefix = "") const override;
+    virtual uint read(const char* buffer) override;
+    virtual uint write(char* buffer, size_t n) const override;
+    virtual void print(bool newline = true, const char* prefix = "") const override;
     virtual uint64_t quickHash() const override;
     virtual void fromHash(uint64_t hash) override;
 };
@@ -47,7 +47,7 @@ public:
     using SLookupTable::SLookupTable;
 
     // methods
-    SLookupChannel * createChannel() const override { return new SFibersStackChannel(); }
+    SLookupChannel* createChannel() const override { return new SFibersStackChannel(); }
 };
 
 #endif /* SFIBERSSTACKLOOKUP_H */

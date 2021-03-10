@@ -29,7 +29,7 @@ public:
     SFibersStackCal() = default;
     virtual ~SFibersStackCal() = default;
 
-    ClassDef(SFibersStackCal, 1);   // container for fibers stack calibrated data
+    ClassDef(SFibersStackCal, 1); // container for fibers stack calibrated data
 };
 
 #endif /* SFIBERSSTACKCAL_H */

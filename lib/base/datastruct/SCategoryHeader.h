@@ -30,13 +30,13 @@ class SCategoryHeader : public TObject
 {
 public:
     // members
-    TString name;           ///< name of the category
-    Bool_t simulation;      ///< simulation category
-    UInt_t dim;             ///< dimensions
-    TArrayI dim_sizes;      ///< dimension sizes
-    TArrayI dim_offsets;    ///< dimension offsets
-    ULong_t data_size;      ///< data array size
-    Bool_t writable;        ///< is writable
+    TString name;        ///< name of the category
+    Bool_t simulation;   ///< simulation category
+    UInt_t dim;          ///< dimensions
+    TArrayI dim_sizes;   ///< dimension sizes
+    TArrayI dim_offsets; ///< dimension offsets
+    ULong_t data_size;   ///< data array size
+    Bool_t writable;     ///< is writable
 
 public:
     // constructor
@@ -46,7 +46,7 @@ public:
     void clear();
 
 private:
-    ClassDefOverride(SCategoryHeader,1);
+    ClassDefOverride(SCategoryHeader, 1);
 };
 
 #endif /* SCATEGORYHEADER_H */

@@ -21,8 +21,8 @@ protected:
 
 public:
     // methods
-    bool getParams(SParContainer * parcont) override;
-    bool putParams(SParContainer * parcont) const override;
+    bool getParams(SParContainer* parcont) override;
+    bool putParams(SParContainer* parcont) const override;
     void clear() override;
 };
 

@@ -46,42 +46,44 @@ void SFibersStackHitFinderPar::clear()
  */
 Float_t SFibersStackHitFinderPar::getResPos(UInt_t i) const
 {
-	Float_t ret = 0.;
-	if(i < fResPos.GetSize() ) {
-		ret = fResPos[i];
-	} else {
-        	std::cerr << "TArrayF index is more than allowed in numOfResPars" << std::endl;
-		return 0.;
-	}
-	return ret;
+    Float_t ret = 0.;
+    if (i < fResPos.GetSize()) { ret = fResPos[i]; }
+    else
+    {
+        std::cerr << "TArrayF index is more than allowed in numOfResPars" << std::endl;
+        return 0.;
+    }
+    return ret;
 }
 
 Float_t SFibersStackHitFinderPar::getResEne(UInt_t i) const
 {
-	Float_t ret = 0.;
-	if(i < fResEne.GetSize() ) {
-		ret = fResEne[i];
-	} else {
-        	std::cerr << "TArrayF index is more than allowed in numOfResPars" << std::endl;
-		return 0.;
-	}
-	return ret;
+    Float_t ret = 0.;
+    if (i < fResEne.GetSize()) { ret = fResEne[i]; }
+    else
+    {
+        std::cerr << "TArrayF index is more than allowed in numOfResPars" << std::endl;
+        return 0.;
+    }
+    return ret;
 }
 
-void SFibersStackHitFinderPar::setResPos(UInt_t i, Float_t f) {
-	if(i < numOfResPars ) {
-		fResPos.SetAt(f, i);
-	} else {
-        	std::cerr << "TArrayF index is more than allowed in numOfResPars" << std::endl;
-	}
+void SFibersStackHitFinderPar::setResPos(UInt_t i, Float_t f)
+{
+    if (i < numOfResPars) { fResPos.SetAt(f, i); }
+    else
+    {
+        std::cerr << "TArrayF index is more than allowed in numOfResPars" << std::endl;
+    }
 }
 
-void SFibersStackHitFinderPar::setResEne(UInt_t i, Float_t f) {
-	if(i < numOfResPars ) {
-		fResEne.SetAt(f, i);
-	} else {
-        	std::cerr << "TArrayF index is more than allowed in numOfResPars" << std::endl;
-	}
+void SFibersStackHitFinderPar::setResEne(UInt_t i, Float_t f)
+{
+    if (i < numOfResPars) { fResEne.SetAt(f, i); }
+    else
+    {
+        std::cerr << "TArrayF index is more than allowed in numOfResPars" << std::endl;
+    }
 }
 
 /**
@@ -95,13 +97,13 @@ bool SFibersStackHitFinderPar::getParams(SParContainer* parcont)
     if (!parcont->fill("fA0", fA0)) return false;
     if (!parcont->fill("fLambda", fLambda)) return false;
     if (!parcont->fill("fAlpha", fAlpha)) return false;
-    if (!parcont->fill("fResPos", fResPos) ) return false;
+    if (!parcont->fill("fResPos", fResPos)) return false;
     if (fResPos.GetSize() != numOfResPars)
     {
         std::cerr << "Size of fResPos doesn't match numOfResPars" << std::endl;
         return false;
     }
-    if (!parcont->fill("fResEne", fResEne) ) return false;
+    if (!parcont->fill("fResEne", fResEne)) return false;
     if (fResEne.GetSize() != numOfResPars)
     {
         std::cerr << "Size of fResEne doesn't match numOfResPars" << std::endl;
@@ -133,10 +135,10 @@ void SFibersStackHitFinderPar::print() const
     printf(" fLambda = %f\n", fLambda);
     printf(" fAlpha = %f\n", fAlpha);
     printf(" fResPos:");
-    for(int l=0; l < fResPos.GetSize(); ++l)
-	    printf(" %f", fResPos[l]);
+    for (int l = 0; l < fResPos.GetSize(); ++l)
+        printf(" %f", fResPos[l]);
     printf("\n fResEne:");
-    for(int l=0; l < fResPos.GetSize(); ++l)
-	    printf(" %f", fResEne[l]);
+    for (int l = 0; l < fResPos.GetSize(); ++l)
+        printf(" %f", fResEne[l]);
     printf("\n");
 }

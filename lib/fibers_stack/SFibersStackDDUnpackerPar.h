@@ -20,17 +20,17 @@
 
 class SFibersStackDDUnpackerPar : public SPar
 {
-  private:
+private:
     // members
     TArrayF fThreshold;     ///< Threshold in ADC (LE) or % (CF)
     TArrayF fVetoThreshold; ///< Threshold for determination of fVeto flag (in ADC)
-    TArrayI fBLMode;        ///< 0 - dynamic BL subtraction, >0 - constant BL, given value subtracted
-    Int_t nPolarity;    ///< 0 - neg, 1 - pos
-    Int_t nAnaMode;     ///< 0 - LE, 1 - CF
-    Int_t nIntMode;     ///< 0 - TOT, >0 - Limit
-    Int_t nDeadTime;    ///< fDeadTime     
+    TArrayI fBLMode; ///< 0 - dynamic BL subtraction, >0 - constant BL, given value subtracted
+    Int_t nPolarity; ///< 0 - neg, 1 - pos
+    Int_t nAnaMode;  ///< 0 - LE, 1 - CF
+    Int_t nIntMode;  ///< 0 - TOT, >0 - Limit
+    Int_t nDeadTime; ///< fDeadTime
 
-  public:
+public:
     bool getParams(SParContainer* parcont) override;
     bool putParams(SParContainer* parcont) const override;
     void clear() override;
@@ -58,7 +58,7 @@ class SFibersStackDDUnpackerPar : public SPar
     Int_t getDeadTime() const { return nDeadTime; }
     /// Returns baseline subtraction mode
     /// \param chan channel
-    /// \return base line subtraction mode 
+    /// \return base line subtraction mode
     Int_t getBLMode(Int_t chan) const;
 };
 

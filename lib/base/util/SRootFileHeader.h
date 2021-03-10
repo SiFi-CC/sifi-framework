@@ -33,13 +33,13 @@ A header object for the category
 class SRootFileHeader : public TObject
 {
 public:
-    std::map<SCategory::Cat, TString> catName;      ///< category type
+    std::map<SCategory::Cat, TString> catName; ///< category type
 public:
     // constructor
     SRootFileHeader() = default;
 
 private:
-    ClassDef(SRootFileHeader,1);
+    ClassDef(SRootFileHeader, 1);
 };
 
 #endif /* SROOTFILEHEADER_H */

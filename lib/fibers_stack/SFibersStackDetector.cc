@@ -13,8 +13,8 @@
 
 #include "SCalContainer.h"
 
-#include "SFibersStackDDCalibratorPar.h"
 #include "SFibersStackCalibratorPar.h"
+#include "SFibersStackDDCalibratorPar.h"
 #include "SFibersStackDigitizerPar.h"
 #include "SFibersStackGeomPar.h"
 
@@ -107,8 +107,9 @@ bool SFibersStackDetector::initContainers()
     else
     {
         pm()->addParameterContainer("SFibersStackDDUnpackerPar", new SFibersStackDDUnpackerPar());
-        pm()->addCalibrationContainer("SFibersStackDDCalibratorPar",
-                                      new SFibersStackDDCalibratorPar("SFibersStackDDCalibratorPar"));
+        pm()->addCalibrationContainer(
+            "SFibersStackDDCalibratorPar",
+            new SFibersStackDDCalibratorPar("SFibersStackDDCalibratorPar"));
         pm()->addCalibrationContainer("SFibersStackCalibratorPar",
                                       new SFibersStackCalibratorPar("SFibersStackCalibratorPar"));
     }
@@ -148,7 +149,8 @@ bool SFibersStackDetector::initCategories()
         if (!dm->registerCategory(SCategory::CatFibersStackCal, "SFibersStackCalSim", 3, sizes,
                                   true))
             return false;
-        if (!dm->registerCategory(SCategory::CatFibersStackHit, "SFibersStackHitSim", 3, sizes, true))
+        if (!dm->registerCategory(SCategory::CatFibersStackHit, "SFibersStackHitSim", 3, sizes,
+                                  true))
             return false;
     }
     else
@@ -161,7 +163,8 @@ bool SFibersStackDetector::initCategories()
             return false;
     }
 
-    if (!dm->registerCategory(SCategory::CatFibersStackClus, "SFibersStackCluster", 2, sizes_clus, false))
+    if (!dm->registerCategory(SCategory::CatFibersStackClus, "SFibersStackCluster", 2, sizes_clus,
+                              false))
         return false;
 
     return true;

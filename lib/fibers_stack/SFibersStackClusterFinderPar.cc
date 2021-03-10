@@ -28,10 +28,7 @@ A container for Fibers Stack Calibrator parameters
 /**
  * Clear parameters
  */
-void SFibersStackClusterFinderPar::clear()
-{
-    fClusterMode = 0;
-}
+void SFibersStackClusterFinderPar::clear() { fClusterMode = 0; }
 
 /**
  * Get parameters
@@ -62,7 +59,4 @@ bool SFibersStackClusterFinderPar::putParams(SParContainer* parcont) const
 /**
  * Print parameters
  */
-void SFibersStackClusterFinderPar::print() const
-{
-    printf(" fClusterMode = %d\n", fClusterMode);
-}
+void SFibersStackClusterFinderPar::print() const { printf(" fClusterMode = %d\n", fClusterMode); }

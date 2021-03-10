@@ -18,14 +18,13 @@
 
 #include <map>
 
-
 class SCategoryIndex : public TObject
 {
 private:
     // members
-    std::map<Int_t, Int_t> idxmap;              ///< map of indexes
+    std::map<Int_t, Int_t> idxmap; ///< map of indexes
     // flags
-    Bool_t compressed;                          ///< compressed
+    Bool_t compressed; ///< compressed
 
 public:
     SCategoryIndex();

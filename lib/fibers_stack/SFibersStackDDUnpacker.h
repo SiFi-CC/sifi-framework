@@ -29,11 +29,11 @@ class SIFI_EXPORT SFibersStackDDUnpacker : public SDDUnpacker
 {
 protected:
     // members
-    SCategory * catDDSamples;                   ///< fibers raw category
-    SCategory * catFibersRaw;                   ///< fibers raw category
-    SFibersStackDDUnpackerPar * pDDUnpackerPar; ///< calibrator parameters
-    SFibersStackDDCalibratorPar * pDDCalPar;
-    SFibersStackLookupTable * pLookUp;          ///< lookup table
+    SCategory* catDDSamples;                   ///< fibers raw category
+    SCategory* catFibersRaw;                   ///< fibers raw category
+    SFibersStackDDUnpackerPar* pDDUnpackerPar; ///< calibrator parameters
+    SFibersStackDDCalibratorPar* pDDCalPar;
+    SFibersStackLookupTable* pLookUp; ///< lookup table
 
 public:
     // constructor
@@ -42,9 +42,10 @@ public:
     virtual ~SFibersStackDDUnpacker() = default;
 
     virtual bool init() override;
+
 protected:
     // methods
-    bool decode(uint16_t subevtid, float * data, size_t length) override;
+    bool decode(uint16_t subevtid, float* data, size_t length) override;
 };
 
 #endif /* SFIBERSSTACKUNPACKER_H */

@@ -22,31 +22,31 @@ class SIFI_EXPORT SDetectorManager
 {
 private:
     // members
-    std::map<std::string, SDetector *> detectors;   ///< map det name to object
-    static SDetectorManager * detm;     ///< Instance of the SDetectorManager
+    std::map<std::string, SDetector*> detectors; ///< map det name to object
+    static SDetectorManager* detm;               ///< Instance of the SDetectorManager
 
 private:
     // constructors
     SDetectorManager() = default;
 
 public:
-    SDetectorManager(SDetectorManager const &) = delete;
-    SDetectorManager & operator=(SDetectorManager const &) = delete;
+    SDetectorManager(SDetectorManager const&) = delete;
+    SDetectorManager& operator=(SDetectorManager const&) = delete;
 
     // instance method
-    static SDetectorManager * instance();
+    static SDetectorManager* instance();
     // destructor
     virtual ~SDetectorManager();
 
     // methods
-    void addDetector(SDetector * detector);
-    SDetector * getDetector(const std::string & name);
+    void addDetector(SDetector* detector);
+    SDetector* getDetector(const std::string& name);
 
     void initTasks();
     void initParameterContainers();
     void initCategories();
 };
 
-extern SDetectorManager * dm();
+extern SDetectorManager* dm();
 
 #endif /* STASKMANAGER_H */

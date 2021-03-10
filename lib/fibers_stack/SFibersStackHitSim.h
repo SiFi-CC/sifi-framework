@@ -18,9 +18,14 @@ class SIFI_EXPORT SFibersStackHitSim : public SFibersStackHit
 {
 public:
     // data members
-    Float_t fGeantEloss{0};     ///< energy loss from Geant
-    TVector3 fGeantPoint{0,0,0};    ///< geant X,Y,Z
-    enum InteractionType { PHOTON, ELECTRON, SCINT } type;
+    Float_t fGeantEloss{0};        ///< energy loss from Geant
+    TVector3 fGeantPoint{0, 0, 0}; ///< geant X,Y,Z
+    enum InteractionType
+    {
+        PHOTON,
+        ELECTRON,
+        SCINT
+    } type;
 
 public:
     // constructors
@@ -43,8 +48,8 @@ public:
     void setGeantPoint(TVector3 p) { fGeantPoint = p; }
     /// Get Geant X coordinate
     /// \return X value
-    TVector3 & getGeantPoint() { return fGeantPoint; }
-    const TVector3 & getGeantPoint() const { return fGeantPoint; }
+    TVector3& getGeantPoint() { return fGeantPoint; }
+    const TVector3& getGeantPoint() const { return fGeantPoint; }
 
     virtual void print() const override;
 

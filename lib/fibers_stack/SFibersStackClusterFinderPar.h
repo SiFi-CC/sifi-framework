@@ -22,11 +22,11 @@
 
 class SIFI_EXPORT SFibersStackClusterFinderPar : public SPar
 {
-  private:
+private:
     // members
-    Int_t fClusterMode{0};    // 0 - AC; 1 - HF; 2 - FF
+    Int_t fClusterMode{0}; // 0 - AC; 1 - HF; 2 - FF
 
-  public:
+public:
     bool getParams(SParContainer* parcont) override;
     bool putParams(SParContainer* parcont) const override;
     void clear() override;

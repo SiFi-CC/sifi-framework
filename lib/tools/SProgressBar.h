@@ -21,18 +21,18 @@ class SIFI_EXPORT SProgressBar
 {
 protected:
     // members
-    ulong cnt_current;          ///< current counter
-    ulong cnt_previous;         ///< previous counter
-    ulong cnt_limit;            ///< counter limit
-    uint point_width;           ///< width of a point
-    uint bar_width;             ///< width of a bar
-    bool new_bar;               ///< make new bar
-    bool new_bar_line;          ///< make new bar line
-    bool line_running;          ///< indicates that the bar line was not closed
+    ulong cnt_current;  ///< current counter
+    ulong cnt_previous; ///< previous counter
+    ulong cnt_limit;    ///< counter limit
+    uint point_width;   ///< width of a point
+    uint bar_width;     ///< width of a bar
+    bool new_bar;       ///< make new bar
+    bool new_bar_line;  ///< make new bar line
+    bool line_running;  ///< indicates that the bar line was not closed
 
-    std::string line_prefix;    ///< line prefix
-    char bar_p;                 ///< if counter below limit, use regular sign
-    char alarm_p;               ///< if counter exceed limit, use alarm sign
+    std::string line_prefix; ///< line prefix
+    char bar_p;              ///< if counter below limit, use regular sign
+    char alarm_p;            ///< if counter exceed limit, use alarm sign
 
 public:
     // constructor
@@ -48,7 +48,7 @@ public:
 
     /// Set line prefix
     /// \param prefix prefix
-    void setLinePrefix(const std::string & prefix) { line_prefix = prefix; }
+    void setLinePrefix(const std::string& prefix) { line_prefix = prefix; }
     /// Get line prefix
     /// \return current line prefix
     std::string getLinePrefix() const { return line_prefix; }

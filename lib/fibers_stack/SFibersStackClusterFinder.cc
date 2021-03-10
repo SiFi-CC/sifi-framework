@@ -11,10 +11,10 @@
 
 #include "SFibersStackClusterFinder.h"
 #include "SCategory.h"
-#include "SFibersStackHit.h"
-#include "SFibersStackGeomPar.h"
 #include "SFibersStackCluster.h"
 #include "SFibersStackClusterFinderPar.h"
+#include "SFibersStackGeomPar.h"
+#include "SFibersStackHit.h"
 #include "SLocator.h"
 #include "SLookup.h"
 #include "SiFi.h"
@@ -42,7 +42,8 @@ Takes each fiber data and tries to reconstruct hit along the fiber.
  * \param tolerance
  * \return overalp
  */
-bool check_overlap(SFibersStackHit * a, SFibersStackHit * b, Float_t tolerance) {
+bool check_overlap(SFibersStackHit* a, SFibersStackHit* b, Float_t tolerance)
+{
     // calculate difference and make it sositive
     TVector3 dpos = a->getPoint() - b->getPoint();
     dpos.SetXYZ(fabs(dpos.X()), fabs(dpos.Y()), fabs(dpos.Z()));
@@ -58,7 +59,6 @@ bool check_overlap(SFibersStackHit * a, SFibersStackHit * b, Float_t tolerance) 
     if (dpos.Z() > 0) return false;
     return true;
 }
-
 
 /**
  * Init task
@@ -118,7 +118,8 @@ bool SFibersStackClusterFinder::execute()
 
     const size_t max_mod = pGeomPar->getModules();
 
-    struct Cluster {
+    struct Cluster
+    {
         int id{-1};
         TVector3 pos;
         TVector3 err;
@@ -126,7 +127,8 @@ bool SFibersStackClusterFinder::execute()
         std::vector<SFibersStackHit*> hits;
     };
     std::vector<Cluster> clusters;
-    std::map<SFibersStackHit*,int> hit_cluster_map; // inr = -1: no cluster assigned, id >= cluster id;
+    std::map<SFibersStackHit*, int>
+        hit_cluster_map; // inr = -1: no cluster assigned, id >= cluster id;
 
     int size = catFibersHit->getEntries();
     for (int i = 0; i < size; ++i)
@@ -143,19 +145,21 @@ bool SFibersStackClusterFinder::execute()
         pHit->getAddress(mod, lay, fib);
 
         hit_cluster_map[pHit] = -1;
-//         m_points[mod].push_back(MeanShift::Point{pHit->getPoint().X(), pHit->getPoint().Y(), pHit->getPoint().Z()});
-//         pHit->print();
+        //         m_points[mod].push_back(MeanShift::Point{pHit->getPoint().X(),
+        //         pHit->getPoint().Y(), pHit->getPoint().Z()}); pHit->print();
     }
 
     int cluster_id = -1;
     int unassigned = hit_cluster_map.size();
     const float tolerance = 0.1;
 
-//     printf(" => clustering\n");
-    for (auto h = hit_cluster_map.begin(); h != hit_cluster_map.end(); ++h) {
+    //     printf(" => clustering\n");
+    for (auto h = hit_cluster_map.begin(); h != hit_cluster_map.end(); ++h)
+    {
         // if hit doesn't belong to any cluter, create one
 
-        if (h->second == -1) {
+        if (h->second == -1)
+        {
             h->second = ++cluster_id;
 
             // creating new cluster
@@ -172,15 +176,19 @@ bool SFibersStackClusterFinder::execute()
         // Loop over other hits trying to match them, repeat a many times as not assigned hits yet.
         // First go over other hits, and try to mach them with any hit in the cluster. If overlap
         // found, assign hit to cluster, and continue
-        for (int i = 0; i < unassigned; ++i) {
-            for (auto hit_nr  = 0; hit_nr < clusters[cluster_id].hits.size(); ++hit_nr) {
-                for (auto h2 = h; h2 != hit_cluster_map.end(); ++h2) {
+        for (int i = 0; i < unassigned; ++i)
+        {
+            for (auto hit_nr = 0; hit_nr < clusters[cluster_id].hits.size(); ++hit_nr)
+            {
+                for (auto h2 = h; h2 != hit_cluster_map.end(); ++h2)
+                {
 
                     if (h2->second != -1) continue; // skip assigned hits
 
-                    if (check_overlap(clusters[cluster_id].hits[hit_nr], h2->first, tolerance)) {
+                    if (check_overlap(clusters[cluster_id].hits[hit_nr], h2->first, tolerance))
+                    {
                         // overlap found
-                        h2->second = cluster_id;    // assign cluster to hit
+                        h2->second = cluster_id; // assign cluster to hit
                         clusters[cluster_id].hits.push_back(h2->first);
                         --unassigned;
                     }
@@ -189,31 +197,33 @@ bool SFibersStackClusterFinder::execute()
         }
     }
 
-//     printf(" => hits assigned\n");
-//     for (auto h : hit_cluster_map) {
-//         printf("  %#lx -> %d\n", h.first, h.second);
-//     }
+    //     printf(" => hits assigned\n");
+    //     for (auto h : hit_cluster_map) {
+    //         printf("  %#lx -> %d\n", h.first, h.second);
+    //     }
 
-//     printf(" => clusters found\n");
+    //     printf(" => clusters found\n");
 
     int mode = pClusterFinderPar->getClusterMode();
     int clus_cnt[max_mod];
     for (int i = 0; i < max_mod; ++i)
         clus_cnt[i] = 0;
 
-    for (int i = 0; i < clusters.size(); ++i) {
-        float hf_e = 0.;    // temp variable for HF mode highest energy
-        float ff_z = 0.;         // temp variable for FF for minimal Z
+    for (int i = 0; i < clusters.size(); ++i)
+    {
+        float hf_e = 0.; // temp variable for HF mode highest energy
+        float ff_z = 0.; // temp variable for FF for minimal Z
         TVector3 weight_sum;
 
-        for (auto h : clusters[i].hits) {
-//             h->print();
+        for (auto h : clusters[i].hits)
+        {
+            //             h->print();
 
-            if (mode == 0) {            // AC
+            if (mode == 0)
+            { // AC
                 TVector3 e = h->getErrors();
                 TVector3 np = h->getPoint();
-                TVector3 weight(h->getE() / e.X() / e.X(),
-                                h->getE() / e.Y() / e.Y(),
+                TVector3 weight(h->getE() / e.X() / e.X(), h->getE() / e.Y() / e.Y(),
                                 h->getE() / e.Z() / e.Z());
 
                 np.SetX(np.X() * weight.X());
@@ -224,12 +234,13 @@ bool SFibersStackClusterFinder::execute()
                 clusters[i].err += weight;
                 weight_sum += weight;
             }
-            else if (mode == 1) {       // HF
-                if (h->getE() > hf_e) {
+            else if (mode == 1)
+            { // HF
+                if (h->getE() > hf_e)
+                {
                     TVector3 e = h->getErrors();
                     TVector3 np = h->getPoint();
-                    TVector3 weight(h->getE() / e.X() / e.X(),
-                                    h->getE() / e.Y() / e.Y(),
+                    TVector3 weight(h->getE() / e.X() / e.X(), h->getE() / e.Y() / e.Y(),
                                     h->getE() / e.Z() / e.Z());
 
                     np.SetX(np.X() * weight.X());
@@ -242,12 +253,13 @@ bool SFibersStackClusterFinder::execute()
                     hf_e = h->getE();
                 }
             }
-            else if (mode == 2) {       // FF
-                if (ff_z == 0. or h->getPoint().Z() < ff_z) {
+            else if (mode == 2)
+            { // FF
+                if (ff_z == 0. or h->getPoint().Z() < ff_z)
+                {
                     TVector3 e = h->getErrors();
                     TVector3 np = h->getPoint();
-                    TVector3 weight(h->getE() / e.X() / e.X(),
-                                    h->getE() / e.Y() / e.Y(),
+                    TVector3 weight(h->getE() / e.X() / e.X(), h->getE() / e.Y() / e.Y(),
                                     h->getE() / e.Z() / e.Z());
 
                     np.SetX(np.X() * weight.X());
@@ -258,11 +270,12 @@ bool SFibersStackClusterFinder::execute()
                     clusters[i].err = weight;
                     weight_sum = weight;
                     ff_z = h->getPoint().Z();
-                } else if (h->getPoint().Z() == clusters[i].pos.Z()) {
+                }
+                else if (h->getPoint().Z() == clusters[i].pos.Z())
+                {
                     TVector3 e = h->getErrors();
                     TVector3 np = h->getPoint();
-                    TVector3 weight(h->getE() / e.X() / e.X(),
-                                    h->getE() / e.Y() / e.Y(),
+                    TVector3 weight(h->getE() / e.X() / e.X(), h->getE() / e.Y() / e.Y(),
                                     h->getE() / e.Z() / e.Z());
 
                     np.SetX(np.X() * weight.X());
@@ -273,20 +286,22 @@ bool SFibersStackClusterFinder::execute()
                     clusters[i].err += weight;
                     weight_sum += weight;
                 }
-            } else {
+            }
+            else
+            {
                 printf("Wrong clustering mode!\n");
             }
 
             clusters[i].e += h->getE();
         }
 
-        clusters[i].pos.SetX(clusters[i].pos.X() / weight_sum.X() );
-        clusters[i].pos.SetY(clusters[i].pos.Y() / weight_sum.Y() );
-        clusters[i].pos.SetZ(clusters[i].pos.Z() / weight_sum.Z() );
+        clusters[i].pos.SetX(clusters[i].pos.X() / weight_sum.X());
+        clusters[i].pos.SetY(clusters[i].pos.Y() / weight_sum.Y());
+        clusters[i].pos.SetZ(clusters[i].pos.Z() / weight_sum.Z());
 
-        clusters[i].err.SetX(1./sqrt(clusters[i].err.X()));
-        clusters[i].err.SetY(1./sqrt(clusters[i].err.Y()));
-        clusters[i].err.SetZ(1./sqrt(clusters[i].err.Z()));
+        clusters[i].err.SetX(1. / sqrt(clusters[i].err.X()));
+        clusters[i].err.SetY(1. / sqrt(clusters[i].err.Y()));
+        clusters[i].err.SetZ(1. / sqrt(clusters[i].err.Z()));
 
         int m, l, f;
         clusters[i].hits[0]->getAddress(m, l, f);
@@ -295,14 +310,18 @@ bool SFibersStackClusterFinder::execute()
         loc[0] = m;
         loc[1] = clus_cnt[m]++;
 
-        SFibersStackCluster* pCluster = reinterpret_cast<SFibersStackCluster*>(catFibersCluster->getSlot(loc));
+        SFibersStackCluster* pCluster =
+            reinterpret_cast<SFibersStackCluster*>(catFibersCluster->getSlot(loc));
         if (pCluster) pCluster = new (pCluster) SFibersStackCluster;
 
-        if (pCluster) {
+        if (pCluster)
+        {
             pCluster->setAddress(loc[0], loc[1]);
             pCluster->getPoint() = clusters[i].pos;
             pCluster->getErrors() = clusters[i].err;
-        } else {
+        }
+        else
+        {
             printf("Cluster of m=%ld with id=%ld could not be add.\n", loc[0], loc[1]);
         }
     }

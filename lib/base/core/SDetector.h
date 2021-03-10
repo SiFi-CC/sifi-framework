@@ -14,9 +14,9 @@
 
 #include "sifi_export.h"
 
-#include "SiFi.h"
-#include "STaskManager.h"
 #include "SParManager.h"
+#include "STaskManager.h"
+#include "SiFi.h"
 
 #include <string>
 
@@ -28,13 +28,13 @@ class SIFI_EXPORT SDetector : public TNamed
 {
 protected:
     // members
-    UInt_t task_mask;       ///< mask on tasks
+    UInt_t task_mask; ///< mask on tasks
 
 public:
     // constructor
     SDetector() = delete;
     // constructor
-    SDetector(const std::string & name);
+    SDetector(const std::string& name);
     // destructor
     virtual ~SDetector() = default;
 
@@ -49,7 +49,7 @@ public:
     /// \return success
     virtual bool initCategories() = 0;
 
-    void addTask(STask * task, Int_t step);
+    void addTask(STask* task, Int_t step);
 
     /**
      * Set tasks mask.
