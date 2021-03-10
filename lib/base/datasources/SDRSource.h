@@ -106,8 +106,9 @@ private:
     double fComptonTime{0};       //!< time when the compton scattering occured
 
     TVector3* fComptonPosition{nullptr}; //!< position where the compton scattering occured
-    // TVector3* fPhotonPosition{nullptr};                 //!< first position where the scattered photon is absorbed
-    // TVector3* fElectronPosition{nullptr};               //!< position where the recoilelectron is absorbed
+    // TVector3* fPhotonPosition{nullptr};                 //!< first position where the scattered
+    // photon is absorbed TVector3* fElectronPosition{nullptr};               //!< position where
+    // the recoilelectron is absorbed
 
     TVector3* fPhotonDirection{nullptr}; //!< direction of the scattered photon
 
@@ -125,11 +126,7 @@ private:
     int sipm_fold{0}; // index at which counting for right side starts
 
     // for "DetectorEvent" in chain2
-    std::map<int, TVector3>* fPxPosPhot{nullptr};
-    std::map<int, TVector3>* fPxPosElec{nullptr};
     std::map<int, TVector3>* fPxPosScin{nullptr};
-    std::map<int, double>* fPxEnPhot{nullptr};
-    std::map<int, double>* fPxEnElec{nullptr};
     std::map<int, double>* fPxEnScin{nullptr};
 
     TREE_all tree;

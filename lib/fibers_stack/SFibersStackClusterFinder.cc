@@ -116,7 +116,6 @@ bool SFibersStackClusterFinder::execute()
     std::vector<std::vector<double>> points;
 
     const size_t max_mod = pGeomPar->getModules();
-    //     std::vector<std::vector<MeanShift::Point>> m_points(max_mod);
 
     struct Cluster
     {
@@ -145,15 +144,12 @@ bool SFibersStackClusterFinder::execute()
         pHit->getAddress(mod, lay, fib);
 
         hit_cluster_map[pHit] = -1;
-//         m_points[mod].push_back(MeanShift::Point{pHit->getPoint().X(), pHit->getPoint().Y(), pHit->getPoint().Z()});
-//         pHit->print();
     }
 
     int cluster_id = -1;
     int unassigned = hit_cluster_map.size();
     const float tolerance = 0.1;
 
-//     printf(" => clustering\n");
     for (auto h = hit_cluster_map.begin(); h != hit_cluster_map.end(); ++h)
     {
         // if hit doesn't belong to any cluter, create one
@@ -197,12 +193,10 @@ bool SFibersStackClusterFinder::execute()
         }
     }
 
-//     printf(" => hits assigned\n");
-//     for (auto h : hit_cluster_map) {
-//         printf("  %#lx -> %d\n", h.first, h.second);
-//     }
-
-//     printf(" => clusters found\n");
+    // printf(" => hits assigned\n");
+    // for (auto h : hit_cluster_map) {
+    //     printf("  %#lx -> %d\n", h.first, h.second);
+    // }
 
     int mode = pClusterFinderPar->getClusterMode();
     int clus_cnt[max_mod];

@@ -37,6 +37,6 @@ void SFibersStackCalSim::Clear(Option_t* /*opt*/)
 void SFibersStackCalSim::print() const
 {
     SFibersStackCal::print();
-    printf("  GEANT: position = %.2f,%.2f,%.2f  Eloss = %.2f\n",
-           fGeantPoint.X(), fGeantPoint.Y(), fGeantPoint.Z(), fGeantEloss);
+    printf("  GEANT: position = %.2f,%.2f,%.2f  Eloss = %.2f\n", fGeantPoint.X(), fGeantPoint.Y(),
+           fGeantPoint.Z(), fGeantEloss);
 }

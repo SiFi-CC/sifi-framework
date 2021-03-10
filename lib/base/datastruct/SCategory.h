@@ -37,17 +37,17 @@ public:
         // simulations
         CatGeantTrack = 0, ///< geant track
         CatGeantFibersRaw, ///< fibers hit
-        // helpers
+                           // helpers
         CatDDSamples = 10,
         // fibers
         CatFibersStackRaw = 20, ///< fibers stack raw data
         CatFibersStackCal,      ///< fibers cal data
         CatFibersStackHit,      ///< fibers hit
         CatFibersStackClus,     ///< fibers cluster
-        // tracks
-        // Limit
-        CatLimitDoNotUse, ///< holds size of the category list
-        CatNone,          ///< Clear category list in SLoop
+                                // tracks
+                                // Limit
+        CatLimitDoNotUse,       ///< holds size of the category list
+        CatNone,                ///< Clear category list in SLoop
     };
 
     // constructors

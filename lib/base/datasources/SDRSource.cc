@@ -52,10 +52,6 @@ SDRSource::SDRSource() : SRootSource("Events"), subevent(0)
     fPhotonInteractions = new std::vector<int>;
     fElectronInteractions = new std::vector<int>;
 
-    fPxPosPhot = new std::map<int, TVector3>;
-    fPxPosElec = new std::map<int, TVector3>;
-    fPxPosScin = new std::map<int, TVector3>;
-
     // Define odjects for branches
     chain->SetBranchAddress("PrimEnergy", &fPrimEnergy);
     chain->SetBranchAddress("SourcePos", &fSourcePosition);
@@ -76,20 +72,12 @@ SDRSource::SDRSource() : SRootSource("Events"), subevent(0)
     chain->SetBranchAddress("PInteractions", &fPhotonInteractions);
 
     tree.events.fHitArray = new TClonesArray("OPHit", 50000);
-    fPxPosPhot = new std::map<int, TVector3>;
-    fPxPosElec = new std::map<int, TVector3>;
     fPxPosScin = new std::map<int, TVector3>;
-    fPxEnPhot = new std::map<int, double>;
-    fPxEnElec = new std::map<int, double>;
     fPxEnScin = new std::map<int, double>;
 
     // "DetectorEvent" tree
     chain2->SetBranchAddress("Hitsarray", &tree.events.fHitArray);
-    chain2->SetBranchAddress("Pixel_Position_Photon", &fPxPosPhot);
-    chain2->SetBranchAddress("Pixel_Position_Electron", &fPxPosElec);
     chain2->SetBranchAddress("Pixel_Position_Scin", &fPxPosScin);
-    chain2->SetBranchAddress("Pixel_Energy_Photon", &fPxEnPhot);
-    chain2->SetBranchAddress("Pixel_Energy_Electron", &fPxEnElec);
     chain2->SetBranchAddress("Pixel_Energy_Scin", &fPxEnScin);
 
     pmmodel = new DRSiPMModel(0.4, 0.06, 3e6, 500, 10, false);
