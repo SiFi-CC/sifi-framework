@@ -53,6 +53,8 @@ void SFibersStackGeomPar::clear()
  */
 bool SFibersStackGeomPar::getParams(SParContainer* parcont)
 {
+    if (!parcont->fill("fType", type)) return false;
+
     if (!parcont->fill("nModules", modules)) return false;
 
     if (modules) delete[] mods;
@@ -164,7 +166,7 @@ bool SFibersStackGeomPar::putParams(SParContainer* /*parcont*/) const { return t
  */
 void SFibersStackGeomPar::print() const
 {
-    printf("Number of modules = %d\n", modules);
+    printf("Geometry type: %d   Number of modules = %d\n", type, modules);
     for (int m = 0; m < modules; ++m)
     {
         printf(" [%2d] module z: %f", m, mods[m].module_z);

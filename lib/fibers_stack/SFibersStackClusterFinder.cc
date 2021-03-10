@@ -11,10 +11,10 @@
 
 #include "SFibersStackClusterFinder.h"
 #include "SCategory.h"
-#include "SFibersStackHit.h"
-#include "SFibersStackGeomPar.h"
 #include "SFibersStackCluster.h"
 #include "SFibersStackClusterFinderPar.h"
+#include "SFibersStackGeomPar.h"
+#include "SFibersStackHit.h"
 #include "SLocator.h"
 #include "SLookup.h"
 #include "SiFi.h"
@@ -42,7 +42,8 @@ Takes each fiber data and tries to reconstruct hit along the fiber.
  * \param tolerance
  * \return overalp
  */
-bool check_overlap(SFibersStackHit * a, SFibersStackHit * b, Float_t tolerance) {
+bool check_overlap(SFibersStackHit* a, SFibersStackHit* b, Float_t tolerance)
+{
     // calculate difference and make it sositive
     TVector3 dpos = a->getPoint() - b->getPoint();
     dpos.SetXYZ(fabs(dpos.X()), fabs(dpos.Y()), fabs(dpos.Z()));
@@ -59,7 +60,6 @@ bool check_overlap(SFibersStackHit * a, SFibersStackHit * b, Float_t tolerance) 
     return true;
 }
 
-
 /**
  * Init task
  *
@@ -68,7 +68,6 @@ bool check_overlap(SFibersStackHit * a, SFibersStackHit * b, Float_t tolerance) 
  */
 bool SFibersStackClusterFinder::init()
 {
-
     // get Cal category
     catFibersHit = sifi()->getCategory(SCategory::CatFibersStackHit);
     if (!catFibersHit)
@@ -117,8 +116,10 @@ bool SFibersStackClusterFinder::execute()
     std::vector<std::vector<double>> points;
 
     const size_t max_mod = pGeomPar->getModules();
+    //     std::vector<std::vector<MeanShift::Point>> m_points(max_mod);
 
-    struct Cluster {
+    struct Cluster
+    {
         int id{-1};
         TVector3 pos;
         TVector3 err;
@@ -126,7 +127,8 @@ bool SFibersStackClusterFinder::execute()
         std::vector<SFibersStackHit*> hits;
     };
     std::vector<Cluster> clusters;
-    std::map<SFibersStackHit*,int> hit_cluster_map; // inr = -1: no cluster assigned, id >= cluster id;
+    std::map<SFibersStackHit*, int>
+        hit_cluster_map; // inr = -1: no cluster assigned, id >= cluster id;
 
     int size = catFibersHit->getEntries();
     for (int i = 0; i < size; ++i)
@@ -152,10 +154,12 @@ bool SFibersStackClusterFinder::execute()
     const float tolerance = 0.1;
 
 //     printf(" => clustering\n");
-    for (auto h = hit_cluster_map.begin(); h != hit_cluster_map.end(); ++h) {
+    for (auto h = hit_cluster_map.begin(); h != hit_cluster_map.end(); ++h)
+    {
         // if hit doesn't belong to any cluter, create one
 
-        if (h->second == -1) {
+        if (h->second == -1)
+        {
             h->second = ++cluster_id;
 
             // creating new cluster
@@ -172,15 +176,19 @@ bool SFibersStackClusterFinder::execute()
         // Loop over other hits trying to match them, repeat a many times as not assigned hits yet.
         // First go over other hits, and try to mach them with any hit in the cluster. If overlap
         // found, assign hit to cluster, and continue
-        for (int i = 0; i < unassigned; ++i) {
-            for (auto hit_nr  = 0; hit_nr < clusters[cluster_id].hits.size(); ++hit_nr) {
-                for (auto h2 = h; h2 != hit_cluster_map.end(); ++h2) {
+        for (int i = 0; i < unassigned; ++i)
+        {
+            for (auto hit_nr = 0; hit_nr < clusters[cluster_id].hits.size(); ++hit_nr)
+            {
+                for (auto h2 = h; h2 != hit_cluster_map.end(); ++h2)
+                {
 
                     if (h2->second != -1) continue; // skip assigned hits
 
-                    if (check_overlap(clusters[cluster_id].hits[hit_nr], h2->first, tolerance)) {
+                    if (check_overlap(clusters[cluster_id].hits[hit_nr], h2->first, tolerance))
+                    {
                         // overlap found
-                        h2->second = cluster_id;    // assign cluster to hit
+                        h2->second = cluster_id; // assign cluster to hit
                         clusters[cluster_id].hits.push_back(h2->first);
                         --unassigned;
                     }
@@ -201,19 +209,34 @@ bool SFibersStackClusterFinder::execute()
     for (int i = 0; i < max_mod; ++i)
         clus_cnt[i] = 0;
 
-    for (int i = 0; i < clusters.size(); ++i) {
-        float hf_e = 0.;    // temp variable for HF mode highest energy
-        float ff_z = 0.;         // temp variable for FF for minimal Z
-        TVector3 weight_sum;
+    for (int i = 0; i < clusters.size(); ++i)
+    {
+        float hf_e = 0.;          // temp variable for HF mode highest energy
+        float ff_z = 1.e12;       // temp variable for FF for minimal Z
+        float disc_x_min = 1.e12; // x-spread for discrete X
+        float disc_x_max = -1.e12;
+        float disc_z_min = 1.e12; // z-spread for discrete Z
+        float disc_z_max = -1.e12;
 
-        for (auto h : clusters[i].hits) {
-//             h->print();
+        TVector3 weight_sum(0, 0, 0);
 
-            if (mode == 0) {            // AC
-                TVector3 e = h->getErrors();
+        for (auto h : clusters[i].hits)
+        {
+
+            if (mode == 0)
+            { // AC
                 TVector3 np = h->getPoint();
-                TVector3 weight(h->getE() / e.X() / e.X(),
-                                h->getE() / e.Y() / e.Y(),
+
+                // finding spread
+                Float_t curr_x = np.X();
+                if (curr_x < disc_x_min) disc_x_min = curr_x;
+                if (curr_x > disc_x_max) disc_x_max = curr_x;
+                Float_t curr_z = np.Z();
+                if (curr_z < disc_z_min) disc_z_min = curr_z;
+                if (curr_z > disc_z_max) disc_z_max = curr_z;
+
+                TVector3 e = h->getErrors();
+                TVector3 weight(h->getE() / e.X() / e.X(), h->getE() / e.Y() / e.Y(),
                                 h->getE() / e.Z() / e.Z());
 
                 np.SetX(np.X() * weight.X());
@@ -224,69 +247,128 @@ bool SFibersStackClusterFinder::execute()
                 clusters[i].err += weight;
                 weight_sum += weight;
             }
-            else if (mode == 1) {       // HF
-                if (h->getE() > hf_e) {
-                    TVector3 e = h->getErrors();
-                    TVector3 np = h->getPoint();
-                    TVector3 weight(h->getE() / e.X() / e.X(),
-                                    h->getE() / e.Y() / e.Y(),
-                                    h->getE() / e.Z() / e.Z());
+            else if (mode == 1)
+            { // HF
+                TVector3 np = h->getPoint();
 
-                    np.SetX(np.X() * weight.X());
-                    np.SetY(np.Y() * weight.Y());
-                    np.SetZ(np.Z() * weight.Z());
+                // finding spread
+                Float_t curr_x = np.X();
+                if (curr_x < disc_x_min) disc_x_min = curr_x;
+                if (curr_x > disc_x_max) disc_x_max = curr_x;
+                Float_t curr_z = np.Z();
+                if (curr_z < disc_z_min) disc_z_min = curr_z;
+                if (curr_z > disc_z_max) disc_z_max = curr_z;
 
-                    clusters[i].pos = np;
-                    clusters[i].err = weight;
-                    weight_sum += weight;
+                TVector3 e = h->getErrors();
+                TVector3 weight(h->getE() / e.X() / e.X(), h->getE() / e.Y() / e.Y(), 0);
+
+                np.SetX(np.X() * weight.X());
+                np.SetY(np.Y() * weight.Y());
+                np.SetZ(0);
+
+                clusters[i].pos += np;
+                clusters[i].err = weight;
+                weight_sum += weight;
+
+                if (h->getE() > hf_e)
+                {
                     hf_e = h->getE();
+                    clusters[i].pos.SetZ(h->getPoint().Z());
+                }
+                else
+                {
                 }
             }
-            else if (mode == 2) {       // FF
-                if (ff_z == 0. or h->getPoint().Z() < ff_z) {
-                    TVector3 e = h->getErrors();
-                    TVector3 np = h->getPoint();
-                    TVector3 weight(h->getE() / e.X() / e.X(),
-                                    h->getE() / e.Y() / e.Y(),
-                                    h->getE() / e.Z() / e.Z());
+            else if (mode == 2)
+            { // FF
+                TVector3 np = h->getPoint();
 
-                    np.SetX(np.X() * weight.X());
-                    np.SetY(np.Y() * weight.Y());
-                    np.SetZ(np.Z() * weight.Z());
+                // finding spread
+                Float_t curr_x = np.X();
+                if (curr_x < disc_x_min) disc_x_min = curr_x;
+                if (curr_x > disc_x_max) disc_x_max = curr_x;
+                Float_t curr_z = np.Z();
+                if (curr_z < disc_z_min) disc_z_min = curr_z;
+                if (curr_z > disc_z_max) disc_z_max = curr_z;
 
-                    clusters[i].pos = np;
-                    clusters[i].err = weight;
-                    weight_sum = weight;
+                TVector3 e = h->getErrors();
+
+                TVector3 weight(h->getE() / e.X() / e.X(), h->getE() / e.Y() / e.Y(), 0);
+
+                np.SetX(np.X() * weight.X());
+                np.SetY(np.Y() * weight.Y());
+                np.SetZ(0);
+
+                clusters[i].pos += np;
+                clusters[i].err = weight;
+                weight_sum += weight;
+
+                if (h->getPoint().Z() < ff_z)
+                {
                     ff_z = h->getPoint().Z();
-                } else if (h->getPoint().Z() == clusters[i].pos.Z()) {
-                    TVector3 e = h->getErrors();
-                    TVector3 np = h->getPoint();
-                    TVector3 weight(h->getE() / e.X() / e.X(),
-                                    h->getE() / e.Y() / e.Y(),
-                                    h->getE() / e.Z() / e.Z());
-
-                    np.SetX(np.X() * weight.X());
-                    np.SetY(np.Y() * weight.Y());
-                    np.SetZ(np.Z() * weight.Z());
-
-                    clusters[i].pos += np;
-                    clusters[i].err += weight;
-                    weight_sum += weight;
+                    clusters[i].pos.SetZ(ff_z);
                 }
-            } else {
+                else
+                {
+                }
+            }
+            else
+            {
                 printf("Wrong clustering mode!\n");
             }
 
             clusters[i].e += h->getE();
         }
 
-        clusters[i].pos.SetX(clusters[i].pos.X() / weight_sum.X() );
-        clusters[i].pos.SetY(clusters[i].pos.Y() / weight_sum.Y() );
-        clusters[i].pos.SetZ(clusters[i].pos.Z() / weight_sum.Z() );
+        if (mode == 0)
+        { // AC
+            clusters[i].pos.SetX(clusters[i].pos.X() / weight_sum.X());
+            clusters[i].pos.SetY(clusters[i].pos.Y() / weight_sum.Y());
+            clusters[i].pos.SetZ(clusters[i].pos.Z() / weight_sum.Z());
 
-        clusters[i].err.SetX(1./sqrt(clusters[i].err.X()));
-        clusters[i].err.SetY(1./sqrt(clusters[i].err.Y()));
-        clusters[i].err.SetZ(1./sqrt(clusters[i].err.Z()));
+            if (pGeomPar->getType() == 0)
+            {                                                            // aligned fibers
+                clusters[i].err.SetX(disc_x_max - disc_x_min + 1. / 2.); // FIXME
+                clusters[i].err.SetY(1. / sqrt(clusters[i].err.Y()));
+                clusters[i].err.SetZ(disc_z_max - disc_z_min + 1. / 2.); // FIXME
+            }
+            else if (pGeomPar->getType() == 1)
+            { // crossed fibers
+                clusters[i].err.SetX(1. / sqrt(clusters[i].err.X()));
+                clusters[i].err.SetY(1. / sqrt(clusters[i].err.Y()));
+                clusters[i].err.SetZ(disc_z_max - disc_z_min + 1. / 2.); // FIXME
+            }
+            else
+            {
+                printf("Unsupported geometry type!\n");
+            }
+        }
+        else if (mode == 1 or mode == 2)
+        { // HF
+            clusters[i].pos.SetX(clusters[i].pos.X() / weight_sum.X());
+            clusters[i].pos.SetY(clusters[i].pos.Y() / weight_sum.Y());
+
+            if (pGeomPar->getType() == 0)
+            {                                                            // aligned fibers
+                clusters[i].err.SetX(disc_x_max - disc_x_min + 1. / 2.); // FIXME
+                clusters[i].err.SetY(1. / sqrt(clusters[i].err.Y()));
+                clusters[i].err.SetZ(disc_z_max - disc_z_min + 1. / 2.); // FIXME
+            }
+            else if (pGeomPar->getType() == 1)
+            { // crossed fibers
+                clusters[i].err.SetX(1. / sqrt(clusters[i].err.X()));
+                clusters[i].err.SetY(1. / sqrt(clusters[i].err.Y()));
+                clusters[i].err.SetZ(disc_z_max - disc_z_min + 1. / 2.); // FIXME
+            }
+            else
+            {
+                printf("Unsupported geometry type!\n");
+            }
+        }
+        else
+        {
+            printf("Wrong clustering mode!\n");
+        }
 
         int m, l, f;
         clusters[i].hits[0]->getAddress(m, l, f);
@@ -295,14 +377,18 @@ bool SFibersStackClusterFinder::execute()
         loc[0] = m;
         loc[1] = clus_cnt[m]++;
 
-        SFibersStackCluster* pCluster = reinterpret_cast<SFibersStackCluster*>(catFibersCluster->getSlot(loc));
+        SFibersStackCluster* pCluster =
+            reinterpret_cast<SFibersStackCluster*>(catFibersCluster->getSlot(loc));
         if (pCluster) pCluster = new (pCluster) SFibersStackCluster;
 
-        if (pCluster) {
+        if (pCluster)
+        {
             pCluster->setAddress(loc[0], loc[1]);
             pCluster->getPoint() = clusters[i].pos;
             pCluster->getErrors() = clusters[i].err;
-        } else {
+        }
+        else
+        {
             printf("Cluster of m=%ld with id=%ld could not be add.\n", loc[0], loc[1]);
         }
     }

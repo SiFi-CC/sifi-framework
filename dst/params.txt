@@ -9,6 +9,7 @@ nDeadTime: Int_t 400
 fVetoThreshold: Float_t 0
 fBLMode: Int_t 0
 [SFibersStackGeomPar]
+fType: Int_t 0
 nModules: Int_t 2
 nLayers: Int_t 10 30
 nFibers: Int_t \
