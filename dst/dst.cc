@@ -27,8 +27,10 @@
 #include "SiFi.h"
 
 #include "SDDSource.h"
+#include "SKSSource.h"
 
 #include "SFibersStackDDUnpacker.h"
+#include "SFibersStackDDUnpackerPar.h"
 #include "SFibersStackDetector.h"
 #include "SFibersStackLookup.h"
 
@@ -72,9 +74,6 @@ int main(int argc, char** argv)
         }
     }
 
-    SFibersStackDDUnpacker* unp = new SFibersStackDDUnpacker();
-    SFibersStackDDUnpacker::saveSamples(save_samples);
-
     while (optind < argc)
     {
         std::string inpstr(argv[optind]);
@@ -88,14 +87,37 @@ int main(int argc, char** argv)
             std::string saddr = inpstr.substr(0, pos1);
             std::string type = inpstr.substr(pos1 + 1, pos2 - pos1 - 1);
             std::string name = inpstr.substr(pos2 + 1, inpstr.length() - pos2 - 1);
-
+            std::string ext = name.substr(name.size() - 4, name.size() - 1);
             uint16_t addr = std::stoi(saddr, nullptr, 16);
 
-            SDDSource* source = new SDDSource(addr);
-            unp->setDataLen(1024);
-            source->addUnpacker(unp, {addr});
-            source->setInput(name, 1024 * sizeof(float));
-            sifi()->addSource(source);
+            if (ext == ".dat")
+            {
+                SFibersStackDDUnpacker* unp = new SFibersStackDDUnpacker();
+                SFibersStackDDUnpacker::saveSamples(save_samples);
+
+                SDDSource* source = new SDDSource(addr);
+                unp->setDataLen(1024);
+                source->addUnpacker(unp, {addr});
+                source->setInput(name, 1024 * sizeof(float));
+                sifi()->addSource(source);
+            }
+            else if (ext == ".csv")
+            {
+                SFibersStackDDUnpacker* unp = new SFibersStackDDUnpacker();
+                SFibersStackDDUnpacker::saveSamples(save_samples);
+
+                SKSSource* source = new SKSSource(addr);
+                source->addUnpacker(unp, {addr});
+                source->setInput(name);
+                sifi()->addSource(source);
+            }
+            else
+            {
+                std::cerr << "##### Error in dst: unknown data file extension!" << std::endl;
+                std::cerr << "Acceptable extensions: *.dat and *.csv" << std::endl;
+                std::cerr << "Given data file: " << name << std::endl;
+                std::exit(EXIT_FAILURE);
+            }
         }
 
         ++optind;

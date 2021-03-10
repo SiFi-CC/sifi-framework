@@ -9,8 +9,8 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#ifndef MDDUNPACKER_H
-#define MDDUNPACKER_H
+#ifndef SDDUNPACKER_H
+#define SDDUNPACKER_H
 
 #include "sifi_export.h"
 

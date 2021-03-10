@@ -9,8 +9,8 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#ifndef SDDSOURCE_H
-#define SDDSOURCE_H
+#ifndef SKSSOURCE_H
+#define SKSSOURCE_H
 
 #include "sifi_export.h"
 
@@ -26,22 +26,25 @@
 #include <string>
 
 /**
- * Extends SDataSOurce to read data from Desktop Digitizer.
+ * Extends SDataSOurce to read data from the oscilloscope.
  */
-class SIFI_EXPORT SDDSource : public SDataSource
+class SIFI_EXPORT SKSSource : public SDataSource
 {
 public:
-    explicit SDDSource(uint16_t subevent);
+    explicit SKSSource(uint16_t subevent);
 
     virtual bool open() override;
     virtual bool close() override;
     virtual bool readCurrentEvent() override;
-    virtual void setInput(const std::string& filename, size_t length);
+    virtual void setInput(const std::string& filename);
 
 private:
+    int samples;
+    int max_channels;
+    uint8_t channel;
     uint16_t subevent;     ///< subevent id
     std::string input;     ///< source file name
     std::ifstream istream; ///< input file stream
     size_t buffer_size;    ///< data buffer size
 };
-#endif /* SDDSOURCE_H */
+#endif /* SKSSOURCE_H */

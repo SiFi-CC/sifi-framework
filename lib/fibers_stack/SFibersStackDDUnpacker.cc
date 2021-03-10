@@ -23,8 +23,6 @@
 #include <iostream>
 #include <numeric>
 
-const Float_t adc_to_mv = 4.096;
-const Float_t sample_to_ns = 1.;
 /**
  * \class SFibersStackDDUnpacker
 \ingroup lib_fibers_stack
@@ -224,27 +222,28 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
 
     pSamples->setAddress(loc[0], loc[1], loc[2]);
 
-    // copy samples
-    Float_t samples[1024];
-    size_t limit = length <= 1024 ? length : 1024;
+    // Float_t samples[1024];
+    // size_t limit = length <= 1024 ? length : 1024;
+    Float_t samples[length];
+    size_t limit = length;
 
     memcpy(samples, data, limit * sizeof(float));
 
     // find baseline
     Float_t bl = -1;
     Float_t bl_sigma = 0;
+    Int_t samples_for_bl = 50;
 
     if (blmode == 0)
     {
-        bl = std::accumulate(samples, samples + 50, 0.);
-        bl /= 50.;
-
+        bl = std::accumulate(samples, samples + samples_for_bl, 0.);
+        bl /= samples_for_bl;
         bl_sigma = 0;
-        for (int i = 0; i < 50; ++i)
+        for (int i = 0; i < samples_for_bl; ++i)
         {
             bl_sigma += (bl - samples[i]) * (bl - samples[i]);
         }
-        bl_sigma = sqrt(bl_sigma / 50.);
+        bl_sigma = sqrt(bl_sigma / samples_for_bl);
     }
     else
     {
@@ -301,14 +300,17 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
         new (pRaw) SFibersStackRaw;
     }
 
+    float ADC_to_mV = getADCTomV();
+    float sample_to_ns = getSampleTons();
+
     pRaw->setAddress(loc[0], loc[1], loc[2]);
     if (side == 'l')
     {
-        float tmp_charge = charge / adc_to_mv;
+        float tmp_charge = charge / ADC_to_mV;
         if (save_samples) pSamples->fillSamplesL(data, length);
-        pSamples->getSignalL()->SetAmplitude(ampl / adc_to_mv);
-        pSamples->getSignalL()->SetT0(t0 /** sample_to_ns*/);
-        pSamples->getSignalL()->SetTOT(tot /** sample_to_ns*/);
+        pSamples->getSignalL()->SetAmplitude(ampl / ADC_to_mV);
+        pSamples->getSignalL()->SetT0(t0 * sample_to_ns);
+        pSamples->getSignalL()->SetTOT(tot * sample_to_ns);
         pSamples->getSignalL()->SetCharge(tmp_charge);
         pSamples->getSignalL()->SetBL(bl);
         pSamples->getSignalL()->SetBLSigma(bl_sigma);
@@ -316,16 +318,16 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
         pSamples->getSignalL()->SetVeto(veto);
         pSamples->getSignalL()->SetPE(tmp_charge / cp[0] + cp[1]);
 
-        pRaw->setQDCL(charge / adc_to_mv);
+        pRaw->setQDCL(tmp_charge);
         pRaw->setTimeL(t0);
     }
     if (side == 'r')
     {
-        float tmp_charge = charge / adc_to_mv;
+        float tmp_charge = charge / ADC_to_mV;
         if (save_samples) pSamples->fillSamplesR(data, length);
-        pSamples->getSignalR()->SetAmplitude(ampl / adc_to_mv);
-        pSamples->getSignalR()->SetT0(t0 /** sample_to_ns*/);
-        pSamples->getSignalR()->SetTOT(tot /** sample_to_ns*/);
+        pSamples->getSignalR()->SetAmplitude(ampl / ADC_to_mV);
+        pSamples->getSignalR()->SetT0(t0 * sample_to_ns);
+        pSamples->getSignalR()->SetTOT(tot * sample_to_ns);
         pSamples->getSignalR()->SetCharge(tmp_charge);
         pSamples->getSignalR()->SetBL(bl);
         pSamples->getSignalR()->SetBLSigma(bl_sigma);
@@ -333,7 +335,7 @@ bool SFibersStackDDUnpacker::decode(uint16_t subevtid, float* data, size_t lengt
         pSamples->getSignalR()->SetVeto(veto);
         pSamples->getSignalR()->SetPE(tmp_charge / cp[0] + cp[1]);
 
-        pRaw->setQDCR(charge / adc_to_mv);
+        pRaw->setQDCR(tmp_charge);
         pRaw->setTimeR(t0);
     }
 

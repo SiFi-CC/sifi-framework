@@ -12,13 +12,15 @@
 #ifndef SFIBERSSTACKDDUNPACKERPAR_H
 #define SFIBERSSTACKDDUNPACKERPAR_H
 
+#include "sifi_export.h"
+
 #include "SPar.h"
 
 #include <Rtypes.h>
 #include <TArrayF.h>
 #include <TArrayI.h>
 
-class SFibersStackDDUnpackerPar : public SPar
+class SIFI_EXPORT SFibersStackDDUnpackerPar : public SPar
 {
 private:
     // members

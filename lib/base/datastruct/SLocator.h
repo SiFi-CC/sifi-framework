@@ -49,23 +49,23 @@ public:
     /// \param n dimension position (0..N)
     /// \return coordinate
     size_t at(size_t n) const { return addr[n]; }
-//     bool operator<(const SLocator & l) const
-//     {
-//         for (size_t i = 0; i < dim; ++i)
-//         {
-//             if (addr[i] < l.addr[i])
-//                 return true;
-//             else if (addr[i] > l.addr[i])
-//                 return false;
-//         }
-// 
-//         return false;
-//     }
-// 
-//     bool operator>(const SLocator & l)
-//     {
-//         return l < *this;
-//     }
+    //     bool operator<(const SLocator & l) const
+    //     {
+    //         for (size_t i = 0; i < dim; ++i)
+    //         {
+    //             if (addr[i] < l.addr[i])
+    //                 return true;
+    //             else if (addr[i] > l.addr[i])
+    //                 return false;
+    //         }
+    //
+    //         return false;
+    //     }
+    //
+    //     bool operator>(const SLocator & l)
+    //     {
+    //         return l < *this;
+    //     }
 
     /// Get locator dimensions
     /// \return number of dimensions

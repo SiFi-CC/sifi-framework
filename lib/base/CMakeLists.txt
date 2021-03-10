@@ -23,6 +23,7 @@ SIFI_GENERATE_LIBRARY(
         datasources/SDataSource.cc
         datasources/SFileSource.cc
         datasources/SDDSource.cc
+        datasources/SKSSource.cc
         ${SDR_CC}
         datasources/SRootSource.cc
         datasources/SUnpacker.cc
@@ -57,6 +58,7 @@ SIFI_GENERATE_LIBRARY(
         datasources/SDataSource.h
         datasources/SFileSource.h
         datasources/SDDSource.h
+        datasources/SKSSource.h
         ${SDR_H}
         datasources/SRootSource.h
         datasources/SUnpacker.h
@@ -87,6 +89,7 @@ SIFI_GENERATE_LIBRARY(
         datastruct
         event
         util
+	../fibers_stack
 )
 
 if (BUILD_SIFIDETRES_SUPPORT)

@@ -56,6 +56,18 @@ public:
     /// Finalize task
     /// \return success
     virtual bool finalize() { return true; };
+
+    void setSampleTons(float bin_value) { sample_to_ns = bin_value; }
+
+    void setADCTomV(float coeff) { ADC_to_mV = coeff; }
+
+    float getSampleTons(void) { return sample_to_ns; }
+
+    float getADCTomV(void) { return ADC_to_mV; }
+
+private:
+    float sample_to_ns;
+    float ADC_to_mV;
 };
 
 #endif /* SUNPACKER_H */

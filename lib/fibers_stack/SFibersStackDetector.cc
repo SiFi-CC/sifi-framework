@@ -101,9 +101,7 @@ bool SFibersStackDetector::initContainers()
     pm()->addParameterContainer("SFibersStackGeomPar", new SFibersStackGeomPar());
 
     if (isSimulation())
-    {
-        pm()->addParameterContainer("SFibersStackDigitizerPar", new SFibersStackDigitizerPar());
-    }
+    { pm()->addParameterContainer("SFibersStackDigitizerPar", new SFibersStackDigitizerPar()); }
     else
     {
         pm()->addParameterContainer("SFibersStackDDUnpackerPar", new SFibersStackDDUnpackerPar());

@@ -22,11 +22,9 @@ SDDUnpacker::SDDUnpacker() : data_length(0) {}
 
 bool SDDUnpacker::init()
 {
+
     if (!data_length)
-    {
-        std::cerr << "Data length not configured." << std::endl;
-        abort();
-    }
+        std::cout << " Warning in SDDUnpacker::init(). Data length not configured." << std::endl;
 
     return true;
 }
@@ -38,8 +36,8 @@ bool SDDUnpacker::execute(unsigned long /*event*/, unsigned long /*seq_number*/,
 {
     if (length != data_length * sizeof(float))
     {
-        std::cerr << "Buffer length " << data_length << " does not fit source length " << length
-                  << "." << std::endl;
+        std::cerr << "SDDUnpacker: Buffer length " << data_length * sizeof(float)
+                  << " does not fit source length " << length << "." << std::endl;
         abort();
     }
 

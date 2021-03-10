@@ -67,7 +67,7 @@ bool SFibersStackDDUnpackerPar::getParams(SParContainer* parcont)
 
     TArrayI _b(16);
     if (!parcont->fill("fBLMode", _b)) return false;
-    if (_v.GetSize() != 16)
+    if (_b.GetSize() != 16)
     {
         std::cerr << "Size of fBLMode doesn't match 16" << std::endl;
         return false;

@@ -146,11 +146,11 @@ void SGeantTrack::clear()
 //     psto *= 1.0/psto.Mag();
 //
 //     printf("##### particle #####\n");
-//     printf("  pos sta=(%f,%f,%f)  sto=(%f,%f,%f)\n", start.x, start.y, start.z, stop.x, stop.y, stop.z);
-//     printf("  dir sta=(%f,%f,%f)  sto=(%f,%f,%f)\n", psta.X(), psta.Y(), psta.Z(), psto.X(), psto.Y(), psto.Z());
-//     printf("  start energy = %f,  stop energy = %f\n", start.E, stop.E);
-//     printf("  scat=%d  process=", scattering);
-//     for (Int_t i = 0; i < processes.size(); ++i)
+//     printf("  pos sta=(%f,%f,%f)  sto=(%f,%f,%f)\n", start.x, start.y, start.z, stop.x, stop.y,
+//     stop.z); printf("  dir sta=(%f,%f,%f)  sto=(%f,%f,%f)\n", psta.X(), psta.Y(), psta.Z(),
+//     psto.X(), psto.Y(), psto.Z()); printf("  start energy = %f,  stop energy = %f\n", start.E,
+//     stop.E); printf("  scat=%d  process=", scattering); for (Int_t i = 0; i < processes.size();
+//     ++i)
 //         printf("%s,", processes[i].c_str());
 //     printf("\n");
 //     printf("  PID=%ld  stop in det=%d\n", g4Id, stopInDetector);

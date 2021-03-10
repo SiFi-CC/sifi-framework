@@ -12,7 +12,8 @@
 #ifndef SiFi_H
 #define SiFi_H
 
-#define PR(x) std::cout << "++DEBUG: " << #x << " = |" << x << "| (" << __FILE__ << ", " << __LINE__ << ")\n";
+#define PR(x)                                                                                      \
+    std::cout << "++DEBUG: " << #x << " = |" << x << "| (" << __FILE__ << ", " << __LINE__ << ")\n";
 
 #include "sifi_export.h"
 
