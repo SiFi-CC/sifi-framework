@@ -24,7 +24,7 @@ class TMemberInspector;
 
 class SIFI_EXPORT SFibersStackCal : public SFibersStackRaw
 {
-public:
+  public:
     // constructors
     SFibersStackCal() = default;
     virtual ~SFibersStackCal() = default;

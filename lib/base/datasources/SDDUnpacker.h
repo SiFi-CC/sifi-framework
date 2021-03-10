@@ -31,7 +31,7 @@
  */
 class SIFI_EXPORT SDDUnpacker : public SUnpacker
 {
-public:
+  public:
     SDDUnpacker();
 
     // methods
@@ -57,7 +57,7 @@ public:
 
     static void saveSamples(bool save) { save_samples = save; }
 
-protected:
+  protected:
     /// Decode buffer. This function must be implemented in deriving class to
     /// provide interpretation for data.
     /// \param subevent subevent id
@@ -66,10 +66,10 @@ protected:
     /// \return success
     virtual bool decode(uint16_t subevent, float* data, size_t length) = 0;
 
-protected:
+  protected:
     static bool save_samples;
 
-private:
+  private:
     size_t data_length; ///< data buffer length
 };
 

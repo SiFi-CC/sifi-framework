@@ -19,7 +19,7 @@
 
 class SIFI_EXPORT SFibersStackHit : public TObject
 {
-protected:
+  protected:
     // members
     Int_t module{-1}; ///< address - module
     Int_t layer{-1};  ///< address - layer
@@ -37,7 +37,7 @@ protected:
     Float_t t{0};  ///< time
     Float_t st{0}; ///< sigma of time
 
-public:
+  public:
     // constructor
     SFibersStackHit() = default;
     virtual ~SFibersStackHit() = default;

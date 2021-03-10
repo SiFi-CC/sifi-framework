@@ -11,14 +11,14 @@ class SFibersStackClusterFinderPar;
 
 class SFibersStackClusterFinder : public STask
 {
-protected:
+  protected:
     // members
     SCategory* catFibersHit{nullptr};                         ///< fibers cal category
     SCategory* catFibersCluster{nullptr};                     ///< fibers cluster category
     SFibersStackClusterFinderPar* pClusterFinderPar{nullptr}; ///< cluster finder parameters
     SFibersStackGeomPar* pGeomPar;
 
-public:
+  public:
     // constructor
     SFibersStackClusterFinder() = default;
     // destructor

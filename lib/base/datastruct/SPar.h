@@ -19,11 +19,11 @@ class SParContainer;
 class SIFI_EXPORT SPar
 {
     friend class SParManager; ///< MParManager is friend
-protected:
+  protected:
     // members
     SParContainer* parcont; ///< Pointer to object of parameter container
 
-public:
+  public:
     // constructor
     SPar();
     // destructor
@@ -34,7 +34,7 @@ public:
     virtual void clear() = 0;
     virtual void print() const;
 
-protected:
+  protected:
     /// Get parameters from container
     /// \param parcont pointer to container object
     /// \return success

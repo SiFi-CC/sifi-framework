@@ -16,7 +16,7 @@
 
 class SIFI_EXPORT SFibersStackHitSim : public SFibersStackHit
 {
-public:
+  public:
     // data members
     Float_t fGeantEloss{0};        ///< energy loss from Geant
     TVector3 fGeantPoint{0, 0, 0}; ///< geant X,Y,Z
@@ -27,7 +27,7 @@ public:
         SCINT
     } type;
 
-public:
+  public:
     // constructors
     SFibersStackHitSim() = default;
     // detructor
@@ -53,7 +53,7 @@ public:
 
     virtual void print() const override;
 
-private:
+  private:
     ClassDefOverride(SFibersStackHitSim, 1);
 };
 

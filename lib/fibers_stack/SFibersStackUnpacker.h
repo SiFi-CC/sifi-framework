@@ -18,11 +18,11 @@ class SCategory;
 
 class SFibersStackUnpacker : public STask
 {
-protected:
+  protected:
     // members
     SCategory* catFibersRaw; ///< fibers raw category
 
-public:
+  public:
     // constructor
     SFibersStackUnpacker();
     // destructor

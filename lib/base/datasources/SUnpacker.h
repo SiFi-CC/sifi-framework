@@ -35,7 +35,7 @@
  */
 class SUnpacker
 {
-public:
+  public:
     virtual ~SUnpacker() = default;
 
     /// Initialize task

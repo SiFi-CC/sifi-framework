@@ -27,7 +27,7 @@ class TObjArray;
  */
 class SEvent : public TObject
 {
-public:
+  public:
     SEvent();
     virtual ~SEvent();
 
@@ -36,7 +36,7 @@ public:
 
     void clearCategories();
 
-private:
+  private:
     TObjArray* categories; ///< Array of categories
 
     ClassDef(SEvent, 1);

@@ -24,14 +24,14 @@ class SFibersStackGeomPar;
 
 class SIFI_EXPORT SSiFiCCDetResImporter : public SUnpacker
 {
-protected:
+  protected:
     // members
     SCategory* catGeantTrack{nullptr};      ///< Geant4 tracks
     SCategory* catGeantFibersRaw{nullptr};  ///< Geant fiber hits
     SCategory* catFibersCal{nullptr};       ///< fibers raw category
     SFibersStackGeomPar* pGeomPar{nullptr}; ///< fibers geometry
 
-public:
+  public:
     // constructor
     SSiFiCCDetResImporter();
     // destructor

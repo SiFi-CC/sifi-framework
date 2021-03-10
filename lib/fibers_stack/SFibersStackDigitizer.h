@@ -24,7 +24,7 @@ class SFibersStackGeomPar;
 
 class SFibersStackDigitizer : public STask
 {
-private:
+  private:
     // members
     SCategory* catGeantFibersRaw; ///< genat raw
     SCategory* catFibersCalSim;   ///< fibers cal
@@ -34,7 +34,7 @@ private:
 
     std::vector<std::vector<Int_t>> layer_fiber_limit; ///< store fibers offset
 
-public:
+  public:
     // constructor
     SFibersStackDigitizer();
     // destructor

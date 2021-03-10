@@ -23,29 +23,29 @@
 
 class SIFI_EXPORT SCategory : public TObject
 {
-protected:
+  protected:
     // members
     SCategoryHeader header; ///< header information
     SCategoryIndex index;   ///< index information
     /// holds category data
     TClonesArray* data; //-> data
 
-public:
+  public:
     /// List of all categories
     enum Cat
     {
         // simulations
         CatGeantTrack = 0, ///< geant track
         CatGeantFibersRaw, ///< fibers hit
-        // helpers
+                           // helpers
         CatDDSamples = 10,
         // fibers
         CatFibersStackRaw = 20, ///< fibers stack raw data
         CatFibersStackCal,      ///< fibers cal data
         CatFibersStackHit,      ///< fibers hit
         CatFibersStackClus,     ///< fibers cluster
-        // tracks
-        // Limit
+                            // tracks
+                            // Limit
         CatLimitDoNotUse, ///< holds size of the category list
         CatNone,          ///< Clear category list in SLoop
     };
@@ -80,13 +80,13 @@ public:
     void clear();
     void print() const;
 
-private:
+  private:
     void setup(const char* name, size_t dim, size_t* sizes, bool simulation);
 
     bool checkDim(const SLocator& loc);
     int loc2pos(const SLocator& loc);
 
-private:
+  private:
     ClassDefOverride(SCategory, 1);
 };
 

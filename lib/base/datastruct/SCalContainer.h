@@ -39,11 +39,11 @@
  */
 template <int N> class SIFI_EXPORT SCalPar
 {
-private:
+  private:
     ///@{
     float par[N]; ///< various parameters
     ///}@
-public:
+  public:
     virtual ~SCalPar() {}
     virtual uint read(const char* buffer);
     virtual uint write(char* buffer, size_t n) const;
@@ -54,10 +54,10 @@ public:
 
 class SVirtualCalContainer
 {
-public:
+  public:
     virtual SLookupChannel* createChannel() const = 0;
 
-protected:
+  protected:
     virtual void fromContainer() = 0;
     virtual void toContainer() const = 0;
 
@@ -74,13 +74,13 @@ protected:
  */
 template <int N> class SIFI_EXPORT SCalContainer : public SVirtualCalContainer
 {
-protected:
+  protected:
     std::string name;                      ///< container name
     std::map<size_t, SCalPar<N>*> calpars; ///< individual calibration parameters
     bool is_init;                          ///< is container init
     SCalPar<N>* def{nullptr};              //!
 
-public:
+  public:
     // constructor
     explicit SCalContainer(const std::string& container);
     virtual ~SCalContainer();
@@ -95,7 +95,7 @@ public:
     virtual void print();
     virtual void setDefault(SCalPar<N>* d) { def = d; }
 
-protected:
+  protected:
     void fromContainer();
     void toContainer() const;
 };

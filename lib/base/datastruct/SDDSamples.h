@@ -22,7 +22,7 @@
  */
 class SIFI_EXPORT SDDSignal
 {
-public:
+  public:
     Float_t fAmp;      ///< Amplitude [mV]
     Float_t fT0;       ///< Time T0 [ns]
     Float_t fTOT;      ///< Time over threshold [ns]
@@ -33,7 +33,7 @@ public:
     Int_t fPileUp;     ///< pile up flag
     Int_t fVeto;       ///< veto flag
 
-public:
+  public:
     SDDSignal();
 
     /// Sets signal amplitude in mV
@@ -102,7 +102,7 @@ public:
  */
 class SIFI_EXPORT SDDSamples : public TObject
 {
-protected:
+  protected:
     // members
     Int_t module; ///< address - module
     Int_t layer;  ///< address - layer
@@ -114,7 +114,7 @@ protected:
     SDDSignal signal_l; ///< signal from the left side, backward comp.
     SDDSignal signal_r; ///< signal from the right side, backward comp.
 
-public:
+  public:
     // constructor
     SDDSamples();
 

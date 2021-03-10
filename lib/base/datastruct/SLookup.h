@@ -61,12 +61,12 @@ struct SIFI_EXPORT SLookupChannel
  */
 class SLookupBoard
 {
-private:
+  private:
     uint addr;                 ///< board address
     uint nchan;                ///< number of channels
     SLookupChannel** channels; ///< array of channels
 
-public:
+  public:
     SLookupBoard() = delete;
     SLookupBoard(uint addr, uint nchan);
     SLookupBoard(const SLookupBoard&) = delete;
@@ -134,7 +134,7 @@ public:
  */
 class SIFI_EXPORT SLookupTable
 {
-protected:
+  protected:
     std::string container; ///< container name
     uint a_min;            ///< lower boundary of address range
     uint a_max;            ///< upper boundary of address range
@@ -143,7 +143,7 @@ protected:
 
     SLookupBoard** boards; ///< array of boards in a given range
 
-public:
+  public:
     SLookupTable(const std::string& container, uint addr_min, uint addr_max, uint channels = 49);
     /// Do not allow for copying the lookup table
     SLookupTable(const SLookupTable&) = delete;
@@ -168,7 +168,7 @@ public:
 
     virtual void print();
 
-protected:
+  protected:
     void fromContainer();
     void toContainer() const;
 

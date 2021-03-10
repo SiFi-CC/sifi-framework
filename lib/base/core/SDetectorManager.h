@@ -20,16 +20,16 @@ class SDetector;
 
 class SIFI_EXPORT SDetectorManager
 {
-private:
+  private:
     // members
     std::map<std::string, SDetector*> detectors; ///< map det name to object
     static SDetectorManager* detm;               ///< Instance of the SDetectorManager
 
-private:
+  private:
     // constructors
     SDetectorManager() = default;
 
-public:
+  public:
     SDetectorManager(SDetectorManager const&) = delete;
     SDetectorManager& operator=(SDetectorManager const&) = delete;
 

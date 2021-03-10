@@ -30,7 +30,7 @@
  */
 class SIFI_EXPORT SDDSource : public SDataSource
 {
-public:
+  public:
     explicit SDDSource(uint16_t subevent);
 
     virtual bool open() override;
@@ -38,7 +38,7 @@ public:
     virtual bool readCurrentEvent() override;
     virtual void setInput(const std::string& filename, size_t length);
 
-private:
+  private:
     uint16_t subevent;     ///< subevent id
     std::string input;     ///< source file name
     std::ifstream istream; ///< input file stream

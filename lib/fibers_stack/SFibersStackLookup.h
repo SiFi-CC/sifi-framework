@@ -43,7 +43,7 @@ struct SIFI_EXPORT SFibersStackChannel : public SLookupChannel
 
 class SIFI_EXPORT SFibersStackLookupTable : public SLookupTable
 {
-public:
+  public:
     using SLookupTable::SLookupTable;
 
     // methods

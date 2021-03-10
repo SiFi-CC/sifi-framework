@@ -21,7 +21,7 @@
 
 class SIFI_EXPORT SFibersStackGeomPar : public SPar
 {
-protected:
+  protected:
     // members
     Int_t modules;      ///< number of modules
     struct SingleModule ///< single module configuration
@@ -37,7 +37,7 @@ protected:
 
     SingleModule* mods; ///< params for each module
 
-public:
+  public:
     SFibersStackGeomPar();
     virtual ~SFibersStackGeomPar();
 

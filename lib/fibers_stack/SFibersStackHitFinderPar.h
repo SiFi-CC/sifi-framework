@@ -22,7 +22,7 @@
 
 class SIFI_EXPORT SFibersStackHitFinderPar : public SPar
 {
-private:
+  private:
     // members
     Float_t fA0{0.0};     // position fit parameter y-intercept
     Float_t fLambda{0.0}; // position fit parameter slope
@@ -30,7 +30,7 @@ private:
     TArrayF fResPos;      // store position resolution fit parameters
     TArrayF fResEne;      // store energy resolution fit parameters
 
-public:
+  public:
     bool getParams(SParContainer* parcont) override;
     bool putParams(SParContainer* parcont) const override;
     void clear() override;

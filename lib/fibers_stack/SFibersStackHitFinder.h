@@ -11,7 +11,7 @@ class SFibersStackHitFinderPar;
 
 class SFibersStackHitFinder : public STask
 {
-protected:
+  protected:
     // members
     SCategory* catFibersCal{nullptr};                 ///< fibers cal category
     SCategory* catFibersHit{nullptr};                 ///< fibers hit category
@@ -19,7 +19,7 @@ protected:
     SFibersStackHitFinderPar* pHitFinderPar{nullptr}; ///< hit finder parameters
     SFibersStackGeomPar* pGeomPar;
 
-public:
+  public:
     // constructor
     SFibersStackHitFinder() = default;
     // destructor

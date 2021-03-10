@@ -23,7 +23,7 @@
 
 class SIFI_EXPORT SGeantTrack : public TLorentzVector
 {
-public:
+  public:
     /// List of recorderd physics processes
     enum Process
     {
@@ -43,7 +43,7 @@ public:
     } type;         ///< track type
     TVector3 start; ///< start point
 
-protected:
+  protected:
     //     Point stop;                         ///< stop point
     //     Bool_t scattering;                  ///< was scattering
     //     std::vector<std::string> processes; ///< processes
@@ -59,7 +59,7 @@ protected:
 
     //     TRandom2 randGen;                   ///< random generator
 
-public:
+  public:
     // constructor
     SGeantTrack();
     // destructor
@@ -383,7 +383,7 @@ public:
 
     void Clear(Option_t* opt = "");
 
-private:
+  private:
     ClassDef(SGeantTrack, 1);
 };
 

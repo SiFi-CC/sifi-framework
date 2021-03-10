@@ -34,7 +34,7 @@
  */
 class SFileSource : public SDataSource
 {
-public:
+  public:
     SFileSource();
 
     virtual bool open() override;
@@ -46,7 +46,7 @@ public:
     /// \param address emulated subevent id
     virtual void forceUnpacker(uint16_t address) { subevent = address; }
 
-private:
+  private:
     uint16_t subevent;     ///< set address for unpacker
     std::string input;     ///< file input
     std::ifstream istream; ///< file reader stream
