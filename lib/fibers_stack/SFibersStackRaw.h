@@ -24,7 +24,7 @@ class TMemberInspector;
 
 class SIFI_EXPORT SFibersStackRaw : public TObject
 {
-  protected:
+protected:
     // members
     Int_t module{-1}; ///< address - module
     Int_t layer{-1};  ///< address - layer
@@ -36,7 +36,7 @@ class SIFI_EXPORT SFibersStackRaw : public TObject
     Float_t qdc_r{0.};  ///< qdc value
     Float_t time_r{0.}; ///< time value
 
-  public:
+public:
     // constructor
     SFibersStackRaw() = default;
     virtual ~SFibersStackRaw() = default;

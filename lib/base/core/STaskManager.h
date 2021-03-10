@@ -24,16 +24,16 @@ class STask;
  */
 class SIFI_EXPORT STaskManager
 {
-  protected:
+protected:
     // members
     std::multimap<int, STask*> tasks; ///< Tasks map
     static STaskManager* tm;          ///< Instance of STaskManager
 
-  private:
+private:
     // constructors
     STaskManager() = default;
 
-  public:
+public:
     /// Copy constructor
     STaskManager(STaskManager const&) = delete;
     // methods

@@ -20,13 +20,13 @@
 
 class SCategoryIndex : public TObject
 {
-  private:
+private:
     // members
     std::map<Int_t, Int_t> idxmap; ///< map of indexes
     // flags
     Bool_t compressed; ///< compressed
 
-  public:
+public:
     SCategoryIndex();
     virtual ~SCategoryIndex() = default;
 

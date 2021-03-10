@@ -81,7 +81,7 @@ struct TREE_all
  */
 class SIFI_EXPORT SDRSource : public SRootSource
 {
-  public:
+public:
     explicit SDRSource(/*uint16_t subevent*/);
 
     virtual bool open() override;
@@ -89,11 +89,11 @@ class SIFI_EXPORT SDRSource : public SRootSource
     virtual bool readCurrentEvent() override;
     virtual void addInput(const std::string& filename) override;
 
-  protected:
+protected:
     TChain* chain2;
     TChain* chain3;
 
-  private:
+private:
     uint16_t subevent; ///< subevent id
 
     // for "Events" in chain

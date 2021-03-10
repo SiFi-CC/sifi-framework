@@ -28,13 +28,13 @@ typedef std::map<std::string, TypeDataField> ParMap;
 
 class SIFI_EXPORT SParContainer
 {
-  protected:
+protected:
     // members
     ParMap parameters;     ///< holds pairs of parameter string: key-values
     std::string container; ///< container name
     size_t line_split;     ///< how many parameters per line in file
 
-  public:
+public:
     // constructor
     explicit SParContainer(const std::string& container);
     // destructor
@@ -62,7 +62,7 @@ class SIFI_EXPORT SParContainer
 
     void print() const;
 
-  protected:
+protected:
     // methods
     /// Set line split
     /// \param n number of values per line

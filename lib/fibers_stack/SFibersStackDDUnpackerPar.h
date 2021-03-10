@@ -20,7 +20,7 @@
 
 class SFibersStackDDUnpackerPar : public SPar
 {
-  private:
+private:
     // members
     TArrayF fThreshold;     ///< Threshold in ADC (LE) or % (CF)
     TArrayF fVetoThreshold; ///< Threshold for determination of fVeto flag (in ADC)
@@ -30,7 +30,7 @@ class SFibersStackDDUnpackerPar : public SPar
     Int_t nIntMode;  ///< 0 - TOT, >0 - Limit
     Int_t nDeadTime; ///< fDeadTime
 
-  public:
+public:
     bool getParams(SParContainer* parcont) override;
     bool putParams(SParContainer* parcont) const override;
     void clear() override;

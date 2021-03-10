@@ -28,7 +28,7 @@ A header object for the category
 
 class SCategoryHeader : public TObject
 {
-  public:
+public:
     // members
     TString name;        ///< name of the category
     Bool_t simulation;   ///< simulation category
@@ -38,14 +38,14 @@ class SCategoryHeader : public TObject
     ULong_t data_size;   ///< data array size
     Bool_t writable;     ///< is writable
 
-  public:
+public:
     // constructor
     SCategoryHeader() : TObject() { clear(); }
 
     /// Clears all members
     void clear();
 
-  private:
+private:
     ClassDefOverride(SCategoryHeader, 1);
 };
 

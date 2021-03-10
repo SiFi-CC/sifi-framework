@@ -34,7 +34,7 @@ class SUnpacker;
  */
 class SIFI_EXPORT SDataSource
 {
-  public:
+public:
     SDataSource() : current_event(0) {}
     virtual ~SDataSource();
 
@@ -53,10 +53,10 @@ class SIFI_EXPORT SDataSource
 
     void addUnpacker(SUnpacker* unpacker, const std::vector<uint16_t>& address);
 
-  private:
+private:
     ulong current_event;
 
-  protected:
+protected:
     std::map<uint16_t, SUnpacker*> unpackers; ///< store unpackers and its addresses
 };
 

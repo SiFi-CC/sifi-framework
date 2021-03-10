@@ -18,7 +18,7 @@
 
 class SIFI_EXPORT SGeantFibersRaw : public TObject
 {
-  protected:
+protected:
     // members
     Int_t module; ///< module
     Int_t fiber;  ///< fiber
@@ -35,7 +35,7 @@ class SIFI_EXPORT SGeantFibersRaw : public TObject
     Float_t time_l;                     ///< time left
     Float_t time_r;                     ///< time right
 
-  public:
+public:
     // constrructor
     SGeantFibersRaw();
     // destructor
@@ -132,7 +132,7 @@ class SIFI_EXPORT SGeantFibersRaw : public TObject
 
     void print() const;
 
-  private:
+private:
     // Needed for creation of shared library
     ClassDef(SGeantFibersRaw, 1);
 };

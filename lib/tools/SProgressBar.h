@@ -19,7 +19,7 @@
 
 class SIFI_EXPORT SProgressBar
 {
-  protected:
+protected:
     // members
     ulong cnt_current;  ///< current counter
     ulong cnt_previous; ///< previous counter
@@ -34,7 +34,7 @@ class SIFI_EXPORT SProgressBar
     char bar_p;              ///< if counter below limit, use regular sign
     char alarm_p;            ///< if counter exceed limit, use alarm sign
 
-  public:
+public:
     // constructor
     explicit SProgressBar(ulong limit, uint point_width = 500, uint bar_width = 20);
 
@@ -60,7 +60,7 @@ class SIFI_EXPORT SProgressBar
     /// \param p character
     void setAlarmCharacter(char p) { alarm_p = p; }
 
-  private:
+private:
     void render();
 };
 

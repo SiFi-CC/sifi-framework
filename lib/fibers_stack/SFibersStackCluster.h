@@ -19,7 +19,7 @@
 
 class SIFI_EXPORT SFibersStackCluster : public TObject
 {
-  protected:
+protected:
     // members
     Int_t module{-1};  ///< address - module
     Int_t cluster{-1}; ///< address - layer
@@ -28,7 +28,7 @@ class SIFI_EXPORT SFibersStackCluster : public TObject
     TVector3 errors;
     std::vector<int> hits;
 
-  public:
+public:
     // constructor
     SFibersStackCluster() = default;
     virtual ~SFibersStackCluster() = default;

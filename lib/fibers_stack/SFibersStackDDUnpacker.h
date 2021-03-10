@@ -27,7 +27,7 @@ class SFibersStackLookupTable;
 
 class SIFI_EXPORT SFibersStackDDUnpacker : public SDDUnpacker
 {
-  protected:
+protected:
     // members
     SCategory* catDDSamples;                   ///< fibers raw category
     SCategory* catFibersRaw;                   ///< fibers raw category
@@ -35,7 +35,7 @@ class SIFI_EXPORT SFibersStackDDUnpacker : public SDDUnpacker
     SFibersStackDDCalibratorPar* pDDCalPar;
     SFibersStackLookupTable* pLookUp; ///< lookup table
 
-  public:
+public:
     // constructor
     SFibersStackDDUnpacker();
     // destructor
@@ -43,7 +43,7 @@ class SIFI_EXPORT SFibersStackDDUnpacker : public SDDUnpacker
 
     virtual bool init() override;
 
-  protected:
+protected:
     // methods
     bool decode(uint16_t subevtid, float* data, size_t length) override;
 };

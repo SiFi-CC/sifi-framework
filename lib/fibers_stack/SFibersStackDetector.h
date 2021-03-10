@@ -18,13 +18,13 @@
 
 class SIFI_EXPORT SFibersStackDetector : public SDetector
 {
-  protected:
+protected:
     // members
     const size_t modules; ///< number of modules
     const size_t layers;  ///< number of layers
     const size_t fibers;  ///< number of fibers
 
-  public:
+public:
     // constructors
     SFibersStackDetector() = delete;
     explicit SFibersStackDetector(const std::string& name);

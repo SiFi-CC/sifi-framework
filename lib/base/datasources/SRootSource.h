@@ -27,7 +27,7 @@
  */
 class SIFI_EXPORT SRootSource : public SDataSource
 {
-  public:
+public:
     SRootSource(const std::string& tree_name);
 
     virtual bool open() override;
@@ -37,7 +37,7 @@ class SIFI_EXPORT SRootSource : public SDataSource
 
     virtual long getEntries() { return chain->GetEntries(); }
 
-  protected:
+protected:
     TChain* chain;
 };
 

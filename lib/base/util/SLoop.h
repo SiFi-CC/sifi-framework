@@ -29,7 +29,7 @@ class TTree;
  */
 class SIFI_EXPORT SLoop
 {
-  public:
+public:
     // constructor
     SIFI_EXPORT SLoop();
     SLoop(const SLoop&) = delete;
@@ -47,7 +47,7 @@ class SIFI_EXPORT SLoop
     Int_t nextEvent();
     Int_t getEvent(ulong event);
 
-  private:
+private:
     TChain* chain;                                          ///< chain storing all input files
     TFile* current_file;                                    ///< pointer to the current file
     TTree* current_tree;                                    ///< pointer to the current tree

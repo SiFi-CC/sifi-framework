@@ -18,7 +18,7 @@
 
 class SIFI_EXPORT SFibersStackCalSim : public SFibersStackCal
 {
-  public:
+public:
     // data members
     Float_t fGeantEloss{0};        ///< energy loss from Geant
     TVector3 fGeantPoint{0, 0, 0}; ///< geant X,Y,Z
@@ -29,7 +29,7 @@ class SIFI_EXPORT SFibersStackCalSim : public SFibersStackCal
         SCINT
     } type;
 
-  public:
+public:
     // constructors
     SFibersStackCalSim() = default;
     // detructor
@@ -55,7 +55,7 @@ class SIFI_EXPORT SFibersStackCalSim : public SFibersStackCal
 
     void print() const override;
 
-  private:
+private:
     ClassDefOverride(SFibersStackCalSim, 1);
 };
 

@@ -26,11 +26,11 @@ class STask;
 
 class SIFI_EXPORT SDetector : public TNamed
 {
-  protected:
+protected:
     // members
     UInt_t task_mask; ///< mask on tasks
 
-  public:
+public:
     // constructor
     SDetector() = delete;
     // constructor
@@ -67,7 +67,7 @@ class SIFI_EXPORT SDetector : public TNamed
     /// \return simulation run flag
     bool isSimulation() const { return SiFi::instance()->isSimulation(); }
 
-  private:
+private:
     ClassDef(SDetector, 1);
 };
 

@@ -67,7 +67,7 @@ struct SIFI_EXPORT SContainer
 
 class SIFI_EXPORT SParManager
 {
-  protected:
+protected:
     std::string source;      ///< Parameters source file
     std::string destination; ///< Parameters destination file
 
@@ -79,14 +79,14 @@ class SIFI_EXPORT SParManager
 
     static SParManager* pm; ///< Instance of the SParManager
 
-  private:
+private:
     // constructors
     SParManager() = default;
     SParManager(SParManager const&) = delete;
 
     SParManager& operator=(SParManager const&) = delete;
 
-  public:
+public:
     // instance method
     static SParManager* instance();
     // destructor

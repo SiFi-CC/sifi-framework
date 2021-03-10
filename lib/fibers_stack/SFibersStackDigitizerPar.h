@@ -16,10 +16,10 @@
 
 class SFibersStackDigitizerPar : public SPar
 {
-  protected:
+protected:
     // members
 
-  public:
+public:
     // methods
     bool getParams(SParContainer* parcont) override;
     bool putParams(SParContainer* parcont) const override;

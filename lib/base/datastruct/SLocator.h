@@ -25,12 +25,12 @@
 
 class SIFI_EXPORT SLocator
 {
-  private:
+private:
     // members
     std::size_t dim;          ///< dimension of the locator
     std::vector<size_t> addr; ///< cooridnates of the locator
 
-  public:
+public:
     SLocator() = delete;
     // constructor
     /// Constructor
@@ -73,7 +73,7 @@ class SIFI_EXPORT SLocator
 
     void print() const;
 
-  private:
+private:
     ClassDef(SLocator, 1);
 };
 

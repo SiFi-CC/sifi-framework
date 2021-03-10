@@ -16,7 +16,7 @@
 
 class STask
 {
-  public:
+public:
     virtual ~STask() = default;
 
     // methods

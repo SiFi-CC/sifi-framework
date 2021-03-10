@@ -35,7 +35,7 @@ class TTree;
 
 class SIFI_EXPORT SiFi
 {
-  protected:
+protected:
     // members
     TFile* outputFile;                      ///< Pointer to output file
     std::string outputFileName;             ///< Output file name
@@ -67,11 +67,11 @@ class SIFI_EXPORT SiFi
     bool sim;                                        ///< Simulation run
     bool branches_set;                               ///< Has branches set
 
-  private:
+private:
     // constructor
     SiFi();
 
-  public:
+public:
     SiFi(SiFi const&) = delete;
     SiFi& operator=(SiFi const&) = delete;
 
@@ -138,7 +138,7 @@ class SIFI_EXPORT SiFi
     /// \return linearised index of the category
     static int getCategoryIndex(SCategory::Cat cat, int /*simulation*/) { return cat; }
 
-  private:
+private:
     SIFI_NO_EXPORT void initBranches();
 };
 
