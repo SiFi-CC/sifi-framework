@@ -59,8 +59,7 @@ bool SFibersDigitizer::init()
         return false;
     }
 
-    pGeomPar =
-        dynamic_cast<SFibersGeomPar*>(pm()->getParameterContainer("FibersGeomPar"));
+    pGeomPar = dynamic_cast<SFibersGeomPar*>(pm()->getParameterContainer("FibersGeomPar"));
     if (!pGeomPar)
     {
         std::cerr << "Parameter container 'SFibersGeomPar' was not obtained!" << std::endl;
@@ -126,8 +125,7 @@ bool SFibersDigitizer::execute()
         loc[1] = lay;
         loc[2] = fib;
 
-        SFibersCalSim* pCal =
-            dynamic_cast<SFibersCalSim*>(catFibersCalSim->getObject(loc));
+        SFibersCalSim* pCal = dynamic_cast<SFibersCalSim*>(catFibersCalSim->getObject(loc));
         if (!pCal)
         {
             pCal = dynamic_cast<SFibersCalSim*>(catFibersCalSim->getSlot(loc));

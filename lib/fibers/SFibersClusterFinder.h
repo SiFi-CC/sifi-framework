@@ -13,8 +13,8 @@ class SFibersClusterFinder : public STask
 {
 protected:
     // members
-    SCategory* catFibersHit{nullptr};                         ///< fibers cal category
-    SCategory* catFibersCluster{nullptr};                     ///< fibers cluster category
+    SCategory* catFibersHit{nullptr};                    ///< fibers cal category
+    SCategory* catFibersCluster{nullptr};                ///< fibers cluster category
     SFibersClusterFinderPar* pClusterFinderPar{nullptr}; ///< cluster finder parameters
     SFibersGeomPar* pGeomPar;
 

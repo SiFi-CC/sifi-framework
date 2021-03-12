@@ -76,8 +76,7 @@ bool SFibersCalibrator::init()
 
     if (!pCalibratorPar)
     {
-        std::cerr << "Parameter container 'SFibersCalibratorPar' was not obtained!"
-                  << std::endl;
+        std::cerr << "Parameter container 'SFibersCalibratorPar' was not obtained!" << std::endl;
         exit(EXIT_FAILURE);
     }
 

@@ -44,10 +44,10 @@ public:
         CatFibersCal,      ///< fibers cal data
         CatFibersHit,      ///< fibers hit
         CatFibersClus,     ///< fibers cluster
-                                // tracks
-                                // Limit
-        CatLimitDoNotUse,       ///< holds size of the category list
-        CatNone,                ///< Clear category list in SLoop
+                           // tracks
+                           // Limit
+        CatLimitDoNotUse,  ///< holds size of the category list
+        CatNone,           ///< Clear category list in SLoop
     };
 
     // constructors

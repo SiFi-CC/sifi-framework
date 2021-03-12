@@ -29,8 +29,8 @@ class SIFI_EXPORT SFibersDDUnpacker : public SDDUnpacker
 {
 protected:
     // members
-    SCategory* catDDSamples;                   ///< fibers raw category
-    SCategory* catFibersRaw;                   ///< fibers raw category
+    SCategory* catDDSamples;              ///< fibers raw category
+    SCategory* catFibersRaw;              ///< fibers raw category
     SFibersDDUnpackerPar* pDDUnpackerPar; ///< calibrator parameters
     SFibersDDCalibratorPar* pDDCalPar;
     SFibersLookupTable* pLookUp; ///< lookup table

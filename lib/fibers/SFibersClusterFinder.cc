@@ -89,13 +89,11 @@ bool SFibersClusterFinder::init()
         pm()->getParameterContainer("FibersClusterFinderPar"));
     if (!pClusterFinderPar)
     {
-        std::cerr << "Parameter container 'SFibersClusterFinderPar' was not obtained!"
-                  << std::endl;
+        std::cerr << "Parameter container 'SFibersClusterFinderPar' was not obtained!" << std::endl;
         exit(EXIT_FAILURE);
     }
 
-    pGeomPar =
-        dynamic_cast<SFibersGeomPar*>(pm()->getParameterContainer("FibersGeomPar"));
+    pGeomPar = dynamic_cast<SFibersGeomPar*>(pm()->getParameterContainer("FibersGeomPar"));
     if (!pGeomPar)
     {
         std::cerr << "Parameter container 'SFibersGeomPar' was not obtained!" << std::endl;
@@ -126,8 +124,7 @@ bool SFibersClusterFinder::execute()
         std::vector<SFibersHit*> hits;
     };
     std::vector<Cluster> clusters;
-    std::map<SFibersHit*, int>
-        hit_cluster_map; // inr = -1: no cluster assigned, id >= cluster id;
+    std::map<SFibersHit*, int> hit_cluster_map; // inr = -1: no cluster assigned, id >= cluster id;
 
     int size = catFibersHit->getEntries();
     for (int i = 0; i < size; ++i)

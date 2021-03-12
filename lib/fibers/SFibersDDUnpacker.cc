@@ -153,12 +153,11 @@ bool SFibersDDUnpacker::init()
     }
 
     // get calibrator parameters
-    pDDUnpackerPar = dynamic_cast<SFibersDDUnpackerPar*>(
-        pm()->getParameterContainer("FibersDDUnpackerPar"));
+    pDDUnpackerPar =
+        dynamic_cast<SFibersDDUnpackerPar*>(pm()->getParameterContainer("FibersDDUnpackerPar"));
     if (!pDDUnpackerPar)
     {
-        std::cerr << "Parameter container 'SFibersDDUnpackerPar' was not obtained!"
-                  << std::endl;
+        std::cerr << "Parameter container 'SFibersDDUnpackerPar' was not obtained!" << std::endl;
         exit(EXIT_FAILURE);
     }
     pDDUnpackerPar->print();
@@ -168,13 +167,11 @@ bool SFibersDDUnpacker::init()
         pm()->getCalibrationContainer("FibersDDCalibratorPar"));
     if (!pDDCalPar)
     {
-        std::cerr << "Parameter container 'SFibersDDCalibratorPar' was not obtained!"
-                  << std::endl;
+        std::cerr << "Parameter container 'SFibersDDCalibratorPar' was not obtained!" << std::endl;
         exit(EXIT_FAILURE);
     }
 
-    pLookUp = dynamic_cast<SFibersLookupTable*>(
-        pm()->getLookupContainer("FibersDDLookupTable"));
+    pLookUp = dynamic_cast<SFibersLookupTable*>(pm()->getLookupContainer("FibersDDLookupTable"));
     pLookUp->print();
 
     return true;
@@ -202,8 +199,7 @@ bool SFibersDDUnpacker::decode(uint16_t subevtid, float* data, size_t length)
     Int_t blmode = pDDUnpackerPar->getBLMode(channel);
     Float_t veto_thr = pDDUnpackerPar->getVetoThreshold(channel);
 
-    SFibersChannel* lc =
-        dynamic_cast<SFibersChannel*>(pLookUp->getAddress(fake_address, channel));
+    SFibersChannel* lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(fake_address, channel));
     SLocator loc(3);
     loc[0] = lc->m; // mod;
     loc[1] = lc->l; // lay;

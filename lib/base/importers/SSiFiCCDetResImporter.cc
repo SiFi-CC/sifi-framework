@@ -70,8 +70,7 @@ bool SSiFiCCDetResImporter::init()
         return false;
     }
 
-    pGeomPar =
-        dynamic_cast<SFibersGeomPar*>(pm()->getParameterContainer("FibersGeomPar"));
+    pGeomPar = dynamic_cast<SFibersGeomPar*>(pm()->getParameterContainer("FibersGeomPar"));
     if (!pGeomPar)
     {
         std::cerr << "Parameter container 'FibersGeomPar' was not obtained!" << std::endl;

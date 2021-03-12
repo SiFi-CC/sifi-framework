@@ -149,9 +149,8 @@ int main(int argc, char** argv)
     detm->initParameterContainers();
     detm->initCategories();
 
-    pm()->addLookupContainer(
-        "FibersDDLookupTable",
-        new SFibersLookupTable("FibersDDLookupTable", 0x1000, 0x1fff, 32));
+    pm()->addLookupContainer("FibersDDLookupTable",
+                             new SFibersLookupTable("FibersDDLookupTable", 0x1000, 0x1fff, 32));
 
     // initialize tasks
     STaskManager* tm = STaskManager::instance();

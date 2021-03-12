@@ -107,9 +107,8 @@ bool SFibersDetector::initContainers()
     else
     {
         pm()->addParameterContainer("FibersDDUnpackerPar", new SFibersDDUnpackerPar());
-        pm()->addCalibrationContainer(
-            "FibersDDCalibratorPar",
-            new SFibersDDCalibratorPar("FibersDDCalibratorPar"));
+        pm()->addCalibrationContainer("FibersDDCalibratorPar",
+                                      new SFibersDDCalibratorPar("FibersDDCalibratorPar"));
         pm()->addCalibrationContainer("FibersCalibratorPar",
                                       new SFibersCalibratorPar("FibersCalibratorPar"));
     }
@@ -146,11 +145,9 @@ bool SFibersDetector::initCategories()
     {
         if (!dm->registerCategory(SCategory::CatGeantFibersRaw, "SGeantFibersRaw", 250, true))
             return false;
-        if (!dm->registerCategory(SCategory::CatFibersCal, "SFibersCalSim", 3, sizes,
-                                  true))
+        if (!dm->registerCategory(SCategory::CatFibersCal, "SFibersCalSim", 3, sizes, true))
             return false;
-        if (!dm->registerCategory(SCategory::CatFibersHit, "SFibersHitSim", 3, sizes,
-                                  true))
+        if (!dm->registerCategory(SCategory::CatFibersHit, "SFibersHitSim", 3, sizes, true))
             return false;
     }
     else
@@ -163,8 +160,7 @@ bool SFibersDetector::initCategories()
             return false;
     }
 
-    if (!dm->registerCategory(SCategory::CatFibersClus, "SFibersCluster", 2, sizes_clus,
-                              false))
+    if (!dm->registerCategory(SCategory::CatFibersClus, "SFibersCluster", 2, sizes_clus, false))
         return false;
 
     return true;

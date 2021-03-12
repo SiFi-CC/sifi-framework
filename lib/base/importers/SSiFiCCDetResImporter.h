@@ -26,10 +26,10 @@ class SIFI_EXPORT SSiFiCCDetResImporter : public SUnpacker
 {
 protected:
     // members
-    SCategory* catGeantTrack{nullptr};      ///< Geant4 tracks
-    SCategory* catGeantFibersRaw{nullptr};  ///< Geant fiber hits
-    SCategory* catFibersCal{nullptr};       ///< fibers raw category
-    SFibersGeomPar* pGeomPar{nullptr}; ///< fibers geometry
+    SCategory* catGeantTrack{nullptr};     ///< Geant4 tracks
+    SCategory* catGeantFibersRaw{nullptr}; ///< Geant fiber hits
+    SCategory* catFibersCal{nullptr};      ///< fibers raw category
+    SFibersGeomPar* pGeomPar{nullptr};     ///< fibers geometry
 
 public:
     // constructor

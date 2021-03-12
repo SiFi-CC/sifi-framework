@@ -13,10 +13,10 @@ class SFibersHitFinder : public STask
 {
 protected:
     // members
-    SCategory* catFibersCal{nullptr};                 ///< fibers cal category
-    SCategory* catFibersHit{nullptr};                 ///< fibers hit category
-    SCalContainer<3>* pHitFinderFiberPar{nullptr};    ///< hit finder fiber parameters
-    SFibersHitFinderPar* pHitFinderPar{nullptr}; ///< hit finder parameters
+    SCategory* catFibersCal{nullptr};              ///< fibers cal category
+    SCategory* catFibersHit{nullptr};              ///< fibers hit category
+    SCalContainer<3>* pHitFinderFiberPar{nullptr}; ///< hit finder fiber parameters
+    SFibersHitFinderPar* pHitFinderPar{nullptr};   ///< hit finder parameters
     SFibersGeomPar* pGeomPar;
 
 public:
