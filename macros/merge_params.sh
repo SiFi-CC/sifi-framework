@@ -1,11 +1,11 @@
 #!/bin/bash
 
-cat params/FibersStackGeomPar.txt
-cat params/FibersStackDDUnpackerPar.txt
-cat params/FibersStackDDLookupTable.txt
-cat params/FibersStackDDCalibratorPar.txt
-cat params/FibersStackCalibratorPar.txt
-cat params/FibersStackHitFinderPar.txt
-cat params/FibersStackClusterFinderPar.txt
-cat params/FibersStackDigitizerPar.txt
-cat params/FibersStackHitFinderFiberPar.txt
+cat params/FibersGeomPar.txt
+cat params/FibersDDUnpackerPar.txt
+cat params/FibersDDLookupTable.txt
+cat params/FibersDDCalibratorPar.txt
+cat params/FibersCalibratorPar.txt
+cat params/FibersHitFinderPar.txt
+cat params/FibersClusterFinderPar.txt
+cat params/FibersDigitizerPar.txt
+cat params/FibersHitFinderFiberPar.txt

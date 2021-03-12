@@ -42,7 +42,7 @@ void rootlogon(TString additional_libs = "",
   if (!useSIFIDIR) cout << "SIFIDIR is not set !" << endl;
 
   // space seperated list and order of common libraries to be loaded
-  common_libs = "Geant FibersStack SiFiTools SiFi";
+  common_libs = "Geant Fibers SiFiTools SiFi";
 //  common_libs += "cc6_tools ";
 //  common_libs += "cc6_cm ";
 //  common_libs += "cc6_cc ";

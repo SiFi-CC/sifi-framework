@@ -25,7 +25,7 @@
 #include "STaskManager.h"
 #include "SiFi.h"
 
-#include "SFibersStackDetector.h"
+#include "SFibersDetector.h"
 
 #include "SProgressBar.h"
 
@@ -69,7 +69,7 @@ int simdst(const std::string & file, int events = 1000)
     // initialize detectors
     SDetectorManager * detm = SDetectorManager::instance();
 
-    detm->addDetector(new SFibersStackDetector("FibersStack"));
+    detm->addDetector(new SFibersDetector("Fibers"));
 
     detm->initTasks();
     detm->initParameterContainers();

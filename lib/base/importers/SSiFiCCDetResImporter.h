@@ -1,4 +1,4 @@
-// @(#)lib/fibers_stack:$Id$
+// @(#)lib/fibers:$Id$
 // Author: Rafal Lalik  18/11/2017
 
 /*************************************************************************
@@ -20,7 +20,7 @@
 #include <string>
 
 class SCategory;
-class SFibersStackGeomPar;
+class SFibersGeomPar;
 
 class SIFI_EXPORT SSiFiCCDetResImporter : public SUnpacker
 {
@@ -29,7 +29,7 @@ protected:
     SCategory* catGeantTrack{nullptr};      ///< Geant4 tracks
     SCategory* catGeantFibersRaw{nullptr};  ///< Geant fiber hits
     SCategory* catFibersCal{nullptr};       ///< fibers raw category
-    SFibersStackGeomPar* pGeomPar{nullptr}; ///< fibers geometry
+    SFibersGeomPar* pGeomPar{nullptr}; ///< fibers geometry
 
 public:
     // constructor

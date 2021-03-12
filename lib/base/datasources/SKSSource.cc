@@ -11,7 +11,7 @@
  *************************************************************************/
 
 #include "SKSSource.h"
-#include "SFibersStackDDUnpacker.h"
+#include "SFibersDDUnpacker.h"
 #include "SUnpacker.h"
 
 #include <iostream>
@@ -79,7 +79,7 @@ bool SKSSource::open()
             printf("Forced unpacker %#x not initalized\n", subevent);
             abort();
         }
-        auto ddUnp = dynamic_cast<SFibersStackDDUnpacker*>(unpackers[subevent]);
+        auto ddUnp = dynamic_cast<SFibersDDUnpacker*>(unpackers[subevent]);
         if (ddUnp) ddUnp->setDataLen(samples);
     }
     else
@@ -93,7 +93,7 @@ bool SKSSource::open()
                 printf("Unpacker %#x not initalized\n", iter->first);
                 abort();
             }
-            auto ddUnp = dynamic_cast<SFibersStackDDUnpacker*>(iter->second);
+            auto ddUnp = dynamic_cast<SFibersDDUnpacker*>(iter->second);
             if (ddUnp) ddUnp->setDataLen(samples);
         }
     }

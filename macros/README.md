@@ -238,7 +238,7 @@ This is examplary file containing parameters for sifi_dst. It contains parameter
 
 ## Structure
 
-### [SFibersStackGeomPar]
+### [SFibersGeomPar]
 - `fModuleZ: Float_t`
 - `nModules: Int_t`
 - `nLayers: Int_t`
@@ -248,7 +248,7 @@ This is examplary file containing parameters for sifi_dst. It contains parameter
 - `fFiberOffsetY: Float_t`
 - `fFibersPitch: Float_t`
 
-### [SFibersStackDDUnpackerPar]
+### [SFibersDDUnpackerPar]
 - `fThreshold: Float_t`
 - `fPolarity: Int_t`
 - `fAnaMode: Int_t`
@@ -257,19 +257,19 @@ This is examplary file containing parameters for sifi_dst. It contains parameter
 - `fVetoThreshold: Float_t`
 - `fBLMode: Int_t`
 
-### [SFibersStackDDLookupTable]
+### [SFibersDDLookupTable]
 - FTAB ID channel
 - module
 - layer
 - fiber
 - side
 
-### [SFibersStackDDCalibratorPar]
+### [SFibersDDCalibratorPar]
 - address: module, layer, fiber, side
 - gain
 - offset
 
-### [SFibersStackCalibratorPar]
+### [SFibersCalibratorPar]
 - address: module, layer, fiber, side
 - lambda
 - eta_r
@@ -278,14 +278,14 @@ This is examplary file containing parameters for sifi_dst. It contains parameter
 - length
 - time offset
 
-### [SFibersStackHitFinderPar]
+### [SFibersHitFinderPar]
 - `fA0: Float_t`
 - `fLambda: Float_t`
 - `fAlpha: Float_t`
 
-### [SFibersStackClusterFinderPar]
+### [SFibersClusterFinderPar]
 - `fClusterMode: Int_t`
 
-### [SFibersStackDigitizerPar]
+### [SFibersDigitizerPar]
 
-### [SFibersStackHitFinderFiberPar]
+### [SFibersHitFinderFiberPar]

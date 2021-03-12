@@ -83,13 +83,14 @@ SIFI_GENERATE_LIBRARY(
         ROOT::Core
         ROOT::Tree
         SiFiTools
+        Geant
     INCLUDE_DIRS
         core
         datasources
         datastruct
         event
         util
-	../fibers_stack
+	../fibers
 )
 
 if (BUILD_SIFIDETRES_SUPPORT)
@@ -97,11 +98,11 @@ if (BUILD_SIFIDETRES_SUPPORT)
 
     target_include_directories(SiFi PUBLIC
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/lib/base/importers>
-        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/lib/fibers_stack>
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/lib/fibers>
     )
     target_include_directories(G__${ARG_TARGET}_cc PUBLIC
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/lib/base/importers>
-        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/lib/fibers_stack>
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/lib/fibers>
     )
 
     target_link_libraries(SiFi PRIVATE

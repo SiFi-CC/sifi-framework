@@ -1,11 +1,11 @@
 #include "SCategoryManager.h"
 #include "SDDSamples.h"
 #include "SDetectorManager.h"
-#include "SFibersStackCalSim.h"
-#include "SFibersStackDetector.h"
-#include "SFibersStackHit.h"
-#include "SFibersStackHitFinder.h"
-#include "SFibersStackHitFinderPar.h"
+#include "SFibersCalSim.h"
+#include "SFibersDetector.h"
+#include "SFibersHit.h"
+#include "SFibersHitFinder.h"
+#include "SFibersHitFinderPar.h"
 #include "SLoop.h"
 #include "SParManager.h"
 
@@ -63,14 +63,14 @@ void position_calibration(SLoop *loop, SCategory *pCatHitSim, SCategory *pCatCal
         size_t nn = pCatHitSim->getEntries();
         for (uint j = 0; j < nn; ++j)
         {
-            SFibersStackHit* pHit = (SFibersStackHit*)pCatHitSim->getObject(j);
+            SFibersHit* pHit = (SFibersHit*)pCatHitSim->getObject(j);
             Int_t m, l, f;
             pHit->getAddress(m, l, f);
             loc[0] = m;
             loc[1] = l;
             loc[2] = f;
 
-            SFibersStackCalSim* pCalSim = (SFibersStackCalSim*)pCatCalSim->getObject(loc);
+            SFibersCalSim* pCalSim = (SFibersCalSim*)pCatCalSim->getObject(loc);
 	    Float_t ql = pCalSim->getQDCL();
 	    Float_t qr = pCalSim->getQDCR();
 	    Float_t Eloss = pCalSim->getGeantEnergyLoss();
@@ -111,14 +111,14 @@ void position_calibration(SLoop *loop, SCategory *pCatHitSim, SCategory *pCatCal
         size_t nn = pCatHitSim->getEntries();
         for (uint j = 0; j < nn; ++j)
         {
-            SFibersStackHit* pHit = (SFibersStackHit*)pCatHitSim->getObject(j);
+            SFibersHit* pHit = (SFibersHit*)pCatHitSim->getObject(j);
             Int_t m, l, f;
             pHit->getAddress(m, l, f);
             loc[0] = m;
             loc[1] = l;
             loc[2] = f;
 
-            SFibersStackCalSim* pCalSim = (SFibersStackCalSim*)pCatCalSim->getObject(loc);
+            SFibersCalSim* pCalSim = (SFibersCalSim*)pCatCalSim->getObject(loc);
 	    Float_t ql = pCalSim->getQDCL();
 	    Float_t qr = pCalSim->getQDCR();
 	    Float_t Eloss = pCalSim->getGeantEnergyLoss();
@@ -217,14 +217,14 @@ void energy_calibration(SLoop *loop, SCategory *pCatHitSim, SCategory *pCatCalSi
 		size_t nn = pCatHitSim->getEntries();
 		for (uint j = 0; j < nn; ++j)
 		{
-			SFibersStackHit* pHit = (SFibersStackHit*)pCatHitSim->getObject(j);
+			SFibersHit* pHit = (SFibersHit*)pCatHitSim->getObject(j);
 			Int_t m, l, f;
 			pHit->getAddress(m, l, f);
 			loc[0] = m;
 			loc[1] = l;
 			loc[2] = f;
 
-			SFibersStackCalSim* pCalSim = (SFibersStackCalSim*)pCatCalSim->getObject(loc);
+			SFibersCalSim* pCalSim = (SFibersCalSim*)pCatCalSim->getObject(loc);
 			Float_t ql = pCalSim->getQDCL();
 			Float_t qr = pCalSim->getQDCR();
 			Float_t Eloss = pCalSim->getGeantEnergyLoss();
@@ -265,14 +265,14 @@ void energy_calibration(SLoop *loop, SCategory *pCatHitSim, SCategory *pCatCalSi
 		size_t nn = pCatHitSim->getEntries();
 		for (uint j = 0; j < nn; ++j)
 		{
-			SFibersStackHit* pHit = (SFibersStackHit*)pCatHitSim->getObject(j);
+			SFibersHit* pHit = (SFibersHit*)pCatHitSim->getObject(j);
 			Int_t m, l, f;
 			pHit->getAddress(m, l, f);
 			loc[0] = m;
 			loc[1] = l;
 			loc[2] = f;
 
-			SFibersStackCalSim* pCalSim = (SFibersStackCalSim*)pCatCalSim->getObject(loc);
+			SFibersCalSim* pCalSim = (SFibersCalSim*)pCatCalSim->getObject(loc);
 			Float_t ql = pCalSim->getQDCL();
 			Float_t qr = pCalSim->getQDCR();
 			Float_t Eloss = pCalSim->getGeantEnergyLoss();
@@ -386,17 +386,17 @@ int hitfinder_calibration(const char* datafile = 0, const char* paramfile = "par
 
     // initialize detectors
     SDetectorManager* detm = SDetectorManager::instance();
-    detm->addDetector(new SFibersStackDetector("FibersStack"));
+    detm->addDetector(new SFibersDetector("Fibers"));
     detm->initParameterContainers();
 
-    SCategory* pCatCalSim = SCategoryManager::getCategory(SCategory::CatFibersStackCal);
-    SCategory* pCatHitSim = SCategoryManager::getCategory(SCategory::CatFibersStackHit);
+    SCategory* pCatCalSim = SCategoryManager::getCategory(SCategory::CatFibersCal);
+    SCategory* pCatHitSim = SCategoryManager::getCategory(SCategory::CatFibersHit);
 
-    SFibersStackHitFinderPar* pHitFinderPar = dynamic_cast<SFibersStackHitFinderPar*>(
-        pm()->getParameterContainer("SFibersStackHitFinderPar"));
+    SFibersHitFinderPar* pHitFinderPar = dynamic_cast<SFibersHitFinderPar*>(
+        pm()->getParameterContainer("SFibersHitFinderPar"));
     if (!pHitFinderPar)
     {
-        std::cerr << "Parameter container 'SFibersStackHitFinderPar' was not obtained!"
+        std::cerr << "Parameter container 'SFibersHitFinderPar' was not obtained!"
                   << std::endl;
         exit(EXIT_FAILURE);
     }

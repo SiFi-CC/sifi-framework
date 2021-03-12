@@ -34,9 +34,9 @@ SCalContainer. The getParam() method reads content of the SCalContainer and
 fills variables inside the SLookup object. The putParam method allows to update
 parameters in the container and write to param file.
 
-\sa SFibersStackCalibratorPar
-\sa SFibersStackDigitizerPar
-\sa SFibersStackGeomPar
+\sa SFibersCalibratorPar
+\sa SFibersDigitizerPar
+\sa SFibersGeomPar
 */
 
 /**

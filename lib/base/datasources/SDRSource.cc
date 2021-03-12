@@ -273,7 +273,7 @@ bool SDRSource::readCurrentEvent()
                 if ((iter = fPxPosScin->find(fiber_id)) != fPxPosScin->end())
                 {
                     tree.pos = iter->second;
-                    tree.type = SFibersStackCalSim::InteractionType::SCINT;
+                    tree.type = SFibersCalSim::InteractionType::SCINT;
                 }
                 else
                 {

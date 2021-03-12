@@ -29,10 +29,10 @@
 #include "SDDSource.h"
 #include "SKSSource.h"
 
-#include "SFibersStackDDUnpacker.h"
-#include "SFibersStackDDUnpackerPar.h"
-#include "SFibersStackDetector.h"
-#include "SFibersStackLookup.h"
+#include "SFibersDDUnpacker.h"
+#include "SFibersDDUnpackerPar.h"
+#include "SFibersDetector.h"
+#include "SFibersLookup.h"
 
 #include "SProgressBar.h"
 
@@ -92,8 +92,8 @@ int main(int argc, char** argv)
 
             if (ext == ".dat")
             {
-                SFibersStackDDUnpacker* unp = new SFibersStackDDUnpacker();
-                SFibersStackDDUnpacker::saveSamples(save_samples);
+                SFibersDDUnpacker* unp = new SFibersDDUnpacker();
+                SFibersDDUnpacker::saveSamples(save_samples);
 
                 SDDSource* source = new SDDSource(addr);
                 unp->setDataLen(1024);
@@ -103,8 +103,8 @@ int main(int argc, char** argv)
             }
             else if (ext == ".csv")
             {
-                SFibersStackDDUnpacker* unp = new SFibersStackDDUnpacker();
-                SFibersStackDDUnpacker::saveSamples(save_samples);
+                SFibersDDUnpacker* unp = new SFibersDDUnpacker();
+                SFibersDDUnpacker::saveSamples(save_samples);
 
                 SKSSource* source = new SKSSource(addr);
                 source->addUnpacker(unp, {addr});
@@ -143,15 +143,15 @@ int main(int argc, char** argv)
     // initialize detectors
     SDetectorManager* detm = SDetectorManager::instance();
 
-    detm->addDetector(new SFibersStackDetector("FibersStack"));
+    detm->addDetector(new SFibersDetector("Fibers"));
 
     detm->initTasks();
     detm->initParameterContainers();
     detm->initCategories();
 
     pm()->addLookupContainer(
-        "SFibersStackDDLookupTable",
-        new SFibersStackLookupTable("SFibersStackDDLookupTable", 0x1000, 0x1fff, 32));
+        "FibersDDLookupTable",
+        new SFibersLookupTable("FibersDDLookupTable", 0x1000, 0x1fff, 32));
 
     // initialize tasks
     STaskManager* tm = STaskManager::instance();

@@ -28,9 +28,9 @@
 
 #include "SDRSource.h"
 
-#include "SFibersStackDDUnpacker.h"
-#include "SFibersStackDetector.h"
-#include "SFibersStackLookup.h"
+#include "SFibersDDUnpacker.h"
+#include "SFibersDetector.h"
+#include "SFibersLookup.h"
 #include "SSiFiCCDetResImporter.h"
 
 #include "SProgressBar.h"
@@ -105,17 +105,17 @@ int main(int argc, char** argv)
     // initialize detectors
     SDetectorManager* detm = SDetectorManager::instance();
 
-    detm->addDetector(new SFibersStackDetector("FibersStack"));
+    detm->addDetector(new SFibersDetector("Fibers"));
 
     detm->initCategories();
-    sifi()->buildCategory(SCategory::CatFibersStackCal, true);
+    sifi()->buildCategory(SCategory::CatFibersCal, true);
 
     detm->initParameterContainers();
     detm->initTasks();
 
     pm()->addLookupContainer(
-        "SFibersStackDDLookupTable",
-        new SFibersStackLookupTable("SFibersStackDDLookupTable", 0x1000, 0x1fff, 32));
+        "FibersDDLookupTable",
+        new SFibersLookupTable("FibersDDLookupTable", 0x1000, 0x1fff, 32));
 
     // initialize tasks
     STaskManager* tm = STaskManager::instance();

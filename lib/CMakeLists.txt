@@ -1,6 +1,6 @@
 #----------------------------------------------------------------------------
 
-set(MODULES base geant fibers_stack tools)
+set(MODULES base geant fibers tools)
 
 foreach(MOD ${MODULES})
     add_subdirectory(${MOD})

@@ -157,7 +157,7 @@ include(GenerateExportHeader)
 generate_export_header(SiFi)
 
 # keep all targets here
-set(PROJECT_TARGETS SiFi FibersStack Geant SiFiTools)
+set(PROJECT_TARGETS SiFi Fibers Geant SiFiTools)
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file(Config.cmake.in ${CMAKE_PROJECT_NAME}Config.cmake

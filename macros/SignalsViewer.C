@@ -7,10 +7,10 @@
 #include "SCategoryManager.h"
 #include "SDDSamples.h"
 #include "SDetectorManager.h"
-#include "SFibersStackCal.h"
-#include "SFibersStackDetector.h"
-#include "SFibersStackLookup.h"
-#include "SFibersStackRaw.h"
+#include "SFibersCal.h"
+#include "SFibersDetector.h"
+#include "SFibersLookup.h"
+#include "SFibersRaw.h"
 #include "SLoop.h"
 #include "SParManager.h"
 
@@ -889,13 +889,13 @@ Bool_t CutAndView(TString path, Int_t ch, Int_t thr, CutType cut, std::vector<Fl
         pm()->parseSource();
 
         SDetectorManager* detm = SDetectorManager::instance();
-        detm->addDetector(new SFibersStackDetector("FibersStack"));
+        detm->addDetector(new SFibersDetector("Fibers"));
         detm->initParameterContainers();
 
-        SFibersStackLookupTable *lookUp = dynamic_cast<SFibersStackLookupTable*>
-                                          (pm()->getLookupContainer("SFibersStackDDLookupTable"));
+        SFibersLookupTable *lookUp = dynamic_cast<SFibersLookupTable*>
+                                          (pm()->getLookupContainer("FibersDDLookupTable"));
 
-        SFibersStackChannel *lc = dynamic_cast<SFibersStackChannel*>
+        SFibersChannel *lc = dynamic_cast<SFibersChannel*>
                                   (lookUp->getAddress(fake_FTAB_address, ch));
 
         std::cout << "\nChannel " << ch << " address:" << std::endl;
@@ -907,8 +907,8 @@ Bool_t CutAndView(TString path, Int_t ch, Int_t thr, CutType cut, std::vector<Fl
     */
     //----- temporary fix
     const Int_t chmax = 8;
-    std::map<Int_t, SFibersStackChannel> lookUp;
-    SFibersStackChannel channels[chmax];
+    std::map<Int_t, SFibersChannel> lookUp;
+    SFibersChannel channels[chmax];
 
     channels[0].m = 0;
     channels[0].l = 0;
@@ -944,7 +944,7 @@ Bool_t CutAndView(TString path, Int_t ch, Int_t thr, CutType cut, std::vector<Fl
     channels[7].side = 'r';
 
     for (Int_t i = 0; i < chmax; i++)
-        lookUp.insert(std::pair<Int_t, SFibersStackChannel>(i, channels[i]));
+        lookUp.insert(std::pair<Int_t, SFibersChannel>(i, channels[i]));
 
     auto chf = lookUp.find(ch)->second;
     Int_t mod = chf.m;
@@ -958,8 +958,8 @@ Bool_t CutAndView(TString path, Int_t ch, Int_t thr, CutType cut, std::vector<Fl
     loop->addFile(std::string(path) + "/sifi_results.root");
     loop->setInput({});
     SCategory* tSig = SCategoryManager::getCategory(SCategory::CatDDSamples);
-    SCategory* tCal = SCategoryManager::getCategory(SCategory::CatFibersStackCal);
-    SCategory* tRaw = SCategoryManager::getCategory(SCategory::CatFibersStackRaw);
+    SCategory* tCal = SCategoryManager::getCategory(SCategory::CatFibersCal);
+    SCategory* tRaw = SCategoryManager::getCategory(SCategory::CatFibersRaw);
 
     //----- accessing binary file
     TString iname = Form(path + "/wave_%i.dat", ch);
@@ -1009,8 +1009,8 @@ Bool_t CutAndView(TString path, Int_t ch, Int_t thr, CutType cut, std::vector<Fl
         {
             int m, l, f;
             SDDSamples* samples = (SDDSamples*)tSig->getObject(j);
-            SFibersStackCal* calib = (SFibersStackCal*)tCal->getObject(j);
-            SFibersStackRaw* raw = (SFibersStackRaw*)tRaw->getObject(j);
+            SFibersCal* calib = (SFibersCal*)tCal->getObject(j);
+            SFibersRaw* raw = (SFibersRaw*)tRaw->getObject(j);
             SDDSignal* sigL = (SDDSignal*)samples->getSignalL();
             SDDSignal* sigR = (SDDSignal*)samples->getSignalR();
             samples->getAddress(m, l, f);

@@ -15,7 +15,7 @@
 #include "SiFiConfig.h"
 #include "sifi_export.h"
 
-#include "SFibersStackCalSim.h"
+#include "SFibersCalSim.h"
 #include "SGeantTrack.h"
 #include "SRootSource.h"
 
@@ -72,7 +72,7 @@ struct TREE_all
     TREE_hit data;
     TVector3 pos;
     Float_t energy_dep;
-    SFibersStackCalSim::InteractionType type;
+    SFibersCalSim::InteractionType type;
     std::vector<TREE_Kine> kine;
 };
 

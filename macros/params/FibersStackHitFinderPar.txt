@@ -1,4 +1,0 @@
-[SFibersStackHitFinderPar]
-fA0: Float_t -0.000540944
-fLambda: Float_t 118.809
-fAlpha: Float_t 1.002

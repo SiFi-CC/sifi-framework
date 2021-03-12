@@ -40,10 +40,10 @@ public:
                            // helpers
         CatDDSamples = 10,
         // fibers
-        CatFibersStackRaw = 20, ///< fibers stack raw data
-        CatFibersStackCal,      ///< fibers cal data
-        CatFibersStackHit,      ///< fibers hit
-        CatFibersStackClus,     ///< fibers cluster
+        CatFibersRaw = 20, ///< fibers stack raw data
+        CatFibersCal,      ///< fibers cal data
+        CatFibersHit,      ///< fibers hit
+        CatFibersClus,     ///< fibers cluster
                                 // tracks
                                 // Limit
         CatLimitDoNotUse,       ///< holds size of the category list

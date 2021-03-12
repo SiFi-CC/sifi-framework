@@ -15,7 +15,7 @@
 
 /**
  * \class SDDSamples
-\ingroup lib_fibers_stack
+\ingroup lib_fibers
 
 A container for Fibers Stack Raw data
 

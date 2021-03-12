@@ -1,4 +1,4 @@
-[SFibersStackDDUnpackerPar]
+[FibersDDUnpackerPar]
 fThreshold: Float_t \
  -22 -22 -50 0 0 0 0 0 \
  0 0 0 0 0 0 0 0
@@ -9,7 +9,7 @@ nIntMode: Int_t 300
 nDeadTime: Int_t 400
 fVetoThreshold: Float_t 0
 fBLMode: Int_t 0
-[SFibersStackGeomPar]
+[FibersGeomPar]
 fType: Int_t 0
 nModules: Int_t 2
 nLayers: Int_t 10 30
@@ -42,12 +42,12 @@ fFibersPitch: Float_t \
 1 1 1 1 1 1 1 1 1 1 \
 1 1 1 1 1 1 1 1 1 1 \
 1 1 1 1 1 1 1 1 1 1
-[MFibersStackCalibratorPar]
+[MFibersCalibratorPar]
 fAdcGain: Float_t 1.0
 fAdcOffset: Float_t 0.0
 
-[SFibersStackDigitizerPar]
-[SFibersStackDDLookupTable]
+[FibersDigitizerPar]
+[FibersDDLookupTable]
 #   FTAB id channel         mod     layer   fiber   side l/r
 0x1000      0               0       0       0       l
 0x1000      1               0       0       0       r

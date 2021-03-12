@@ -1,0 +1,54 @@
+#----------------------------------------------------------------------------
+
+SIFI_GENERATE_LIBRARY(
+    TARGET Fibers
+    SOURCES
+        SFibersDetector.cc
+        SFibersGeomPar.cc
+        SFibersUnpacker.cc
+        SFibersLookup.cc
+        SFibersDDUnpacker.cc
+        SFibersDDUnpackerPar.cc
+        SFibersDDCalibratorPar.cc
+        SFibersRaw.cc
+        SFibersCalibrator.cc
+        SFibersCalibratorPar.cc
+        SFibersCal.cc
+        SFibersDigitizer.cc
+        SFibersDigitizerPar.cc
+        SFibersCalSim.cc
+        SFibersHitFinder.cc
+        SFibersHitFinderPar.cc
+        SFibersHit.cc
+        SFibersHitSim.cc
+        SFibersClusterFinder.cc
+        SFibersClusterFinderPar.cc
+        SFibersCluster.cc
+    HEADERS
+        SFibersDetector.h
+        SFibersGeomPar.h
+        SFibersUnpacker.h
+        SFibersLookup.h
+        SFibersDDUnpacker.h
+        SFibersDDUnpackerPar.h
+        SFibersDDCalibratorPar.h
+        SFibersRaw.h
+        SFibersCalibrator.h
+        SFibersCalibratorPar.h
+        SFibersCal.h
+        SFibersDigitizer.h
+        SFibersDigitizerPar.h
+        SFibersCalSim.h
+        SFibersHitFinder.h
+        SFibersHitFinderPar.h
+        SFibersHit.h
+        SFibersHitSim.h
+        SFibersClusterFinder.h
+        SFibersClusterFinderPar.h
+        SFibersCluster.h
+
+    PRIVATE_LIBRARIES
+        ROOT::Core
+        SiFi
+        Geant
+)

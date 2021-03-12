@@ -1,4 +1,4 @@
-// @(#)lib/fibers_stack:$Id$
+// @(#)lib/fibers:$Id$
 // Author: Rafal Lalik  18/11/2017
 
 /*************************************************************************
@@ -11,8 +11,8 @@
 
 #include "SSiFiCCDetResImporter.h"
 #include "SCategory.h"
-#include "SFibersStackCalSim.h"
-#include "SFibersStackGeomPar.h"
+#include "SFibersCalSim.h"
+#include "SFibersGeomPar.h"
 #include "SGeantFibersRaw.h"
 #include "SGeantTrack.h"
 #include "SParManager.h"
@@ -27,7 +27,7 @@ const Float_t adc_to_mv = 4.096;
 const Float_t sample_to_ns = 1.;
 /**
  * \class SSiFiCCDetResImporter
-\ingroup lib_fibers_stack
+\ingroup lib_fibers
 
 A unpacker task.
 
@@ -63,18 +63,18 @@ bool SSiFiCCDetResImporter::init()
         return false;
     }
 
-    catFibersCal = sifi()->buildCategory(SCategory::CatFibersStackCal);
+    catFibersCal = sifi()->buildCategory(SCategory::CatFibersCal);
     if (!catFibersCal)
     {
-        std::cerr << "No CatFibersStackCal category" << std::endl;
+        std::cerr << "No CatFibersCal category" << std::endl;
         return false;
     }
 
     pGeomPar =
-        dynamic_cast<SFibersStackGeomPar*>(pm()->getParameterContainer("SFibersStackGeomPar"));
+        dynamic_cast<SFibersGeomPar*>(pm()->getParameterContainer("FibersGeomPar"));
     if (!pGeomPar)
     {
-        std::cerr << "Parameter container 'SFibersStackGeomPar' was not obtained!" << std::endl;
+        std::cerr << "Parameter container 'FibersGeomPar' was not obtained!" << std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -114,11 +114,11 @@ bool SSiFiCCDetResImporter::execute(ulong /*event*/, ulong /*seq_number*/, uint1
         pTrack->setType(t.type);
     }
 
-    SFibersStackCalSim* pCal = dynamic_cast<SFibersStackCalSim*>(catFibersCal->getObject(loc));
+    SFibersCalSim* pCal = dynamic_cast<SFibersCalSim*>(catFibersCal->getObject(loc));
     if (!pCal)
     {
-        pCal = reinterpret_cast<SFibersStackCalSim*>(catFibersCal->getSlot(loc));
-        pCal = new (pCal) SFibersStackCalSim;
+        pCal = reinterpret_cast<SFibersCalSim*>(catFibersCal->getSlot(loc));
+        pCal = new (pCal) SFibersCalSim;
     }
 
     pCal->setAddress(loc[0], loc[1], loc[2]);

@@ -4,7 +4,7 @@ find_package(cppunit)
 file(GLOB UnitTests_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*_tests.cpp" )
 
 add_executable(UnitTester test_runner.cpp ${UnitTests_SRCS})
-target_link_libraries(UnitTester SiFi SiFiTools FibersStack Geant ${CPPUNIT_LIBRARIES} ROOT::Physics)
+target_link_libraries(UnitTester SiFi SiFiTools Fibers Geant ${CPPUNIT_LIBRARIES} ROOT::Physics)
 
 enable_testing()
 
