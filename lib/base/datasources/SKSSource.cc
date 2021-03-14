@@ -162,7 +162,7 @@ bool SKSSource::readCurrentEvent()
     if (subevent != 0x0000)
     {
         if (!unpackers[subevent]) abort();
-        unpackers[subevent]->setSampleTons(time_bin);
+        unpackers[subevent]->setSampleTimeBin(time_bin);
         unpackers[subevent]->setADCTomV(1.);
         // TODO must pass event number to the execute
         unpackers[subevent]->execute(0, 0, subevent, buffer, nSamples * sizeof(buffer[0]));
@@ -171,7 +171,7 @@ bool SKSSource::readCurrentEvent()
     {
         for (const auto& u : unpackers)
         {
-            u.second->setSampleTons(time_bin);
+            u.second->setSampleTimeBin(time_bin);
             u.second->setADCTomV(1.);
             u.second->execute(0, 0, u.first, buffer, nSamples * sizeof(buffer[0]));
         }

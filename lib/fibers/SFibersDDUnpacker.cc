@@ -297,7 +297,7 @@ bool SFibersDDUnpacker::decode(uint16_t subevtid, float* data, size_t length)
     }
 
     float ADC_to_mV = getADCTomV();
-    float sample_to_ns = getSampleTons();
+    float sample_to_ns = getSampleTimeBin();
 
     pRaw->setAddress(loc[0], loc[1], loc[2]);
     if (side == 'l')

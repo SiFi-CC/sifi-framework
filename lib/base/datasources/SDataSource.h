@@ -48,13 +48,17 @@ public:
     /// \return success
     virtual bool readCurrentEvent() = 0;
 
+    /// Set index of the current event
+    /// \param i new index of the current event
     void setCurrentEvent(long i) { current_event = i; }
+    /// Get index of the current event
+    /// \return current event index
     long getCurrentEvent() const { return current_event; }
 
     void addUnpacker(SUnpacker* unpacker, const std::vector<uint16_t>& address);
 
 private:
-    ulong current_event;
+    ulong current_event; ///< current event index
 
 protected:
     std::map<uint16_t, SUnpacker*> unpackers; ///< store unpackers and its addresses

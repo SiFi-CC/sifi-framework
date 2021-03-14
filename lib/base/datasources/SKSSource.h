@@ -39,9 +39,9 @@ public:
     virtual void setInput(const std::string& filename);
 
 private:
-    int samples;
-    int max_channels;
-    uint8_t channel;
+    int samples;           ///< number of samples in the chunk
+    int max_channels;      ///< max number of channels to read
+    uint8_t channel;       ///< current channel
     uint16_t subevent;     ///< subevent id
     std::string input;     ///< source file name
     std::ifstream istream; ///< input file stream

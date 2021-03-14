@@ -217,7 +217,7 @@ bool SiFi::open()
 bool SiFi::registerCategory(SCategory::Cat cat, const std::string& name, size_t dim, size_t* sizes,
                             bool simulation)
 {
-    int pos = getCategoryIndex(cat, simulation);
+    int pos = getCategoryIndex(cat);
 
     if (SiFi::cinfovec[pos].registered == true) return true;
 
@@ -249,7 +249,7 @@ bool SiFi::registerCategory(SCategory::Cat cat, const std::string& name, size_t 
  */
 bool SiFi::registerCategory(SCategory::Cat cat, const std::string& name, size_t n, bool simulation)
 {
-    int pos = getCategoryIndex(cat, simulation);
+    int pos = getCategoryIndex(cat);
 
     if (SiFi::cinfovec[pos].registered == true) return true;
 
@@ -301,7 +301,7 @@ SCategory* SiFi::buildCategory(SCategory::Cat cat, bool persistent)
 
     if (categories[cat]) return categories[cat];
 
-    int pos = getCategoryIndex(cat, sim);
+    int pos = getCategoryIndex(cat);
 
     CategoryInfo& cinfo = SiFi::cinfovec[pos];
     if (cinfo.registered == false) return gNullSCategoryPtr;
@@ -332,7 +332,7 @@ SCategory* SiFi::buildCategory(SCategory::Cat cat, bool persistent)
  */
 SCategory* SiFi::getCategory(SCategory::Cat cat, bool /*persistent*/)
 {
-    int pos = getCategoryIndex(cat, sim);
+    int pos = getCategoryIndex(cat);
     CategoryInfo& cinfo = SiFi::cinfovec[pos];
     if (cinfo.registered == false) return gNullSCategoryPtr;
     if (cinfo.ptr) return cinfo.ptr;

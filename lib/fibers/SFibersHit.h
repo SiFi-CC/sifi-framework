@@ -25,8 +25,8 @@ protected:
     Int_t layer{-1};  ///< address - layer
     Int_t fiber{-1};  ///< address - fiber
 
-    TVector3 point;
-    TVector3 errors;
+    TVector3 point;  ///< hit point
+    TVector3 errors; ///< hit point errors
 
     Float_t u{0};  ///< u-coord along the fiber
     Float_t su{0}; ///< sigma of u
@@ -69,6 +69,7 @@ public:
 
     /// Set u-hit coordinate reconstructed from times
     /// \param _u u coordinate
+    /// \param _su u error sigma
     void setU(Float_t _u, Float_t _su)
     {
         u = _u;
@@ -111,12 +112,14 @@ public:
     /// \return time sigma
     Float_t getTimeError() const { return sE; }
 
-    // get point vector
+    /// Get point vector
     TVector3& getPoint() { return point; }
+    /// Get point vector
     const TVector3& getPoint() const { return point; }
 
-    // get point errors vector
+    // Get point errors vector
     TVector3& getErrors() { return errors; }
+    /// Get point errors vector
     const TVector3& getErrors() const { return errors; }
 
     virtual void print() const;

@@ -102,7 +102,7 @@ bool SDDSource::readCurrentEvent()
     if (subevent != 0x0000)
     {
         if (!unpackers[subevent]) abort();
-        unpackers[subevent]->setSampleTons(1.);
+        unpackers[subevent]->setSampleTimeBin(1.);
         unpackers[subevent]->setADCTomV(4.096);
         // TODO must pass event number to the execute
         unpackers[subevent]->execute(0, 0, subevent, buffer, buffer_size);
@@ -111,7 +111,7 @@ bool SDDSource::readCurrentEvent()
     {
         for (const auto& u : unpackers)
         {
-            u.second->setSampleTons(1.);
+            u.second->setSampleTimeBin(1.);
             u.second->setADCTomV(4.096);
             u.second->execute(0, 0, u.first, buffer, buffer_size);
         }

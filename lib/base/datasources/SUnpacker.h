@@ -57,17 +57,25 @@ public:
     /// \return success
     virtual bool finalize() { return true; };
 
-    void setSampleTons(float bin_value) { sample_to_ns = bin_value; }
+    /// Set size of the time bin (sample) in ns
+    /// \param bin_value size of the time bin in ns
+    void setSampleTimeBin(float bin_value) { sample_to_ns = bin_value; }
 
+    /// Set ADC to V conversion
+    /// \param coeff conversion coefficient in V/LSB
     void setADCTomV(float coeff) { ADC_to_mV = coeff; }
 
-    float getSampleTons(void) { return sample_to_ns; }
+    /// Get size of the time bin
+    /// \return time bin size in ns
+    float getSampleTimeBin(void) { return sample_to_ns; }
 
+    /// Get ADC coefficient conversion
+    /// \return coefficient value in V/LSB
     float getADCTomV(void) { return ADC_to_mV; }
 
 private:
-    float sample_to_ns;
-    float ADC_to_mV;
+    float sample_to_ns; ///< conversion factor sample to time
+    float ADC_to_mV;    ///< conversion factor for ADC to V
 };
 
 #endif /* SUNPACKER_H */

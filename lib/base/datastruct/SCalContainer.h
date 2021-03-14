@@ -25,11 +25,9 @@
 #include <vector>
 
 /**
- * Contains basic calibation parameters. Consist of three values:
- *  * #par0,
- *  * #par1,
- *  * #par2,
- * which interpretation can be any.
+ * Template that contains basic calibation parameters. Consist of a N-parameters array:
+ *  * #par,
+ * which interpretation can be any, depends of the user.
  *
  * This structure must provie interface to read and write cal pars to a
  * container. Each deriving class must also provide proper interface.
@@ -40,9 +38,8 @@
 template <int N> class SIFI_EXPORT SCalPar
 {
 private:
-    ///@{
     float par[N]; ///< various parameters
-    ///}@
+
 public:
     virtual ~SCalPar() {}
     virtual uint read(const char* buffer);
@@ -55,10 +52,16 @@ public:
 class SVirtualCalContainer
 {
 public:
+    /**
+     * Interface for accessing calibration container channel.
+     * \return lookup channel base class
+     */
     virtual SLookupChannel* createChannel() const = 0;
 
 protected:
+    /// Read data from container (parse ascii form)
     virtual void fromContainer() = 0;
+    /// Write data to container (generate ascii form)
     virtual void toContainer() const = 0;
 
     /* Have access to fromContainer() and toContainer() to SParManager */
@@ -78,8 +81,8 @@ protected:
     std::string name;                      ///< container name
     std::map<size_t, SCalPar<N>*> calpars; ///< individual calibration parameters
     bool is_init;                          ///< is container init
-    SCalPar<N>* def{nullptr};              //!
-
+    /// default channel value
+    SCalPar<N>* def{nullptr}; //!
 public:
     // constructor
     explicit SCalContainer(const std::string& container);
@@ -93,6 +96,8 @@ public:
     SCalPar<N>* getPar(const SLookupChannel* channel);
 
     virtual void print();
+    /// Set default value for the new channel
+    /// \param d default value
     virtual void setDefault(SCalPar<N>* d) { def = d; }
 
 protected:

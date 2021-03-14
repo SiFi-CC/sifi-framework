@@ -134,9 +134,8 @@ public:
 
     /// Maps category kind and simulation flag into index.
     /// \param cat category kind
-    /// \param simulation simulation flag
     /// \return linearised index of the category
-    static int getCategoryIndex(SCategory::Cat cat, int /*simulation*/) { return cat; }
+    static int getCategoryIndex(SCategory::Cat cat) { return cat; }
 
 private:
     SIFI_NO_EXPORT void initBranches();

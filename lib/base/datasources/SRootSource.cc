@@ -14,6 +14,10 @@
 
 #include <TChain.h>
 
+/**
+ * Constructor
+ * \param tree_name tree name to read from source
+ */
 SRootSource::SRootSource(const std::string& tree_name) : SDataSource()
 {
     chain = new TChain(tree_name.c_str());
@@ -29,6 +33,5 @@ bool SRootSource::readCurrentEvent() { return true; }
  * Set input for the source.
  *
  * \param filename input file name
- * \param length length of buffer to read
  */
 void SRootSource::addInput(const std::string& filename) { chain->Add(filename.c_str()); }

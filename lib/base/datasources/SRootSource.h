@@ -35,10 +35,12 @@ public:
     virtual bool readCurrentEvent() override;
     virtual void addInput(const std::string& filename);
 
+    /// Returns number of entries in the source
+    /// \return number of entries
     virtual long getEntries() { return chain->GetEntries(); }
 
 protected:
-    TChain* chain;
+    TChain* chain; ///< TChain to read from the source
 };
 
 #endif /* SROOTSOURCE_H */

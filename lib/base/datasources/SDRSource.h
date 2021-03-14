@@ -36,44 +36,48 @@ class TChain;
 
 struct TREE_Events
 {
-    TClonesArray* fHitArray;
+    TClonesArray* fHitArray; ///< SiPm hits data
 };
 
 struct TREE_Kine
 {
-    TVector3 pos, dir;
-    double E;
-    SGeantTrack::Type type;
+    ///@{
+    TVector3 pos, dir; ///< interaction point and direction
+    ///@}
+    double E;               ///< energy
+    SGeantTrack::Type type; ///< type of track
 };
 
 struct TREE_Address
 {
-    int m;
-    int l;
-    int f;
-    char s;
+    int m;  ///< module
+    int l;  ///< layer
+    int f;  ///< fiber
+    char s; ///< side
 };
 
 struct TREE_hit
 {
-    int counts;
-    float time;
+    int counts; ///< number of hits
+    float time; ///< time of the signal
 };
 
 struct TREE_simdata
 {
-    float x, y, z;
+    ///@{
+    float x, y, z; ///< hit position
+    ///@}
 };
 
 struct TREE_all
 {
-    TREE_Address address;
-    TREE_Events events;
-    TREE_hit data;
-    TVector3 pos;
-    Float_t energy_dep;
-    SFibersCalSim::InteractionType type;
-    std::vector<TREE_Kine> kine;
+    TREE_Address address;                ///< address of the event
+    TREE_Events events;                  ///< SiPm hits
+    TREE_hit data;                       ///< data
+    TVector3 pos;                        ///< position
+    Float_t energy_dep;                  ///< energy deposition
+    SFibersCalSim::InteractionType type; ///< interaction type
+    std::vector<TREE_Kine> kine;         ///< collection of kine data
 };
 
 /**

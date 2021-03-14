@@ -37,7 +37,7 @@ SEvent::~SEvent()
  */
 void SEvent::addCategory(SCategory::Cat catid, SCategory* category)
 {
-    int pos = SiFi::getCategoryIndex(catid, sifi()->isSimulation());
+    int pos = SiFi::getCategoryIndex(catid);
     if (!categories->At(pos)) categories->AddAt(category, pos);
 }
 
@@ -49,7 +49,7 @@ void SEvent::addCategory(SCategory::Cat catid, SCategory* category)
  */
 SCategory* SEvent::getCategory(SCategory::Cat catid)
 {
-    int pos = SiFi::getCategoryIndex(catid, sifi()->isSimulation());
+    int pos = SiFi::getCategoryIndex(catid);
     return dynamic_cast<SCategory*>(categories->At(pos));
 }
 

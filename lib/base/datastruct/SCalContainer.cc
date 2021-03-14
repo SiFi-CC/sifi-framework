@@ -86,6 +86,10 @@ template <int N> uint SCalPar<N>::write(char* buffer, size_t n) const
     return 0;
 }
 
+/** Get reference to the n-th component of the calibration set for a single channel.
+ * \param n component index
+ * \return reference to paramater array component
+ */
 template <int N> float& SCalPar<N>::operator[](int n)
 {
     if (n < 0 or n > N - 1)
@@ -97,6 +101,10 @@ template <int N> float& SCalPar<N>::operator[](int n)
     return par[n];
 }
 
+/** Get value of the n-th component of the calibration set for a single channel.
+ * \param n component index
+ * \return value of the paramater array component
+ */
 template <int N> const float SCalPar<N>::operator[](int n) const
 {
     if (n < 0 or n > N - 1)

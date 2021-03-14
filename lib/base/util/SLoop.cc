@@ -123,7 +123,7 @@ void SLoop::setInput(std::initializer_list<SCategory::Cat> categories)
         }
         else
         {
-            int pos = SiFi::getCategoryIndex(cn.first, sifi()->isSimulation());
+            int pos = SiFi::getCategoryIndex(cn.first);
             chain->SetBranchAddress(Form("%s", cn.second.Data()), &(this->categories[pos]));
             chain->SetBranchStatus(Form("%s", cn.second.Data()), 1);
             chain->SetBranchStatus(Form("%s", cn.second.Data()), 1);
