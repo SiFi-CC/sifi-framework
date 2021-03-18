@@ -7,10 +7,8 @@
 #include "SCategoryManager.h"
 #include "SDDSamples.h"
 #include "SDetectorManager.h"
-#include "SFibersCal.h"
 #include "SFibersDetector.h"
 #include "SFibersLookup.h"
-#include "SFibersRaw.h"
 #include "SLoop.h"
 #include "SParManager.h"
 
@@ -958,8 +956,6 @@ Bool_t CutAndView(TString path, Int_t ch, Int_t thr, CutType cut, std::vector<Fl
     loop->addFile(std::string(path) + "/sifi_results.root");
     loop->setInput({});
     SCategory* tSig = SCategoryManager::getCategory(SCategory::CatDDSamples);
-    SCategory* tCal = SCategoryManager::getCategory(SCategory::CatFibersCal);
-    SCategory* tRaw = SCategoryManager::getCategory(SCategory::CatFibersRaw);
 
     //----- accessing binary file
     TString iname = Form(path + "/wave_%i.dat", ch);
@@ -1009,8 +1005,6 @@ Bool_t CutAndView(TString path, Int_t ch, Int_t thr, CutType cut, std::vector<Fl
         {
             int m, l, f;
             SDDSamples* samples = (SDDSamples*)tSig->getObject(j);
-            SFibersCal* calib = (SFibersCal*)tCal->getObject(j);
-            SFibersRaw* raw = (SFibersRaw*)tRaw->getObject(j);
             SDDSignal* sigL = (SDDSignal*)samples->getSignalL();
             SDDSignal* sigR = (SDDSignal*)samples->getSignalR();
             samples->getAddress(m, l, f);
@@ -1023,16 +1017,10 @@ Bool_t CutAndView(TString path, Int_t ch, Int_t thr, CutType cut, std::vector<Fl
                 if (side == 'l')
                 {
                     sptr = sigL;
-                    PE = calib->getQDCL();
-                    charge = raw->getQDCL();
-                    t0 = calib->getTimeL();
                 }
                 else if (side == 'r')
                 {
                     sptr = sigR;
-                    PE = calib->getQDCR();
-                    charge = raw->getQDCR();
-                    t0 = calib->getTimeR();
                 }
                 else
                 {
@@ -1055,7 +1043,7 @@ Bool_t CutAndView(TString path, Int_t ch, Int_t thr, CutType cut, std::vector<Fl
                         break;
 
                     case CutType::fPE: // PE cut, provide min and max
-                        if (PE > range[0] && PE < range[1])
+                        if (sptr->GetPE() > range[0] && sptr->GetPE() < range[1])
                         {
                             hptr = ReadOneSignal(input, i, sptr);
                             draw_flag = kTRUE;
@@ -1063,7 +1051,7 @@ Bool_t CutAndView(TString path, Int_t ch, Int_t thr, CutType cut, std::vector<Fl
                         break;
 
                     case CutType::fCharge: // charge cut, provide min and max
-                        if (charge > range[0] && charge < range[1])
+                        if (sptr->GetCharge() > range[0] && sptr->GetCharge() < range[1])
                         {
                             hptr = ReadOneSignal(input, i, sptr);
                             draw_flag = kTRUE;
@@ -1071,7 +1059,7 @@ Bool_t CutAndView(TString path, Int_t ch, Int_t thr, CutType cut, std::vector<Fl
                         break;
 
                     case CutType::fT0: // T0 cut, provide min and max
-                        if (t0 > range[0] && t0 < range[1])
+                        if (sptr->GetT0() > range[0] && sptr->GetT0() < range[1])
                         {
                             hptr = ReadOneSignal(input, i, sptr);
                             draw_flag = kTRUE;
@@ -1121,7 +1109,7 @@ Bool_t CutAndView(TString path, Int_t ch, Int_t thr, CutType cut, std::vector<Fl
                     case CutType::fAmpPE: // amplitude & PE cut, provide amplitude min and max, PE
                                           // min and max
                         if (sptr->GetAmplitude() > range[0] && sptr->GetAmplitude() < range[1] &&
-                            PE > range[2] && PE < range[3])
+                            sptr->GetPE() > range[2] && sptr->GetPE() < range[3])
                         {
                             hptr = ReadOneSignal(input, i, sptr);
                             draw_flag = kTRUE;
@@ -1132,7 +1120,8 @@ Bool_t CutAndView(TString path, Int_t ch, Int_t thr, CutType cut, std::vector<Fl
                                              // amplitude min and max, PE min & max, base line sigma
                                              // max
                         if (sptr->GetAmplitude() > range[0] && sptr->GetAmplitude() < range[1] &&
-                            PE > range[2] && PE < range[3] && sptr->GetBLSigma() < range[4])
+                            sptr->GetPE() > range[2] && sptr->GetPE() < range[3] && 
+                            sptr->GetBLSigma() < range[4])
                         {
                             hptr = ReadOneSignal(input, i, sptr);
                             draw_flag = kTRUE;
@@ -1143,8 +1132,8 @@ Bool_t CutAndView(TString path, Int_t ch, Int_t thr, CutType cut, std::vector<Fl
                                                  // provide amplitude min and max, PE min & max,
                                                  // base line sigma max, veto is fixed as false
                         if (sptr->GetAmplitude() > range[0] && sptr->GetAmplitude() < range[1] &&
-                            PE > range[2] && PE < range[3] && sptr->GetBLSigma() < range[4] &&
-                            sptr->GetVeto() == 0)
+                            sptr->GetPE() > range[2] && sptr->GetPE() < range[3] && 
+                            sptr->GetBLSigma() < range[4] && sptr->GetVeto() == 0)
                         {
                             hptr = ReadOneSignal(input, i, sptr);
                             draw_flag = kTRUE;

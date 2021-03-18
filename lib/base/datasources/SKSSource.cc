@@ -163,7 +163,7 @@ bool SKSSource::readCurrentEvent()
     {
         if (!unpackers[subevent]) abort();
         unpackers[subevent]->setSampleTimeBin(time_bin);
-        unpackers[subevent]->setADCTomV(1.);
+        unpackers[subevent]->setADCTomV(1E-3);
         // TODO must pass event number to the execute
         unpackers[subevent]->execute(0, 0, subevent, buffer, nSamples * sizeof(buffer[0]));
     }
@@ -172,7 +172,7 @@ bool SKSSource::readCurrentEvent()
         for (const auto& u : unpackers)
         {
             u.second->setSampleTimeBin(time_bin);
-            u.second->setADCTomV(1.);
+            u.second->setADCTomV(1E-3);
             u.second->execute(0, 0, u.first, buffer, nSamples * sizeof(buffer[0]));
         }
     }
