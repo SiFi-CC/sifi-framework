@@ -317,21 +317,20 @@ bool SFibersClusterFinder::execute()
             clusters[i].pos.SetY(clusters[i].pos.Y() / weight_sum.Y());
             clusters[i].pos.SetZ(clusters[i].pos.Z() / weight_sum.Z());
 
-            if (pGeomPar->getType() == 0)
-            {                                                            // aligned fibers
-                clusters[i].err.SetX(disc_x_max - disc_x_min + 1. / 2.); // FIXME
-                clusters[i].err.SetY(1. / sqrt(clusters[i].err.Y()));
-                clusters[i].err.SetZ(disc_z_max - disc_z_min + 1. / 2.); // FIXME
-            }
-            else if (pGeomPar->getType() == 1)
-            { // crossed fibers
-                clusters[i].err.SetX(1. / sqrt(clusters[i].err.X()));
-                clusters[i].err.SetY(1. / sqrt(clusters[i].err.Y()));
-                clusters[i].err.SetZ(disc_z_max - disc_z_min + 1. / 2.); // FIXME
-            }
-            else
-            {
-                printf("Unsupported geometry type!\n");
+            switch (pGeomPar->getType()) {
+                case 0: // aligned fibers
+                    clusters[i].err.SetX(disc_x_max - disc_x_min + 1. / 2.); // FIXME
+                    clusters[i].err.SetY(1. / sqrt(clusters[i].err.Y()));
+                    clusters[i].err.SetZ(disc_z_max - disc_z_min + 1. / 2.); // FIXME
+                    break;
+                case 1: // crossed fibers
+                case 10:
+                    clusters[i].err.SetX(1. / sqrt(clusters[i].err.X()));
+                    clusters[i].err.SetY(1. / sqrt(clusters[i].err.Y()));
+                    clusters[i].err.SetZ(disc_z_max - disc_z_min + 1. / 2.); // FIXME
+                    break;
+                default:
+                    printf("Unsupported geometry type!\n");
             }
         }
         else if (mode == 1 or mode == 2)
@@ -339,21 +338,20 @@ bool SFibersClusterFinder::execute()
             clusters[i].pos.SetX(clusters[i].pos.X() / weight_sum.X());
             clusters[i].pos.SetY(clusters[i].pos.Y() / weight_sum.Y());
 
-            if (pGeomPar->getType() == 0)
-            {                                                            // aligned fibers
-                clusters[i].err.SetX(disc_x_max - disc_x_min + 1. / 2.); // FIXME
-                clusters[i].err.SetY(1. / sqrt(clusters[i].err.Y()));
-                clusters[i].err.SetZ(disc_z_max - disc_z_min + 1. / 2.); // FIXME
-            }
-            else if (pGeomPar->getType() == 1)
-            { // crossed fibers
-                clusters[i].err.SetX(1. / sqrt(clusters[i].err.X()));
-                clusters[i].err.SetY(1. / sqrt(clusters[i].err.Y()));
-                clusters[i].err.SetZ(disc_z_max - disc_z_min + 1. / 2.); // FIXME
-            }
-            else
-            {
-                printf("Unsupported geometry type!\n");
+            switch (pGeomPar->getType()) {
+                case 0:
+                    clusters[i].err.SetX(disc_x_max - disc_x_min + 1. / 2.); // FIXME
+                    clusters[i].err.SetY(1. / sqrt(clusters[i].err.Y()));
+                    clusters[i].err.SetZ(disc_z_max - disc_z_min + 1. / 2.); // FIXME
+                    break;
+                case 1: // crossed fibers
+                case 10:
+                    clusters[i].err.SetX(1. / sqrt(clusters[i].err.X()));
+                    clusters[i].err.SetY(1. / sqrt(clusters[i].err.Y()));
+                    clusters[i].err.SetZ(disc_z_max - disc_z_min + 1. / 2.); // FIXME
+                    break;
+                default:
+                    printf("Unsupported geometry type!\n");
             }
         }
         else

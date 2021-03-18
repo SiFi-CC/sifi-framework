@@ -144,11 +144,11 @@ struct MultiView
 
 #include "SCategoryManager.h"
 #include "SDetectorManager.h"
-#include "SFibersStackCalSim.h"
-#include "SFibersStackDetector.h"
-#include "SFibersStackGeomPar.h"
-#include "SFibersStackHit.h"
-#include "SFibersStackCluster.h"
+#include "SFibersCalSim.h"
+#include "SFibersDetector.h"
+#include "SFibersGeomPar.h"
+#include "SFibersHit.h"
+#include "SFibersCluster.h"
 #include "SGeantTrack.h"
 #include "SLocator.h"
 #include "SLoop.h"
@@ -183,7 +183,7 @@ struct MultiView
 Int_t sifi_event_id = 0; ///< Current event id.
 
 SLoop* loop = nullptr;
-SFibersStackGeomPar* pGeomPar = nullptr;
+SFibersGeomPar* pGeomPar = nullptr;
 SCategory* pCatGeantTrack = nullptr;
 SCategory* pCatCalSim = nullptr;
 SCategory* pCatHitSim = nullptr;
@@ -241,21 +241,21 @@ void event_display(const char* datafile = 0, const char* paramfile = "params.txt
 
     // initialize detectors
     SDetectorManager* detm = SDetectorManager::instance();
-    detm->addDetector(new SFibersStackDetector("FibersStack"));
+    detm->addDetector(new SFibersDetector("Fibers"));
     detm->initParameterContainers();
 
     pGeomPar =
-        dynamic_cast<SFibersStackGeomPar*>(pm()->getParameterContainer("SFibersStackGeomPar"));
+        dynamic_cast<SFibersGeomPar*>(pm()->getParameterContainer("FibersGeomPar"));
     if (!pGeomPar)
     {
-        std::cerr << "Parameter container 'SFibersStackGeomPar' was not obtained!" << std::endl;
+        std::cerr << "Parameter container 'SFibersGeomPar' was not obtained!" << std::endl;
         exit(EXIT_FAILURE);
     }
 
     pCatGeantTrack = SCategoryManager::getCategory(SCategory::CatGeantTrack);
-    pCatCalSim = SCategoryManager::getCategory(SCategory::CatFibersStackCal);
-    pCatHitSim = SCategoryManager::getCategory(SCategory::CatFibersStackHit);
-    pCatCluster = SCategoryManager::getCategory(SCategory::CatFibersStackClus);
+    pCatCalSim = SCategoryManager::getCategory(SCategory::CatFibersCal);
+    pCatHitSim = SCategoryManager::getCategory(SCategory::CatFibersHit);
+    pCatCluster = SCategoryManager::getCategory(SCategory::CatFibersClus);
 
     Bool_t load = 0;
 
@@ -830,7 +830,7 @@ void sifi_read()
 
     for (uint j = 0; j < nn; ++j)
     {
-        SFibersStackHit* pHit = (SFibersStackHit*)pCatHitSim->getObject(j);
+        SFibersHit* pHit = (SFibersHit*)pCatHitSim->getObject(j);
 
         pHit->getAddress(m, l, f);
         loc[0] = m;
@@ -848,7 +848,7 @@ void sifi_read()
         hits->SetPoint(j, x, y, z);
         // pHit->print();
 
-        SFibersStackCalSim* pCalSim = (SFibersStackCalSim*)pCatCalSim->getObject(loc);
+        SFibersCalSim* pCalSim = (SFibersCalSim*)pCatCalSim->getObject(loc);
         Float_t ql = pCalSim->getQDCL() / scale;
         Float_t qr = pCalSim->getQDCR() / scale;
 
@@ -1081,7 +1081,7 @@ void sifi_read()
 
     for (uint j = 0; j < n_clus; ++j)
     {
-        SFibersStackCluster* pClus = (SFibersStackCluster*)pCatCluster->getObject(j);
+        SFibersCluster* pClus = (SFibersCluster*)pCatCluster->getObject(j);
 
 //         pClus->getAddress(m, l, f);
 //         loc[0] = m;

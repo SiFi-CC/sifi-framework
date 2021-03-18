@@ -250,7 +250,6 @@ bool SDRSource::readCurrentEvent()
         SSiFiCCDetResImporter* unp = dynamic_cast<SSiFiCCDetResImporter*>(unpackers[subevent]);
         for (auto& c : counts)
         {
-
             tree.address = sipm_map[c.first];
             tree.data.counts = c.second;
             tree.data.time = times[c.first];
