@@ -32,9 +32,9 @@
 
 #include "SFibersDDUnpacker.h"
 #include "SFibersDDUnpackerPar.h"
-#include "SFibersPMIUnpacker.h"
 #include "SFibersDetector.h"
 #include "SFibersLookup.h"
+#include "SFibersPMIUnpacker.h"
 
 #include "SProgressBar.h"
 
@@ -116,7 +116,7 @@ int main(int argc, char** argv)
             else if (ext == ".pmi")
             {
                 SFibersPMIUnpacker* unp = new SFibersPMIUnpacker();
-                
+
                 SPMISource* source = new SPMISource(addr);
                 source->addUnpacker(unp, {addr});
                 source->setInput(name);

@@ -14,8 +14,8 @@
 
 #include "sifi_export.h"
 
-#include "SUnpacker.h"
 #include "SLookup.h"
+#include "SUnpacker.h"
 
 #include <string>
 
@@ -25,19 +25,19 @@ class SFibersLookupTable;
 
 class SIFI_EXPORT SFibersPMIUnpacker : public SUnpacker
 {
-    
+
 protected:
     SCategory* catFibersRaw;
-    SCategory* catFibersCal; 
+    SCategory* catFibersCal;
     SFibersLookupTable* pLookUp;
-    
+
 public:
     SFibersPMIUnpacker();
-    
+
     virtual bool init() override;
-    
-    virtual bool execute(ulong event, ulong seq_number, uint16_t subevent, void* buffer, size_t length) override;
-    
+
+    virtual bool execute(ulong event, ulong seq_number, uint16_t subevent, void* buffer,
+                         size_t length) override;
 };
 
 #endif

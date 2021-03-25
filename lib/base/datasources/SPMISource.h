@@ -27,16 +27,16 @@
 
 struct PMIHit
 {
-    Int_t   fiberID = -100;
-    Double_t time_l  = -100;
-    Double_t time_r  = -100;
-    Double_t qdc_l   = -100;
-    Double_t qdc_r   = -100;
-    
-    void print () const
+    Int_t fiberID = -100;
+    Double_t time_l = -100;
+    Double_t time_r = -100;
+    Double_t qdc_l = -100;
+    Double_t qdc_r = -100;
+
+    void print() const
     {
-        printf("PMI: fiberID = %i, time_l = %f, time_r = %f, qdc_l = %f, qdc_r = %f\n",
-               fiberID, time_l, time_r, qdc_l, qdc_r);
+        printf("PMI: fiberID = %i, time_l = %f, time_r = %f, qdc_l = %f, qdc_r = %f\n", fiberID,
+               time_l, time_r, qdc_l, qdc_r);
     }
 };
 
@@ -57,7 +57,12 @@ private:
     uint16_t subevent;     ///< subevent id
     std::string input;     ///< source file name
     std::ifstream istream; ///< input file stream
-    enum State { INIT, READING, DONE } state;
+    enum State
+    {
+        INIT,
+        READING,
+        DONE
+    } state;
     std::shared_ptr<PMIHit> hit_cache;
 };
 #endif /* SPMISOURCE_H */

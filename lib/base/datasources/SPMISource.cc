@@ -39,10 +39,10 @@ bool SPMISource::open()
         std::cerr << input << std::endl;
         return false;
     }
-    
+
     std::string header;
     getline(istream, header);
-    
+
     if (unpackers.size() == 0) return false;
 
     if (subevent != 0x0000)
@@ -99,23 +99,20 @@ bool SPMISource::readCurrentEvent()
     const double deltaT = 10; // 10 ns window
     const double ps_to_ns = 1E3;
     double time_first = 0;
-    
+
     std::vector<std::shared_ptr<PMIHit>> hits;
 
-    if (state == DONE)
-    {
-        return false;
-    }
+    if (state == DONE) { return false; }
 
     if (state == INIT)
     {
         hit_cache = std::make_shared<PMIHit>();
-        istream >> hit_cache->fiberID >> hit_cache->time_l >> hit_cache->time_r
-                >> hit_cache->qdc_l >> hit_cache->qdc_r;
-                
+        istream >> hit_cache->fiberID >> hit_cache->time_l >> hit_cache->time_r >>
+            hit_cache->qdc_l >> hit_cache->qdc_r;
+
         hit_cache->time_l /= ps_to_ns;
         hit_cache->time_r /= ps_to_ns;
-        
+
         state = READING;
     }
 
@@ -123,21 +120,21 @@ bool SPMISource::readCurrentEvent()
     {
         double cache_time = (hit_cache->time_l + hit_cache->time_r) / 2.;
         time_first = std::min(hit_cache->time_l, hit_cache->time_r);
-        //hit_cache->time_l -= time_first;
-        //hit_cache->time_r -= time_first;
+        // hit_cache->time_l -= time_first;
+        // hit_cache->time_r -= time_first;
 
         hits.push_back(hit_cache);
 
-        while(true)
+        while (true)
         {
             auto hit_current = std::make_shared<PMIHit>();
-            
-            istream >> hit_current->fiberID >> hit_current->time_l >> hit_current->time_r
-                    >> hit_current->qdc_l >> hit_current->qdc_r;
+
+            istream >> hit_current->fiberID >> hit_current->time_l >> hit_current->time_r >>
+                hit_current->qdc_l >> hit_current->qdc_r;
 
             hit_current->time_l /= ps_to_ns;
             hit_current->time_r /= ps_to_ns;
-                    
+
             if (!istream.good())
             {
                 state = DONE;
@@ -145,21 +142,21 @@ bool SPMISource::readCurrentEvent()
             }
 
             double current_time = (hit_current->time_l + hit_current->time_r) / 2.;
-            
-            if (fabs(cache_time - current_time) < deltaT)   // same event?
+
+            if (fabs(cache_time - current_time) < deltaT) // same event?
             {
-                //hit_current->time_l -= time_first;
-                //hit_current->time_r -= time_first;
+                // hit_current->time_l -= time_first;
+                // hit_current->time_r -= time_first;
                 hits.push_back(hit_current);
             }
-            else    // next event
+            else // next event
             {
                 hit_cache = hit_current;
                 break;
             }
         }
     }
-    
+
     int n_hits = hits.size();
 
     for (int i = 0; i < n_hits; i++)
@@ -167,7 +164,7 @@ bool SPMISource::readCurrentEvent()
         hits[i]->time_l -= time_first;
         hits[i]->time_r -= time_first;
     }
-    
+
     if (subevent != 0x0000)
     {
         if (!unpackers[subevent]) abort();
@@ -178,7 +175,6 @@ bool SPMISource::readCurrentEvent()
             // TODO must pass event number to the execute
             unpackers[subevent]->execute(0, 0, subevent, hits[i].get(), 0);
         }
-        
     }
     else
     {
@@ -192,7 +188,7 @@ bool SPMISource::readCurrentEvent()
             }
         }
     }
-    
+
     return true;
 }
 
@@ -202,7 +198,4 @@ bool SPMISource::readCurrentEvent()
  * \param filename input file name
  * \param length length of buffer to read
  */
-void SPMISource::setInput(const std::string& filename, size_t length)
-{
-    input = filename;
-}
+void SPMISource::setInput(const std::string& filename, size_t length) { input = filename; }
