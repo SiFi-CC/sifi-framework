@@ -1,0 +1,6 @@
+[FibersHitFinderPar]
+fA0: Float_t 0.
+fLambda: Float_t 0.
+fAlpha: Float_t 0.
+fResPos: Float_t 0. 0. 0.
+fResEne: Float_t 0. 0. 0.

@@ -1,0 +1,10 @@
+[FibersDDUnpackerPar]
+fThreshold: Float_t \
+ 0 0 0 0 0 0 0 0 \
+ 0 0 0 0 0 0 0 0
+fVetoThreshold: Float_t \
+ 0 0 0 0 0 0 0 0 \
+ 0 0 0 0 0 0 0 0
+fBLMode: Int_t \
+ 0 0 0 0 0 0 0 0 \
+ 0 0 0 0 0 0 0 0

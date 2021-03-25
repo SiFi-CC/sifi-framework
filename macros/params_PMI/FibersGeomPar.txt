@@ -1,0 +1,15 @@
+[FibersGeomPar]
+fType: Int_t 1
+fModuleZ: Float_t 200 
+nModules: Int_t 1
+nLayers: Int_t 4
+nFibers: Int_t \
+16 16 16 16
+fLayerRotation: Float_t \
+0 0 0 0
+fFiberOffsetX: Float_t \
+-7.5 -7.5 -7.5 -7.5 
+fFiberOffsetY: Float_t \
+0.5 1.5 2.5 3.5 
+fFibersPitch: Float_t \
+1 1 1 1
