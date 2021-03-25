@@ -7,6 +7,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersGeomPar.cc
         SFibersUnpacker.cc
         SFibersLookup.cc
+        SFibersPMIUnpacker.cc
         SFibersDDUnpacker.cc
         SFibersDDUnpackerPar.cc
         SFibersDDCalibratorPar.cc
@@ -29,6 +30,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersGeomPar.h
         SFibersUnpacker.h
         SFibersLookup.h
+        SFibersPMIUnpacker.h
         SFibersDDUnpacker.h
         SFibersDDUnpackerPar.h
         SFibersDDCalibratorPar.h

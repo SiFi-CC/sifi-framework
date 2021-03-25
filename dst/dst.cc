@@ -28,11 +28,13 @@
 
 #include "SDDSource.h"
 #include "SKSSource.h"
+#include "SPMISource.h"
 
 #include "SFibersDDUnpacker.h"
 #include "SFibersDDUnpackerPar.h"
 #include "SFibersDetector.h"
 #include "SFibersLookup.h"
+#include "SFibersPMIUnpacker.h"
 
 #include "SProgressBar.h"
 
@@ -111,10 +113,19 @@ int main(int argc, char** argv)
                 source->setInput(name);
                 sifi()->addSource(source);
             }
+            else if (ext == ".pmi")
+            {
+                SFibersPMIUnpacker* unp = new SFibersPMIUnpacker();
+
+                SPMISource* source = new SPMISource(addr);
+                source->addUnpacker(unp, {addr});
+                source->setInput(name);
+                sifi()->addSource(source);
+            }
             else
             {
                 std::cerr << "##### Error in dst: unknown data file extension!" << std::endl;
-                std::cerr << "Acceptable extensions: *.dat and *.csv" << std::endl;
+                std::cerr << "Acceptable extensions: *.dat, *.csv and *.pmi" << std::endl;
                 std::cerr << "Given data file: " << name << std::endl;
                 std::exit(EXIT_FAILURE);
             }
@@ -151,7 +162,8 @@ int main(int argc, char** argv)
 
     pm()->addLookupContainer("FibersDDLookupTable",
                              new SFibersLookupTable("FibersDDLookupTable", 0x1000, 0x1fff, 32));
-
+    pm()->addLookupContainer("FibersPMILookupTable",
+                             new SFibersLookupTable("FibersPMILookupTable", 0x1000, 0x1fff, 64));
     // initialize tasks
     STaskManager* tm = STaskManager::instance();
     tm->initTasks();

@@ -187,8 +187,8 @@ export(TARGETS ${PROJECT_TARGETS}
 export(PACKAGE SIFI)
 
 #add_subdirectory(dst)
-enable_testing()
-add_subdirectory(tests)
+#enable_testing()
+#add_subdirectory(tests)
 
 
 install(EXPORT ${CMAKE_PROJECT_NAME}Targets
