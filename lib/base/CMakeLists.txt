@@ -16,7 +16,14 @@ SIFI_GENERATE_LIBRARY(
         core/STask.cc
         core/SDetectorManager.cc
         core/SDetector.cc
-        core/SParManager.cc
+
+        database/SDatabase.cc
+        database/SContainer.cc
+        database/SCalContainer.cc
+        database/SParContainer.cc
+        database/SPar.cc
+        database/SParSource.cc
+        database/SParAsciiSource.cc
 
         event/SEvent.cc
 
@@ -32,15 +39,12 @@ SIFI_GENERATE_LIBRARY(
 
         ${IMPORTER_SIFIDETRES_CC}
 
-        datastruct/SCalContainer.cc
         datastruct/SCategory.cc
         datastruct/SCategoryHeader.cc
         datastruct/SCategoryIndex.cc
         datastruct/SDDSamples.cc
         datastruct/SLocator.cc
         datastruct/SLookup.cc
-        datastruct/SPar.cc
-        datastruct/SParContainer.cc
 
         util/SLoop.cc
         util/SRootFileHeader.cc
@@ -52,7 +56,14 @@ SIFI_GENERATE_LIBRARY(
         core/STask.h
         core/SDetectorManager.h
         core/SDetector.h
-        core/SParManager.h
+
+        database/SDatabase.h
+        database/SContainer.h
+        database/SCalContainer.h
+        database/SParContainer.h
+        database/SPar.h
+        database/SParSource.h
+        database/SParAsciiSource.h
 
         event/SEvent.h
 
@@ -68,15 +79,12 @@ SIFI_GENERATE_LIBRARY(
 
         ${IMPORTER_SIFIDETRES_H}
 
-        datastruct/SCalContainer.h
         datastruct/SCategory.h
         datastruct/SCategoryHeader.h
         datastruct/SCategoryIndex.h
         datastruct/SDDSamples.h
         datastruct/SLocator.h
         datastruct/SLookup.h
-        datastruct/SPar.h
-        datastruct/SParContainer.h
 
         util/SLoop.h
         util/SRootFileHeader.h
@@ -88,6 +96,7 @@ SIFI_GENERATE_LIBRARY(
         Geant
     INCLUDE_DIRS
         core
+        database
         datasources
         datastruct
         event

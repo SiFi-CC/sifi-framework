@@ -14,7 +14,7 @@
 
 #include "sifi_export.h"
 
-#include "SParManager.h"
+#include "SDatabase.h"
 #include "STaskManager.h"
 #include "SiFi.h"
 

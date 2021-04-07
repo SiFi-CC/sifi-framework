@@ -11,11 +11,11 @@
 
 #include "SFibersDigitizer.h"
 #include "SCategory.h"
+#include "SDatabase.h"
 #include "SFibersCalSim.h"
 #include "SFibersDigitizerPar.h"
 #include "SFibersGeomPar.h"
 #include "SGeantFibersRaw.h"
-#include "SParManager.h"
 #include "SiFi.h"
 
 #include <iostream>
@@ -59,7 +59,7 @@ bool SFibersDigitizer::init()
         return false;
     }
 
-    pGeomPar = dynamic_cast<SFibersGeomPar*>(pm()->getParameterContainer("FibersGeomPar"));
+    pGeomPar = dynamic_cast<SFibersGeomPar*>(pm()->getParContainer("FibersGeomPar"));
     if (!pGeomPar)
     {
         std::cerr << "Parameter container 'SFibersGeomPar' was not obtained!" << std::endl;

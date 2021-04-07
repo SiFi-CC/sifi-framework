@@ -11,7 +11,8 @@
 
 #include "SParContainer.h"
 
-#include "SParManager.h"
+#include "SContainer.h"
+#include "SDatabase.h"
 
 #include <iostream>
 #include <sstream>
@@ -25,7 +26,7 @@ SPar is an abstract class to hold container and geometry parameters.
 
 It must be derivated and pure virtual members defined.
 
-The parameters are parsed from text file in SParManager and stored in the
+The parameters are parsed from text file in SDatabase and stored in the
 SParContainer. The getParam() method reads content of the SParContainer and
 fills variables inside the SPar object. The putParam method allows to update
 parameters in the container and write to param file.
@@ -53,7 +54,7 @@ enum WhatNext
  * \param values vector to store values
  * \return next parsing step
  */
-WhatNext parseValues(const std::string& str, std::vector<std::string>& values)
+WhatNext parseValues(std::string&& str, std::vector<std::string>& values)
 {
     size_t pos2 = 0;
     while (true)
@@ -416,10 +417,11 @@ bool SParContainer::initParam(const std::string& name, const std::string& type,
 /**
  * Parses all the parameters from the file. In case of parsing fail (broken
  * input file), the function aborts the execution of the calling process.
+ *
+ * \param sc container object
  */
-void SParContainer::fromContainer()
+void SParContainer::fromContainer(SContainer* sc)
 {
-    SContainer* sc = pm()->getContainer(container);
     if (!sc) throw "No parameter container.";
 
     WhatNext wn = WNParam;
@@ -498,10 +500,11 @@ void SParContainer::fromContainer()
  * value, the values follow in the same line, otherwise are printed in the next
  * lines, each containing maximal of #line_split values. In that case each line
  * beside the last one is broke with `\` character.
+ *
+ * \param sc container object
  */
-void SParContainer::toContainer() const
+void SParContainer::toContainer(SContainer* sc) const
 {
-    SContainer* sc = pm()->getContainer(container);
     if (!sc) throw "No parameter container.";
 
     sc->lines.clear();

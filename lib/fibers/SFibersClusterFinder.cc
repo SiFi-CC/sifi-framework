@@ -85,15 +85,15 @@ bool SFibersClusterFinder::init()
     }
 
     // get cluster finder parameters
-    pClusterFinderPar = dynamic_cast<SFibersClusterFinderPar*>(
-        pm()->getParameterContainer("FibersClusterFinderPar"));
+    pClusterFinderPar =
+        dynamic_cast<SFibersClusterFinderPar*>(pm()->getParContainer("FibersClusterFinderPar"));
     if (!pClusterFinderPar)
     {
         std::cerr << "Parameter container 'SFibersClusterFinderPar' was not obtained!" << std::endl;
         exit(EXIT_FAILURE);
     }
 
-    pGeomPar = dynamic_cast<SFibersGeomPar*>(pm()->getParameterContainer("FibersGeomPar"));
+    pGeomPar = dynamic_cast<SFibersGeomPar*>(pm()->getParContainer("FibersGeomPar"));
     if (!pGeomPar)
     {
         std::cerr << "Parameter container 'SFibersGeomPar' was not obtained!" << std::endl;
@@ -317,8 +317,9 @@ bool SFibersClusterFinder::execute()
             clusters[i].pos.SetY(clusters[i].pos.Y() / weight_sum.Y());
             clusters[i].pos.SetZ(clusters[i].pos.Z() / weight_sum.Z());
 
-            switch (pGeomPar->getType()) {
-                case 0: // aligned fibers
+            switch (pGeomPar->getType())
+            {
+                case 0:                                                      // aligned fibers
                     clusters[i].err.SetX(disc_x_max - disc_x_min + 1. / 2.); // FIXME
                     clusters[i].err.SetY(1. / sqrt(clusters[i].err.Y()));
                     clusters[i].err.SetZ(disc_z_max - disc_z_min + 1. / 2.); // FIXME
@@ -338,7 +339,8 @@ bool SFibersClusterFinder::execute()
             clusters[i].pos.SetX(clusters[i].pos.X() / weight_sum.X());
             clusters[i].pos.SetY(clusters[i].pos.Y() / weight_sum.Y());
 
-            switch (pGeomPar->getType()) {
+            switch (pGeomPar->getType())
+            {
                 case 0:
                     clusters[i].err.SetX(disc_x_max - disc_x_min + 1. / 2.); // FIXME
                     clusters[i].err.SetY(1. / sqrt(clusters[i].err.Y()));

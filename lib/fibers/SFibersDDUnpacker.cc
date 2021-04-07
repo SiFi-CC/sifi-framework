@@ -12,11 +12,11 @@
 #include "SFibersDDUnpacker.h"
 #include "SCategory.h"
 #include "SDDSamples.h"
+#include "SDatabase.h"
 #include "SFibersDDCalibratorPar.h"
 #include "SFibersDDUnpackerPar.h"
 #include "SFibersLookup.h"
 #include "SFibersRaw.h"
-#include "SParManager.h"
 #include "SiFi.h"
 
 #include <algorithm>
@@ -154,7 +154,7 @@ bool SFibersDDUnpacker::init()
 
     // get calibrator parameters
     pDDUnpackerPar =
-        dynamic_cast<SFibersDDUnpackerPar*>(pm()->getParameterContainer("FibersDDUnpackerPar"));
+        dynamic_cast<SFibersDDUnpackerPar*>(pm()->getParContainer("FibersDDUnpackerPar"));
     if (!pDDUnpackerPar)
     {
         std::cerr << "Parameter container 'SFibersDDUnpackerPar' was not obtained!" << std::endl;
@@ -163,8 +163,8 @@ bool SFibersDDUnpacker::init()
     pDDUnpackerPar->print();
 
     // get calibrator parameters
-    pDDCalPar = dynamic_cast<SFibersDDCalibratorPar*>(
-        pm()->getCalibrationContainer("FibersDDCalibratorPar"));
+    pDDCalPar =
+        dynamic_cast<SFibersDDCalibratorPar*>(pm()->getCalContainer("FibersDDCalibratorPar"));
     if (!pDDCalPar)
     {
         std::cerr << "Parameter container 'SFibersDDCalibratorPar' was not obtained!" << std::endl;

@@ -66,6 +66,7 @@ protected:
     static SiFi* mm;                                 ///< Instance of the SiFi
     bool sim;                                        ///< Simulation run
     bool branches_set;                               ///< Has branches set
+    bool disable_assertations{false};                ///< disable runtime assertations
 
 private:
     // constructor
@@ -136,6 +137,10 @@ public:
     /// \param cat category kind
     /// \return linearised index of the category
     static int getCategoryIndex(SCategory::Cat cat) { return cat; }
+
+    void disableAssertations() { disable_assertations = true; }
+    void enableAssertations() { disable_assertations = false; }
+    bool assertationsDisabled() { return disable_assertations; }
 
 private:
     SIFI_NO_EXPORT void initBranches();

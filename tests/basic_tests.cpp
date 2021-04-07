@@ -1,7 +1,8 @@
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <SParManager.h>
-#include <SLookup.h>
+#include "SDatabase.h"
+#include "SLookup.h"
+#include "SParAsciiSource.h"
 
 class BasicCase : public CPPUNIT_NS::TestFixture
 {
@@ -14,7 +15,7 @@ public:
 
 protected:
     void MyTest();
-    SParManager * pm;
+    SDatabase * pm;
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION( BasicCase );
@@ -44,9 +45,10 @@ public:
 
 void BasicCase::setUp()
 {
-    pm = SParManager::instance();
-    pm->setParamSource("lookup.txt");
-    pm->parseSource();
+    pm = SDatabase::instance();
+//     SParAsciiSource * src;
+//     pm->setParamSource("lookup.txt");
+//     pm->parseSource();
 
     SLookupTable * t = reinterpret_cast<SLookupTable*>(new TestLookupTable("TestLookup", 0x6400, 0x64ff, 49));
     t->print();

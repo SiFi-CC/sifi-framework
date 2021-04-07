@@ -12,12 +12,12 @@
 #include "SFibersCalibrator.h"
 #include "SCalContainer.h"
 #include "SCategory.h"
+#include "SDatabase.h"
 #include "SFibersCal.h"
 #include "SFibersCalibratorPar.h"
 #include "SFibersLookup.h"
 #include "SFibersRaw.h"
 #include "SLocator.h"
-#include "SParManager.h"
 #include "SiFi.h"
 
 #include "RtypesCore.h"
@@ -71,8 +71,7 @@ bool SFibersCalibrator::init()
     }
 
     // get calibrator parameters
-    pCalibratorPar =
-        dynamic_cast<SCalContainer<6>*>(pm()->getCalibrationContainer("FibersCalibratorPar"));
+    pCalibratorPar = dynamic_cast<SCalContainer<6>*>(pm()->getCalContainer("FibersCalibratorPar"));
 
     if (!pCalibratorPar)
     {

@@ -27,6 +27,10 @@
 #pragma link C++ class SDDSignal+;
 #pragma link C++ class SDDSamples+;
 
+// databases
+#pragma link C++ class SParSource+;
+#pragma link C++ class SParAsciiSource+;
+
 // util
 #pragma link C++ class SRootFileHeader+;
 

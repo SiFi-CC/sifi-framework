@@ -186,9 +186,12 @@ export(TARGETS ${PROJECT_TARGETS}
 # Register package in user's package registry
 export(PACKAGE SIFI)
 
-#add_subdirectory(dst)
-#enable_testing()
-#add_subdirectory(tests)
+option(BUILD_TESTS "Build tests" ON)
+
+if(BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
 
 
 install(EXPORT ${CMAKE_PROJECT_NAME}Targets

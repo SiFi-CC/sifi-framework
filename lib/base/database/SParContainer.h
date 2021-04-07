@@ -14,7 +14,7 @@
 
 #include "sifi_export.h"
 
-#include "SParManager.h"
+#include "SDatabase.h"
 
 #include <TArrayD.h>
 #include <TArrayF.h>
@@ -57,16 +57,18 @@ public:
 
     bool initParam(const std::string& name, const std::string& type,
                    const std::vector<std::string>& values);
-    void fromContainer();
-    void toContainer() const;
-
     void print() const;
 
 protected:
+    void fromContainer(SContainer* sc);
+    void toContainer(SContainer* sc) const;
+
     // methods
     /// Set line split
     /// \param n number of values per line
     void setLineSplit(size_t n) { line_split = n; }
+
+    friend SPar* SDatabase::getParContainer(const std::string&);
 };
 
 #endif /* SPARCONTAINER_H */

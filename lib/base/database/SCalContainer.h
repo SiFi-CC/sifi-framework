@@ -25,7 +25,7 @@
 #include <vector>
 
 /**
- * Template that contains basic calibation parameters. Consist of a N-parameters array:
+ * Template that contains basic calibration parameters. Consist of a N-parameters array:
  *  * #par,
  * which interpretation can be any, depends of the user.
  *
@@ -60,12 +60,15 @@ public:
 
 protected:
     /// Read data from container (parse ascii form)
-    virtual void fromContainer() = 0;
+    /// \param sc container object
+    virtual void fromContainer(SContainer* sc) = 0;
     /// Write data to container (generate ascii form)
-    virtual void toContainer() const = 0;
+    /// \param sc container object
+    virtual void toContainer(SContainer* sc) const = 0;
 
-    /* Have access to fromContainer() and toContainer() to SParManager */
-    friend void SParManager::writeContainers(const std::vector<std::string>& conts);
+    /* Have access to fromContainer() and toContainer() to SDatabase */
+    friend void SDatabase::writeContainers(const std::vector<std::string>& conts);
+    friend SVirtualCalContainer* SDatabase::getCalContainer(const std::string&);
 };
 
 /**
@@ -101,8 +104,8 @@ public:
     virtual void setDefault(SCalPar<N>* d) { def = d; }
 
 protected:
-    void fromContainer();
-    void toContainer() const;
+    void fromContainer(SContainer* sc);
+    void toContainer(SContainer* sc) const;
 };
 
 #endif /* SCALCONTAINER_H */

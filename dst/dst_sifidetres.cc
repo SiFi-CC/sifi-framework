@@ -21,8 +21,8 @@
 #include "SGeantFibersRaw.h"
 #include "SGeantTrack.h"
 
+#include "SDatabase.h"
 #include "SDetectorManager.h"
-#include "SParManager.h"
 #include "STaskManager.h"
 #include "SiFi.h"
 

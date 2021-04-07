@@ -148,7 +148,7 @@ bool SFibersGeomPar::getParams(SParContainer* parcont)
         }
         cnt_layers += _l[m];
     }
-    print();
+
     return true;
 }
 

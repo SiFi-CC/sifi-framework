@@ -14,7 +14,7 @@
 
 #include "sifi_export.h"
 
-#include "SParManager.h"
+#include "SDatabase.h"
 
 #include <Rtypes.h>
 
@@ -169,11 +169,12 @@ public:
     virtual void print();
 
 protected:
-    void fromContainer();
-    void toContainer() const;
+    void fromContainer(SContainer* sc);
+    void toContainer(SContainer* sc) const;
 
-    /* Have access to fromContainer() and toContainer() to SParManager */
-    friend void SParManager::writeContainers(const std::vector<std::string>& conts);
+    /* Have access to fromContainer() and toContainer() to SDatabase */
+    friend void SDatabase::writeContainers(const std::vector<std::string>&);
+    friend SLookupTable* SDatabase::getLookupContainer(const std::string&);
 };
 
 #endif /* SLOOKUP_H */

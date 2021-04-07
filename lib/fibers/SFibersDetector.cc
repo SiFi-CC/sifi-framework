@@ -98,26 +98,26 @@ bool SFibersDetector::initTasks()
  */
 bool SFibersDetector::initContainers()
 {
-    pm()->addParameterContainer("FibersGeomPar", new SFibersGeomPar());
+    pm()->addParContainer("FibersGeomPar", std::make_unique<SFibersGeomPar>());
 
     if (isSimulation())
     {
-        pm()->addParameterContainer("FibersDigitizerPar", new SFibersDigitizerPar());
+        pm()->addParContainer("FibersDigitizerPar", std::make_unique<SFibersDigitizerPar>());
     }
     else
     {
-        pm()->addParameterContainer("FibersDDUnpackerPar", new SFibersDDUnpackerPar());
-        pm()->addCalibrationContainer("FibersDDCalibratorPar",
-                                      new SFibersDDCalibratorPar("FibersDDCalibratorPar"));
-        pm()->addCalibrationContainer("FibersCalibratorPar",
-                                      new SFibersCalibratorPar("FibersCalibratorPar"));
+        pm()->addParContainer("FibersDDUnpackerPar", std::make_unique<SFibersDDUnpackerPar>());
+        pm()->addCalContainer("FibersDDCalibratorPar",
+                              std::make_unique<SFibersDDCalibratorPar>("FibersDDCalibratorPar"));
+        pm()->addCalContainer("FibersCalibratorPar",
+                              std::make_unique<SFibersCalibratorPar>("FibersCalibratorPar"));
     }
 
-    pm()->addCalibrationContainer("FibersHitFinderFiberPar",
-                                  new SCalContainer<3>("FibersHitFinderFiberPar"));
-    pm()->addParameterContainer("FibersHitFinderPar", new SFibersHitFinderPar());
+    pm()->addCalContainer("FibersHitFinderFiberPar",
+                          std::make_unique<SCalContainer<3>>("FibersHitFinderFiberPar"));
+    pm()->addParContainer("FibersHitFinderPar", std::make_unique<SFibersHitFinderPar>());
 
-    pm()->addParameterContainer("FibersClusterFinderPar", new SFibersClusterFinderPar());
+    pm()->addParContainer("FibersClusterFinderPar", std::make_unique<SFibersClusterFinderPar>());
 
     return true;
 }

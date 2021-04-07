@@ -62,7 +62,7 @@ bool SFibersHitFinder::init()
 
     // get calibrator fiber parameters
     pHitFinderFiberPar =
-        dynamic_cast<SCalContainer<3>*>(pm()->getCalibrationContainer("FibersHitFinderFiberPar"));
+        dynamic_cast<SCalContainer<3>*>(pm()->getCalContainer("FibersHitFinderFiberPar"));
     if (!pHitFinderFiberPar)
     {
         std::cerr << "Parameter container 'SFibersHitFinderFiberPar' was not obtained!"
@@ -78,15 +78,14 @@ bool SFibersHitFinder::init()
     pHitFinderFiberPar->setDefault(def);
 
     // get calibrator parameters
-    pHitFinderPar =
-        dynamic_cast<SFibersHitFinderPar*>(pm()->getParameterContainer("FibersHitFinderPar"));
+    pHitFinderPar = dynamic_cast<SFibersHitFinderPar*>(pm()->getParContainer("FibersHitFinderPar"));
     if (!pHitFinderPar)
     {
         std::cerr << "Parameter container 'SFibersHitFinderPar' was not obtained!" << std::endl;
         exit(EXIT_FAILURE);
     }
 
-    pGeomPar = dynamic_cast<SFibersGeomPar*>(pm()->getParameterContainer("FibersGeomPar"));
+    pGeomPar = dynamic_cast<SFibersGeomPar*>(pm()->getParContainer("FibersGeomPar"));
     if (!pGeomPar)
     {
         std::cerr << "Parameter container 'SFibersGeomPar' was not obtained!" << std::endl;

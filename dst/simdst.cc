@@ -20,8 +20,8 @@
 #include "SGeantFibersRaw.h"
 #include "SGeantTrack.h"
 
+#include "SDatabase.h"
 #include "SDetectorManager.h"
-#include "SParManager.h"
 #include "STaskManager.h"
 #include "SiFi.h"
 
@@ -62,7 +62,7 @@ int simdst(const std::string & file, int events = 1000)
     dataManager->openCategory(SCategory::CatGeantTrack, true);
 
     // initialize parameters
-    SParManager * pm = SParManager::instance();
+    SDatabase * pm = SDatabase::instance();
     pm->setParamSource("params.txt");
     pm->parseSource();
 

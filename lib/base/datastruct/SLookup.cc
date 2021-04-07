@@ -10,7 +10,9 @@
  *************************************************************************/
 
 #include "SLookup.h"
-#include "SParManager.h"
+
+#include "SContainer.h"
+#include "SDatabase.h"
 
 #include <cassert>
 #include <cstdio>
@@ -177,13 +179,14 @@ SLookupTable::~SLookupTable() { delete[] boards; }
 /**
  * Initialize lookup table from the container. The container must exists
  * otherwise exception is thrown.
+ *
+ * \param sc container object
  */
-void SLookupTable::fromContainer()
+void SLookupTable::fromContainer(SContainer* sc)
 {
-    SContainer* lc = pm()->getContainer(container);
-    if (!lc) throw "No lookup container.";
+    if (!sc) throw "No lookup container.";
 
-    const std::vector<std::string>& lv = lc->lines;
+    const std::vector<std::string>& lv = sc->lines;
 
     for (auto line : lv)
     {
@@ -207,12 +210,13 @@ void SLookupTable::fromContainer()
 
 /**
  * Export lookup table to the container. The function is called by the
- * SParManager class. The container must be registered in the Parameters
+ * SDatabase class. The container must be registered in the Parameters
  * Manager. Otherwise an exception is thrown.
+ *
+ * \param sc container object
  */
-void SLookupTable::toContainer() const
+void SLookupTable::toContainer(SContainer* sc) const
 {
-    SContainer* sc = pm()->getContainer(container);
     if (!sc) throw "No lookup container.";
 
     sc->lines.clear();
@@ -254,7 +258,6 @@ void SLookupTable::toContainer() const
  */
 SLookupChannel* SLookupTable::getAddress(uint addr, uint chan)
 {
-    if (!is_init) fromContainer();
     if (!boards[addr - a_min]) return nullptr;
     return boards[addr - a_min]->getChannel(chan);
 }
@@ -264,8 +267,6 @@ SLookupChannel* SLookupTable::getAddress(uint addr, uint chan)
  */
 void SLookupTable::print()
 {
-    if (!is_init) fromContainer();
-
     printf("[%s]\n", container.c_str());
     size_t nboards = a_max - a_min + 1;
     for (uint i = 0; i < nboards; ++i)

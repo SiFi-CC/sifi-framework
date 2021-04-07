@@ -10,8 +10,10 @@
  *************************************************************************/
 
 #include "SCalContainer.h"
+
+#include "SContainer.h"
+#include "SDatabase.h"
 #include "SLookup.h"
-#include "SParManager.h"
 
 #include <iostream>
 #include <sstream>
@@ -154,12 +156,11 @@ template <int N> SCalContainer<N>::~SCalContainer()
  *
  * \sa SLookupTable::fromContainer()
  */
-template <int N> void SCalContainer<N>::fromContainer()
+template <int N> void SCalContainer<N>::fromContainer(SContainer* sc)
 {
-    SContainer* lc = pm()->getContainer(name);
-    if (!lc) throw "No lookup container.";
+    if (!sc) throw "No lookup container.";
 
-    for (const auto& line : lc->lines)
+    for (const auto& line : sc->lines)
     {
         SLookupChannel* chan = createChannel();
         int cnt = chan->read(line.c_str());
@@ -179,9 +180,8 @@ template <int N> void SCalContainer<N>::fromContainer()
  * \sa fromContainer()
  * \sa SLookupTable::toContainer()
  */
-template <int N> void SCalContainer<N>::toContainer() const
+template <int N> void SCalContainer<N>::toContainer(SContainer* sc) const
 {
-    SContainer* sc = pm()->getContainer(name);
     if (!sc) throw "No lookup container.";
 
     sc->lines.clear();
@@ -215,11 +215,8 @@ template <int N> void SCalContainer<N>::toContainer() const
  */
 template <int N> SCalPar<N>* SCalContainer<N>::getPar(const SLookupChannel* channel)
 {
-    if (!is_init) fromContainer();
-
     uint64_t hash = channel->quickHash();
     auto it = calpars.find(hash);
-
     if (it == calpars.end())
     {
         if (def)
@@ -233,9 +230,10 @@ template <int N> SCalPar<N>* SCalContainer<N>::getPar(const SLookupChannel* chan
     else
     {
         assert(it != calpars.end());
+        return it->second;
     }
 
-    return it->second;
+    return nullptr;
 }
 
 /**
@@ -243,8 +241,6 @@ template <int N> SCalPar<N>* SCalContainer<N>::getPar(const SLookupChannel* chan
  */
 template <int N> void SCalContainer<N>::print()
 {
-    if (!is_init) fromContainer();
-
     printf("[%s]\n", name.c_str());
     for (auto& calpar : calpars)
     {

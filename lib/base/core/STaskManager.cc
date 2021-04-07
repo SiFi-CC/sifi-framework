@@ -17,7 +17,7 @@
 #include <utility>
 
 /**
- * \class SParManager
+ * \class SDatabase
 \ingroup lib_base
 
 Task Manager class. Manages all tasks.

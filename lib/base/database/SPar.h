@@ -14,25 +14,25 @@
 
 #include "sifi_export.h"
 
+#include "SDatabase.h"
+
+#include <string>
+
 class SParContainer;
 
 class SIFI_EXPORT SPar
 {
-    friend class SParManager; ///< MParManager is friend
-protected:
-    // members
-    SParContainer* parcont; ///< Pointer to object of parameter container
-
 public:
     // constructor
-    SPar();
+    SPar() = default;
     // destructor
     virtual ~SPar() = default;
 
     // methods
     /// Clear parameters
     virtual void clear() = 0;
-    virtual void print() const;
+    /// Print parameters
+    virtual void print() const {};
 
 protected:
     /// Get parameters from container
@@ -43,6 +43,8 @@ protected:
     /// \param parcont pointer to container object
     /// \return success
     virtual bool putParams(SParContainer* parcont) const = 0;
+
+    friend SPar* SDatabase::getParContainer(const std::string&);
 };
 
 #endif /* SPAR_H */

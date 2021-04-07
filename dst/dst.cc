@@ -9,6 +9,24 @@
 
 #include <getopt.h>
 
+// SiFi-Analysis framework includes
+#include "SDDSource.h"
+#include "SDatabase.h"
+#include "SDetectorManager.h"
+#include "SFibersDDUnpacker.h"
+#include "SFibersDDUnpackerPar.h"
+#include "SFibersDetector.h"
+#include "SFibersLookup.h"
+#include "SFibersPMIUnpacker.h"
+#include "SGeantFibersRaw.h"
+#include "SGeantTrack.h"
+#include "SKSSource.h"
+#include "SPMISource.h"
+#include "SParAsciiSource.h"
+#include "SProgressBar.h"
+#include "STaskManager.h"
+#include "SiFi.h"
+
 // root includes
 #include <TDatabasePDG.h>
 #include <TFile.h>
@@ -16,27 +34,6 @@
 #include <TMath.h>
 #include <TTree.h>
 #include <TVector3.h>
-
-// SiFi-Analysis framework includes
-#include "SGeantFibersRaw.h"
-#include "SGeantTrack.h"
-
-#include "SDetectorManager.h"
-#include "SParManager.h"
-#include "STaskManager.h"
-#include "SiFi.h"
-
-#include "SDDSource.h"
-#include "SKSSource.h"
-#include "SPMISource.h"
-
-#include "SFibersDDUnpacker.h"
-#include "SFibersDDUnpackerPar.h"
-#include "SFibersDetector.h"
-#include "SFibersLookup.h"
-#include "SFibersPMIUnpacker.h"
-
-#include "SProgressBar.h"
 
 int main(int argc, char** argv)
 {
@@ -148,8 +145,7 @@ int main(int argc, char** argv)
     sifi()->getCategory(SCategory::CatGeantTrack, true);
 
     // initialize parameters
-    pm()->setParamSource(params_file);
-    pm()->parseSource();
+    pm()->addSource(new SParAsciiSource(params_file));
 
     // initialize detectors
     SDetectorManager* detm = SDetectorManager::instance();
@@ -160,10 +156,12 @@ int main(int argc, char** argv)
     detm->initParameterContainers();
     detm->initCategories();
 
-    pm()->addLookupContainer("FibersDDLookupTable",
-                             new SFibersLookupTable("FibersDDLookupTable", 0x1000, 0x1fff, 32));
-    pm()->addLookupContainer("FibersPMILookupTable",
-                             new SFibersLookupTable("FibersPMILookupTable", 0x1000, 0x1fff, 64));
+    pm()->addLookupContainer("FibersDDLookupTable", std::make_unique<SFibersLookupTable>(
+                                                        "FibersDDLookupTable", 0x1000, 0x1fff, 32));
+    pm()->addLookupContainer(
+        "FibersPMILookupTable",
+        std::make_unique<SFibersLookupTable>("FibersPMILookupTable", 0x1000, 0x1fff, 64));
+
     // initialize tasks
     STaskManager* tm = STaskManager::instance();
     tm->initTasks();

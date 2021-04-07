@@ -11,11 +11,11 @@
 
 #include "SSiFiCCDetResImporter.h"
 #include "SCategory.h"
+#include "SDatabase.h"
 #include "SFibersCalSim.h"
 #include "SFibersGeomPar.h"
 #include "SGeantFibersRaw.h"
 #include "SGeantTrack.h"
-#include "SParManager.h"
 #include "SiFi.h"
 
 #include <algorithm>

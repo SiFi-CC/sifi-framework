@@ -16,11 +16,3 @@ foreach(test ${UnitTests_SRCS})
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tests
     )
 endforeach(test)
-
-# add_test(NAME "BasicCase" COMMAND UnitTester)
-
-# add_custom_command(TARGET MainTest
-#     POST_BUILD
-#     COMMAND ctest --output-on-failure)
-# 
-# add_custom_target(MainTest ALL UnitTester)
