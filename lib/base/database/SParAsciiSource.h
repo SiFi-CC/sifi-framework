@@ -44,13 +44,16 @@ public:
     SParAsciiSource(std::string&& source);
     virtual ~SParAsciiSource() = default;
 
+    virtual SContainer* getContainer(const std::string& name, long runid) override;
+
     void print() const override;
 
 private:
     bool parseSource();
 
 private:
-    std::string source; ///< ascii file name
+    std::string source;                                            ///< ascii file name
+    std::map<std::string, std::unique_ptr<SContainer>> containers; ///< Containers mirrors
 };
 
 #endif /* SPARASCIISOURCE_H */

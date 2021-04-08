@@ -5,6 +5,9 @@ See [Manual](@ref manual) for details.
 \defgroup lib_base_core Core
 \brief Data, parameter and tasks managers.
 
+\defgroup lib_base_database Database resources
+\brief Interface to communicate wwith DB, parameters and run containers
+
 \defgroup lib_base_datasources Data sources
 \brief Various data sources: hld files, root fils, dd files handling
 

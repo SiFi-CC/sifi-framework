@@ -9,9 +9,9 @@
 #include "SParAsciiSource.h"
 #include "SiFi.h"
 
-class base_database_tests : public CPPUNIT_NS::TestFixture
+class tests_base_database_ascii_source : public CPPUNIT_NS::TestFixture
 {
-    CPPUNIT_TEST_SUITE(base_database_tests);
+    CPPUNIT_TEST_SUITE(tests_base_database_ascii_source);
     CPPUNIT_TEST(ascii_source_test);
     CPPUNIT_TEST_SUITE_END();
 
@@ -21,16 +21,15 @@ public:
 
 protected:
     void ascii_source_test();
-    void db_ascii_source_test();
 
 private:
     SDatabase* db{nullptr};
     SParAsciiSource* ascii{nullptr};
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION(base_database_tests);
+CPPUNIT_TEST_SUITE_REGISTRATION(tests_base_database_ascii_source);
 
-void base_database_tests::setUp()
+void tests_base_database_ascii_source::setUp()
 {
     sifi()->disableAssertations();
 
@@ -51,14 +50,18 @@ void base_database_tests::setUp()
     db->addSource(ascii);
 }
 
-void base_database_tests::tearDown() { delete ascii; }
+void tests_base_database_ascii_source::tearDown()
+{
+    delete ascii;
+    sifi()->enableAssertations();
+}
 
-void base_database_tests::ascii_source_test()
+void tests_base_database_ascii_source::ascii_source_test()
 {
     // Test parameter containers
-    CPPUNIT_ASSERT(ascii->getContainer("Cont1") == nullptr);
-    CPPUNIT_ASSERT(ascii->getContainer("Cont2") == nullptr);
-    CPPUNIT_ASSERT(ascii->getContainer("FibersGeomPar") != nullptr);
+    CPPUNIT_ASSERT(ascii->getContainer("Cont1", 0) == nullptr);
+    CPPUNIT_ASSERT(ascii->getContainer("Cont2", 0) == nullptr);
+    CPPUNIT_ASSERT(ascii->getContainer("FibersGeomPar", 0) != nullptr);
 
     CPPUNIT_ASSERT(db->getParContainer("Cont1") == nullptr);
     CPPUNIT_ASSERT(db->getParContainer("Cont2") == nullptr);

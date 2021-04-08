@@ -28,8 +28,11 @@
 #pragma link C++ class SDDSamples+;
 
 // databases
+#pragma link C++ class validity_range_t+;
+#pragma link C++ class SContainer+;
 #pragma link C++ class SParSource+;
 #pragma link C++ class SParAsciiSource+;
+#pragma link C++ class SParRootSource+;
 
 // util
 #pragma link C++ class SRootFileHeader+;

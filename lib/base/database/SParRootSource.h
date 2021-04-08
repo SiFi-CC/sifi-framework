@@ -28,34 +28,34 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#ifndef SPARSOURCE_H
-#define SPARSOURCE_H
+#ifndef SPARROOTSOURCE_H
+#define SPARROOTSOURCE_H
 
 #include "sifi_export.h"
 
-#include "SContainer.h"
+#include "SParSource.h"
 
-#include <map>
-#include <memory>
 #include <string>
 
-class SIFI_EXPORT SParSource
+class SIFI_EXPORT SParRootSource : public SParSource
 {
 public:
-    /**
-     * Get plain container by name. Intepretation of the content must be done by appropriate class,
-     * see SDatabase::getParContainer, SDatabase::getLookupContainer, SDatabase::getCalContainer for
-     * examples.
-     *
-     * \param name container name
-     * \param runid run id
-     * \return pointer to the container
-     */
-    virtual SContainer* getContainer(const std::string& name, long runid) = 0;
+    SParRootSource(const std::string& source);
+    SParRootSource(std::string&& source);
+    virtual ~SParRootSource() = default;
 
-    /// Print containers stored in the source. Details about source must be print by subclass
-    /// method.
-    virtual void print() const {};
+    virtual SContainer* getContainer(const std::string& name, long runid) override;
+
+    void print() const override;
+
+private:
+    bool parseSource();
+
+private:
+    std::map<std::string, std::map<validity_range_t, SContainer*>>
+        containers;                                    ///< Containers mirrors
+    std::map<std::string, SContainer*> last_container; ///< Last used container, for caching purpose
+    std::string source;                                ///< Root file name
 };
 
-#endif /* SPARSOURCE_H */
+#endif /* SPARROOTSOURCE_H */

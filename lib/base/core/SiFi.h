@@ -138,8 +138,16 @@ public:
     /// \return linearised index of the category
     static int getCategoryIndex(SCategory::Cat cat) { return cat; }
 
+    /// In case of fatal event, like missing parameter or container, framework immediately breaks
+    /// execution. This safety switch can be disabled if required (automatic tests need it), however
+    /// this action is discouraged. This function disables it.
     void disableAssertations() { disable_assertations = true; }
+
+    /// Enabled runtime assertation. See disableAssertations() for details.
     void enableAssertations() { disable_assertations = false; }
+
+    /// Return status of runtime assertation. See disableAssertations() for details.
+    /// \return status of runtime assertations
     bool assertationsDisabled() { return disable_assertations; }
 
 private:

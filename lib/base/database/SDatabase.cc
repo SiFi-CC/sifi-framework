@@ -265,13 +265,16 @@ SPar* SDatabase::getParContainer(const std::string& name)
         return nullptr;
     }
 
+    // TODO current id number
+    long runid = 1e10;
+
     // Check if Container was initialized from source, and if not, do it.
     auto it2 = par_containers.find(name);
     if (it2 == par_containers.end())
     {
         for (auto s : sources)
         {
-            auto c = s->getContainer(name);
+            auto c = s->getContainer(name, runid);
             if (c)
             {
                 conts_sources.emplace(name, s);
@@ -324,6 +327,9 @@ SLookupTable* SDatabase::getLookupContainer(const std::string& name)
         return nullptr;
     }
 
+    // TODO current id number
+    long runid = 1e10;
+
     auto lu = it->second.get();
 
     // Check if Container was initialized from source, and if not, do it.
@@ -332,7 +338,7 @@ SLookupTable* SDatabase::getLookupContainer(const std::string& name)
     {
         for (auto s : sources)
         {
-            auto c = s->getContainer(name);
+            auto c = s->getContainer(name, runid);
             if (c)
             {
                 conts_sources.emplace(name, s);
@@ -385,6 +391,9 @@ SVirtualCalContainer* SDatabase::getCalContainer(const std::string& name)
         return nullptr;
     }
 
+    // TODO current id number
+    long runid = 1e10;
+
     auto cal = it->second.get();
 
     // Check if Container was initialized from source, and if not, do it.
@@ -393,7 +402,7 @@ SVirtualCalContainer* SDatabase::getCalContainer(const std::string& name)
     {
         for (auto s : sources)
         {
-            auto c = s->getContainer(name);
+            auto c = s->getContainer(name, runid);
             if (c)
             {
                 conts_sources.emplace(name, s);

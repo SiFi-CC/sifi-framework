@@ -4,9 +4,9 @@
 #include "SLookup.h"
 #include "SParAsciiSource.h"
 
-class BasicCase : public CPPUNIT_NS::TestFixture
+class tests_basic : public CPPUNIT_NS::TestFixture
 {
-    CPPUNIT_TEST_SUITE( BasicCase );
+    CPPUNIT_TEST_SUITE( tests_basic );
     CPPUNIT_TEST( MyTest );
     CPPUNIT_TEST_SUITE_END();
 
@@ -18,7 +18,7 @@ protected:
     SDatabase * pm;
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION( BasicCase );
+CPPUNIT_TEST_SUITE_REGISTRATION( tests_basic );
 
 class TestChannel : public SLookupChannel
 {
@@ -43,7 +43,7 @@ public:
     SLookupChannel * createChannel() const override { return new TestChannel(); }
 };
 
-void BasicCase::setUp()
+void tests_basic::setUp()
 {
     pm = SDatabase::instance();
 //     SParAsciiSource * src;
@@ -57,7 +57,7 @@ void BasicCase::setUp()
 //     tt->print();
 }
 
-void BasicCase::MyTest()
+void tests_basic::MyTest()
 {
      //float fnum = 2.00001f;
 }

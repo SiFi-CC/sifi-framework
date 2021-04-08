@@ -111,7 +111,6 @@ bool SParAsciiSource::parseSource()
                 cont_name = str.substr(1, pos - 1);
 
                 cont = new SContainer;
-                cont->name = cont_name;
                 cont->updated = true;
                 containers.emplace(cont_name, std::unique_ptr<SContainer>(cont));
 
@@ -151,4 +150,12 @@ void SParAsciiSource::print() const
     std::cout << "=== Ascii Source Info ===" << std::endl;
     std::cout << "    File name: " << source << std::endl;
     SParSource::print();
+}
+
+SContainer* SParAsciiSource::getContainer(const std::string& name, long runid)
+{
+    auto it = containers.find(name);
+    if (it == containers.end()) { return nullptr; }
+
+    return it->second.get();
 }

@@ -29,28 +29,3 @@ the requested parameter containers exists.
 
 // for trim functions see
 // https://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
-
-/**
- * Get plain container by name. Intepretation of the content must be done by appropriate class, see
- * SDatabase::getParContainer, SDatabase::getLookupContainer, SDatabase::getCalContainer for
- * examples.
- *
- * \param name container name
- * \return pointer to the container
- */
-SContainer* SParSource::getContainer(const std::string& name)
-{
-    auto it = containers.find(name);
-    if (it == containers.end()) { return nullptr; }
-
-    return it->second.get();
-}
-
-void SParSource::print() const
-{
-    std::cout << "    Containers:" << std::endl;
-    for (auto&& c : containers)
-    {
-        std::cout << "      + " << c.first << std::endl;
-    }
-}
