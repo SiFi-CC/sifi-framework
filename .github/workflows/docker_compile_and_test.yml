@@ -17,7 +17,7 @@ jobs:
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
     container:
-      image: root-project/root-docker:6.22.06-conda
+      image: rootproject/root:6.22.06-conda
     strategy:
       fail-fast: false
       matrix:
@@ -26,23 +26,18 @@ jobs:
             name: "Ubuntu_GCC",
             os: ubuntu-latest,
             build_type: "Release",
-            cc: "gcc",
-            cxx: "g++",
+            cc: "gcc-9",
+            cxx: "g++-9",
           }
         - {
             name: "Ubuntu_CLANG",
             os: ubuntu-latest,
             build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
+            cc: "clang-11",
+            cxx: "clang++-11",
           }
 
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-        with:
-          submodules: recursive
-
       - name: Print env
         run: |
           echo github.event.action: ${{ github.event.action }}
@@ -50,11 +45,10 @@ jobs:
 
       - name: Install common dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install libcppunit-dev cmake
-          root-config --cflags
-          root-config --features
+          apt update
+          apt install libcppunit-dev cmake -y
           cmake --version
+          cmake --help
 
       - name: Install dependencies on ubuntu with gcc
         if: startsWith(matrix.config.name, 'Ubuntu_GCC')
@@ -63,13 +57,25 @@ jobs:
       - name: Install dependencies on ubuntu with clang
         if: startsWith(matrix.config.name, 'Ubuntu_CLANG')
         run: |
-          sudo apt-get install clang-11
+          #apt install clang-11 -y
           clang --version
+
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout repository
+        uses: actions/checkout@v1
+        with:
+          submodules: recursive
 
       - name: Configure
         shell: bash
         run: |
+          root --version
+          root-config --version
+          root-config --cflags
+          root-config --features
+          pwd
           mkdir build
+          pwd
           cmake \
             -S . \
             -B build \

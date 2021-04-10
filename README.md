@@ -1,3 +1,10 @@
+![SiFi-CC: Analysis fremwork](https://img.shields.io/badge/SiFi--CC-Analysis%20framework-orange)
+![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/SiFi-CC/sifi-framework/docker_compile_and_test/master)
+![GitHub](https://img.shields.io/github/license/SIFi-CC/sifi-framework)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/SiFi-cc/sifi-framework)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/SiFi-CC/sifi-framework)
+
+
 # SiFi Framework Documentation
 
 The SiFi Framework contains all the libraries and applications,

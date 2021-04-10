@@ -30,6 +30,7 @@ the requested parameter containers exists.
 // for trim functions see
 // https://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
 
-void SParSource::print() const {
+void SParSource::print() const
+{
     printf("=== THIS Source has not print function implemented. ===\n");
 }

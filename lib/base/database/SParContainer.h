@@ -32,11 +32,11 @@ protected:
     // members
     ParMap parameters;     ///< holds pairs of parameter string: key-values
     std::string container; ///< container name
-    size_t line_split;     ///< how many parameters per line in file
+    size_t line_split{8};  ///< how many parameters per line in file
 
 public:
     // constructor
-    explicit SParContainer(const std::string& container);
+    explicit SParContainer(const std::string& name);
     // destructor
     virtual ~SParContainer() = default;
 
@@ -58,6 +58,8 @@ public:
     bool initParam(const std::string& name, const std::string& type,
                    const std::vector<std::string>& values);
     void print() const;
+
+    void clear();
 
 protected:
     void fromContainer(SContainer* sc);

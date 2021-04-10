@@ -86,7 +86,7 @@ WhatNext parseValues(std::string&& str, std::vector<std::string>& values)
  *
  * \param container container name
  */
-SParContainer::SParContainer(const std::string& container) : container(container), line_split(8) {}
+SParContainer::SParContainer(const std::string& name) : container(name) {}
 
 /**
  * Add key with integer value
@@ -97,10 +97,7 @@ SParContainer::SParContainer(const std::string& container) : container(container
  */
 bool SParContainer::add(const std::string& name, Int_t val)
 {
-    std::stringstream buff;
-    buff << "  " << val;
-    std::vector<std::string> v;
-    v.push_back(buff.str());
+    std::vector<std::string> v{std::to_string(val)};
     parameters[name] = TypeDataField("Int_t", v);
 
     return true;
@@ -115,10 +112,7 @@ bool SParContainer::add(const std::string& name, Int_t val)
  */
 bool SParContainer::add(const std::string& name, Float_t val)
 {
-    std::stringstream buff;
-    buff << "  " << val;
-    std::vector<std::string> v;
-    v.push_back(buff.str());
+    std::vector<std::string> v{std::to_string(val)};
     parameters[name] = TypeDataField("Float_t", v);
 
     return true;
@@ -133,10 +127,7 @@ bool SParContainer::add(const std::string& name, Float_t val)
  */
 bool SParContainer::add(const std::string& name, Double_t val)
 {
-    std::stringstream buff;
-    buff << "  " << val;
-    std::vector<std::string> v;
-    v.push_back(buff.str());
+    std::vector<std::string> v{std::to_string(val)};
     parameters[name] = TypeDataField("Double_t", v);
 
     return true;
@@ -151,12 +142,10 @@ bool SParContainer::add(const std::string& name, Double_t val)
  */
 bool SParContainer::add(const std::string& name, const TArrayI& val)
 {
-    std::stringstream buff;
     std::vector<std::string> v;
     for (int i = 0; i < val.GetSize(); ++i)
     {
-        buff << "  " << val[i];
-        v.push_back(buff.str());
+        v.push_back(std::to_string(val[i]));
     }
     parameters[name] = TypeDataField("Int_t", v);
 
@@ -172,12 +161,10 @@ bool SParContainer::add(const std::string& name, const TArrayI& val)
  */
 bool SParContainer::add(const std::string& name, const TArrayF& val)
 {
-    std::stringstream buff;
     std::vector<std::string> v;
     for (int i = 0; i < val.GetSize(); ++i)
     {
-        buff << "  " << val[i];
-        v.push_back(buff.str());
+        v.push_back(std::to_string(val[i]));
     }
     parameters[name] = TypeDataField("Float_t", v);
 
@@ -193,12 +180,10 @@ bool SParContainer::add(const std::string& name, const TArrayF& val)
  */
 bool SParContainer::add(const std::string& name, const TArrayD& val)
 {
-    std::stringstream buff;
     std::vector<std::string> v;
     for (int i = 0; i < val.GetSize(); ++i)
     {
-        buff << "  " << val[i];
-        v.push_back(buff.str());
+        v.push_back(std::to_string(val[i]));
     }
     parameters[name] = TypeDataField("Double_t", v);
 
@@ -546,3 +531,8 @@ void SParContainer::toContainer(SContainer* sc) const
         }
     }
 }
+
+/**
+ * Clear all fields in the container.
+ */
+void SParContainer::clear() { parameters.clear(); }

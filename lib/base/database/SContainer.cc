@@ -10,3 +10,15 @@
  *************************************************************************/
 
 #include "SContainer.h"
+
+/**
+ * Print container content.
+ */
+void SContainer::print(std::string name) const
+{
+    printf("Container Table [%s]\n", name.c_str());
+    for (auto line : lines)
+    {
+        printf("%s\n", line.c_str());
+    }
+}
