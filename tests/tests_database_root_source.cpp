@@ -11,9 +11,9 @@
 
 #include <memory>
 
-class tests_base_database_root_source : public CPPUNIT_NS::TestFixture
+class tests_database_root_source : public CPPUNIT_NS::TestFixture
 {
-    CPPUNIT_TEST_SUITE(tests_base_database_root_source);
+    CPPUNIT_TEST_SUITE(tests_database_root_source);
     CPPUNIT_TEST(root_source_test);
     CPPUNIT_TEST_SUITE_END();
 
@@ -31,9 +31,9 @@ private:
     std::unique_ptr<SContainer> c[10];
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION(tests_base_database_root_source);
+CPPUNIT_TEST_SUITE_REGISTRATION(tests_database_root_source);
 
-void tests_base_database_root_source::setUp()
+void tests_database_root_source::setUp()
 {
     TFile* file = TFile::Open("/tmp/test_params.root", "RECREATE");
     if (!file) abort();
@@ -44,7 +44,7 @@ void tests_base_database_root_source::setUp()
     for (int i = 0; i < N; ++i)
     {
         c[i] = std::make_unique<SContainer>();
-        c[i]->validity = {i, (i + 1) * 3};
+        c[i]->validity = {i*2, (i + 1) * 10 + 3};
         list->Add(c[i].get());
     }
 
@@ -56,16 +56,18 @@ void tests_base_database_root_source::setUp()
 
     root = new SParRootSource("/tmp/test_params.root");
     db->addSource(root);
+
+    root->print();
 }
 
-void tests_base_database_root_source::tearDown()
+void tests_database_root_source::tearDown()
 {
     delete root;
     gSystem->Exec("rm /tmp/test_params.root");
     sifi()->enableAssertations();
 }
 
-void tests_base_database_root_source::root_source_test()
+void tests_database_root_source::root_source_test()
 {
     // Test parameter containers
     CPPUNIT_ASSERT(root->getContainer("TestContainer", 0) != nullptr);

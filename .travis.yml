@@ -17,11 +17,7 @@ before_script:
     - root-config --cflags
     - root-config --features
     - mkdir build
-    - cmake \
-      -S . \
-      -B build \
-      -DCMAKE_BUILD_TYPE=Release \
-      -DCMAKE_CXX_FLAGS='--std=c++17'
+    - cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS='--std=c++17'
 script:
-    - make
-    - make test
+    - cmake --build build --config Release
+    - cmake --build build --target test

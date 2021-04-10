@@ -42,6 +42,8 @@
 class SIFI_EXPORT SParSource
 {
 public:
+    virtual ~SParSource() = default;
+
     /**
      * Get plain container by name. Intepretation of the content must be done by appropriate class,
      * see SDatabase::getParContainer, SDatabase::getLookupContainer, SDatabase::getCalContainer for
@@ -55,7 +57,7 @@ public:
 
     /// Print containers stored in the source. Details about source must be print by subclass
     /// method.
-    virtual void print() const {};
+    virtual void print() const;
 };
 
 #endif /* SPARSOURCE_H */

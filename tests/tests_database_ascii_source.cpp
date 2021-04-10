@@ -1,5 +1,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 
+#include "tests/tests_config.h"
+
 #include "SContainer.h"
 #include "SDatabase.h"
 #include "SFibersCalibratorPar.h"
@@ -9,9 +11,9 @@
 #include "SParAsciiSource.h"
 #include "SiFi.h"
 
-class tests_base_database_ascii_source : public CPPUNIT_NS::TestFixture
+class tests_database_ascii_source : public CPPUNIT_NS::TestFixture
 {
-    CPPUNIT_TEST_SUITE(tests_base_database_ascii_source);
+    CPPUNIT_TEST_SUITE(tests_database_ascii_source);
     CPPUNIT_TEST(ascii_source_test);
     CPPUNIT_TEST_SUITE_END();
 
@@ -27,9 +29,9 @@ private:
     SParAsciiSource* ascii{nullptr};
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION(tests_base_database_ascii_source);
+CPPUNIT_TEST_SUITE_REGISTRATION(tests_database_ascii_source);
 
-void tests_base_database_ascii_source::setUp()
+void tests_database_ascii_source::setUp()
 {
     sifi()->disableAssertations();
 
@@ -44,19 +46,19 @@ void tests_base_database_ascii_source::setUp()
     db->addCalContainer("CalibratorParMissing",
                         std::make_unique<SFibersCalibratorPar>("CalibratorParMissing"));
 
-    ascii = new SParAsciiSource("params.txt");
+    ascii = new SParAsciiSource(tests_path + "params.txt");
     // ascii->print();
 
     db->addSource(ascii);
 }
 
-void tests_base_database_ascii_source::tearDown()
+void tests_database_ascii_source::tearDown()
 {
     delete ascii;
     sifi()->enableAssertations();
 }
 
-void tests_base_database_ascii_source::ascii_source_test()
+void tests_database_ascii_source::ascii_source_test()
 {
     // Test parameter containers
     CPPUNIT_ASSERT(ascii->getContainer("Cont1", 0) == nullptr);

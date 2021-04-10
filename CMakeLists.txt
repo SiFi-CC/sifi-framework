@@ -113,7 +113,7 @@ endif()
 
 
 #cxx_17()
-# add_code_coverage()
+add_code_coverage()
 add_code_coverage_all_targets()
 
 # Root
