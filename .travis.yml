@@ -16,8 +16,12 @@ before_script:
     - . ./.aux_deps/root/bin/thisroot.sh
     - root-config --cflags
     - root-config --features
-    - mkdir build && cd build
-    - cmake .. -DCMAKE_BUILD_TYPE=Release
+    - mkdir build
+    - cmake \
+      -S . \
+      -B build \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_CXX_FLAGS='--std=c++17'
 script:
     - make
     - make test
