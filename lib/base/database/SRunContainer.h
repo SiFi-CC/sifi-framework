@@ -60,7 +60,10 @@ public:
 
     /// Get all data as tuple
     /// \return tuple with data
-    auto getData() { return std::make_tuple(runid, run_starttime, run_stoptime, runtype); }
+    auto getData() -> std::tuple<long, std::time_t, std::time_t, long>
+    {
+        return std::make_tuple(runid, run_starttime, run_stoptime, runtype);
+    }
 
     /// Print the contaner name and content
     void print() const

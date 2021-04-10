@@ -3,9 +3,9 @@
 #include "SRunContainer.h"
 
 
-class tests_base_database_run_container : public CPPUNIT_NS::TestFixture
+class tests_database_run_container : public CPPUNIT_NS::TestFixture
 {
-    CPPUNIT_TEST_SUITE(tests_base_database_run_container);
+    CPPUNIT_TEST_SUITE(tests_database_run_container);
     CPPUNIT_TEST(run_container_test);
     CPPUNIT_TEST_SUITE_END();
 
@@ -20,13 +20,13 @@ private:
 
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION(tests_base_database_run_container);
+CPPUNIT_TEST_SUITE_REGISTRATION(tests_database_run_container);
 
-void tests_base_database_run_container::setUp() {}
+void tests_database_run_container::setUp() {}
 
-void tests_base_database_run_container::tearDown() {}
+void tests_database_run_container::tearDown() {}
 
-void tests_base_database_run_container::run_container_test()
+void tests_database_run_container::run_container_test()
 {
     SRunContainer run1;
     run1.setId(13);
