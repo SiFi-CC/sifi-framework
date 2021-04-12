@@ -1,4 +1,4 @@
-#ifndef SISI_TESTS_CONFIG_H
+#ifndef SIFI_TESTS_CONFIG_H
 #define SIFI_TESTS_CONFIG_H
 
 #include <string>

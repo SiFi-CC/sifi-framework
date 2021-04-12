@@ -113,8 +113,10 @@ endif()
 
 
 #cxx_17()
-add_code_coverage()
-add_code_coverage_all_targets()
+if (CODE_COVERAGE)
+    add_code_coverage()
+    add_code_coverage_all_targets()
+endif()
 
 # Root
 find_package(ROOT 6.20 CONFIG REQUIRED COMPONENTS Core Tree)

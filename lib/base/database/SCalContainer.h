@@ -52,6 +52,8 @@ public:
 class SVirtualCalContainer
 {
 public:
+    virtual ~SVirtualCalContainer() = default;
+
     /**
      * Interface for accessing calibration container channel.
      * \return lookup channel base class
