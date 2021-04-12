@@ -19,5 +19,6 @@ target_link_libraries(
         ROOT::RIO #ROOT::Physics
         GTest::gtest_main
 )
+target_code_coverage(gtests ALL)
 
 gtest_discover_tests(gtests)
