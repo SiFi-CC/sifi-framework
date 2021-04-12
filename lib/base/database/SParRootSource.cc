@@ -17,7 +17,10 @@
 #include <TList.h>
 
 #include <algorithm>
+#include <ctime>
 #include <functional>
+#include <iomanip>
+#include <iostream>
 
 /**
  * \class SParRootSource
@@ -80,8 +83,22 @@ bool SParRootSource::parseSource()
             // descendant of TH1 -> merge it
 
             std::string name = obj->GetName();
-            auto&& cont_map = containers[name];
+            auto& cont_map = containers[name];
             TIter next(dynamic_cast<TList*>(obj));
+            SContainer* cache = nullptr;
+
+            while (TObject* c = next())
+            {
+                SContainer* cont = dynamic_cast<SContainer*>(c);
+                if (cont)
+                {
+                    if (cache) cache->validity.truncate(cont->validity);
+                    cache = cont;
+                }
+            }
+
+            next = TIter(dynamic_cast<TList*>(obj));
+
             while (TObject* c = next())
             {
                 SContainer* cont = dynamic_cast<SContainer*>(c);
@@ -120,9 +137,52 @@ SContainer* SParRootSource::getContainer(const std::string& name, long runid)
     return nullptr;
 }
 
+#include "tabulate/table.hpp"
+using namespace tabulate;
+
 void SParRootSource::print() const
 {
-    std::cout << "=== Ascii Source Info ===" << std::endl;
+    std::cout << "=== ROOT Source Info ===" << std::endl;
     std::cout << "    File name: " << source << std::endl;
-    SParSource::print();
+
+    for (auto& container : containers)
+    {
+        const validity_range_t* cache = nullptr;
+        Table cont_summary;
+        cont_summary.add_row({container.first, "Valid from", "Valid to", "Overlap", "Truncated"});
+
+        for (auto& revision : container.second)
+        {
+            std::stringstream s_from;
+            s_from << std::put_time(std::gmtime(&revision.first.from), "%c %Z");
+
+            std::stringstream s_to;
+            s_to << std::put_time(std::gmtime(&revision.first.to), "%c %Z");
+
+            std::stringstream trunc_from;
+            if (revision.first.truncated > 0)
+                trunc_from << std::put_time(std::gmtime(&revision.first.truncated), "%c %Z");
+
+            bool overlap = cache ? revision.first.check_overlap(*cache) : false;
+
+            cont_summary.add_row(
+                {"", s_from.str(), s_to.str(), std::to_string(overlap), trunc_from.str()});
+
+            cache = &revision.first;
+        }
+
+        cont_summary.column(3).format().font_align(FontAlign::center);
+        cont_summary.column(4).format().font_align(FontAlign::center).font_color(Color::red);
+
+        for (size_t i = 0; i < 5; ++i)
+        {
+            cont_summary[0][i]
+                .format()
+                .font_color(Color::yellow)
+                .font_align(FontAlign::center)
+                .font_style({FontStyle::bold});
+        }
+
+        std::cout << cont_summary << std::endl;
+    }
 }

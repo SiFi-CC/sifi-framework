@@ -1,3 +1,6 @@
 [submodule "cmake-scripts"]
 	path = cmake-scripts
 	url = https://github.com/StableCoder/cmake-scripts
+[submodule "tabulate"]
+	path = tabulate
+	url = https://github.com/p-ranav/tabulate
