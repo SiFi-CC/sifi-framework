@@ -1,3 +1,4 @@
+
 // @(#)lib/base:$Id$
 // Author: Rafal Lalik  18/11/2017
 
@@ -17,6 +18,7 @@
 #include <cassert>
 #include <cstdio>
 #include <iostream>
+#include <memory>
 
 #include <inttypes.h>
 
@@ -130,18 +132,7 @@ void SLookupChannel::fromHash(uint64_t hash)
  *
  * \param addr,nchan address and channels number
  */
-SLookupBoard::SLookupBoard(uint addr, uint nchan) : addr(addr), nchan(nchan)
-{
-    channels = new SLookupChannel* [nchan] { nullptr };
-}
-
-SLookupBoard::~SLookupBoard()
-{
-    for (uint i = 0; i < nchan; ++i)
-        if (channels[i]) delete channels[i];
-
-    delete[] channels;
-}
+SLookupBoard::SLookupBoard(uint addr, uint nchan) : addr(addr), nchan(nchan), channels(nchan) {}
 
 /**
  * Prints all registered channels for given board.
@@ -161,20 +152,15 @@ void SLookupBoard::print()
  * range of \p addr_min, \p addr_max. Defines that each board has no more channeel
  * than specified in #channels.
  *
- * \param container container name
+ * \param name container name
  * \param addr_min,addr_max lower and upper range of boards addresses
  * \param channels maximal number of channels in each board
  */
-SLookupTable::SLookupTable(const std::string& container, uint addr_min, uint addr_max,
-                           uint channels)
-    : container(container), a_min(addr_min), a_max(addr_max), channels(channels), is_init(false)
+SLookupTable::SLookupTable(const std::string& name, uint addr_min, uint addr_max, uint channels)
+    : container(name), a_min(addr_min), a_max(addr_max), channels(channels), is_init(false),
+      boards(addr_max - addr_min + 1)
 {
-    size_t nboards = addr_max - addr_min + 1;
-    boards = new SLookupBoard*[nboards];
-    memset(boards, 0, sizeof(SLookupBoard*) * nboards);
 }
-
-SLookupTable::~SLookupTable() { delete[] boards; }
 
 /**
  * Initialize lookup table from the container. The container must exists
@@ -199,9 +185,9 @@ void SLookupTable::fromContainer(SContainer* sc)
             continue;
         }
         uint idx = addr - a_min;
-        if (boards[idx] == 0) boards[idx] = new SLookupBoard(addr, channels);
+        if (boards[idx] == nullptr) boards[idx] = std::make_unique<SLookupBoard>(addr, channels);
 
-        boards[idx]->setChannel(chan, createChannel());
+        boards[idx]->setChannel(chan, std::unique_ptr<SLookupChannel>(createChannel()));
         boards[idx]->getChannel(chan)->read(line.c_str() + len);
     }
 
@@ -258,6 +244,9 @@ void SLookupTable::toContainer(SContainer* sc) const
  */
 SLookupChannel* SLookupTable::getAddress(uint addr, uint chan)
 {
+    if (addr > a_max) return nullptr;
+    if (addr < a_min) return nullptr;
+
     if (!boards[addr - a_min]) return nullptr;
     return boards[addr - a_min]->getChannel(chan);
 }

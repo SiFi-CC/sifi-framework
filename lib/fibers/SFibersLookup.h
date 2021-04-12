@@ -45,9 +45,13 @@ class SIFI_EXPORT SFibersLookupTable : public SLookupTable
 {
 public:
     using SLookupTable::SLookupTable;
+    virtual ~SFibersLookupTable() = default;
 
     // methods
-    SLookupChannel* createChannel() const override { return new SFibersChannel(); }
+    virtual std::unique_ptr<SLookupChannel> createChannel() const override
+    {
+        return std::make_unique<SFibersChannel>();
+    }
 };
 
 #endif /* SFIBERSLOOKUP_H */

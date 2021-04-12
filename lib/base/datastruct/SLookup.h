@@ -20,6 +20,7 @@
 
 #include <cassert>
 #include <cstdint>
+#include <memory>
 
 class SLookupTable;
 
@@ -59,12 +60,12 @@ struct SIFI_EXPORT SLookupChannel
  * Two functions setChannel() and getChannel() provide actuall functionality
  * required by the user.
  */
-class SLookupBoard
+class SIFI_EXPORT SLookupBoard
 {
 private:
-    uint addr;                 ///< board address
-    uint nchan;                ///< number of channels
-    SLookupChannel** channels; ///< array of channels
+    uint addr;                                             ///< board address
+    uint nchan;                                            ///< number of channels
+    std::vector<std::unique_ptr<SLookupChannel>> channels; ///< array of channels
 
 public:
     SLookupBoard() = delete;
@@ -72,7 +73,7 @@ public:
     SLookupBoard(const SLookupBoard&) = delete;
     SLookupBoard& operator=(const SLookupBoard&) = delete;
 
-    virtual ~SLookupBoard();
+    virtual ~SLookupBoard() = default;
 
     /**
      * Set channel object at given channel location. If #chan is larger than
@@ -81,15 +82,15 @@ public:
      * \param chan channel number
      * \param c channel mapping object
      */
-    void setChannel(uint chan, SLookupChannel* c)
+    void setChannel(uint chan, std::unique_ptr<SLookupChannel>&& c)
     {
         assert(chan < nchan);
-        channels[chan] = c;
+        channels[chan] = std::move(c);
     }
 
     /**
      * Fetch the channel mapping object for given channel number. If channel
-     * number is outside the allwoed range, the executions aborts.
+     * number is outside the allowed range, the executions aborts.
      *
      * \param chan channel number
      * \return channel mapping object
@@ -97,7 +98,7 @@ public:
     SLookupChannel* getChannel(uint chan)
     {
         assert(chan < nchan);
-        return channels[chan];
+        return channels[chan].get();
     }
 
     virtual void print();
@@ -141,16 +142,16 @@ protected:
     uint channels;         ///< maximal number of channels
     bool is_init;          ///< set if container was initialized
 
-    SLookupBoard** boards; ///< array of boards in a given range
+    std::vector<std::unique_ptr<SLookupBoard>> boards; ///< array of boards in a given range
 
 public:
-    SLookupTable(const std::string& container, uint addr_min, uint addr_max, uint channels = 49);
+    SLookupTable(const std::string& name, uint addr_min, uint addr_max, uint channels = 49);
     /// Do not allow for copying the lookup table
     SLookupTable(const SLookupTable&) = delete;
     SLookupTable& operator=(const SLookupTable&) = delete;
 
     // destructor
-    virtual ~SLookupTable();
+    virtual ~SLookupTable() = default;
 
     /**
      * To simplify mechanism of lookup table and remove need to sublass
@@ -162,7 +163,10 @@ public:
      *
      * \return empty object of channel lookup class
      */
-    virtual SLookupChannel* createChannel() const { return new SLookupChannel; }
+    virtual std::unique_ptr<SLookupChannel> createChannel() const
+    {
+        return std::make_unique<SLookupChannel>();
+    }
 
     SLookupChannel* getAddress(uint addr, uint chan);
 
