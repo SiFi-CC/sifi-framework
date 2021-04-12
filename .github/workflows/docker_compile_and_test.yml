@@ -16,8 +16,8 @@ jobs:
     # The type of runner that the job will run on
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
-    container:
-      image: rootproject/root:6.22.08-conda
+    #container:
+    #image: rootproject/root:6.22.08-conda
     strategy:
       fail-fast: false
       matrix:
@@ -49,6 +49,8 @@ jobs:
           apt install libcppunit-dev cmake -y
           cmake --version
           cmake --help
+          wget http://gccb.if.uj.edu.pl/root-cpp17_6.22.08_amd64.deb
+          dpkg -i root-cpp17_6.22.08_amd64.deb
 
       - name: Install dependencies on ubuntu with gcc
         if: startsWith(matrix.config.name, 'Ubuntu_GCC')
@@ -89,4 +91,4 @@ jobs:
 
       - name: Test
         shell: bash
-        run: cmake --build build_test --target test
+        run: cmake --build build --target test
