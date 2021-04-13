@@ -42,7 +42,8 @@ protected:
     size_t line_split{8};  ///< how many parameters per line in file
 
 public:
-    // constructor
+    /// Constructor
+    /// \param name container name
     explicit SParContainer(const std::string& name);
     // destructor
     virtual ~SParContainer() = default;

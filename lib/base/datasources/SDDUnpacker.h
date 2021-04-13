@@ -49,7 +49,8 @@ public:
     /// Set expected data len, we speak about floats not bytes.
     /// \param length size of the array in terms of floats
     void setDataLen(size_t length) { data_length = length; }
-
+    /// Save or not samples in the root tree
+    /// \param save save samples if true
     static void saveSamples(bool save) { save_samples = save; }
 
 protected:
@@ -62,7 +63,7 @@ protected:
     virtual bool decode(uint16_t subevent, float* data, size_t length) = 0;
 
 protected:
-    static bool save_samples;
+    static bool save_samples;   ///< if set to true, samples are saved to the tree
 
 private:
     size_t data_length; ///< data buffer length

@@ -45,6 +45,9 @@ void SFibersHitFinderPar::clear()
  * The resolution equations are typically f(x) = p0/x + p1/x^{1/2} + p2/x^{3/2}
  * from Poisson statistics.
  * Here we can set/get the parameters themselves
+ * 
+ * \param i parameter index
+ * \return value at index
  */
 Float_t SFibersHitFinderPar::getResPos(UInt_t i) const
 {

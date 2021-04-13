@@ -51,6 +51,7 @@ public:
     void print() const override;
 
     /// Get geometry type
+    /// \return geometry type
     Int_t getType() const { return type; }
     /// Get number of modules
     /// \return number of modules

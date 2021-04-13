@@ -19,7 +19,7 @@ protected:
     SCategory* catFibersHit{nullptr};              ///< fibers hit category
     SCalContainer<3>* pHitFinderFiberPar{nullptr}; ///< hit finder fiber parameters
     SFibersHitFinderPar* pHitFinderPar{nullptr};   ///< hit finder parameters
-    SFibersGeomPar* pGeomPar;
+    SFibersGeomPar* pGeomPar;                      ///< geometry container
 
 public:
     // constructor

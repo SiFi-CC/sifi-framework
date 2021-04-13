@@ -119,13 +119,17 @@ public:
     Float_t getTimeError() const { return sE; }
 
     /// Get point vector
+    /// \return hit position
     TVector3& getPoint() { return point; }
     /// Get point vector
+    /// \return hit position
     const TVector3& getPoint() const { return point; }
 
-    // Get point errors vector
+    /// Get point errors vector
+    /// \return vector of errors
     TVector3& getErrors() { return errors; }
     /// Get point errors vector
+    /// \return vector of errors
     const TVector3& getErrors() const { return errors; }
 
     virtual void print() const;

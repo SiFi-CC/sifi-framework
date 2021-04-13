@@ -36,7 +36,8 @@
 #include <algorithm> // for max
 #include <map>
 #include <memory>
-#include <string> // for string
+#include <string>
+#include <string_view>
 #include <vector>
 
 class SPar;
@@ -45,17 +46,13 @@ class SParContainer;
 class SVirtualCalContainer;
 class SLookupTable;
 
-// void trim(std::string& s);
-// void simplify(std::string& s);
-// bool isFloat(const std::string& str);
-
 class SIFI_EXPORT SDatabase
 {
 protected:
     std::vector<SParSource*> sources; ///< Parameters source file
     SParSource* target{0};            ///< Parameters destination file
 
-    std::map<std::string, SParSource*> conts_sources;
+    std::map<std::string, SParSource*> conts_sources;                            ///< Input sources
     std::map<std::string, std::unique_ptr<SParContainer>> par_containers;        ///< Par Containers
     std::map<std::string, std::unique_ptr<SPar>> par_parameters;                 ///< Parameters
     std::map<std::string, std::unique_ptr<SVirtualCalContainer>> cal_containers; ///< Par Containers
@@ -81,7 +78,7 @@ public:
     /// \param source source file name
     void addSource(SParSource* source) { sources.push_back(source); }
     /// Set parameters destination
-    /// \param dest destination file name
+    /// \param target destination file name
     void setTarget(SParSource* target) { this->target = target; }
 
     void writeDestination();

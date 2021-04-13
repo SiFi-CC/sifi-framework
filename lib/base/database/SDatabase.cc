@@ -273,7 +273,7 @@ bool SDatabase::addCalContainer(const std::string& name,
 /**
  * Get calibration container by name.
  *
- * \param cont_name container name
+ * \param name container name
  * \return pointer to container
  */
 SVirtualCalContainer* SDatabase::getCalContainer(const std::string& name)

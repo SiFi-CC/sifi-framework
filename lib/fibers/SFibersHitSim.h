@@ -30,12 +30,12 @@ public:
     // data members
     Float_t fGeantEloss{0};        ///< energy loss from Geant
     TVector3 fGeantPoint{0, 0, 0}; ///< geant X,Y,Z
-    enum InteractionType
+    enum InteractionType           ///< describes interaction type
     {
-        PHOTON,
-        ELECTRON,
-        SCINT
-    } type;
+        PHOTON,   ///< photon
+        ELECTRON, ///< electron
+        SCINT     ///< scintilation
+    } type;       ///< Interaction type
 
 public:
     // constructors
@@ -54,11 +54,13 @@ public:
     Float_t getGeantEnergyLoss() const { return fGeantEloss; }
 
     /// Set Geant X coordinate
-    /// \param v coordinate value
+    /// \param p coordinate value
     void setGeantPoint(TVector3 p) { fGeantPoint = p; }
     /// Get Geant X coordinate
     /// \return X value
     TVector3& getGeantPoint() { return fGeantPoint; }
+    /// Get Geant XYZ coordinate
+    /// \return XYZ value
     const TVector3& getGeantPoint() const { return fGeantPoint; }
 
     virtual void print() const override;

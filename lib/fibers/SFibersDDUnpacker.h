@@ -30,9 +30,9 @@ protected:
     // members
     SCategory* catDDSamples;              ///< fibers raw category
     SCategory* catFibersRaw;              ///< fibers raw category
-    SFibersDDUnpackerPar* pDDUnpackerPar; ///< calibrator parameters
-    SFibersDDCalibratorPar* pDDCalPar;
-    SFibersLookupTable* pLookUp; ///< lookup table
+    SFibersDDUnpackerPar* pDDUnpackerPar; ///< unpacker parameters
+    SFibersDDCalibratorPar* pDDCalPar;    ///< calibrator parameters
+    SFibersLookupTable* pLookUp;          ///< lookup table
 
 public:
     // constructor

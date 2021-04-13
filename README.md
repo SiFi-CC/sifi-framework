@@ -1,4 +1,5 @@
 ![SiFi-CC: Analysis fremwork](https://img.shields.io/badge/SiFi--CC-Analysis%20framework-orange)
+![Coveralls](https://img.shields.io/coveralls/github/SiFi-CC/sifi-framework)
 ![Travis (.com)](https://img.shields.io/travis/com/SiFi-CC/sifi-framework)
 ![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/SiFI-CC/sifi-framework/CMake%20Build%20Matrix/master)
 ![GitHub](https://img.shields.io/github/license/SIFi-CC/sifi-framework)

@@ -35,7 +35,35 @@
 
 \ingroup lib_base_database
 
-Reads parameters from ascii file. Can be also used as a target to write parameters.
+Reads parameters from the database file. Parameters in the database are organized in:
+* releases - collections of paramaters related to given experiment, test, measurement
+* versions (ranges) - specific value of parameters valid in specific time range
+* runid - run number (from DAQ)
+
+The database interface must provide following interface:
+
+ 1. Getting data from database:
+
+   - Read parameater values for given time slice
+
+     `getContainer(release : string, container_name : string, runid : long) -> SContainer`
+
+   - Read all paramater ranges for given release
+
+     `getContainer(release : string, container_name : string) -> std::vector<SContainer>`
+
+   - Read selected paramater ranges for given release
+
+     `getContainer(release : string, range : range) -> std::vector<SContainer>`
+
+ 2. Writing data from database:
+
+   - Write slice (ascii) to database as range. Returns 0 if succeed, otherwise positive value as
+     error code (e.g. 1 - overlap, etc.)
+
+     `writeContainer(release : string, container_name : string, range : range, container :
+SContainer) -> int`
+
 */
 
 /**

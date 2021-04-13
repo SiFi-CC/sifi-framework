@@ -31,11 +31,13 @@ class DRSiFiCCSetup;
 class DRSiPMModel;
 class TChain;
 
+/// Encapsulates array of hits in a SiPm
 struct TREE_Events
 {
     TClonesArray* fHitArray; ///< SiPm hits data
 };
 
+/// Encapsulates kine (sim) data
 struct TREE_Kine
 {
     ///@{
@@ -45,6 +47,7 @@ struct TREE_Kine
     SGeantTrack::Type type; ///< type of track
 };
 
+/// Encapsulates fired fiber address
 struct TREE_Address
 {
     int m;  ///< module
@@ -53,12 +56,14 @@ struct TREE_Address
     char s; ///< side
 };
 
+/// Encapsulates hit statistics data
 struct TREE_hit
 {
     int counts; ///< number of hits
     float time; ///< time of the signal
 };
 
+/// Encapsulates sim data position FIXME what is different to kine? Can we merge?
 struct TREE_simdata
 {
     ///@{
@@ -66,6 +71,7 @@ struct TREE_simdata
     ///@}
 };
 
+/// Encapsulates all other TREE_ structures
 struct TREE_all
 {
     TREE_Address address;                ///< address of the event
@@ -91,20 +97,20 @@ public:
     virtual void addInput(const std::string& filename) override;
 
 protected:
-    TChain* chain2;
-    TChain* chain3;
+    TChain* chain2; ///< chain for some other data
+    TChain* chain3; ///< chain for some other data
 
 private:
     uint16_t subevent; ///< subevent id
 
     // for "Events" in chain
-    std::vector<double>* fPrimEnergy{nullptr};
-    std::vector<TVector3>* fSourcePosition{nullptr};  //!< BranchAddress RealData
-    std::vector<TVector3>* fSourceDirection{nullptr}; //!< BranchAddress RealData
+    std::vector<double>* fPrimEnergy{nullptr};        ///< primary energy
+    std::vector<TVector3>* fSourcePosition{nullptr};  ///< BranchAddress RealData
+    std::vector<TVector3>* fSourceDirection{nullptr}; ///< BranchAddress RealData
 
-    double fScaEnergyElectron{0}; //!< energy of the recoil electron
-    double fScaEnergyPhoton{0};   //!< energy of the scattered photon
-    double fComptonTime{0};       //!< time when the compton scattering occured
+    double fScaEnergyElectron{0}; ///< energy of the recoil electron
+    double fScaEnergyPhoton{0};   ///< energy of the scattered photon
+    double fComptonTime{0};       ///< time when the compton scattering occured
 
     TVector3* fComptonPosition{nullptr}; //!< position where the compton scattering occured
     // TVector3* fPhotonPosition{nullptr};                 //!< first position where the scattered
@@ -114,25 +120,25 @@ private:
     TVector3* fPhotonDirection{nullptr}; //!< direction of the scattered photon
 
     std::vector<TVector3>* fPhotonPositions{
-        nullptr}; //!< positions where the scattered photon and its secondaries interacted
+        nullptr}; ///< positions where the scattered photon and its secondaries interacted
     std::vector<TVector3>* fElectronPositions{
-        nullptr}; //!< position where the recoilelectron and secondaries interacted
+        nullptr}; ///< position where the recoilelectron and secondaries interacted
 
     std::vector<int>*
-        fPhotonInteractions; //!< the interaction and secondary generations of the positions
-    std::vector<int>* fElectronInteractions; //!< interactions to the recoilelectrons and
+        fPhotonInteractions; ///< the interaction and secondary generations of the positions
+    std::vector<int>* fElectronInteractions; ///< interactions to the recoilelectrons and
 
     // helper
-    std::map<int, TREE_Address> sipm_map;
-    int sipm_fold{0}; // index at which counting for right side starts
+    std::map<int, TREE_Address> sipm_map; ///< SiPm map
+    int sipm_fold{0};                     ///< index at which counting for right side starts
 
     // for "DetectorEvent" in chain2
-    std::map<int, TVector3>* fPxPosScin{nullptr};
-    std::map<int, double>* fPxEnScin{nullptr};
+    std::map<int, TVector3>* fPxPosScin{nullptr}; ///< scintillation position
+    std::map<int, double>* fPxEnScin{nullptr};    ///< scintillation energy
 
-    TREE_all tree;
-    DRSiFiCCSetup* ccsetup{nullptr};
-    DRSiPMModel* pmmodel{nullptr};
+    TREE_all tree;                   ///< tree to store all data for unpacker
+    DRSiFiCCSetup* ccsetup{nullptr}; ///< compton camera setup
+    DRSiPMModel* pmmodel{nullptr};   ///< PM model
 };
 
 #endif /* SDRSOURCE_H */

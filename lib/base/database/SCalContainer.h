@@ -50,6 +50,9 @@ public:
     const float operator[](int n) const;
 };
 
+/**
+ * base class for all Cal containers.
+ */
 class SVirtualCalContainer
 {
 public:
@@ -97,7 +100,7 @@ public:
     /// return empty object of Lookup channel
     /// \sa SLookupTable::createChannel()
     /// \return empty lookup channel
-    virtual SLookupChannel* createChannel() const { return new SLookupChannel; }
+    virtual SLookupChannel* createChannel() const override { return new SLookupChannel; }
 
     SCalPar<N>* getPar(const SLookupChannel* channel);
 
@@ -107,8 +110,10 @@ public:
     virtual void setDefault(SCalPar<N>* d) { def = d; }
 
 protected:
-    void fromContainer(SContainer* sc);
-    void toContainer(SContainer* sc) const;
+    /// \copydoc SVirtualCalContainer::fromContainer()
+    virtual void fromContainer(SContainer* sc) override;
+    /// \copydoc SVirtualCalContainer::toContainer()
+    virtual void toContainer(SContainer* sc) const override;
 };
 
 #endif /* SCALCONTAINER_H */

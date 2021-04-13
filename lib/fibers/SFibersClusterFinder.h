@@ -15,7 +15,7 @@ protected:
     SCategory* catFibersHit{nullptr};                    ///< fibers cal category
     SCategory* catFibersCluster{nullptr};                ///< fibers cluster category
     SFibersClusterFinderPar* pClusterFinderPar{nullptr}; ///< cluster finder parameters
-    SFibersGeomPar* pGeomPar;
+    SFibersGeomPar* pGeomPar;                            ///< geometry parameters
 
 public:
     // constructor

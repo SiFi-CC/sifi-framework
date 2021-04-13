@@ -25,6 +25,9 @@ class TBuffer;
 class TClass;
 class TMemberInspector;
 
+/**
+ * Simple structure to hold data validty range for a single version of container.
+ */
 struct validity_range_t
 {
     std::time_t from{0};      ///< beginning of the range
@@ -41,22 +44,22 @@ struct validity_range_t
     }
 
     /// Constructor
-    /// \param l valid from time
-    /// \param r valid to time
+    /// \param f valid from time
+    /// \param t valid to time
     validity_range_t(std::time_t f, std::time_t t) : from(f), to(t) {}
 
     /// Compare ranges, the smaller one has lower start time. Ranges may overlap.
     /// \param r range to compare
-    /// return whether the object is smaller than compared
+    /// \return whether the object is smaller than compared
     bool operator<(const validity_range_t& r) { return from < r.from; }
     /// Compare ranges, the smaller one has lower start time. Ranges may overlap.
     /// \param time time to compare
-    /// return whether the object is smaller than compared
+    /// \return whether the object is smaller than compared
     bool operator<(std::time_t time) const { return from < time; }
 
     /// Checks whether #time is within the range
     /// \param time time to compare
-    /// return whether the #time is within the range
+    /// \return whether the #time is within the range
     bool operator==(std::time_t time) const { return from <= time and time < to; }
 
     /// Check for overlap
@@ -66,7 +69,6 @@ struct validity_range_t
 
     /// Check for overlap
     /// \param range tested range
-    /// \return overlap test result
     void truncate(const validity_range_t& range)
     {
         if (check_overlap(range))
@@ -97,6 +99,7 @@ inline bool operator<(const validity_range_t& lhs, const validity_range_t& rhs)
  *  * write() - writes cal pars to the container
  *  * print() - print cal par values
  */
+
 /**
  * Stores content of the container read out from the disk.
  */
@@ -107,12 +110,10 @@ public:
     bool updated{false};            ///< flag -- was container updated?
     validity_range_t validity;      ///< run validity start,end id
 
-    SContainer() = default;
-    SContainer(const SContainer&) = default;
-
     void print(std::string name = std::string()) const;
 
     ClassDef(SContainer, 1);
 };
 
 #endif /* SCALCONTAINER_H */
+

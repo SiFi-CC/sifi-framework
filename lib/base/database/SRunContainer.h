@@ -29,7 +29,6 @@ struct SIFI_EXPORT SRunContainer : public TObject
 
 public:
     SRunContainer();
-    SRunContainer(const SRunContainer&) = default;
 
     /// Set run id
     /// \param id run id

@@ -88,7 +88,7 @@ WhatNext parseValues(std::string&& str, std::vector<std::string>& values)
 /**
  * Constructor
  *
- * \param container container name
+ * \param name container name
  */
 SParContainer::SParContainer(const std::string& name) : container(name) {}
 

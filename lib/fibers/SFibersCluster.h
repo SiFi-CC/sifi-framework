@@ -33,23 +33,22 @@ protected:
     Int_t module{-1};  ///< address - module
     Int_t cluster{-1}; ///< address - layer
 
-    TVector3 point;
-    TVector3 errors;
-    std::vector<int> hits;
+    TVector3 point;        ///< cluster position
+    TVector3 errors;       ///< cluster position errors
+    std::vector<int> hits; ///< hits belonging to the cluster
 
 public:
     // constructor
     SFibersCluster() = default;
     virtual ~SFibersCluster() = default;
 
-    // inherited from ROOT
-    virtual void Clear(Option_t* opt = "");
+    /// Clear cluster object
+    /// \param opt clear options
+    virtual void Clear(Option_t* opt = "") override;
 
-    // methods
     /// Set address
     /// \param m module
-    /// \param l layer
-    /// \param f fiber
+    /// \param c cluster
     void setAddress(Int_t m, Int_t c)
     {
         module = m;
@@ -57,8 +56,7 @@ public:
     }
     /// Get address
     /// \param m module
-    /// \param l layer
-    /// \param f fiber
+    /// \param c cluster
     void getAddress(Int_t& m, Int_t& c) const
     {
         m = module;
@@ -73,17 +71,21 @@ public:
     /// \return hits id vector
     const std::vector<int>& getHitsArray() { return hits; }
 
-    // get point vector
+    /// Get cluster position
+    /// \return cluster position
     TVector3& getPoint() { return point; }
+    /// \copydoc getPoint()
     const TVector3& getPoint() const { return point; }
 
-    // get point errors vector
+    /// Get position errors
+    /// \return position errors
     TVector3& getErrors() { return errors; }
+    /// \copydoc getErrors()
     const TVector3& getErrors() const { return errors; }
 
     void print() const;
 
-    ClassDef(SFibersCluster, 1); // container for fibers stack raw data
+    ClassDefOverride(SFibersCluster, 1); // container for fibers stack raw data
 };
 
 #endif /* SFIBERSCLUSTER_H */

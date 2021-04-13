@@ -24,7 +24,7 @@ class SIFI_EXPORT SFibersClusterFinderPar : public SPar
 {
 private:
     // members
-    Int_t fClusterMode{0}; // 0 - AC; 1 - HF; 2 - FF
+    Int_t fClusterMode{0}; ///< cluster mode: 0 - AC; 1 - HF; 2 - FF
 
 public:
     bool getParams(SParContainer* parcont) override;
@@ -32,8 +32,12 @@ public:
     void clear() override;
     void print() const override;
 
+    /// Get cluste mode
+    /// \return cluster mode
     Int_t getClusterMode() const { return fClusterMode; }
 
+    /// Set cluster mode
+    /// \param m new mode
     void setClusterMode(Int_t m) { fClusterMode = m; }
 };
 
