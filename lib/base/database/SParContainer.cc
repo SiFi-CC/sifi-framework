@@ -12,10 +12,14 @@
 #include "SParContainer.h"
 
 #include "SContainer.h"
-#include "SDatabase.h"
+#include "SHelperFunctions.h"
 
+#include <algorithm>
+#include <cstdio>
+#include <cstdlib>
 #include <iostream>
-#include <sstream>
+#include <map>
+#include <memory>
 #include <string>
 
 /**
@@ -69,7 +73,7 @@ WhatNext parseValues(std::string&& str, std::vector<std::string>& values)
 
         pos2 = str.find_first_of(' ', pos + 1);
         std::string match = str.substr(pos, pos2 - pos);
-        if (isFloat(match)) { values.push_back(match); }
+        if (SHelperFunctions::isFloat(match)) { values.push_back(match); }
         else
         {
             std::cerr << "Value is not a number:" << std::endl << str << std::endl;
@@ -416,8 +420,8 @@ void SParContainer::fromContainer(SContainer* sc)
 
     for (auto line : sc->lines)
     {
-        trim(line);
-        simplify(line);
+        SHelperFunctions::trim(line);
+        SHelperFunctions::simplify(line);
 
         // skip comment or empty line
         if (line[0] == '#' or (line.length() == 0 and wn != WNParamCont)) { continue; }
@@ -429,7 +433,7 @@ void SParContainer::fromContainer(SContainer* sc)
                 // find parameter name ended with :
                 size_t pos = line.find_first_of(':', 1);
                 param_name = line.substr(0, pos);
-                trim(param_name);
+                SHelperFunctions::trim(param_name);
 
                 // prepare other variables
                 type_name.clear();

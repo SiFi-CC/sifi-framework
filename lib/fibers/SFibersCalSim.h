@@ -14,7 +14,15 @@
 
 #include "SFibersCal.h"
 
+#include "sifi_export.h" // for SIFI_EXPORT
+
+#include <Rtypes.h>     // for THashConsistencyHolder, ClassDefOverride
+#include <RtypesCore.h> // for Float_t, Option_t
 #include <TVector3.h>
+
+class TBuffer;
+class TClass;
+class TMemberInspector;
 
 class SIFI_EXPORT SFibersCalSim : public SFibersCal
 {

@@ -10,7 +10,6 @@
  *************************************************************************/
 
 #include "SDetector.h"
-#include "STask.h"
 #include "STaskManager.h"
 
 /**

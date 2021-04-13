@@ -12,16 +12,10 @@
 #ifndef SFILESOURCE_H
 #define SFILESOURCE_H
 
-#include "sifi_export.h"
-
 #include "SDataSource.h"
 
-#include <TArrayI.h>
-#include <TClonesArray.h>
-#include <TObject.h>
-#include <TString.h>
-
 #include <cstddef>
+#include <cstdint> // for uint16_t
 #include <fstream>
 #include <string>
 

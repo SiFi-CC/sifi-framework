@@ -1,39 +1,32 @@
-// STL includes
-#include <algorithm>
-#include <chrono>
-#include <iostream>
-#include <list>
-#include <string.h>
-#include <time.h>
-#include <vector>
-
-#include <getopt.h>
-
 // SiFi-Analysis framework includes
+#include "SCategory.h" // for SCategory, SCategory::CatGeantTrack
 #include "SDDSource.h"
 #include "SDatabase.h"
 #include "SDetectorManager.h"
 #include "SFibersDDUnpacker.h"
-#include "SFibersDDUnpackerPar.h"
 #include "SFibersDetector.h"
 #include "SFibersLookup.h"
 #include "SFibersPMIUnpacker.h"
-#include "SGeantFibersRaw.h"
-#include "SGeantTrack.h"
 #include "SKSSource.h"
+#include "SLookup.h"
 #include "SPMISource.h"
 #include "SParAsciiSource.h"
-#include "SProgressBar.h"
 #include "STaskManager.h"
 #include "SiFi.h"
 
 // root includes
-#include <TDatabasePDG.h>
-#include <TFile.h>
-#include <TH1.h>
-#include <TMath.h>
 #include <TTree.h>
-#include <TVector3.h>
+
+// STL includes
+#include <algorithm>
+#include <bits/getopt_core.h> // for optarg, optind
+#include <cstdint>            // for uint16_t
+#include <cstdlib>            // for atoi, exit, EXIT_FAILURE
+#include <iostream>
+#include <memory> // for allocator, make_unique
+#include <string> // for string, operator==, basic_string
+
+#include <getopt.h>
 
 int main(int argc, char** argv)
 {

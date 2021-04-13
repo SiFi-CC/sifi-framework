@@ -1,10 +1,17 @@
-#include <gtest/gtest.h>
+#include "gtest/gtest_pred_impl.h" // for AssertionResult, ASSERT_FALSE
+#include <gtest/gtest-message.h>   // for Message
+#include <gtest/gtest-test-part.h> // for TestPartResult
 
 #include "SContainer.h"
 #include "SParContainer.h"
 
-#include <ctime>
+#include <RtypesCore.h> // for Float_t
+#include <TArrayD.h>    // for TArrayD
+#include <TArrayF.h>    // for TArrayF
+#include <TArrayI.h>    // for TArrayI
+
 #include <memory>
+#include <string> // for string
 
 class tests_sparcontainer : public ::testing::Test
 {

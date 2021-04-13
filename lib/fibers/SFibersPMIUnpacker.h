@@ -14,13 +14,13 @@
 
 #include "sifi_export.h"
 
-#include "SLookup.h"
 #include "SUnpacker.h"
 
-#include <string>
+#include <cstddef>     // for size_t
+#include <cstdint>     // for uint16_t
+#include <sys/types.h> // for ulong
 
 class SCategory;
-class SFibersGeomPar;
 class SFibersLookupTable;
 
 class SIFI_EXPORT SFibersPMIUnpacker : public SUnpacker

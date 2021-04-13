@@ -13,7 +13,8 @@
 
 #include "SParContainer.h"
 
-#include <iostream>
+#include <cstdio> // for printf
+#include <memory> // for allocator
 
 /**
  * \class SFibersClusterFinderPar

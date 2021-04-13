@@ -16,9 +16,10 @@
 
 #include "SPar.h"
 
-#include <Rtypes.h>
+#include <RtypesCore.h> // for Float_t, UInt_t
 #include <TArrayF.h>
-#include <TArrayI.h>
+
+class SParContainer;
 
 class SIFI_EXPORT SFibersHitFinderPar : public SPar
 {

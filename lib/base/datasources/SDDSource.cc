@@ -12,8 +12,12 @@
 #include "SDDSource.h"
 #include "SUnpacker.h"
 
+#include <cstdint> // for uint16_t
+#include <cstdio>  // for printf
+#include <cstdlib> // for abort
 #include <iostream>
 #include <map>
+#include <utility> // for pair
 
 /**
  * Constructor. Requires subevent id for unpacked source.

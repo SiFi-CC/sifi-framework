@@ -14,14 +14,10 @@
 
 #include "sifi_export.h"
 
-#include <TArrayI.h>
-#include <TClonesArray.h>
-#include <TObject.h>
-#include <TString.h>
-
-#include <cstddef>
+#include <cstdint> // for uint16_t
 #include <map>
-#include <string>
+#include <sys/types.h> // for ulong
+#include <vector>      // for vector
 
 class SUnpacker;
 

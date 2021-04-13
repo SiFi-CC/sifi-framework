@@ -16,6 +16,7 @@
 #include "SProgressBar.h"
 #include "STaskManager.h"
 
+#include <RtypesCore.h> // for Int_t, Long64_t
 #include <TChain.h>
 #include <TFile.h>
 #include <TString.h>

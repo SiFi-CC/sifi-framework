@@ -12,8 +12,15 @@
 #include "SPMISource.h"
 #include "SUnpacker.h"
 
+#include <algorithm>          // for max, min
+#include <cmath>              // for fabs
+#include <cstdint>            // for uint16_t
+#include <cstdlib>            // for abort
+#include <ext/alloc_traits.h> // for __alloc_traits<>::value_type
 #include <iostream>
 #include <map>
+#include <utility> // for pair
+#include <vector>  // for vector
 
 /**
  * Constructor. Requires subevent id for unpacked source.

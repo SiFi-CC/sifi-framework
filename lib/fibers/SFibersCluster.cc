@@ -11,6 +11,8 @@
 
 #include "SFibersCluster.h"
 
+#include <cstdio> // for printf
+
 /**
  * \class SFibersCluster
 \ingroup lib_fibers

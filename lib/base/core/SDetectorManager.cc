@@ -9,11 +9,14 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#include <iostream>
-
 #include "SDetector.h"
 
 #include "SDetectorManager.h"
+
+#include <cstdio>  // for printf
+#include <cstdlib> // for exit, EXIT_FAILURE
+#include <iostream>
+#include <utility> // for pair
 
 /**
  * \class SDetectorManager

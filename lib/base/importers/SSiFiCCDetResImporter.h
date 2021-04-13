@@ -11,13 +11,13 @@
 #ifndef SSIFICCDETRESIMPORTER_H
 #define SSIFICCDETRESIMPORTER_H
 
-#include "SCategory.h"
-#include "SDRSource.h"
-#include "SLookup.h"
-#include "SUnpacker.h"
 #include "sifi_export.h"
 
-#include <string>
+#include "SUnpacker.h"
+
+#include <cstddef>     // for size_t
+#include <cstdint>     // for uint16_t
+#include <sys/types.h> // for ulong
 
 class SCategory;
 class SFibersGeomPar;

@@ -10,6 +10,9 @@
  *************************************************************************/
 
 #include "SGeantTrack.h"
+
+#include <cstdio> // for printf
+
 /**
  * \class SGeantTrack
 \ingroup lib_geant

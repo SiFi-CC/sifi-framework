@@ -16,12 +16,19 @@
 
 #include "SDatabase.h"
 
+#include <RtypesCore.h> // for Double_t, Float_t, Int_t
 #include <TArrayD.h>
 #include <TArrayF.h>
 #include <TArrayI.h>
 
+#include <cstddef> // for size_t
 #include <map>
+#include <string>  // for string, basic_string, operator<
+#include <utility> // for pair
 #include <vector>
+
+class SContainer;
+class SPar;
 
 typedef std::pair<std::string, std::vector<std::string>> TypeDataField;
 typedef std::map<std::string, TypeDataField> ParMap;

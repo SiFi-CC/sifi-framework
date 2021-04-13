@@ -9,12 +9,9 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#include <iostream>
-
-#include <TClass.h>
-#include <TClonesArray.h>
-
 #include "SLocator.h"
+
+#include <cstdio> // for printf, putchar
 
 /**
  * \class SLocator

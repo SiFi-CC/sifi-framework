@@ -16,13 +16,17 @@
 
 #include "SDatabase.h"
 
-#include <Rtypes.h>
-
 #include <cassert>
+#include <cstddef> // for size_t
 #include <cstdint>
+#include <ext/alloc_traits.h> // for __alloc_traits<>::value_type
 #include <memory>
+#include <string>      // for string
+#include <sys/types.h> // for uint
+#include <utility>     // for move
+#include <vector>      // for vector
 
-class SLookupTable;
+class SContainer;
 
 /**
  * Describes basic mapped address structure in the framework. Consist of three

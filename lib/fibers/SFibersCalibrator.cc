@@ -14,14 +14,15 @@
 #include "SCategory.h"
 #include "SDatabase.h"
 #include "SFibersCal.h"
-#include "SFibersCalibratorPar.h"
 #include "SFibersLookup.h"
 #include "SFibersRaw.h"
 #include "SLocator.h"
 #include "SiFi.h"
 
-#include "RtypesCore.h"
+#include <RtypesCore.h>
+#include <TObject.h> // for TObject
 
+#include <cmath> // for pow, exp
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>

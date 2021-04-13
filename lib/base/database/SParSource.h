@@ -33,11 +33,9 @@
 
 #include "sifi_export.h"
 
-#include "SContainer.h"
-
-#include <map>
-#include <memory>
 #include <string>
+
+class SContainer;
 
 class SIFI_EXPORT SParSource
 {

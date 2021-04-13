@@ -16,6 +16,9 @@
 
 #include "SDetector.h"
 
+#include <cstddef> // for size_t
+#include <string>  // for string
+
 class SIFI_EXPORT SFibersDetector : public SDetector
 {
 protected:

@@ -35,7 +35,11 @@
 
 #include "SParSource.h"
 
+#include <map>
+#include <memory>
 #include <string>
+
+class SContainer;
 
 class SIFI_EXPORT SParAsciiSource : public SParSource
 {

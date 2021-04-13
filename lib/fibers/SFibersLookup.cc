@@ -11,6 +11,9 @@
 
 #include "SFibersLookup.h"
 
+#include <cassert>    // for assert
+#include <inttypes.h> // for SCNu8
+
 /**
  * \class SFibersLookupTable
 \ingroup lib_fibers

@@ -32,5 +32,5 @@ the requested parameter containers exists.
 
 void SParSource::print() const
 {
-    printf("=== THIS Source has not print function implemented. ===\n");
+    std::cout << "=== THIS Source has not print function implemented. ===" << std::endl;
 }

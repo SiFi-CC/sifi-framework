@@ -1,8 +1,11 @@
-#include <gtest/gtest.h>
+#include "gtest/gtest_pred_impl.h" // for AssertionResult, ASSERT_FALSE
+#include <gtest/gtest-message.h>   // for Message
+#include <gtest/gtest-test-part.h> // for TestPartResult
 
 #include "SContainer.h"
 
-#include <ctime>
+#include <string>      // for string
+#include <sys/types.h> // for time_t
 
 TEST(tests_scontainer, valid_range_test)
 {

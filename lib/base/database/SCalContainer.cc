@@ -12,16 +12,20 @@
 #include "SCalContainer.h"
 
 #include "SContainer.h"
-#include "SDatabase.h"
 #include "SLookup.h"
 
-#include <iostream>
-#include <sstream>
-
+#include <algorithm> // for copy
 #include <cassert>
 #include <cstring>
-
 #include <experimental/iterator>
+#include <iostream>
+#include <iterator> // for begin, end
+#include <sstream>
+#include <stdint.h>    // for uint64_t
+#include <stdio.h>     // for printf, putchar
+#include <stdlib.h>    // for abort
+#include <type_traits> // for decay_t
+#include <utility>     // for pair
 
 /**
  * \class SCalContainer

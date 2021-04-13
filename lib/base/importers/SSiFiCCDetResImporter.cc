@@ -11,17 +11,23 @@
 
 #include "SSiFiCCDetResImporter.h"
 #include "SCategory.h"
+#include "SDRSource.h" // for TREE_all, TREE_Kine, TREE_Address, TREE_hit
 #include "SDatabase.h"
 #include "SFibersCalSim.h"
 #include "SFibersGeomPar.h"
-#include "SGeantFibersRaw.h"
 #include "SGeantTrack.h"
+#include "SLocator.h" // for SLocator
+#include "SPar.h"     // for SPar
 #include "SiFi.h"
 
-#include <algorithm>
+#include <RtypesCore.h> // for Float_t
+#include <TObject.h>    // for TObject
+#include <TVector3.h>   // for TVector3
+
+#include <cstdlib> // for exit, EXIT_FAILURE, size_t
 #include <iostream>
 #include <math.h>
-#include <numeric>
+#include <vector> // for vector
 
 const Float_t adc_to_mv = 4.096;
 const Float_t sample_to_ns = 1.;

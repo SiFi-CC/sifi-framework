@@ -9,9 +9,4 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#include <iostream>
-
-#include <TClass.h>
-#include <TClonesArray.h>
-
 #include "SUnpacker.h"

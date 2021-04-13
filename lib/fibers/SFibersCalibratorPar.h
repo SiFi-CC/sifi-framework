@@ -15,7 +15,7 @@
 #include "SCalContainer.h"
 #include "SFibersLookup.h"
 
-#include <Rtypes.h>
+struct SLookupChannel;
 
 class SFibersCalibratorPar : public SCalContainer<6>
 {

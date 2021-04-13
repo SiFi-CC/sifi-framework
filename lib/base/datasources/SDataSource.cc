@@ -12,8 +12,12 @@
 #include "SDataSource.h"
 #include "SUnpacker.h"
 
+#include <cstdint> // for uint16_t
+#include <cstdio>  // for printf
+#include <cstdlib> // for abort
 #include <iostream>
 #include <map>
+#include <utility> // for pair
 
 /**
  * Add an unpacker fo source

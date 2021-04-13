@@ -11,8 +11,6 @@
 
 #include "SFibersCalibratorPar.h"
 
-#include "SParContainer.h"
-
 /**
  * \class SFibersCalibratorPar
 \ingroup lib_fibers

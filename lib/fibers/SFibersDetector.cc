@@ -12,26 +12,23 @@
 #include "SFibersDetector.h"
 
 #include "SCalContainer.h"
-
-#include "SFibersCalibratorPar.h"
-#include "SFibersDDCalibratorPar.h"
-#include "SFibersDigitizerPar.h"
-#include "SFibersGeomPar.h"
-
+#include "SCategory.h" // for SCategory, SCategory::CatFibersCal
+#include "SDatabase.h" // for pm, SDatabase
 #include "SFibersCalibrator.h"
-#include "SFibersDigitizer.h"
-#include "SFibersUnpacker.h"
-
-#include "SFibersDDUnpackerPar.h"
-#include "SFibersHitFinder.h"
-#include "SFibersHitFinderPar.h"
-
+#include "SFibersCalibratorPar.h"
 #include "SFibersClusterFinder.h"
 #include "SFibersClusterFinderPar.h"
-
-#include "SCalContainer.h"
-
+#include "SFibersDDCalibratorPar.h"
+#include "SFibersDDUnpackerPar.h"
+#include "SFibersDigitizerPar.h"
+#include "SFibersGeomPar.h"
+#include "SFibersHitFinder.h"
+#include "SFibersHitFinderPar.h"
+#include "SFibersUnpacker.h"
+#include "SPar.h" // for SPar
 #include "SiFi.h"
+
+#include <memory> // for make_unique, allocator
 
 /**
  * \class SFibersDetector

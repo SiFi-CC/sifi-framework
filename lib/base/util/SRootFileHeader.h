@@ -12,15 +12,17 @@
 #ifndef SROOTFILEHEADER_H
 #define SROOTFILEHEADER_H
 
-#include "sifi_export.h"
-
 #include "SCategory.h"
 
-#include <TArrayI.h>
-#include <TMap.h>
+#include <Rtypes.h>  // for THashConsistencyHolder, ClassDef
+#include <TObject.h> // for TObject
 #include <TString.h>
 
 #include <map>
+
+class TBuffer;
+class TClass;
+class TMemberInspector;
 
 /**
  * \class SRootFileHeader

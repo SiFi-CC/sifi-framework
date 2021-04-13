@@ -2,12 +2,14 @@
 #ifndef SFIBERSHITFINDER_H
 #define SFIBERSHITFINDER_H
 
-#include "SCalContainer.h"
+#include "sifi_export.h"
+
 #include "STask.h"
 
 class SCategory;
 class SFibersGeomPar;
 class SFibersHitFinderPar;
+template <int N> class SIFI_EXPORT SCalContainer;
 
 class SFibersHitFinder : public STask
 {

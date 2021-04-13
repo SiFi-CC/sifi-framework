@@ -1,33 +1,15 @@
+// SiFi-Analysis framework includes
+
 // STL includes
-#include <chrono>
+#include <cstdlib> // for atoi
 #include <iostream>
-#include <list>
-#include <string.h>
-#include <time.h>
+#include <memory>  // for allocator_traits<>::value_type
+#include <string>  // for string, operator<<, basic_string
+#include <utility> // for pair
 #include <vector>
 
+#include <bits/getopt_core.h> // for optind, optarg
 #include <getopt.h>
-
-// root includes
-#include <TDatabasePDG.h>
-#include <TFile.h>
-#include <TH1.h>
-#include <TMath.h>
-#include <TTree.h>
-#include <TVector3.h>
-
-// SiFi-Analysis framework includes
-#include "SGeantFibersRaw.h"
-#include "SGeantTrack.h"
-
-#include "SDatabase.h"
-#include "SDetectorManager.h"
-#include "STaskManager.h"
-#include "SiFi.h"
-
-#include "SFibersDetector.h"
-
-#include "SProgressBar.h"
 
 /*
 int simdst(const std::string & file, int events = 1000)

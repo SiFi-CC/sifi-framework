@@ -1,6 +1,11 @@
-#include <gtest/gtest.h>
+#include <gtest/gtest-message.h>   // for Message
+#include <gtest/gtest-test-part.h> // for TestPartResult
+#include <gtest/gtest_pred_impl.h> // for SuiteApiResolver, ASSERT_EQ, ASSE...
 
 #include "SRunContainer.h"
+
+#include <ctime>  // for time, time_t
+#include <memory> // for allocator
 
 TEST(tests_database_run_container, basic_test)
 {

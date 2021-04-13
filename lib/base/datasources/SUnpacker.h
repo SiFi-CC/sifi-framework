@@ -12,16 +12,9 @@
 #ifndef SUNPACKER_H
 #define SUNPACKER_H
 
-#include "sifi_export.h"
-
 #include <cstddef>
-#include <map>
-#include <string>
-
-#include <TArrayI.h>
-#include <TClonesArray.h>
-#include <TObject.h>
-#include <TString.h>
+#include <cstdint>     // for uint16_t
+#include <sys/types.h> // for ulong
 
 /**
  * Abstract base class for unpacker. The interface contains of following

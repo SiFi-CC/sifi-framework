@@ -16,9 +16,9 @@
 
 #include "SPar.h"
 
-#include <Rtypes.h>
-#include <TArrayF.h>
-#include <TArrayI.h>
+#include <RtypesCore.h> // for Int_t
+
+class SParContainer;
 
 class SIFI_EXPORT SFibersClusterFinderPar : public SPar
 {

@@ -11,13 +11,18 @@
 
 #include "SFibersPMIUnpacker.h"
 #include "SCategory.h"
-#include "SFibersCal.h"
+#include "SDatabase.h" // for pm, SDatabase
 #include "SFibersLookup.h"
 #include "SFibersRaw.h"
+#include "SLocator.h" // for SLocator
+#include "SLookup.h"  // for SLookupChannel, SLookupTable
 #include "SPMISource.h"
 #include "SiFi.h"
 
+#include <TObject.h> // for TObject
+
 #include <iostream>
+#include <string> // for allocator
 
 /**
  * Constructor

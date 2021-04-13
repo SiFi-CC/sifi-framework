@@ -12,8 +12,10 @@
 #include <iostream>
 
 #include "SFibersGeomPar.h"
-
 #include "SParContainer.h"
+
+#include <cstdio> // for printf, putchar
+#include <memory> // for allocator
 
 /**
  * \class SFibersGeomPar

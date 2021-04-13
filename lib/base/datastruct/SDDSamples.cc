@@ -11,6 +11,8 @@
 
 #include "SDDSamples.h"
 
+#include <cstdio>  // for printf, size_t
+#include <cstring> // for memcpy, memset
 #include <iostream>
 
 /**

@@ -14,7 +14,8 @@
 
 #include "sifi_export.h"
 
-#include <vector>
+#include <map>    // for map
+#include <string> // for string
 
 class SDetector;
 

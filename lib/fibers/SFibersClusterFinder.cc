@@ -11,19 +11,28 @@
 
 #include "SFibersClusterFinder.h"
 #include "SCategory.h"
+#include "SDatabase.h" // for pm, SDatabase
 #include "SFibersCluster.h"
 #include "SFibersClusterFinderPar.h"
 #include "SFibersGeomPar.h"
 #include "SFibersHit.h"
 #include "SLocator.h"
-#include "SLookup.h"
+#include "SPar.h" // for SPar
 #include "SiFi.h"
 
 #include <RtypesCore.h>
+#include <TObject.h>  // for TObject
+#include <TVector3.h> // for TVector3, operator+, operator-
 
+#include <algorithm> // for max
+#include <cmath>
 #include <cstdio>
+#include <cstdlib> // for exit, EXIT_FAILURE
 #include <iostream>
-#include <math.h>
+#include <map>     // for _Rb_tree_iterator, map, operator!=
+#include <memory>  // for allocator_traits<>::value_type
+#include <utility> // for pair
+#include <vector>  // for vector
 
 /**
  * \class SFibersClusterFinder

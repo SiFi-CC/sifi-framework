@@ -17,13 +17,9 @@
 #include "SParSource.h"
 #include "SiFi.h"
 
-#include <algorithm>
-#include <cctype>
-#include <fstream>
+#include <cstdlib> // for exit, EXIT_FAILURE, abort
 #include <iostream>
-#include <iterator>
-#include <locale>
-#include <sstream>
+#include <utility> // for pair, make_pair, move
 
 /**
  * \class SDatabase
@@ -41,106 +37,6 @@ the requested parameter containers exists.
 
 // for trim functions see
 // https://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
-
-/**
- * Trim from start (in place)
- *
- * \param s string
- */
-static inline void ltrim(std::string& s)
-{
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch) { return !std::isspace(ch); }));
-}
-
-/**
- * Trim from end (in place)
- *
- * \param s string
- */
-static inline void rtrim(std::string& s)
-{
-    s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) { return !std::isspace(ch); }).base(),
-            s.end());
-}
-
-/**
- * Trim from both ends (in place)
- *
- * \param s string
- */
-void trim(std::string& s)
-{
-    ltrim(s);
-    rtrim(s);
-}
-
-/**
- * Trim from start (copying)
- *
- * \param s string
- * \return trimmed string
- */
-static inline std::string ltrim_copy(std::string s)
-{
-    ltrim(s);
-    return s;
-}
-
-/**
- * Trim from end (copying)
- *
- * \param s string
- * \return trimmed string
- */
-static inline std::string rtrim_copy(std::string s)
-{
-    rtrim(s);
-    return s;
-}
-
-/**
- * Trim from both ends (copying)
- *
- * \param s string
- * \return trimmed string
- */
-static inline std::string trim_copy(std::string s)
-{
-    trim(s);
-    return s;
-}
-
-/**
- * Remove all tabs (in place)
- *
- * \param s string
- */
-void simplify(std::string& s)
-{
-    size_t pos = 0;
-    while (1)
-    {
-        pos = s.find_first_of('\t', pos);
-        if (pos == s.npos) return;
-        s.replace(pos, 1, " ");
-    }
-}
-
-/**
- * Check if float.
- *
- * \sa Stackoverflow #447206
- *
- * \param str string
- * \return is float
- */
-bool isFloat(const std::string& str)
-{
-    std::istringstream iss(str);
-    float f;
-    iss >> std::noskipws >> f;
-    return iss.eof() && !iss.fail();
-}
 
 SDatabase* SDatabase::pm = nullptr;
 

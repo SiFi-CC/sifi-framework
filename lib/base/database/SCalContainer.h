@@ -14,15 +14,16 @@
 
 #include "sifi_export.h"
 
+#include "SDatabase.h"
 #include "SLookup.h"
 
-#include <TArrayD.h>
-#include <TArrayF.h>
-#include <TArrayI.h>
-
+#include <cstddef>
 #include <map>
-#include <unordered_map>
+#include <string>
+#include <sys/types.h>
 #include <vector>
+
+class SContainer;
 
 /**
  * Template that contains basic calibration parameters. Consist of a N-parameters array:

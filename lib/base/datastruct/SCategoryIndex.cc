@@ -9,14 +9,9 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#include <iostream>
-
-#include <TArrayI.h>
-#include <TBuffer.h>
-#include <TClass.h>
-#include <TClonesArray.h>
-
 #include "SCategoryIndex.h"
+
+#include <utility> // for pair
 
 /**
  * \class SCategoryIndex

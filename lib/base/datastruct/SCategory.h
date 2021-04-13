@@ -14,12 +14,21 @@
 
 #include "sifi_export.h"
 
-#include <TClonesArray.h>
-#include <TObject.h>
-
 #include "SCategoryHeader.h"
 #include "SCategoryIndex.h"
-#include "SLocator.h"
+
+#include <Rtypes.h>     // for THashConsistencyHolder, ClassDefOverride
+#include <RtypesCore.h> // for Int_t, Bool_t, kTRUE
+#include <TClonesArray.h>
+#include <TObject.h>
+#include <TString.h> // for TString
+
+#include <cstddef> // for size_t
+
+class SLocator;
+class TBuffer;
+class TClass;
+class TMemberInspector;
 
 class SIFI_EXPORT SCategory : public TObject
 {

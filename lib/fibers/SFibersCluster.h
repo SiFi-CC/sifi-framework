@@ -14,8 +14,17 @@
 
 #include "sifi_export.h"
 
+#include <Rtypes.h>     // for THashConsistencyHolder, ClassDef
+#include <RtypesCore.h> // for Int_t, Option_t
 #include <TObject.h>
 #include <TVector3.h>
+
+#include <algorithm> // for max
+#include <vector>    // for vector
+
+class TBuffer;
+class TClass;
+class TMemberInspector;
 
 class SIFI_EXPORT SFibersCluster : public TObject
 {

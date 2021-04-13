@@ -16,12 +16,8 @@
 
 #include "SDataSource.h"
 
-#include <TArrayI.h>
-#include <TClonesArray.h>
-#include <TObject.h>
-#include <TString.h>
-
 #include <cstddef>
+#include <cstdint> // for uint16_t, uint8_t
 #include <fstream>
 #include <string>
 

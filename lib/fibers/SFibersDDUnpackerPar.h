@@ -16,9 +16,11 @@
 
 #include "SPar.h"
 
-#include <Rtypes.h>
+#include <RtypesCore.h>
 #include <TArrayF.h>
 #include <TArrayI.h>
+
+class SParContainer;
 
 class SIFI_EXPORT SFibersDDUnpackerPar : public SPar
 {

@@ -1,4 +1,6 @@
-#include <gtest/gtest.h>
+#include <gtest/gtest-message.h>   // for Message
+#include <gtest/gtest-test-part.h> // for TestPartResult
+#include <gtest/gtest_pred_impl.h> // for SuiteApiResolver, ASSERT_EQ, ASSE...
 
 #include "SContainer.h"
 #include "SDatabase.h"
@@ -7,8 +9,10 @@
 
 #include <TFile.h>
 #include <TList.h>
+#include <TObject.h>
 #include <TSystem.h>
 
+#include <cstdlib> // for abort, size_t
 #include <memory>
 
 class tests_database_root_source : public ::testing::Test

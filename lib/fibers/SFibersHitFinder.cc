@@ -10,20 +10,29 @@
  *************************************************************************/
 
 #include "SFibersHitFinder.h"
+#include "SCalContainer.h" // for SCalPar, SCalContainer, SVirtualCal...
 #include "SCategory.h"
+#include "SDatabase.h"  // for pm, SDatabase
+#include "SFibersCal.h" // for SFibersCal
 #include "SFibersCalSim.h"
 #include "SFibersGeomPar.h"
+#include "SFibersHit.h" // for SFibersHit
 #include "SFibersHitFinderPar.h"
 #include "SFibersHitSim.h"
 #include "SLocator.h"
 #include "SLookup.h"
+#include "SPar.h" // for SPar
 #include "SiFi.h"
 
 #include <RtypesCore.h>
+#include <TObject.h>  // for TObject
+#include <TVector3.h> // for TVector3
 
 #include <cstdio>
+#include <cstdlib> // for exit, EXIT_FAILURE
 #include <iostream>
 #include <math.h>
+#include <memory> // for allocator
 
 /**
  * \class SFibersHitFinder

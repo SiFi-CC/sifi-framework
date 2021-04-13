@@ -14,12 +14,14 @@
 
 #include "sifi_export.h"
 
+#include <Rtypes.h>     // for THashConsistencyHolder, ClassDef
+#include <RtypesCore.h> // for Double_t, Float_t, Option_t
 #include <TLorentzVector.h>
-#include <TRandom2.h>
 #include <TVector3.h>
 
-#include <fstream>
-#include <string>
+class TBuffer;
+class TClass;
+class TMemberInspector;
 
 class SIFI_EXPORT SGeantTrack : public TLorentzVector
 {

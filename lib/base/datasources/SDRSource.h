@@ -12,24 +12,21 @@
 #ifndef SDRSOURCE_H
 #define SDRSOURCE_H
 
-#include "SiFiConfig.h"
 #include "sifi_export.h"
 
 #include "SFibersCalSim.h"
 #include "SGeantTrack.h"
 #include "SRootSource.h"
 
-#include <ComptonCameraHitClass.hh>
-
-#include <TClonesArray.h>
-#include <TObject.h>
-#include <TString.h>
+#include <RtypesCore.h> // for Float_t
 #include <TVector3.h>
 
-#include <cstddef>
-#include <fstream>
+#include <cstdint> // for uint16_t
+#include <map>     // for map
 #include <string>
+#include <vector> // for vector
 
+class TClonesArray;
 class DRSiFiCCSetup;
 class DRSiPMModel;
 class TChain;

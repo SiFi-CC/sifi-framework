@@ -11,9 +11,12 @@
 
 #include "SFibersUnpacker.h"
 #include "SCategory.h"
-#include "SDatabase.h"
 #include "SFibersRaw.h"
+#include "SLocator.h" // for SLocator
 #include "SiFi.h"
+
+#include <RtypesCore.h> // for Int_t, Float_t
+#include <TObject.h>    // for TObject
 
 #include <iostream>
 

@@ -1,40 +1,28 @@
-// STL includes
-#include <algorithm>
-#include <chrono>
-#include <iostream>
-#include <list>
-#include <memory>
-#include <string.h>
-#include <time.h>
-#include <vector>
-
-#include <getopt.h>
-
-// root includes
-#include <TDatabasePDG.h>
-#include <TFile.h>
-#include <TH1.h>
-#include <TMath.h>
-#include <TTree.h>
-#include <TVector3.h>
-
 // SiFi-Analysis framework includes
-#include "SGeantFibersRaw.h"
-#include "SGeantTrack.h"
-
+#include "SCategory.h" // for SCategory, SCategory::CatFibersCal
+#include "SDRSource.h"
 #include "SDatabase.h"
 #include "SDetectorManager.h"
+#include "SFibersDetector.h"
+#include "SFibersLookup.h"
+#include "SLookup.h" // for SLookupTable
+#include "SParAsciiSource.h"
+#include "SSiFiCCDetResImporter.h"
 #include "STaskManager.h"
 #include "SiFi.h"
 
-#include "SDRSource.h"
+// root includes
+#include <TTree.h>
 
-#include "SFibersDDUnpacker.h"
-#include "SFibersDetector.h"
-#include "SFibersLookup.h"
-#include "SParAsciiSource.h"
-#include "SProgressBar.h"
-#include "SSiFiCCDetResImporter.h"
+// STL includes
+#include <bits/getopt_core.h> // for optarg, optind
+#include <cstdint>            // for uint16_t
+#include <cstdlib>            // for atoi
+#include <iostream>
+#include <memory>
+#include <string>
+
+#include <getopt.h>
 
 int main(int argc, char** argv)
 {

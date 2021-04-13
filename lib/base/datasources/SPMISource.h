@@ -16,13 +16,12 @@
 
 #include "SDataSource.h"
 
-#include <TArrayI.h>
-#include <TClonesArray.h>
-#include <TObject.h>
-#include <TString.h>
+#include <RtypesCore.h> // for Double_t, Int_t
 
-#include <cstddef>
+#include <cstdint> // for uint16_t
+#include <cstdio>  // for printf
 #include <fstream>
+#include <memory> // for shared_ptr
 #include <string>
 
 struct PMIHit

@@ -14,6 +14,8 @@
 
 #include "SPar.h"
 
+class SParContainer;
+
 class SFibersDigitizerPar : public SPar
 {
 protected:

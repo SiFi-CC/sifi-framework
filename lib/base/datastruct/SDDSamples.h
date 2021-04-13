@@ -14,7 +14,15 @@
 
 #include "sifi_export.h"
 
+#include <Rtypes.h>     // for THashConsistencyHolder, ClassDef
+#include <RtypesCore.h> // for Float_t, Int_t, Option_t
 #include <TObject.h>
+
+#include <cstddef> // for size_t
+
+class TBuffer;
+class TClass;
+class TMemberInspector;
 
 /**
  * Set of functions used in the analysis by Katarzyna Rusiecka. Imported here

@@ -17,13 +17,8 @@
 #include "SUnpacker.h"
 
 #include <cstddef>
-#include <fstream>
-#include <string>
-
-#include <TArrayI.h>
-#include <TClonesArray.h>
-#include <TObject.h>
-#include <TString.h>
+#include <cstdint>     // for uint16_t
+#include <sys/types.h> // for ulong
 
 /**
  * Unpacker for Desktop Digitizer data. It is a abstract base class which must

@@ -9,19 +9,19 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#include "SFibersDigitizerPar.h"
-
-#include "SParContainer.h"
-
 /**
  * \class SFibersDigitizerPar
-\ingroup lib_fibers
+ \ i*ngroup lib_fibers
 
-A container for Fibers Stack Digitizer parameters
+ A container for Fibers Stack Digitizer parameters
 
-\sa SPar
+ \sa SPar
 
-*/
+ */
+
+#include "SFibersDigitizerPar.h"
+
+class SParContainer;
 
 /**
  * Get parameters

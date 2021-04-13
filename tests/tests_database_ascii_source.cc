@@ -1,15 +1,21 @@
-#include <gtest/gtest.h>
+#include <gtest/gtest-message.h>   // for Message
+#include <gtest/gtest-test-part.h> // for TestPartResult
+#include <gtest/gtest_pred_impl.h> // for SuiteApiResolver, ASSERT_EQ, ASSE...
+#include <tests/tests_config.h>
 
-#include "tests/tests_config.h"
-
+#include "SCalContainer.h"
 #include "SContainer.h"
 #include "SDatabase.h"
 #include "SFibersCalibratorPar.h"
 #include "SFibersGeomPar.h"
 #include "SFibersLookup.h"
 #include "SLookup.h"
+#include "SPar.h"
 #include "SParAsciiSource.h"
 #include "SiFi.h"
+
+#include <memory> // for allocator, make_unique
+#include <string> // for operator+, string
 
 class tests_database_ascii_source : public ::testing::Test
 {

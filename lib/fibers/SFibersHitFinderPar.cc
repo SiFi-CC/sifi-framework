@@ -13,7 +13,9 @@
 
 #include "SParContainer.h"
 
+#include <cstdio> // for printf
 #include <iostream>
+#include <memory> // for allocator
 
 /**
  * \class SFibersHitFinderPar

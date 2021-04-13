@@ -10,6 +10,7 @@
  *************************************************************************/
 
 #include "SFibersDDUnpacker.h"
+#include "SCalContainer.h" // for SCalPar, SVirtualCalContainer
 #include "SCategory.h"
 #include "SDDSamples.h"
 #include "SDatabase.h"
@@ -17,11 +18,22 @@
 #include "SFibersDDUnpackerPar.h"
 #include "SFibersLookup.h"
 #include "SFibersRaw.h"
+#include "SLocator.h" // for SLocator
+#include "SLookup.h"  // for SLookupChannel, SLookupTable
+#include "SPar.h"     // for SPar
 #include "SiFi.h"
 
+#include <RtypesCore.h> // for Float_t, Int_t
+#include <TObject.h>    // for TObject
+
 #include <algorithm>
+#include <cstdlib> // for size_t, exit, EXIT_FAILURE
+#include <cstring> // for memcpy
 #include <iostream>
+#include <math.h> // for fabs, sqrt
 #include <numeric>
+#include <string>      // for allocator
+#include <sys/types.h> // for uint
 
 /**
  * \class SFibersDDUnpacker

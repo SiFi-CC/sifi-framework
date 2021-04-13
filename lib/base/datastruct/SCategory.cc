@@ -10,13 +10,14 @@
  *************************************************************************/
 
 #include "SCategory.h"
-#include "SiFi.h"
 
-#include <TBuffer.h>
-#include <TClass.h>
+#include "SLocator.h" // for SLocator
+
+#include <TArrayI.h> // for TArrayI
 #include <TClonesArray.h>
 
-#include <cstring>
+#include <cassert> // for assert
+#include <cstdio>  // for printf
 #include <iostream>
 
 /**

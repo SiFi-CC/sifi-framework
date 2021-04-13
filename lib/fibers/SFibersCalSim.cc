@@ -11,6 +11,8 @@
 
 #include "SFibersCalSim.h"
 
+#include <cstdio> // for printf
+
 /**
  * \class SFibersCalSim
 \ingroup lib_fibers

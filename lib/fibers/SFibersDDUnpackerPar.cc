@@ -13,7 +13,10 @@
 
 #include "SParContainer.h"
 
+#include <cstdio>  // for printf
+#include <cstdlib> // for exit, abort, EXIT_FAILURE
 #include <iostream>
+#include <memory> // for allocator
 
 /**
  * \class SFibersDDUnpackerPar

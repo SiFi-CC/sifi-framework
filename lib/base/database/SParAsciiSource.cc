@@ -10,20 +10,15 @@
  *************************************************************************/
 
 #include "SParAsciiSource.h"
-#include "SCalContainer.h"
 #include "SContainer.h"
-#include "SLookup.h"
-#include "SPar.h"
-#include "SParContainer.h"
+#include "SHelperFunctions.h"
 
 #include <algorithm>
-#include <cctype>
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
-#include <iterator>
-#include <locale>
-#include <memory>
-#include <sstream>
+#include <utility>
+#include <vector>
 
 /**
  * \class SParAsciiSource
@@ -94,8 +89,8 @@ bool SParAsciiSource::parseSource()
         ifs.getline(cbuff, length);
 
         std::string str(cbuff);
-        trim(str);
-        simplify(str);
+        SHelperFunctions::trim(str);
+        SHelperFunctions::simplify(str);
 
         size_t pos = 0;
 

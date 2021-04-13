@@ -10,12 +10,13 @@
  *************************************************************************/
 
 #include "SEvent.h"
+
 #include "SiFi.h"
 
 #include <TObjArray.h>
 
-#include <iostream>
-#include <map>
+#include <cstddef>     // for size_t
+#include <sys/types.h> // for uint
 
 /**
  * Constructor. Initializes array of objects, The array has doubel size of the

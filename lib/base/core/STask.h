@@ -12,8 +12,6 @@
 #ifndef STASK_H
 #define STASK_H
 
-#include "sifi_export.h"
-
 class STask
 {
 public:

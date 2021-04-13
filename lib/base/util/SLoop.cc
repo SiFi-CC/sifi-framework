@@ -11,17 +11,24 @@
 
 #include "SLoop.h"
 #include "SEvent.h"
-#include "SProgressBar.h"
 #include "SRootFileHeader.h"
 #include "SiFi.h"
 
 #include <TChain.h>
 #include <TFile.h>
+#include <TObjArray.h> // for TObjArray
+#include <TString.h>   // for Form, TString
 #include <TSystem.h>
+#include <TTree.h> // for TTree
 
 #include <cstdio>
+#include <cstdlib> // for abort
+#include <cstring> // for memset
 #include <iostream>
 #include <map>
+#include <utility> // for pair
+
+class TBranch;
 
 /**
  * \class SLoop

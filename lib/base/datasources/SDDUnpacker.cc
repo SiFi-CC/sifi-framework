@@ -9,12 +9,10 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#include <iostream>
-
-#include <TClass.h>
-#include <TClonesArray.h>
-
 #include "SDDUnpacker.h"
+
+#include <cstdlib> // for abort
+#include <iostream>
 
 bool SDDUnpacker::save_samples = false;
 

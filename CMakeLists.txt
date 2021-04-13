@@ -89,8 +89,7 @@ include(formatting)
 include(tools)
 
 clang_format(format ${ALL_SOURCES})
-include_what_you_use(-Xiwyu)
-#message(WARNING "ALL sources: ${ALL_SOURCES} FIXME")
+include_what_you_use("-Xiwyu;any;-Xiwyu;iwyu;-Xiwyu;args")
 
 option(ROOT_DOC_XREF "Root Cross-reference in doc" OFF)
 

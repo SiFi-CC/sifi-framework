@@ -11,16 +11,35 @@
 
 #include "SParRootSource.h"
 
+#include "SContainer.h"
+
+#include <TClass.h>      // for TClass
+#include <TCollection.h> // for TIter
+#include <TDirectory.h>  // for TDirectory, gDirectory
 #include <TFile.h>
-#include <TH1.h>
 #include <TKey.h>
 #include <TList.h>
+#include <TObject.h> // for TObject
 
-#include <algorithm>
+#include "tabulate/cell.hpp"           // for Cell
+#include "tabulate/color.hpp"          // for Color, Color::red, Color::yellow
+#include "tabulate/column.hpp"         // for Column, ColumnFormat::font_align
+#include "tabulate/column_format.hpp"  // for ColumnFormat
+#include "tabulate/font_align.hpp"     // for FontAlign, FontAlign::center
+#include "tabulate/font_style.hpp"     // for FontStyle, FontStyle::bold
+#include "tabulate/format.hpp"         // for Format
+#include "tabulate/row.hpp"            // for Row
+#include "tabulate/table_internal.hpp" // for Cell::format
+
+#include <cstring> // for strcmp
 #include <ctime>
-#include <functional>
+#include <cxxabi.h> // for __forced_unwind
 #include <iomanip>
 #include <iostream>
+#include <map>
+#include <string>
+#include <utility> // for pair
+#include <variant> // for variant
 
 /**
  * \class SParRootSource

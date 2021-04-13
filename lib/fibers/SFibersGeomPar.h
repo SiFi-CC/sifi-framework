@@ -14,10 +14,13 @@
 
 #include "sifi_export.h"
 
+#include "SPar.h"
+
+#include <RtypesCore.h> // for Int_t, Float_t
 #include <TArrayF.h>
 #include <TArrayI.h>
 
-#include "SPar.h"
+class SParContainer;
 
 class SIFI_EXPORT SFibersGeomPar : public SPar
 {

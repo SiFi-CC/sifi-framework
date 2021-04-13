@@ -9,17 +9,6 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#include "SFibersDigitizer.h"
-#include "SCategory.h"
-#include "SDatabase.h"
-#include "SFibersCalSim.h"
-#include "SFibersDigitizerPar.h"
-#include "SFibersGeomPar.h"
-#include "SGeantFibersRaw.h"
-#include "SiFi.h"
-
-#include <iostream>
-
 /**
  * \class SFibersDigitizer
 \ingroup lib_fibers
@@ -28,6 +17,25 @@ A digitizer task.
 
 \sa STask
 */
+
+#include "SFibersDigitizer.h"
+#include "SCategory.h"
+#include "SDatabase.h"
+#include "SFibersCalSim.h"
+#include "SFibersGeomPar.h"
+#include "SGeantFibersRaw.h"
+#include "SLocator.h" // for SLocator
+#include "SPar.h"     // for SPar
+#include "SiFi.h"
+
+#include <TObject.h> // for TObject
+
+#include <algorithm>          // for max
+#include <cstdio>             // for printf
+#include <cstdlib>            // for exit, EXIT_FAILURE
+#include <ext/alloc_traits.h> // for __alloc_traits<>::value_type
+#include <iostream>
+#include <memory> // for allocator_traits<>::value_type
 
 /**
  * Constructor

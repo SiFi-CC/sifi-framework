@@ -16,14 +16,10 @@
 
 #include "SLookup.h"
 
-#include <cassert>
 #include <cstdio>
+#include <memory> // for make_unique, unique_ptr
 #include <stdint.h>
-
-#include <inttypes.h>
-
-struct SLookupChannel;
-class SLookupTable;
+#include <sys/types.h> // for uint
 
 /**
  * Extends the SLookupChannel. In addiotion to `m`, `l`, and `s` adds #side

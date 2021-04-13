@@ -14,10 +14,17 @@
 #include "SFibersDDUnpacker.h"
 #include "SUnpacker.h"
 
+#include <RtypesCore.h> // for Int_t
+
+#include <algorithm> // for max
+#include <cstdint>   // for uint16_t
+#include <cstdio>    // for printf
+#include <cstdlib>   // for abort
 #include <iostream>
 #include <map>
 #include <sstream>
 #include <string>
+#include <utility> // for pair
 #include <vector>
 
 /**

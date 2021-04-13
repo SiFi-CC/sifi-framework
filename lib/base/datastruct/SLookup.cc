@@ -13,8 +13,8 @@
 #include "SLookup.h"
 
 #include "SContainer.h"
-#include "SDatabase.h"
 
+#include <algorithm> // for max
 #include <cassert>
 #include <cstdio>
 #include <iostream>

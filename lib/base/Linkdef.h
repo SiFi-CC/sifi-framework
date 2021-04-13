@@ -32,6 +32,7 @@
 #pragma link C++ class SContainer+;
 #pragma link C++ class SParSource+;
 #pragma link C++ class SParAsciiSource+;
+#pragma link C++ class SParDatabaseSource+;
 #pragma link C++ class SParRootSource+;
 
 // util

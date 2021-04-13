@@ -14,14 +14,14 @@
 
 #include "sifi_export.h"
 
-#include <cstddef>
-#include <map>
-#include <string>
+#include <Rtypes.h> // for THashConsistencyHolder, ClassDef
 
-#include <TArrayI.h>
-#include <TClonesArray.h>
-#include <TObject.h>
-#include <TString.h>
+#include <cstddef>
+#include <vector> // for vector
+
+class TBuffer;
+class TClass;
+class TMemberInspector;
 
 class SIFI_EXPORT SLocator
 {

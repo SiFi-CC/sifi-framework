@@ -15,12 +15,11 @@
 #include "sifi_export.h"
 
 #include "SDDUnpacker.h"
-#include "SLookup.h"
 
-#include <string>
+#include <cstddef> // for size_t
+#include <cstdint> // for uint16_t
 
 class SCategory;
-class SFibersGeomPar;
 class SFibersDDUnpackerPar;
 class SFibersDDCalibratorPar;
 class SFibersLookupTable;

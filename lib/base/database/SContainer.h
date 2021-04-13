@@ -14,11 +14,16 @@
 
 #include "sifi_export.h"
 
-#include "SLookup.h"
-
+#include <Rtypes.h> // for THashConsistencyHolder, ClassDef
 #include <TObject.h>
 
 #include <ctime>
+#include <string> // for string, basic_string
+#include <vector> // for vector
+
+class TBuffer;
+class TClass;
+class TMemberInspector;
 
 struct validity_range_t
 {

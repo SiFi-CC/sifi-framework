@@ -10,10 +10,15 @@
  *************************************************************************/
 
 #include "SFileSource.h"
+
 #include "SUnpacker.h"
 
+#include <cstdint> // for uint16_t
+#include <cstdio>  // for printf
+#include <cstdlib> // for abort
 #include <iostream>
 #include <map>
+#include <utility> // for pair
 
 SFileSource::SFileSource() : SDataSource(), subevent(0x0000), input(), istream(), buffer_size(0) {}
 

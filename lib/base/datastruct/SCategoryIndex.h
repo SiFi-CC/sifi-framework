@@ -12,11 +12,16 @@
 #ifndef SCATEGORYINDEX_H
 #define SCATEGORYINDEX_H
 
-#include "sifi_export.h"
-
+#include <Rtypes.h>     // for THashConsistencyHolder, ClassDefOverride
+#include <RtypesCore.h> // for Int_t, Bool_t
 #include <TObject.h>
 
+#include <cstddef> // for size_t
 #include <map>
+
+class TBuffer;
+class TClass;
+class TMemberInspector;
 
 class SCategoryIndex : public TObject
 {

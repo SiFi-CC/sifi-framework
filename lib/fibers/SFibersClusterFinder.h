@@ -2,7 +2,6 @@
 #ifndef SFIBERSCLUSTERFINDER_H
 #define SFIBERSCLUSTERFINDER_H
 
-#include "SCalContainer.h"
 #include "STask.h"
 
 class SCategory;

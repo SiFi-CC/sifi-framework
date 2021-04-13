@@ -16,7 +16,13 @@
 
 #include "SCategory.h"
 
+#include <RtypesCore.h> // for Int_t, Long64_t
+
+#include <cstddef> // for size_t
 #include <initializer_list>
+#include <string>      // for string
+#include <sys/types.h> // for ulong
+#include <vector>      // for vector
 
 class SEvent;
 class SRootFileHeader;

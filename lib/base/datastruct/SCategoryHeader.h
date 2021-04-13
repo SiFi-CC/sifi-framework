@@ -12,11 +12,15 @@
 #ifndef SCATEGORYHEADER_H
 #define SCATEGORYHEADER_H
 
-#include "sifi_export.h"
-
+#include <Rtypes.h>     // for THashConsistencyHolder, ClassDefOverride
+#include <RtypesCore.h> // for Bool_t, UInt_t, ULong_t
 #include <TArrayI.h>
 #include <TObject.h>
 #include <TString.h>
+
+class TBuffer;
+class TClass;
+class TMemberInspector;
 
 /**
  * \class SCategoryHeader

@@ -11,6 +11,8 @@
 
 #include "SContainer.h"
 
+#include <stdio.h> // for printf
+
 /**
  * Print container content.
  */

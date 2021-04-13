@@ -11,6 +11,8 @@
 
 #include "SFibersHitSim.h"
 
+#include <cstdio> // for printf
+
 /**
  * \class SFibersHitSim
 \ingroup lib_fibers

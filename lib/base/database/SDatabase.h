@@ -33,22 +33,21 @@
 
 #include "sifi_export.h"
 
-#include <iostream>
+#include <algorithm> // for max
 #include <map>
 #include <memory>
+#include <string> // for string
 #include <vector>
 
 class SPar;
 class SParSource;
-class SParAsciiSource;
 class SParContainer;
 class SVirtualCalContainer;
 class SLookupTable;
-struct SContainer;
 
-void trim(std::string& s);
-void simplify(std::string& s);
-bool isFloat(const std::string& str);
+// void trim(std::string& s);
+// void simplify(std::string& s);
+// bool isFloat(const std::string& str);
 
 class SIFI_EXPORT SDatabase
 {

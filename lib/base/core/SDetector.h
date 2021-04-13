@@ -14,14 +14,17 @@
 
 #include "sifi_export.h"
 
-#include "SDatabase.h"
-#include "STaskManager.h"
 #include "SiFi.h"
 
 #include <string>
 
+#include <Rtypes.h>     // for THashConsistencyHolder, ClassDef
+#include <RtypesCore.h> // for UInt_t, Int_t
 #include <TNamed.h>
 
+class TBuffer;
+class TClass;
+class TMemberInspector;
 class STask;
 
 class SIFI_EXPORT SDetector : public TNamed

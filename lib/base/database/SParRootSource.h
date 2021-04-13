@@ -35,7 +35,11 @@
 
 #include "SParSource.h"
 
+#include <map>
 #include <string>
+
+class SContainer;
+struct validity_range_t;
 
 class SIFI_EXPORT SParRootSource : public SParSource
 {

@@ -10,6 +10,7 @@
  *************************************************************************/
 
 #include "SDRSource.h"
+
 #include "SSiFiCCDetResImporter.h"
 #include "SUnpacker.h"
 
@@ -17,9 +18,17 @@
 #include <DR_CCSetup.hh>
 
 #include <TChain.h>
+#include <TClonesArray.h> // for TClonesArray
 
+#include <algorithm> // for max
+#include <cstddef>   // for size_t
+#include <cstdint>   // for uint16_t
+#include <cstdio>    // for printf
+#include <cstdlib>   // for abort
+#include <fstream>   // for basic_ostream::operator<<, operat...
 #include <iostream>
 #include <map>
+#include <utility> // for pair
 
 /**
  * Constructor. Requires subevent id for unpacked source.

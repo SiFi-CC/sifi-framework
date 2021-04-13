@@ -12,12 +12,14 @@
 #ifndef SEVENT_H
 #define SEVENT_H
 
-#include "sifi_export.h"
-
 #include "SCategory.h"
 
+#include <Rtypes.h> // for THashConsistencyHolder, ClassDef
 #include <TObject.h>
 
+class TBuffer;
+class TClass;
+class TMemberInspector;
 class TObjArray;
 
 /**
