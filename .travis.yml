@@ -2,24 +2,21 @@ language: cpp
 compiler: gcc
 os: linux
 dist: focal
-services:
-  - docker
 
 env:
   global:
     - MAKEFLAGS="-j 2"
 
-before_install:
-  - docker pull rootproject/root:6.22.06-conda
-    docker run rootproject/root:6.22.06-conda
-  - root-config --cflags
-  - root-config --features
-
 before_script:
   - sudo apt-get update
-  - sudo apt-get install -y libcppunit-dev cmake lcov
+  - sudo apt-get install -y libgtest-dev cmake lcov python3-numpy libtbb-dev libxxhash0
+  - wget gccb.if.uj.edu.pl/code/root-cpp17_6.22.08_amd64.deb
+  - sudo dpkg -i root-cpp17_6.22.08_amd64.deb
+  - . /etc/profile
+  - root-config --cflags
+  - root-config --features
   - mkdir build
-  - cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS='--std=c++17'
+  - cmake -S . -B build -DBUILD_TESTS=On -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS='--std=c++17'
 
 script:
   - cmake --build build --config Release
