@@ -33,9 +33,11 @@
 
 #include "sifi_export.h"
 
+#include "SMysqlInterface.h"
 #include "SParSource.h"
 
 #include <map>
+#include <memory>
 #include <string>
 
 class SContainer;
@@ -48,6 +50,7 @@ public:
     virtual ~SParDatabaseSource() = default;
 
     virtual SContainer* getContainer(const std::string& name, long runid) override;
+    virtual bool setContainer(const std::string& name, SContainer&& cont);
 
     void print() const override;
 
@@ -59,6 +62,8 @@ private:
         containers;                                    ///< Containers mirrors
     std::map<std::string, SContainer*> last_container; ///< Last used container, for caching purpose
     std::string source;                                ///< DATABASE file name
+
+    std::unique_ptr<SMysqlInterface> mysqlcon;
 };
 
 #endif /* SParDatabaseSource_H */

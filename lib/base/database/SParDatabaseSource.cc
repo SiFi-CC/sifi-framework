@@ -73,7 +73,11 @@ SContainer) -> int`
  *
  * \param source ascii source file name
  */
-SParDatabaseSource::SParDatabaseSource() : SParSource() { parseSource(); }
+SParDatabaseSource::SParDatabaseSource() : SParSource()
+{
+    mysqlcon = std::make_unique<SMysqlInterface>("http://localhost", 1234);
+    parseSource();
+}
 
 /**
  * Parse source file. Implemented based on hadd.C from ROOT.
@@ -91,6 +95,8 @@ SContainer* SParDatabaseSource::getContainer(const std::string& name, long runid
 
     // DB call
     // DBOBJECT->getContainer(release, name, runid);
+    mysqlcon->setParamRelease(release);
+    mysqlcon->getContainer(name, runid);
 
     // check if container is in the source at all
     auto it = containers.find(name);
@@ -116,6 +122,19 @@ SContainer* SParDatabaseSource::getContainer(const std::string& name, long runid
     }
 
     return nullptr;
+}
+
+bool SParDatabaseSource::setContainer(const std::string& name, SContainer&& cont)
+{
+    // check if same release
+    std::string_view release = SDatabase::instance()->getRelease();
+    // TODO if release has name, then check whether it matches the one from file
+    // if (!release.empty() and release != this_release_from_file) return 0;
+
+    // DB call
+    // DBOBJECT->getContainer(release, name, runid);
+    mysqlcon->setParamRelease(release);
+    return mysqlcon->addContainer(std::move(name), std::move(cont));
 }
 
 #include "tabulate/table.hpp"
