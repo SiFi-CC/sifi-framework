@@ -142,7 +142,7 @@ struct MultiView
     void DestroyEventRhoZ() { fRhoZEventScene->DestroyElements(); }
 };
 
-#include "SCategoryManager.h"
+//#include "SCategoryManager.h"
 #include "SDetectorManager.h"
 #include "SFibersCalSim.h"
 #include "SFibersDetector.h"

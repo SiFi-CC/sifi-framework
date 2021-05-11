@@ -12,6 +12,7 @@
 #include "SParRootSource.h"
 
 #include "SContainer.h"
+#include "SDatabase.h"
 
 #include <TClass.h>      // for TClass
 #include <TCollection.h> // for TIter
@@ -38,6 +39,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <string_view>
 #include <utility> // for pair
 #include <variant> // for variant
 
@@ -130,6 +132,11 @@ bool SParRootSource::parseSource()
 
 SContainer* SParRootSource::getContainer(const std::string& name, long runid)
 {
+    // check if same release
+    std::string_view release = SDatabase::instance()->getRelease();
+    // TODO if release has name, then check whether it matches the one from file
+    // if (!release.empty() and release != this_release_from_file) return 0;
+
     // check if container is in the source at all
     auto it = containers.find(name);
     if (it == containers.end()) { return nullptr; }

@@ -60,6 +60,8 @@ protected:
 
     static SDatabase* pm; ///< Instance of the SDatabase
 
+    std::string_view release; ///< stores parameters release name
+
 private:
     // constructors
     SDatabase() = default;
@@ -92,6 +94,13 @@ public:
 
     bool addCalContainer(const std::string& name, std::unique_ptr<SVirtualCalContainer>&& cal);
     SVirtualCalContainer* getCalContainer(const std::string& name);
+
+    /// Set release value.
+    /// \param r release name
+    void setRelease(std::string_view r) { release = r; }
+    /// Get release value.
+    /// \return release value
+    std::string_view getRelease() const { return release; }
 
     void print() const;
 

@@ -12,6 +12,7 @@
 #include "SParDatabaseSource.h"
 
 #include "SContainer.h"
+#include "SDatabase.h"
 
 #include "tabulate/cell.hpp"           // for Cell
 #include "tabulate/color.hpp"          // for Color, Color::red, Color::yellow
@@ -27,6 +28,7 @@
 #include <cxxabi.h> // for __forced_unwind
 #include <iomanip>
 #include <iostream>
+#include <string_view>
 #include <utility> // for pair
 #include <variant> // for variant
 
@@ -82,6 +84,14 @@ bool SParDatabaseSource::parseSource() { return true; }
 
 SContainer* SParDatabaseSource::getContainer(const std::string& name, long runid)
 {
+    // check if same release
+    std::string_view release = SDatabase::instance()->getRelease();
+    // TODO if release has name, then check whether it matches the one from file
+    // if (!release.empty() and release != this_release_from_file) return 0;
+
+    // DB call
+    // DBOBJECT->getContainer(release, name, runid);
+
     // check if container is in the source at all
     auto it = containers.find(name);
     if (it == containers.end()) { return nullptr; }

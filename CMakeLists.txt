@@ -2,7 +2,7 @@
 # Setup the project
 cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
 project(SiFi
-    VERSION 0.1.0
+    VERSION 0.1.1
     LANGUAGES CXX
 )
 
@@ -150,7 +150,7 @@ configure_file(SiFiConfig.h.in SiFiConfig.h)
 
 option(BUILD_PYTHON_WRAPPER "Build python wrapper" OFF)
 if(BUILD_PYTHON_WRAPPER)
-add_subdirectory(python)
+    add_subdirectory(python)
 endif()
 
 uninstall_target()
