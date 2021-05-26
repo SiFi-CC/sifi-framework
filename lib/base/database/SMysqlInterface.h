@@ -33,12 +33,13 @@
 
 #include "sifi_export.h"
 
-#include "SRunContainer.h"
 #include "SContainer.h"
+#include "SRunContainer.h"
 
 #include <algorithm> // for max
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -48,37 +49,34 @@ class SIFI_EXPORT SMysqlInterface
 public:
     // constructors
     SMysqlInterface() = delete;
-    SMysqlInterface(std::string_view server, int port) {}; // adjust connection to reqiuirements, add other constructors if needed, like via socket or so
+    SMysqlInterface(std::string_view server,
+                    int port){}; // adjust connection to reqiuirements, add other constructors if
+                                 // needed, like via socket or so
     SMysqlInterface(SMysqlInterface const&) = delete;
 
     SMysqlInterface& operator=(SMysqlInterface const&) = delete;
 
 public:
     // destructor
-    virtual ~SMysqlInterface() {};
+    virtual ~SMysqlInterface() = default;
 
     /// Call this after conenction to select which param release we are about to work on
     /// Maych change between different calls to database
     void setParamRelease(std::string_view release) { param_release = release; }
 
     // Implement these
-    auto getRunContainer(long runid) -> SRunContainer;
+    auto getRunContainer(long runid) -> std::optional<SRunContainer>;
     auto getRunContainers(long runid_min, long runid_max) -> TObjArray;
-    void addRunContainer(SRunContainer && runcont);
+    void addRunContainer(SRunContainer&& runcont);
 
-    // get containers for given runid
-    auto getContainer(std::string_view && name, long runid) -> SContainer {};
-    // get containers for given runid from min to the latest available for given release
-    auto getContainers(std::string_view && name, long runid_min) -> std::vector<SContainer> {};
-    // get containers between min (weak) and max (strong)
-    auto getContainers(std::string_view && name, long runid_min, long runid_max) -> std::vector<SContainer> {};
-
-    /// Add new container to the database, by name. It must be later validated via web interface.
-    /// \return success of the operation
-    bool addContainer(std::string_view && name, SContainer && cont) {};
+    auto getContainer(std::string_view&& name, long runid) -> std::optional<SContainer>;
+    auto getContainers(std::string_view&& name, long runid_min) -> std::vector<SContainer>;
+    auto getContainers(std::string_view&& name, long runid_min, long runid_max)
+        -> std::vector<SContainer>;
+    bool addContainer(std::string_view&& name, SContainer&& cont);
 
 private:
-    std::string_view param_release;
+    std::string param_release;
 };
 
 #endif /* SMYSQLINTERFACE_H */

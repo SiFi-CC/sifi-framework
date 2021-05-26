@@ -15,7 +15,7 @@
 
 /**
  * Print container content.
- * 
+ *
  * \param name name to display
  */
 void SContainer::print(std::string name) const

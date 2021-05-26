@@ -63,7 +63,7 @@ protected:
     virtual bool decode(uint16_t subevent, float* data, size_t length) = 0;
 
 protected:
-    static bool save_samples;   ///< if set to true, samples are saved to the tree
+    static bool save_samples; ///< if set to true, samples are saved to the tree
 
 private:
     size_t data_length; ///< data buffer length
