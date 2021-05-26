@@ -1,0 +1,90 @@
+# This is a basic workflow to help you get started with Actions
+name: Compiler Checks
+
+# Controls when the action will run. Triggers the workflow on push
+on:
+  push:
+  pull_request:
+  release:
+    # tags:
+    # - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - {
+            name: "Ubuntu GCC",
+            os: ubuntu-latest,
+            build_type: "Release",
+            cc: "gcc-9",
+            cxx: "g++-9",
+          }
+        - {
+            name: "Ubuntu Clang",
+            os: ubuntu-latest,
+            build_type: "Release",
+            cc: "clang-11",
+            cxx: "clang++-11",
+          }
+
+    steps:
+      - name: Print env
+        run: |
+          echo github.event.action: ${{ github.event.action }}
+          echo github.event_name: ${{ github.event_name }}
+
+      - name: Install common dependencies
+        run: |
+          sudo apt update
+          sudo apt install libgtest-dev cmake lcov python3-numpy libtbb-dev libxxhash0 -y
+          cmake --version
+          wget http://gccb.if.uj.edu.pl/code/root-cpp17_6.22.08_amd64.deb
+          sudo dpkg -i root-cpp17_6.22.08_amd64.deb
+
+      - name: Install dependencies on ubuntu with gcc
+        if: startsWith(matrix.config.name, 'Ubuntu_GCC')
+        run: |
+          gcc --version
+      - name: Install dependencies on ubuntu with clang
+        if: startsWith(matrix.config.name, 'Ubuntu_CLANG')
+        run: |
+          #apt install clang-11 -y
+          clang --version
+
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout repository
+        uses: actions/checkout@v1
+        with:
+          submodules: recursive
+
+      - name: Configure
+        shell: bash
+        run: |
+          . /etc/profile
+          root-config --version
+          root-config --cflags
+          root-config --features
+          cmake \
+            -S . \
+            -B build \
+            -DBUILD_TESTS=On \
+            -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} \
+            -DCMAKE_INSTALL_PREFIX:PATH=instdir \
+            -DCMAKE_CXX_FLAGS='--std=c++17'
+
+      - name: Build
+        shell: bash
+        run: cmake --build build --config ${{ matrix.config.build_type }}
+
+      - name: Test
+        shell: bash
+        run: cmake --build build --target test
