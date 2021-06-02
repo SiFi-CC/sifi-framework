@@ -115,8 +115,23 @@ bool SFibersCalibrator::execute()
         SFibersChannel chan_r = chan_l;
         chan_r.side = 'r';
 
-        auto cp_l = *pCalibratorPar->getPar(&chan_l);
-        auto cp_r = *pCalibratorPar->getPar(&chan_r);
+        auto _cp_l = pCalibratorPar->getPar(&chan_l);
+        auto _cp_r = pCalibratorPar->getPar(&chan_r);
+
+        if (!_cp_l or !_cp_r)
+        {
+            if (!_cp_l)
+                printf("Calibration parametes for ml,f,s = %d,%d,%d,%c does not exists\n", mod, lay,
+                       fib, 'l');
+            if (!_cp_r)
+                printf("Calibration parametes for ml,f,s = %d,%d,%d,%c does not exists\n", mod, lay,
+                       fib, 'r');
+            abort();
+        }
+
+        auto&& cp_l = *_cp_l;
+        auto&& cp_r = *_cp_r;
+
         // parameters in cp_l/cp_r:
         // [0] - lambda
         // [1] - eta_r
