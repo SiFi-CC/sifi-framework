@@ -138,6 +138,13 @@ if (BUILD_SIFIDETRES_SUPPORT)
 endif()
 
 #----------------------------------------------------------------------------
+set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Build shared CPR")
+set(CPR_FORCE_USE_SYSTEM_CURL ON)
+set(CPR_USE_SYSTEM_GTEST ON)
+
+add_subdirectory(cpr)
+
+#----------------------------------------------------------------------------
 add_subdirectory(lib)
 # add_subdirectory(geometry)
 # add_subdirectory(simulation)
@@ -181,16 +188,16 @@ install(FILES
 )
 
 # Add all targets to the build-tree export set
-export(TARGETS ${PROJECT_TARGETS}
+export(TARGETS ${PROJECT_TARGETS} cpr
     FILE ${CMAKE_PROJECT_NAME}Targets.cmake
     NAMESPACE SIFI::)
 
 # Register package in user's package registry
 export(PACKAGE SIFI)
 
-option(BUILD_TESTS "Build tests" ON)
+option(ENABLE_TESTING "Build tests" ON)
 
-if(BUILD_TESTS)
+if(ENABLE_TESTING)
     enable_testing()
     add_subdirectory(tests)
 endif()
@@ -200,11 +207,6 @@ install(EXPORT ${CMAKE_PROJECT_NAME}Targets
     DESTINATION ${CMAKE_INSTALL_CMAKEDIR}
     COMPONENT Development
 )
-
-include(GenerateExportHeader)
-foreach(TRG ${TARGETS})
-    generate_export_header(${TRG})
-endforeach()
 
 message("")
 message("Add to your profile")

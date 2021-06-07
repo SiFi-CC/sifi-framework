@@ -14,7 +14,7 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
-    name: ${{ matrix.config.name }}
+    name: "${{ matrix.config.name }} (CMake version: ${{ matrix.cmake-version }})"
     runs-on: ${{ matrix.config.os }}
 
     strategy:
@@ -35,6 +35,7 @@ jobs:
             cc: "clang-11",
             cxx: "clang++-11",
           }
+        cmake-version: [ "", "3.16" ]
 
     steps:
       - name: Print env
@@ -45,7 +46,8 @@ jobs:
       - name: Install common dependencies
         run: |
           sudo apt update
-          sudo apt install libgtest-dev cmake lcov python3-numpy libtbb-dev libxxhash0 -y
+          sudo apt install cmake libgtest-dev lcov rapidjson-dev libcurl4-openssl-dev -y
+          sudo apt install python3-numpy libtbb-dev libxxhash0 -y
           cmake --version
           wget http://gccb.if.uj.edu.pl/code/root-cpp17_6.22.08_amd64.deb
           sudo dpkg -i root-cpp17_6.22.08_amd64.deb
@@ -66,6 +68,11 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Setup CMake
+        uses: jwlawson/actions-setup-cmake@v1.9
+        with:
+          cmake-version: ${{ matrix.cmake-version }}
+
       - name: Configure
         shell: bash
         run: |
@@ -76,7 +83,7 @@ jobs:
           cmake \
             -S . \
             -B build \
-            -DBUILD_TESTS=On \
+            -DENABLE_TESTING=On \
             -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} \
             -DCMAKE_INSTALL_PREFIX:PATH=instdir \
             -DCMAKE_CXX_FLAGS='--std=c++17'

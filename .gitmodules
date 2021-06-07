@@ -4,3 +4,6 @@
 [submodule "tabulate"]
 	path = tabulate
 	url = https://github.com/p-ranav/tabulate
+[submodule "cpr"]
+	path = cpr
+	url = https://github.com/whoshuu/cpr

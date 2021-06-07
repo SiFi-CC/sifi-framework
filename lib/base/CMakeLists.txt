@@ -102,6 +102,7 @@ SIFI_GENERATE_LIBRARY(
         ROOT::Tree
         SiFiTools
         Geant
+        cpr::cpr
     INCLUDE_DIRS
         core
         database
@@ -109,7 +110,7 @@ SIFI_GENERATE_LIBRARY(
         datastruct
         event
         util
-	../fibers
+        ../fibers
 )
 
 if (BUILD_SIFIDETRES_SUPPORT)

@@ -22,6 +22,35 @@ the detector and the data structure.
 * root-6
 * geant4
 
+### Dependencies
+
+The framework is always tested on the Latest Ubuntu. The bare system requires a few packages to be installed:
+
+* cmake (the build system)
+* libgtest-dev (for the tests)
+* lcov (for code coverage)
+* rapidjson-dev (MySQL interface)
+* libcurl4-openssl-dev (for cpr)
+
+The default root in Ubuntu is compield against c++14. We provide our custom toot compilation available from http://gccb.if.uj.edu.pl/code/root-cpp17_6.22.08_amd64.deb which has following depedencies:
+
+* python3-numpy
+* libtbb-dev
+* libxxhash0
+
+An example how to install depedenceis and prepare environment can be found in github workflow in `.github/workflows/main.yml` or below:
+
+    bash
+    sudo apt update
+    sudo apt install libgtest-dev cmake lcov python3-numpy libtbb-dev libxxhash0 -y
+    wget http://gccb.if.uj.edu.pl/code/root-cpp17_6.22.08_amd64.deb
+    sudo dpkg -i root-cpp17_6.22.08_amd64.deb
+    . /etc/profile
+
+```
+
+For other Linux distributions, you need to handkle depedensies manually.
+
 ### Getting source
 
 Get the source from the project git page:
@@ -40,6 +69,8 @@ We assume the working directory is `sifi-framework` of the git repository.
     cmake .. -DCMAKE_INSTALL_PREFIX=__some_location__
     make
     make install
+
+To disable tests, add `-DENABLE_TESTING=OFF` to the cmake arguments.
 
 ## The framework
 

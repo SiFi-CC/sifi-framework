@@ -24,6 +24,7 @@ target_link_libraries(
         ROOT::Core
         ROOT::RIO #ROOT::Physics
         ${GTEST_TRG}
+        cpr
 )
 target_code_coverage(gtests ALL)
 

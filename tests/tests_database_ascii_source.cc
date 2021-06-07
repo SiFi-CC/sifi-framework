@@ -1,6 +1,5 @@
-#include <gtest/gtest-message.h>   // for Message
-#include <gtest/gtest-test-part.h> // for TestPartResult
-#include <gtest/gtest_pred_impl.h> // for SuiteApiResolver, ASSERT_EQ, ASSE...
+#include <gtest/gtest.h>
+
 #include <tests/tests_config.h>
 
 #include "SCalContainer.h"
