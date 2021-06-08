@@ -1,5 +1,6 @@
 ![SiFi-CC: Analysis fremwork](https://img.shields.io/badge/SiFi--CC-Analysis%20framework-orange)
 ![Coveralls](https://img.shields.io/coveralls/github/SiFi-CC/sifi-framework)
+[![Coverage Status](https://coveralls.io/repos/github/SiFi-CC/sifi-framework/badge.svg?branch=master)](https://coveralls.io/github/SiFi-CC/sifi-framework?branch=refactor_parameters)
 ![Travis (.com)](https://img.shields.io/travis/com/SiFi-CC/sifi-framework)
 ![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/SiFI-CC/sifi-framework/CMake%20Build%20Matrix/master)
 ![GitHub](https://img.shields.io/github/license/SIFi-CC/sifi-framework)
@@ -47,7 +48,6 @@ An example how to install depedenceis and prepare environment can be found in gi
     sudo dpkg -i root-cpp17_6.22.08_amd64.deb
     . /etc/profile
 
-```
 
 For other Linux distributions, you need to handkle depedensies manually.
 
