@@ -143,6 +143,7 @@ set(CPR_FORCE_USE_SYSTEM_CURL ON)
 set(CPR_USE_SYSTEM_GTEST ON)
 
 add_subdirectory(cpr)
+set_property(TARGET cpr PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 #----------------------------------------------------------------------------
 add_subdirectory(lib)
