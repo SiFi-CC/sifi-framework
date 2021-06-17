@@ -66,7 +66,9 @@ public:
 
     /// Print the contaner name and content
     void print() const
-    {
+    {   
+        std::printf("start: %s", asctime(gmtime(&run_starttime)));
+        std::printf("stop: %s", asctime(gmtime(&run_stoptime)));
         std::printf("=== Run info === id: %ld  start: %s  stop: %s  type: %d\n", runid,
                     asctime(gmtime(&run_starttime)), asctime(gmtime(&run_stoptime)), runtype);
     }

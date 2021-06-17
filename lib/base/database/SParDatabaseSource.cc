@@ -75,7 +75,7 @@ SContainer) -> int`
  */
 SParDatabaseSource::SParDatabaseSource() : SParSource()
 {
-    mysqlcon = std::make_unique<SMysqlInterface>("http://localhost", 1234);
+    mysqlcon = std::make_unique<SMysqlInterface>("http://127.0.0.1:9081/api/");
     parseSource();
 }
 

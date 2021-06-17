@@ -46,11 +46,14 @@
 
 class SIFI_EXPORT SMysqlInterface
 {
+private:
+    std::string api_url;
+    static constexpr const char* auth_token = "59bcc6db2f36933601bdce41cbc5535655f0021c";
+    // auth_token might change on the server side.
 public:
     // constructors
     SMysqlInterface() = delete;
-    SMysqlInterface(std::string_view server,
-                    int port){}; // adjust connection to reqiuirements, add other constructors if
+    SMysqlInterface(std::string_view api_url); // adjust connection to reqiuirements, add other constructors if
                                  // needed, like via socket or so
     SMysqlInterface(SMysqlInterface const&) = delete;
 
