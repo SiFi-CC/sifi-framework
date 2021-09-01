@@ -11,18 +11,20 @@
 
 #include "SContainer.h"
 
-#include <stdio.h> // for printf
+#include <iostream> // for printf
 
 /**
  * Print container content.
  *
  * \param name name to display
  */
-void SContainer::print(std::string name) const
+void SContainer::print(std::string_view name) const
 {
-    printf("Container Table [%s]\n", name.c_str());
+    std::cout << "# Container Table [" << name << "]\n";
+    std::cout << "# -----\n";
     for (auto line : lines)
     {
         printf("%s\n", line.c_str());
     }
+    std::cout << "# -----\n";
 }

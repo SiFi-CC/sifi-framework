@@ -11,6 +11,9 @@
 
 #include "SRunContainer.h"
 
+#include <iomanip>
+#include <iostream>
+
 /**
 
  \class SRunContainer
@@ -22,11 +25,16 @@ be neglected.
 
 The run stores following informations:
 * #runid -- consectutive, unique run id, corresoinds to database ID
-* #run_starttime -- beginning of run taking
-* #run_stoptime   -- end of run taking
+* #start_time -- beginning of run taking
+* #stop_time   -- end of run taking
 * #runtype -- type of run, user defined
 runtype -- type of run, to be defined by user
 
 */
 
-SRunContainer::SRunContainer() {}
+void SRunContainer::print() const
+{
+    std::cout << "=== Run info === id: " << runid << "  type: " << runtype
+              << "  start: " << std::put_time(gmtime(&start_time), "%F %T %Z")
+              << "  stop: " << std::put_time(gmtime(&stop_time), "%F %T %Z") << std::endl;
+}

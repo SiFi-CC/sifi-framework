@@ -16,19 +16,18 @@
 
 #include <TObject.h>
 
-#include <cstdio>
 #include <ctime>
 #include <tuple>
 
 struct SIFI_EXPORT SRunContainer : public TObject
 {
-    long runid;                ///< run id
-    std::time_t run_starttime; ///< run timestamp in UTC
-    std::time_t run_stoptime;  ///< run timestamp in UTC
-    int runtype;               ///< run type
+    long runid;             ///< run id
+    std::time_t start_time; ///< run timestamp in UTC
+    std::time_t stop_time;  ///< run timestamp in UTC
+    int runtype;            ///< run type
 
 public:
-    SRunContainer();
+    SRunContainer() = default;
 
     /// Set run id
     /// \param id run id
@@ -39,16 +38,16 @@ public:
 
     /// Set run start time
     /// \param t start time
-    void setStart(std::time_t t) { run_starttime = t; }
+    void setStart(std::time_t t) { start_time = t; }
     /// Get run start time
     /// \return start time
-    std::time_t getStart() const { return run_starttime; }
+    std::time_t getStart() const { return start_time; }
     /// Set run stop time
     /// \param t stop time
-    void setStop(std::time_t t) { run_stoptime = t; }
+    void setStop(std::time_t t) { stop_time = t; }
     /// Get run stop time
     /// \return stop time
-    std::time_t getStop() const { return run_stoptime; }
+    std::time_t getStop() const { return stop_time; }
 
     /// Set run type
     /// \param t run type
@@ -61,17 +60,11 @@ public:
     /// \return tuple with data
     auto getData() -> std::tuple<long, std::time_t, std::time_t, long>
     {
-        return std::make_tuple(runid, run_starttime, run_stoptime, runtype);
+        return std::make_tuple(runid, start_time, stop_time, runtype);
     }
 
     /// Print the contaner name and content
-    void print() const
-    {   
-        std::printf("start: %s", asctime(gmtime(&run_starttime)));
-        std::printf("stop: %s", asctime(gmtime(&run_stoptime)));
-        std::printf("=== Run info === id: %ld  start: %s  stop: %s  type: %d\n", runid,
-                    asctime(gmtime(&run_starttime)), asctime(gmtime(&run_stoptime)), runtype);
-    }
+    void print() const;
 };
 
 #endif /* SRUNCALCONTAINER_H */

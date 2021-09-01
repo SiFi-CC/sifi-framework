@@ -75,7 +75,9 @@ SContainer) -> int`
  */
 SParDatabaseSource::SParDatabaseSource() : SParSource()
 {
-    mysqlcon = std::make_unique<SMysqlInterface>("http://127.0.0.1:9081/api/");
+    const char* dbapi = getenv("SIFIDBAPI");
+    const char* token = getenv("SIFIAUTH");
+    mysqlcon = std::make_unique<SMysqlInterface>(dbapi, token);
     parseSource();
 }
 
@@ -86,6 +88,13 @@ SParDatabaseSource::SParDatabaseSource() : SParSource()
  */
 bool SParDatabaseSource::parseSource() { return true; }
 
+/**
+ * Get parameter from the database. If the copy exists in the local cache, use it, otherwise
+ * try to retirewe from MySQL database.
+ * \param container name
+ * \param runid run id number
+ * \return pointer to the container
+ */
 SContainer* SParDatabaseSource::getContainer(const std::string& name, long runid)
 {
     // check if same release
@@ -93,35 +102,37 @@ SContainer* SParDatabaseSource::getContainer(const std::string& name, long runid
     // TODO if release has name, then check whether it matches the one from file
     // if (!release.empty() and release != this_release_from_file) return 0;
 
-    // DB call
-    // DBOBJECT->getContainer(release, name, runid);
-    mysqlcon->setParamRelease(release);
-    mysqlcon->getContainer(name, runid);
+    // if it was the same version like before, return cached one
+    auto last_it = last_container.find(name);
+    if (last_it != last_container.end() and last_it->second->validity == runid)
+        return last_it->second;
 
     // check if container is in the source at all
     auto it = containers.find(name);
-    if (it == containers.end()) { return nullptr; }
-
-    // if it was the same version like before, return cached one
-    SContainer* last = last_container[name];
-    if (last and last->validity == runid) return last;
-
-    // get fresh version, need to set flag reinit! TODO
-    // also runid -> time conversion
-    auto time = runid;
-
-    auto&& cont_map = containers[name];
-    auto it2 = cont_map.lower_bound(validity_range_t(time, time));
-    if (it2 != cont_map.end())
+    if (it != containers.end())
     {
-        if (it2->second->validity == time)
+        for (auto& range : it->second)
         {
-            // TODO force DB to reinit here
-            return it2->second;
+            if (range.first == runid)
+            {
+                last_container[name] = range.second.get();
+                return range.second.get();
+            }
         }
     }
 
-    return nullptr;
+    // if not already fetched, get from database
+    mysqlcon->setParamRelease(release);
+    auto cont = mysqlcon->getContainer(name, runid);
+
+    // if database has no given container (or is not validated)
+    if (!cont.has_value()) return nullptr;
+
+    // and add to the local storage for future use
+    auto new_cont = std::make_unique<SContainer>(cont.value());
+    auto new_cont_ptr = new_cont.get();
+    containers[name].insert({cont.value().validity, std::move(new_cont)});
+    return new_cont_ptr;
 }
 
 bool SParDatabaseSource::setContainer(const std::string& name, SContainer&& cont)
@@ -147,26 +158,31 @@ void SParDatabaseSource::print() const
 
     for (auto& container : containers)
     {
-        const validity_range_t* cache = nullptr;
+        const validity_runs_range* cache = nullptr;
         Table cont_summary;
         cont_summary.add_row({container.first, "Valid from", "Valid to", "Overlap", "Truncated"});
 
         for (auto& revision : container.second)
         {
-            std::stringstream s_from;
-            s_from << std::put_time(std::gmtime(&revision.first.from), "%c %Z");
-
-            std::stringstream s_to;
-            s_to << std::put_time(std::gmtime(&revision.first.to), "%c %Z");
-
+            //             std::stringstream s_from;
+            //             s_from << std::put_time(std::gmtime(&revision.first.from), "%c %Z");
+            //
+            //             std::stringstream s_to;
+            //             s_to << std::put_time(std::gmtime(&revision.first.to), "%c %Z");
+            //
             std::stringstream trunc_from;
             if (revision.first.truncated > 0)
                 trunc_from << std::put_time(std::gmtime(&revision.first.truncated), "%c %Z");
 
             bool overlap = cache ? revision.first.check_overlap(*cache) : false;
 
-            cont_summary.add_row(
-                {"", s_from.str(), s_to.str(), std::to_string(overlap), trunc_from.str()});
+            //             cont_summary.add_row(
+            //                 {"", s_from.str(), s_to.str(), std::to_string(overlap),
+            //                 trunc_from.str()});
+
+            cont_summary.add_row({"", std::to_string(revision.first.from),
+                                  std::to_string(revision.first.to), std::to_string(overlap),
+                                  trunc_from.str()});
 
             cache = &revision.first;
         }

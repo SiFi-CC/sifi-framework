@@ -33,6 +33,7 @@
 
 #include "sifi_export.h"
 
+#include "SContainer.h"
 #include "SMysqlInterface.h"
 #include "SParSource.h"
 
@@ -41,7 +42,6 @@
 #include <string>
 
 class SContainer;
-struct validity_range_t;
 
 class SIFI_EXPORT SParDatabaseSource : public SParSource
 {
@@ -49,8 +49,8 @@ public:
     SParDatabaseSource();
     virtual ~SParDatabaseSource() = default;
 
-    virtual SContainer* getContainer(const std::string& name, long runid) override;
-    virtual bool setContainer(const std::string& name, SContainer&& cont);
+    virtual auto getContainer(const std::string& name, long runid) -> SContainer* override;
+    virtual auto setContainer(const std::string& name, SContainer&& cont) -> bool;
 
     void print() const override;
 
@@ -58,9 +58,9 @@ private:
     bool parseSource();
 
 private:
-    std::map<std::string, std::map<validity_range_t, SContainer*>>
+    std::map<std::string, std::map<validity_runs_range, std::unique_ptr<SContainer>>>
         containers;                                    ///< Containers mirrors
-    std::map<std::string, SContainer*> last_container; ///< Last used container, for caching purpose
+    std::map<std::string, SContainer*> last_container; ///< Caching of the last container
     std::string source;                                ///< DATABASE file name
 
     std::unique_ptr<SMysqlInterface> mysqlcon;

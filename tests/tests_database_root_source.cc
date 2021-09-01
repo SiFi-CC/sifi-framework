@@ -24,7 +24,7 @@ protected:
         TList list;
         list.SetName("TestContainer");
 
-        for (int i = 0; i < N; ++i)
+        for (uint64_t i = 0; i < N; ++i)
         {
             c[i] = std::make_unique<SContainer>();
             c[i]->validity = {i * 2, (i + 1) * 10 + 3};

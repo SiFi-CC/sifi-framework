@@ -150,7 +150,7 @@ SContainer* SParRootSource::getContainer(const std::string& name, long runid)
     auto time = runid;
 
     auto&& cont_map = containers[name];
-    auto it2 = cont_map.lower_bound(validity_range_t(time, time));
+    auto it2 = cont_map.lower_bound(validity_runs_range(time, time));
     if (it2 != cont_map.end())
     {
         if (it2->second->validity == time)
@@ -173,17 +173,17 @@ void SParRootSource::print() const
 
     for (auto& container : containers)
     {
-        const validity_range_t* cache = nullptr;
+        const validity_runs_range* cache = nullptr;
         Table cont_summary;
         cont_summary.add_row({container.first, "Valid from", "Valid to", "Overlap", "Truncated"});
 
         for (auto& revision : container.second)
         {
-            std::stringstream s_from;
-            s_from << std::put_time(std::gmtime(&revision.first.from), "%c %Z");
-
-            std::stringstream s_to;
-            s_to << std::put_time(std::gmtime(&revision.first.to), "%c %Z");
+            //             std::stringstream s_from;
+            //             s_from << std::put_time(std::gmtime(&revision.first.from), "%c %Z");
+            //
+            //             std::stringstream s_to;
+            //             s_to << std::put_time(std::gmtime(&revision.first.to), "%c %Z");
 
             std::stringstream trunc_from;
             if (revision.first.truncated > 0)
@@ -191,8 +191,13 @@ void SParRootSource::print() const
 
             bool overlap = cache ? revision.first.check_overlap(*cache) : false;
 
-            cont_summary.add_row(
-                {"", s_from.str(), s_to.str(), std::to_string(overlap), trunc_from.str()});
+            //             cont_summary.add_row(
+            //                 {"", s_from.str(), s_to.str(), std::to_string(overlap),
+            //                 trunc_from.str()});
+
+            cont_summary.add_row({"", std::to_string(revision.first.from),
+                                  std::to_string(revision.first.to), std::to_string(overlap),
+                                  trunc_from.str()});
 
             cache = &revision.first;
         }

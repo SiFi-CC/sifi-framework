@@ -48,20 +48,26 @@ class SIFI_EXPORT SMysqlInterface
 {
 private:
     std::string api_url;
-    static constexpr const char* auth_token = "59bcc6db2f36933601bdce41cbc5535655f0021c";
+    std::string auth_token;
+    bool connection_ok;
+
     // auth_token might change on the server side.
 public:
     // constructors
     SMysqlInterface() = delete;
-    SMysqlInterface(std::string_view api_url); // adjust connection to reqiuirements, add other constructors if
-                                 // needed, like via socket or so
+    /**
+     * \param url REST api api_url
+     * \param token authentication token
+     */
+    SMysqlInterface(std::string_view url, std::string_view token);
     SMysqlInterface(SMysqlInterface const&) = delete;
 
     SMysqlInterface& operator=(SMysqlInterface const&) = delete;
 
-public:
     // destructor
     virtual ~SMysqlInterface() = default;
+
+    auto connected() const -> bool { return connection_ok; }
 
     /// Call this after conenction to select which param release we are about to work on
     /// Maych change between different calls to database
@@ -69,6 +75,7 @@ public:
 
     // Implement these
     auto getRunContainer(long runid) -> std::optional<SRunContainer>;
+    auto getRunContainers() -> TObjArray;
     auto getRunContainers(long runid_min, long runid_max) -> TObjArray;
     void addRunContainer(SRunContainer&& runcont);
 

@@ -5,11 +5,11 @@
 #include <string>      // for string
 #include <sys/types.h> // for time_t
 
-TEST(tests_scontainer, valid_range_test)
+TEST(tests_scontainer, valid_runs_range_test)
 {
-    validity_range_t r1 = {100, 200};
-    validity_range_t r2 = {150, 250};
-    validity_range_t r3 = {225, 450};
+    validity_runs_range r1 = {100, 200};
+    validity_runs_range r2 = {150, 250};
+    validity_runs_range r3 = {225, 450};
 
     std::time_t t1 = 100;
     std::time_t t2 = 120;

@@ -33,13 +33,11 @@
 
 #include "sifi_export.h"
 
+#include "SContainer.h"
 #include "SParSource.h"
 
 #include <map>
 #include <string>
-
-class SContainer;
-struct validity_range_t;
 
 class SIFI_EXPORT SParRootSource : public SParSource
 {
@@ -56,7 +54,7 @@ private:
     bool parseSource();
 
 private:
-    std::map<std::string, std::map<validity_range_t, SContainer*>>
+    std::map<std::string, std::map<validity_runs_range, SContainer*>>
         containers;                                    ///< Containers mirrors
     std::map<std::string, SContainer*> last_container; ///< Last used container, for caching purpose
     std::string source;                                ///< Root file name
