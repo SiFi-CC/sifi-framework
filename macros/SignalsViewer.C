@@ -903,6 +903,10 @@ Bool_t CutAndView(TString path, Int_t ch, Int_t thr, CutType cut, std::vector<Fl
     std::cout << "\tLayer: " << lc->l << std::endl;
     std::cout << "\tFiber: " << lc->s << std::endl;
     std::cout << "\tSide: " << lc->side << std::endl;
+    Int_t mod = lc->m;
+    Int_t layer = lc->l;
+    Int_t fiber = lc->s;
+    Char_t side = lc->side;
 
     //----- accessing ROOT file and tree
     SLoop* loop = new SLoop();
