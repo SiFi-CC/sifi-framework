@@ -877,81 +877,32 @@ TH1F* ReadOneSignal(std::ifstream& input, Int_t infile, SDDSignal* sptr)
 Bool_t CutAndView(TString path, Int_t ch, Int_t thr, CutType cut, std::vector<Float_t> range,
                   Int_t first, Int_t last)
 {
-    /*
-     *  This part for now is not working due to the bug in framework.
-     *  Temporary fix is done for now, when bug is reapired this part
-     *  will be restored
+    
+    std::string params_file(path + "/params.txt");
+    Int_t fake_FTAB_address = 0x1000;
 
-        std::string params_file(path + "/params.txt");
-        Int_t fake_FTAB_address = 0x1000;
+    pm()->setParamSource(params_file);
+    pm()->parseSource();
 
-        pm()->setParamSource(params_file);
-        pm()->parseSource();
+    SDetectorManager* detm = SDetectorManager::instance();
+    detm->addDetector(new SFibersDetector("Fibers"));
+    detm->initParameterContainers();
+    
+    pm()->addLookupContainer("FibersDDLookupTable",
+                             new SFibersLookupTable("FibersDDLookupTable", 0x1000, 0x1fff, 32));
 
-        SDetectorManager* detm = SDetectorManager::instance();
-        detm->addDetector(new SFibersDetector("Fibers"));
-        detm->initParameterContainers();
+    SFibersLookupTable *lookUp = dynamic_cast<SFibersLookupTable*>
+                                 (pm()->getLookupContainer("FibersDDLookupTable"));
 
-        SFibersLookupTable *lookUp = dynamic_cast<SFibersLookupTable*>
-                                          (pm()->getLookupContainer("FibersDDLookupTable"));
+    SFibersChannel *lc = dynamic_cast<SFibersChannel*>
+                         (lookUp->getAddress(fake_FTAB_address, ch));
 
-        SFibersChannel *lc = dynamic_cast<SFibersChannel*>
-                                  (lookUp->getAddress(fake_FTAB_address, ch));
-
-        std::cout << "\nChannel " << ch << " address:" << std::endl;
-        std::cout << "\tFTAB address: " << fake_FTAB_address << std::endl;
-        std::cout << "\tModule: " << lc->m << std::endl;
-        std::cout << "\tLayer: " << lc->l << std::endl;
-        std::cout << "\tFiber: " << lc->s << std::endl;
-        std::cout << "\tSide: " << lc->side << std::endl;
-    */
-    //----- temporary fix
-    const Int_t chmax = 8;
-    std::map<Int_t, SFibersChannel> lookUp;
-    SFibersChannel channels[chmax];
-
-    channels[0].m = 0;
-    channels[0].l = 0;
-    channels[0].s = 0;
-    channels[0].side = 'l';
-    channels[1].m = 0;
-    channels[1].l = 0;
-    channels[1].s = 0;
-    channels[1].side = 'r';
-    channels[2].m = 0;
-    channels[2].l = 0;
-    channels[2].s = 1;
-    channels[2].side = 'l';
-    channels[3].m = 0;
-    channels[3].l = 0;
-    channels[3].s = 1;
-    channels[3].side = 'r';
-    channels[4].m = 0;
-    channels[4].l = 0;
-    channels[4].s = 2;
-    channels[4].side = 'l';
-    channels[5].m = 0;
-    channels[5].l = 0;
-    channels[5].s = 2;
-    channels[5].side = 'r';
-    channels[6].m = 0;
-    channels[6].l = 0;
-    channels[6].s = 3;
-    channels[6].side = 'l';
-    channels[7].m = 0;
-    channels[7].l = 0;
-    channels[7].s = 3;
-    channels[7].side = 'r';
-
-    for (Int_t i = 0; i < chmax; i++)
-        lookUp.insert(std::pair<Int_t, SFibersChannel>(i, channels[i]));
-
-    auto chf = lookUp.find(ch)->second;
-    Int_t mod = chf.m;
-    Int_t layer = chf.l;
-    Int_t fiber = chf.s;
-    Char_t side = chf.side;
-    //----- end of temporary fix
+    std::cout << "\nChannel " << ch << " address:" << std::endl;
+    std::cout << "\tFTAB address: " << fake_FTAB_address << std::endl;
+    std::cout << "\tModule: " << lc->m << std::endl;
+    std::cout << "\tLayer: " << lc->l << std::endl;
+    std::cout << "\tFiber: " << lc->s << std::endl;
+    std::cout << "\tSide: " << lc->side << std::endl;
 
     //----- accessing ROOT file and tree
     SLoop* loop = new SLoop();
