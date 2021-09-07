@@ -3,6 +3,10 @@
 // katarzyna.rusiecka@doctoral.uj.edu.pl
 //--------------------------------------
 
+//To run:
+//root
+//.L SignalsViewer.C+
+
 #include "SCategory.h"
 #include "SCategoryManager.h"
 #include "SDDSamples.h"
@@ -877,12 +881,7 @@ TH1F* ReadOneSignal(std::ifstream& input, Int_t infile, SDDSignal* sptr)
 Bool_t CutAndView(TString path, Int_t ch, Int_t thr, CutType cut, std::vector<Float_t> range,
                   Int_t first, Int_t last)
 {
-    /*
-     *  This part for now is not working due to the bug in framework.
-     *  Temporary fix is done for now, when bug is reapired this part
-     *  will be restored
-
-        std::string params_file(path + "/params.txt");
+        std::string params_file(path + "params.txt");
         Int_t fake_FTAB_address = 0x1000;
 
         pm()->setParamSource(params_file);
@@ -891,6 +890,9 @@ Bool_t CutAndView(TString path, Int_t ch, Int_t thr, CutType cut, std::vector<Fl
         SDetectorManager* detm = SDetectorManager::instance();
         detm->addDetector(new SFibersDetector("Fibers"));
         detm->initParameterContainers();
+
+        pm()->addLookupContainer("FibersDDLookupTable",
+                             new SFibersLookupTable("FibersDDLookupTable", 0x1000, 0x1fff, 32));
 
         SFibersLookupTable *lookUp = dynamic_cast<SFibersLookupTable*>
                                           (pm()->getLookupContainer("FibersDDLookupTable"));
@@ -904,8 +906,14 @@ Bool_t CutAndView(TString path, Int_t ch, Int_t thr, CutType cut, std::vector<Fl
         std::cout << "\tLayer: " << lc->l << std::endl;
         std::cout << "\tFiber: " << lc->s << std::endl;
         std::cout << "\tSide: " << lc->side << std::endl;
-    */
+    
+        
+        Int_t mod = lc->m;
+        Int_t layer = lc->l;
+        Int_t fiber = lc->s;
+        Char_t side = lc->side;
     //----- temporary fix
+    /*
     const Int_t chmax = 8;
     std::map<Int_t, SFibersChannel> lookUp;
     SFibersChannel channels[chmax];
@@ -951,6 +959,7 @@ Bool_t CutAndView(TString path, Int_t ch, Int_t thr, CutType cut, std::vector<Fl
     Int_t layer = chf.l;
     Int_t fiber = chf.s;
     Char_t side = chf.side;
+    */
     //----- end of temporary fix
 
     //----- accessing ROOT file and tree
