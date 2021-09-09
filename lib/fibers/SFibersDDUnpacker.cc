@@ -340,6 +340,10 @@ bool SFibersDDUnpacker::decode(uint16_t subevtid, float* data, size_t length)
             charge = -100 * ADC_to_mV;
         }
     }
+    else
+    {
+        charge = -100 * ADC_to_mV;
+    }
 
     Int_t veto = FindVeto(samples, limit, veto_thr, pol);
 
