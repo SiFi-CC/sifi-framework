@@ -14,7 +14,7 @@ protected:
         db = SDatabase::instance();
         db->setRelease("TEST");
 
-        db->addParContainer("FibersGeomPar", std::make_unique<SFibersGeomPar>());
+        db->addContainer("FibersGeomPar", []() { return new SFibersGeomPar; });
         //         db->addLookupContainer(
         //             "FibersDDLookupTable",
         //             std::make_unique<SFibersLookupTable>("FibersDDLookupTable", 0x1000, 0x1fff,

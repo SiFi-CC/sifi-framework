@@ -34,10 +34,12 @@
 #include "sifi_export.h"
 
 #include <algorithm> // for max
+#include <functional>
 #include <map>
 #include <memory>
 #include <string>
 #include <string_view>
+#include <variant>
 #include <vector>
 
 class SPar;
@@ -46,6 +48,9 @@ class SParContainer;
 class SVirtualCalContainer;
 class SLookupTable;
 
+using cont_obj = std::variant<SPar*, SVirtualCalContainer*, SLookupTable*>;
+using cont_obj_factory = std::function<cont_obj()>;
+
 class SIFI_EXPORT SDatabase
 {
 protected:
@@ -53,13 +58,10 @@ protected:
     SParSource* target{0};            ///< Parameters destination file
 
     std::map<std::string, SParSource*> conts_sources;                            ///< Input sources
-    std::map<std::string, std::unique_ptr<SParContainer>> par_containers;        ///< Par Containers
-    std::map<std::string, std::unique_ptr<SPar>> par_parameters;                 ///< Parameters
-    std::map<std::string, std::unique_ptr<SVirtualCalContainer>> cal_containers; ///< Par Containers
-    std::map<std::string, std::unique_ptr<SLookupTable>> lu_containers; ///< Lookup Containers
 
     static SDatabase* pm; ///< Instance of the SDatabase
 
+    std::map<std::string, cont_obj_factory> obj_factory;        ///< Container object factory
     std::string_view release; ///< stores parameters release name
 
 private:
@@ -86,14 +88,12 @@ public:
     void writeDestination();
     void writeContainers(const std::vector<std::string>& names);
 
-    bool addParContainer(const std::string& name, std::unique_ptr<SPar>&& par);
+    bool addContainer(const std::string& name, cont_obj_factory && f);
     SPar* getParContainer(const std::string& name);
-
-    bool addLookupContainer(const std::string& name, std::unique_ptr<SLookupTable>&& lu);
     SLookupTable* getLookupContainer(const std::string& name);
-
-    bool addCalContainer(const std::string& name, std::unique_ptr<SVirtualCalContainer>&& cal);
     SVirtualCalContainer* getCalContainer(const std::string& name);
+
+
 
     /// Set release value.
     /// \param r release name

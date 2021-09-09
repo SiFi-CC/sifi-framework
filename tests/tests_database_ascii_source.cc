@@ -24,16 +24,17 @@ protected:
         sifi()->disableAssertations();
 
         db = SDatabase::instance();
-        db->addParContainer("FibersGeomPar", std::make_unique<SFibersGeomPar>());
-        db->addLookupContainer(
+        db->addContainer("FibersGeomPar", []() { return new SFibersGeomPar; });
+        db->addContainer(
             "FibersDDLookupTable",
-            std::make_unique<SFibersLookupTable>("FibersDDLookupTable", 0x1000, 0x1fff, 32));
-        db->addLookupContainer("LookupTableMissing", std::make_unique<SFibersLookupTable>(
-                                                         "LookupTableMissing", 0x2000, 0x2fff, 32));
-        db->addCalContainer("FibersCalibratorPar",
-                            std::make_unique<SFibersCalibratorPar>("FibersCalibratorPar"));
-        db->addCalContainer("CalibratorParMissing",
-                            std::make_unique<SFibersCalibratorPar>("CalibratorParMissing"));
+            []() { return new SFibersLookupTable("FibersDDLookupTable", 0x1000, 0x1fff, 32); });
+        db->addContainer(
+            "LookupTableMissing",
+            []() { return new SFibersLookupTable("LookupTableMissing", 0x2000, 0x2fff, 32); });
+        db->addContainer("FibersCalibratorPar",
+                            []() { return new SFibersCalibratorPar("FibersCalibratorPar"); });
+        db->addContainer("CalibratorParMissing",
+                            []() { return new SFibersCalibratorPar("CalibratorParMissing"); });
 
         ascii = new SParAsciiSource(tests_path + "params.txt");
         // ascii->print();

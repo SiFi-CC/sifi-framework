@@ -124,8 +124,6 @@ void SDatabase::writeContainers(const std::vector<std::string>& names)
  */
 void SDatabase::print() const
 {
-    for (const auto& p : par_containers)
-        p.second->print();
 }
 
 /**
@@ -135,12 +133,14 @@ void SDatabase::print() const
  * \param par parameter container object
  * \return success
  */
-bool SDatabase::addParContainer(const std::string& name, std::unique_ptr<SPar>&& par)
+bool SDatabase::addContainer(const std::string& name, cont_obj_factory&& f)
 {
-    auto it = par_parameters.find(name);
-    if (it != par_parameters.end()) return false;
+    auto it = obj_factory.find(name);
+    if (it != obj_factory.end()) return false;
 
-    par_parameters.insert(std::make_pair(name, std::move(par)));
+    obj_factory.insert(std::make_pair(name, std::move(f)));
+    //     container_mode[name] = ContainerMode::Read;
+
     return true;
 }
 
@@ -153,57 +153,26 @@ bool SDatabase::addParContainer(const std::string& name, std::unique_ptr<SPar>&&
 SPar* SDatabase::getParContainer(const std::string& name)
 {
     // If SPar was not registerd before, exit with failure.
-    auto it = par_parameters.find(name);
-    if (it == par_parameters.end())
+    auto it = obj_factory.find(name);
+    if (it == obj_factory.end())
     {
         std::cerr << "Parameter container " << name << " not known!" << std::endl;
         if (!sifi()->assertationsDisabled()) exit(EXIT_FAILURE);
         return nullptr;
     }
 
-    // TODO current id number
-    long runid = 1e10;
-
-    // Check if Container was initialized from source, and if not, do it.
-    auto it2 = par_containers.find(name);
-    if (it2 == par_containers.end())
+    SPar* par = nullptr;
+    try
     {
-        for (auto s : sources)
-        {
-            auto c = s->getContainer(name, runid);
-            if (c)
-            {
-                conts_sources.emplace(name, s);
-                SParContainer* pc = new SParContainer(name);
-                pc->fromContainer(c);
-                par_containers.emplace(name, pc);
-                it->second.get()->getParams(pc);
-                return it->second.get();
-            }
-        }
-
-        std::cerr << "Parameter container " << name << " could not be initialized!" << std::endl;
-        if (!sifi()->assertationsDisabled()) exit(EXIT_FAILURE);
-        return nullptr;
+        par = std::get<SPar*>(it->second());
     }
+    catch (const std::bad_variant_access& ex)
+    {
+        std::cout << ex.what() << '\n';
+        return nullptr;
+    };
 
-    return it->second.get();
-}
-
-/**
- * Add new lookup table container.
- *
- * \param name container name
- * \param lu lookup table object
- * \return success
- */
-bool SDatabase::addLookupContainer(const std::string& name, std::unique_ptr<SLookupTable>&& lu)
-{
-    auto it = lu_containers.find(name);
-    if (it != lu_containers.end()) return false;
-
-    lu_containers.insert(std::make_pair(name, std::move(lu)));
-    return true;
+    return par;
 }
 
 /**
@@ -215,59 +184,26 @@ bool SDatabase::addLookupContainer(const std::string& name, std::unique_ptr<SLoo
 SLookupTable* SDatabase::getLookupContainer(const std::string& name)
 {
     // If SLookupTable was not registerd before, exit with failure.
-    auto it = lu_containers.find(name);
-    if (it == lu_containers.end())
+    auto it = obj_factory.find(name);
+    if (it == obj_factory.end())
     {
         std::cerr << "Lookup table " << name << " not known!" << std::endl;
         if (!sifi()->assertationsDisabled()) exit(EXIT_FAILURE);
         return nullptr;
     }
 
-    // TODO current id number
-    long runid = 1e10;
-
-    auto lu = it->second.get();
-
-    // Check if Container was initialized from source, and if not, do it.
-    auto it2 = conts_sources.find(name);
-    if (it2 == conts_sources.end())
+    SLookupTable* lu = nullptr;
+    try
     {
-        for (auto s : sources)
-        {
-            auto c = s->getContainer(name, runid);
-            if (c)
-            {
-                conts_sources.emplace(name, s);
-                lu->fromContainer(c);
-                return lu;
-            }
-        }
-
-        std::cerr << "Lookup table " << name << " could not be initialized from sources!"
-                  << std::endl;
-        if (!sifi()->assertationsDisabled()) exit(EXIT_FAILURE);
-        return nullptr;
+        lu = std::get<SLookupTable*>(it->second());
     }
+    catch (const std::bad_variant_access& ex)
+    {
+        std::cout << ex.what() << '\n';
+        return nullptr;
+    };
 
     return lu;
-}
-
-/**
- * Add new calibration container.
- *
- * \param name container name
- * \param cal calibration object
- * \return success
- */
-bool SDatabase::addCalContainer(const std::string& name,
-                                std::unique_ptr<SVirtualCalContainer>&& cal)
-{
-    auto it = cal_containers.find(name);
-    if (it != cal_containers.end()) return false;
-
-    cal_containers.insert(std::make_pair(name, std::move(cal)));
-
-    return true;
 }
 
 /**
@@ -279,39 +215,24 @@ bool SDatabase::addCalContainer(const std::string& name,
 SVirtualCalContainer* SDatabase::getCalContainer(const std::string& name)
 {
     // If SLookupTable was not registerd before, exit with failure.
-    auto it = cal_containers.find(name);
-    if (it == cal_containers.end())
+    auto it = obj_factory.find(name);
+    if (it == obj_factory.end())
     {
         std::cerr << "Calibration container " << name << " not known!" << std::endl;
         if (!sifi()->assertationsDisabled()) exit(EXIT_FAILURE);
         return nullptr;
     }
 
-    // TODO current id number
-    long runid = 1e10;
-
-    auto cal = it->second.get();
-
-    // Check if Container was initialized from source, and if not, do it.
-    auto it2 = conts_sources.find(name);
-    if (it2 == conts_sources.end())
+    SVirtualCalContainer* cal = nullptr;
+    try
     {
-        for (auto s : sources)
-        {
-            auto c = s->getContainer(name, runid);
-            if (c)
-            {
-                conts_sources.emplace(name, s);
-                cal->fromContainer(c);
-                return cal;
-            }
-        }
-
-        std::cerr << "Calibration container " << name << " could not be initialized from sources!"
-                  << std::endl;
-        if (!sifi()->assertationsDisabled()) exit(EXIT_FAILURE);
-        return nullptr;
+        cal = std::get<SVirtualCalContainer*>(it->second());
     }
+    catch (const std::bad_variant_access& ex)
+    {
+        std::cout << ex.what() << '\n';
+        return nullptr;
+    };
 
     return cal;
 }

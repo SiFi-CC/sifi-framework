@@ -149,11 +149,11 @@ int main(int argc, char** argv)
     detm->initParameterContainers();
     detm->initCategories();
 
-    pm()->addLookupContainer("FibersDDLookupTable", std::make_unique<SFibersLookupTable>(
-                                                        "FibersDDLookupTable", 0x1000, 0x1fff, 32));
-    pm()->addLookupContainer(
-        "FibersPMILookupTable",
-        std::make_unique<SFibersLookupTable>("FibersPMILookupTable", 0x1000, 0x1fff, 64));
+    pm()->addContainer("FibersDDLookupTable", []() { return new SFibersLookupTable(
+        "FibersDDLookupTable", 0x1000, 0x1fff, 32); } );
+
+    pm()->addContainer("FibersPMILookupTable", []() { return new SFibersLookupTable(
+        "FibersPMILookupTable", 0x1000, 0x1fff, 64); } );
 
     // initialize tasks
     STaskManager* tm = STaskManager::instance();
