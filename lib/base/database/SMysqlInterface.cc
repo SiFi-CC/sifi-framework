@@ -22,7 +22,7 @@
 #include "rapidjson/document.h"
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/writer.h"
-#include <TObjArray.h>
+
 #include <cstdlib> // for exit, EXIT_FAILURE, abort
 #include <ctime>
 #include <iomanip>
@@ -86,7 +86,7 @@ SMysqlInterface::SMysqlInterface(std::string_view url, std::string_view token)
     connection_ok = (r.status_code == 204);
 }
 
-std::optional<SRunContainer> SMysqlInterface::getRunContainer(long runid)
+auto SMysqlInterface::getRunContainer(long runid) -> std::shared_ptr<SRun>
 {
     cpr::Response r =
         cpr::Get(cpr::Url{std::string(api_url) + "/api/fetch/run/" + std::to_string(runid)},
@@ -105,7 +105,7 @@ std::optional<SRunContainer> SMysqlInterface::getRunContainer(long runid)
         assert(doc.IsArray() and doc.Size() == 1);
 
         auto& d = doc[0];
-        int run_id = d["run_id"].GetInt();
+        int run_id = d["id"].GetInt();
 
         assert(runid == run_id);
 
@@ -114,14 +114,15 @@ std::optional<SRunContainer> SMysqlInterface::getRunContainer(long runid)
         std::time_t valid_to =
             extract_date(std::string(d["stop_time"].GetString(), d["stop_time"].GetStringLength()));
 
-        SRunContainer run_container;
-        run_container.setId(run_id);
-        run_container.setStart(valid_from);
-        run_container.setStop(valid_to);
-        run_container.setType(d["run_type"].GetInt());
-        return {std::move(run_container)};
+        auto run = std::make_shared<SRun>();
+        run->setId(run_id);
+        run->setStart(valid_from);
+        run->setStop(valid_to);
+        run->setType(d["run_type"].GetInt());
+        return run;
     }
-    return std::nullopt;
+    return std::unique_ptr<SRun>();
+    ;
 }
 
 /**
@@ -131,7 +132,8 @@ std::optional<SRunContainer> SMysqlInterface::getRunContainer(long runid)
  * \param runid_max maximal runid, strong ordering
  * \return array of objects, empty if no matches
  */
-TObjArray SMysqlInterface::getRunContainers(long runid_min, long runid_max)
+auto SMysqlInterface::getRunContainers(long runid_min, long runid_max)
+    -> std::vector<std::shared_ptr<SRun>>
 {
     cpr::Response r;
 
@@ -143,7 +145,7 @@ TObjArray SMysqlInterface::getRunContainers(long runid_min, long runid_max)
                               "/" + std::to_string(runid_max)},
                      cpr::Header{{"Authorization", "Token " + std::string(auth_token)}});
 
-    TObjArray array;
+    std::vector<std::shared_ptr<SRun>> array;
     if (r.status_code == 200)
     {
         // full json response
@@ -163,12 +165,12 @@ TObjArray SMysqlInterface::getRunContainers(long runid_min, long runid_max)
             std::time_t valid_to = extract_date(
                 std::string(d["stop_time"].GetString(), d["stop_time"].GetStringLength()));
 
-            SRunContainer* run_container = new SRunContainer;
-            run_container->setId(d["run_id"].GetInt());
-            run_container->setStart(valid_from);
-            run_container->setStop(valid_to);
-            run_container->setType(d["run_type"].GetInt());
-            array.Add(run_container);
+            auto run = std::make_shared<SRun>();
+            run->setId(d["id"].GetInt());
+            run->setStart(valid_from);
+            run->setStop(valid_to);
+            run->setType(d["run_type"].GetInt());
+            array.push_back(run);
         }
     }
     return array;
@@ -178,7 +180,7 @@ TObjArray SMysqlInterface::getRunContainers(long runid_min, long runid_max)
  * Add new run contaniner. The runid is stored inside the container.
  * \param runcont run container to add.
  */
-void SMysqlInterface::addRunContainer(SRunContainer&& runcont)
+void SMysqlInterface::addRunContainer(SRun&& runcont)
 {
     std::time_t valid_from = runcont.getStart();
     std::time_t valid_to = runcont.getStop();

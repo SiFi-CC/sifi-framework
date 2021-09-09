@@ -19,7 +19,7 @@
 #include <ctime>
 #include <tuple>
 
-struct SIFI_EXPORT SRunContainer : public TObject
+struct SIFI_EXPORT SRun : public TObject
 {
     long runid;             ///< run id
     std::time_t start_time; ///< run timestamp in UTC
@@ -27,7 +27,7 @@ struct SIFI_EXPORT SRunContainer : public TObject
     int runtype;            ///< run type
 
 public:
-    SRunContainer() = default;
+    SRun() = default;
 
     /// Set run id
     /// \param id run id

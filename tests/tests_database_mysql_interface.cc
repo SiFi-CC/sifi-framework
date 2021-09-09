@@ -41,13 +41,13 @@ TEST(tests_database_mysql_interface, run_request)
 
     SMysqlInterface api("http://127.0.0.1:8000", token);
     auto run_cont = api.getRunContainer(1);
-    EXPECT_TRUE(run_cont.has_value());
+    EXPECT_TRUE(run_cont.get());
     run_cont = api.getRunContainer(2);
-    EXPECT_TRUE(run_cont.has_value());
+    EXPECT_TRUE(run_cont.get());
     run_cont = api.getRunContainer(3);
-    EXPECT_TRUE(run_cont.has_value());
+    EXPECT_TRUE(run_cont.get());
     run_cont = api.getRunContainer(40);
-    EXPECT_FALSE(run_cont.has_value());
+    EXPECT_FALSE(run_cont.get());
 }
 
 TEST(tests_database_mysql_interface, run_range_request)
@@ -74,7 +74,7 @@ TEST(tests_database_mysql_interface, run_range_from_release)
     api.setParamRelease("TEST");
 
     auto run_cont = api.getRunContainers(0, 0);
-    EXPECT_EQ(run_cont.GetEntries(), 7);
+    EXPECT_EQ(run_cont.size(), 7);
 }
 
 TEST(tests_database_mysql_interface, container_request)

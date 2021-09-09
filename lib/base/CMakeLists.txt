@@ -18,7 +18,7 @@ SIFI_GENERATE_LIBRARY(
         core/SDetector.cc
 
         database/SDatabase.cc
-        database/SRunContainer.cc
+        database/SRun.cc
         database/SContainer.cc
         database/SCalContainer.cc
         database/SParContainer.cc
@@ -62,7 +62,7 @@ SIFI_GENERATE_LIBRARY(
         core/SDetector.h
 
         database/SDatabase.h
-        database/SRunContainer.h
+        database/SRun.h
         database/SContainer.h
         database/SCalContainer.h
         database/SParContainer.h

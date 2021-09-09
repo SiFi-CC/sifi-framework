@@ -34,7 +34,7 @@
 #include "sifi_export.h"
 
 #include "SContainer.h"
-#include "SRunContainer.h"
+#include "SRun.h"
 
 #include <algorithm> // for max
 #include <map>
@@ -74,10 +74,9 @@ public:
     void setParamRelease(std::string_view release) { param_release = release; }
 
     // Implement these
-    auto getRunContainer(long runid) -> std::optional<SRunContainer>;
-    auto getRunContainers() -> TObjArray;
-    auto getRunContainers(long runid_min, long runid_max) -> TObjArray;
-    void addRunContainer(SRunContainer&& runcont);
+    auto getRunContainer(long runid) -> std::shared_ptr<SRun>;
+    auto getRunContainers(long runid_min, long runid_max) -> std::vector<std::shared_ptr<SRun>>;
+    void addRunContainer(SRun&& runcont);
 
     auto getContainer(std::string_view&& name, long runid) -> std::optional<SContainer>;
     auto getContainers(std::string_view&& name, long runid_min) -> std::vector<SContainer>;

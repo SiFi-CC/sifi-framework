@@ -9,14 +9,14 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#include "SRunContainer.h"
+#include "SRun.h"
 
 #include <iomanip>
 #include <iostream>
 
 /**
 
- \class SRunContainer
+ \class SRun
  \ingroup lib_base_database
 
 Stores basic run information. Each significant files has corresponding run entry. Significancy
@@ -32,7 +32,7 @@ runtype -- type of run, to be defined by user
 
 */
 
-void SRunContainer::print() const
+void SRun::print() const
 {
     std::cout << "=== Run info === id: " << runid << "  type: " << runtype
               << "  start: " << std::put_time(gmtime(&start_time), "%F %T %Z")

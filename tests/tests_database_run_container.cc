@@ -1,13 +1,13 @@
 #include <gtest/gtest.h>
 
-#include "SRunContainer.h"
+#include "SRun.h"
 
 #include <ctime>  // for time, time_t
 #include <memory> // for allocator
 
 TEST(tests_database_run_container, basic_test)
 {
-    SRunContainer run1;
+    SRun run1;
     run1.setId(13);
     std::time_t t1 = std::time(nullptr);
     std::time_t t2 = std::time(nullptr) + 1;
