@@ -60,18 +60,30 @@ Float_t FindT0(Float_t* samples, size_t len, Float_t threshold, Int_t pol)
     return t0;
 }
 
+/**
+ * This function ...
+ * 
+ * \param samples
+ * \param len
+ * \param threshold
+ * \param _t0
+ * \param pol
+ * \param deadtime
+ * \param pileup
+ * \return ...
+ */
 Float_t FindTMax(Float_t* samples, size_t len, Float_t threshold, Int_t _t0, Int_t pol,
                  Int_t deadtime, Int_t& pileup)
 {
 
     if (_t0 == -100) return -100.;
 
-    Float_t tmax = -1.;
+    Float_t tmax = -100.;
     Int_t wait_for_pileup = 0;
 
     for (Int_t ii = _t0; ii < len; ii++)
     {
-        if (tmax == -1. and
+        if (tmax == -100. and
             ((pol == 0 and samples[ii] > threshold) or (pol == 1 and samples[ii] < threshold)))
         {
             tmax = ii - 1 + (threshold - samples[ii - 1]) / (samples[ii] - samples[ii - 1]);
@@ -253,6 +265,12 @@ bool SFibersDDUnpacker::decode(uint16_t subevtid, float* data, size_t length)
     Int_t pileup = 0;
     Float_t tot = -100;
     Float_t charge = -100;
+    Float_t over_int = -100;
+
+    float ADC_to_mV = getADCTomV();
+    float sample_to_ns = getSampleTimeBin();
+    
+    Int_t _tmax_bl = -500;
 
     if (pol == 1)
     {
@@ -264,27 +282,63 @@ bool SFibersDDUnpacker::decode(uint16_t subevtid, float* data, size_t length)
         ampl = -*std::min_element(samples, samples + limit);
         threshold = anamode == 0 ? thr : thr / 100 * ampl;
     }
+    
     Float_t t0 = FindT0(samples, limit, threshold, pol);
-
+    
     if (t0 >= 0)
     {
         Float_t _mod = t0 - int(t0);
         Int_t _t0 = _mod > 0. ? int(t0 + 1) : int(t0);
-
         Float_t tmax = FindTMax(samples, limit, threshold, _t0, pol, deadtime, pileup);
-        tot = tmax - t0;
 
-        Int_t _tmax = tmax;
-        Int_t _len = intmode <= 0 ? _tmax - _t0 : intmode;
+        if (tmax > 0) 
+        {
+            tot = tmax - t0;
+            Int_t _tmax = tmax;
+            Int_t _len = 0;
+                
+            if (intmode == -1) // integrate to baseline
+            {
+                Float_t tmax_bl = FindTMax(samples, limit, 0, _t0, pol, deadtime, pileup);
+                _tmax_bl = tmax_bl;
+                
+                if (_tmax_bl == -100)
+                    _tmax_bl = 1024;
+                
+                _len = _tmax_bl - _t0;
+            }
+            else if (intmode == 0 ) // integrate TOT
+            {
+                _len = _tmax - _t0;
+            }
+            else if (intmode > 0) // integrate given period
+            {
+                _len = intmode;
+            }
+        
+            if (_len + _t0 >= 1024) 
+                _len = 1024 - _t0 - 1;
 
-        if (_len + _t0 >= 1024) _len = 1024 - _t0 - 1;
+            size_t offset_start = _t0 <= 20 ? 0 : _t0 - 20;
+            size_t offset_stop = _len + _t0 >= 1024 ? 1024 - _t0 - 1 : _t0 + _len;
 
-        size_t offset_start = _t0 <= 20 ? 0 : _t0 - 20;
-        size_t offset_stop = _len + _t0 >= 1024 ? 1024 - _t0 - 1 : _t0 + _len;
-
-        charge = std::accumulate(samples + offset_start, samples + offset_stop,
-                                 0.); // backward integration here
-        if (pol == 0) charge = -charge;
+            charge = std::accumulate(samples + offset_start, samples + offset_stop, 0.); // backward integration here
+            
+            if (pol == 0) charge = -charge;
+            
+            if (intmode == -1) // integrate to baseline
+            {
+                if (_tmax_bl == 1024)
+                    over_int = -100;
+                else
+                    over_int = std::accumulate(samples + offset_stop, samples + 1023, 0.);             
+            }
+                
+        }
+        else
+        {
+            charge = -100 * ADC_to_mV;
+        }
     }
 
     Int_t veto = FindVeto(samples, limit, veto_thr, pol);
@@ -295,9 +349,6 @@ bool SFibersDDUnpacker::decode(uint16_t subevtid, float* data, size_t length)
         pRaw = reinterpret_cast<SFibersRaw*>(catFibersRaw->getSlot(loc));
         new (pRaw) SFibersRaw;
     }
-
-    float ADC_to_mV = getADCTomV();
-    float sample_to_ns = getSampleTimeBin();
 
     pRaw->setAddress(loc[0], loc[1], loc[2]);
     if (side == 'l')
@@ -310,6 +361,7 @@ bool SFibersDDUnpacker::decode(uint16_t subevtid, float* data, size_t length)
         pSamples->getSignalL()->SetCharge(tmp_charge);
         pSamples->getSignalL()->SetBL(bl);
         pSamples->getSignalL()->SetBLSigma(bl_sigma);
+        pSamples->getSignalL()->SetOvershootIntegral(over_int);
         pSamples->getSignalL()->SetPileUp(pileup);
         pSamples->getSignalL()->SetVeto(veto);
         pSamples->getSignalL()->SetPE(tmp_charge / cp[0] + cp[1]);
@@ -327,6 +379,7 @@ bool SFibersDDUnpacker::decode(uint16_t subevtid, float* data, size_t length)
         pSamples->getSignalR()->SetCharge(tmp_charge);
         pSamples->getSignalR()->SetBL(bl);
         pSamples->getSignalR()->SetBLSigma(bl_sigma);
+        pSamples->getSignalR()->SetOvershootIntegral(over_int);
         pSamples->getSignalR()->SetPileUp(pileup);
         pSamples->getSignalR()->SetVeto(veto);
         pSamples->getSignalR()->SetPE(tmp_charge / cp[0] + cp[1]);

@@ -23,15 +23,16 @@
 class SIFI_EXPORT SDDSignal
 {
 public:
-    Float_t fAmp;      ///< Amplitude [mV]
-    Float_t fT0;       ///< Time T0 [ns]
-    Float_t fTOT;      ///< Time over threshold [ns]
-    Float_t fCharge;   ///< Uncalibrated charge [a.u.]
-    Float_t fPE;       ///< Calibrated charge [P.E.] or [keV]
-    Float_t fBL;       ///< extracted base line
-    Float_t fBL_sigma; ///< sigma of the baseline
-    Int_t fPileUp;     ///< pile up flag
-    Int_t fVeto;       ///< veto flag
+    Float_t fAmp;          ///< Amplitude [mV]
+    Float_t fT0;           ///< Time T0 [ns]
+    Float_t fTOT;          ///< Time over threshold [ns]
+    Float_t fCharge;       ///< Uncalibrated charge [a.u.]
+    Float_t fPE;           ///< Calibrated charge [P.E.] or [keV]
+    Float_t fBL;           ///< Extracted base line
+    Float_t fBL_sigma;     ///< Sigma of the baseline
+    Float_t fOvershootInt; ///< Integral of the signal overshoot 
+    Int_t fPileUp;         ///< Pile up flag
+    Int_t fVeto;           ///< Veto flag
 
 public:
     SDDSignal();
@@ -57,6 +58,9 @@ public:
     /// Sets baselibe sigma value
     /// \param bl_sig baseline sigma
     void SetBLSigma(Float_t bl_sig) { fBL_sigma = bl_sig; };
+    /// Sets integral of the signal overshoot
+    /// \param over_int intergal of the signal overshoot
+    void SetOvershootIntegral(Float_t over_int) { fOvershootInt = over_int; };
     /// Sets pile up flag
     /// \param pileup pile up flag
     void SetPileUp(Int_t pileup) { fPileUp = pileup; };
@@ -85,6 +89,9 @@ public:
     /// Returns baseline sigma
     /// \return baseline sigma
     Float_t GetBLSigma() const { return fBL_sigma; };
+    /// Returns integral of the signal overshoot
+    /// \return integral of the signal overshoot
+    Float_t GetOvershootInt() const { return fOvershootInt; };
     /// Returns pile up flag
     /// \return pile up flag
     Int_t GetPileUp() const { return fPileUp; };

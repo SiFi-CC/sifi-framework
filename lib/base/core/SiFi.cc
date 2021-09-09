@@ -276,7 +276,7 @@ void SiFi::initBranches()
 {
     if (branches_set) return;
 
-    size_t limit = SCategory::CatLimitDoNotUse * 2;
+    size_t limit = SCategory::CatLimitDoNotUse;// * 2;
     for (size_t i = 0; i < limit; ++i)
     {
         CategoryInfo& cinfo = SiFi::cinfovec[i];

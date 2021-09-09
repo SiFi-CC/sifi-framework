@@ -72,9 +72,8 @@ void SDDSamples::print() const
 
 //------------------------------------------------------------------
 /// Default constructor.
-SDDSignal::SDDSignal()
-    : fAmp(-100), fT0(-100), fTOT(-100), fCharge(-100), fPE(-100), fBL(-100), fBL_sigma(-100),
-      fPileUp(-100), fVeto(-100)
+SDDSignal::SDDSignal() : fAmp(-100), fT0(-100), fTOT(-100), fCharge(-100), fPE(-100),
+                         fBL(-100), fBL_sigma(-100), fOvershootInt(-100), fPileUp(-100), fVeto(-100)
 {
 }
 
@@ -89,6 +88,7 @@ void SDDSignal::Clear(void)
     fPE = -100.;
     fBL = -100;
     fBL_sigma = -100;
+    fOvershootInt = -100;
     fPileUp = -100;
     fVeto = -100;
 }
@@ -103,6 +103,7 @@ void SDDSignal::Print(void) const
     std::cout << "Time over threshold = " << fTOT << " ns" << std::endl;
     std::cout << "Charge (signal integral) = " << fCharge << std::endl;
     std::cout << "Calibrated charge = " << fPE << " P.E. / keV" << std::endl;
+    std::cout << "Integral of the signal overshoot = " << fOvershootInt << std::endl;
     std::cout << "Baseline = " << fBL << " +/- " << fBL_sigma << " keV" << std::endl;
     std::cout << "PileUp = " << fPileUp << std::endl;
     std::cout << "Veto = " << fVeto << std::endl;

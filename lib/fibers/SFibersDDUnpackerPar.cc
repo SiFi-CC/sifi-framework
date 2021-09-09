@@ -95,10 +95,10 @@ bool SFibersDDUnpackerPar::getParams(SParContainer* parcont)
         exit(EXIT_FAILURE);
     }
 
-    if (fIntMode < 0)
+    if (fIntMode < -1)
     {
-        std::cerr << "fIntMode cannot be smaller than 0!" << std::endl;
-        std::cerr << "Possible values are: 0 - TOT or >0 - Limit" << std::endl;
+        std::cerr << "fIntMode cannot be smaller than -1!" << std::endl;
+        std::cerr << "Possible values are: 0 - TOT or >0 - Limit or -1 - BL" << std::endl;
         std::cerr << "fIntMode = " << fIntMode << std::endl;
         exit(EXIT_FAILURE);
     }
