@@ -211,6 +211,15 @@ void SMysqlInterface::addRunContainer(SRun&& runcont)
                                             {"Content-Type", "application/json"}});
 }
 
+auto SMysqlInterface::findContainer(std::string_view&& name) -> bool
+{
+    cpr::Response r = cpr::Get(cpr::Url{std::string(api_url) + "/api/fetch/cont/" + param_release +
+                                        "/" + std::string(name) + "/find/"},
+                               cpr::Header{{"Authorization", "Token " + std::string(auth_token)}});
+
+    return r.status_code == 200;
+}
+
 std::optional<SContainer> SMysqlInterface::getContainer(std::string_view&& name, long runid)
 {
     cpr::Response r =

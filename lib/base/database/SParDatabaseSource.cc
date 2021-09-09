@@ -88,6 +88,14 @@ SParDatabaseSource::SParDatabaseSource() : SParSource()
  */
 bool SParDatabaseSource::parseSource() { return true; }
 
+auto SParDatabaseSource::findContainer(const std::string& name) -> bool
+{
+    std::string_view release = pm()->getRelease();
+
+    mysqlcon->setParamRelease(release);
+    return mysqlcon->findContainer(name);
+}
+
 /**
  * Get parameter from the database. If the copy exists in the local cache, use it, otherwise
  * try to retirewe from MySQL database.
@@ -95,31 +103,32 @@ bool SParDatabaseSource::parseSource() { return true; }
  * \param runid run id number
  * \return pointer to the container
  */
-SContainer* SParDatabaseSource::getContainer(const std::string& name, long runid)
+auto SParDatabaseSource::getContainer(const std::string& name, long runid)
+    -> std::shared_ptr<SContainer>
 {
     // check if same release
     std::string_view release = SDatabase::instance()->getRelease();
     // TODO if release has name, then check whether it matches the one from file
     // if (!release.empty() and release != this_release_from_file) return 0;
 
-    // if it was the same version like before, return cached one
-    auto last_it = last_container.find(name);
-    if (last_it != last_container.end() and last_it->second->validity == runid)
-        return last_it->second;
-
-    // check if container is in the source at all
-    auto it = containers.find(name);
-    if (it != containers.end())
-    {
-        for (auto& range : it->second)
-        {
-            if (range.first == runid)
-            {
-                last_container[name] = range.second.get();
-                return range.second.get();
-            }
-        }
-    }
+    //     // if it was the same version like before, return cached one
+    //     auto last_it = last_container.find(name);
+    //     if (last_it != last_container.end() and last_it->second->validity == runid)
+    //         return last_it->second;
+    //
+    //     // check if container is in the source at all
+    //     auto it = containers.find(name);
+    //     if (it != containers.end())
+    //     {
+    //         for (auto& range : it->second)
+    //         {
+    //             if (range.first == runid)
+    //             {
+    //                 last_container[name] = range.second.get();
+    //                 return range.second.get();
+    //             }
+    //         }
+    //     }
 
     // if not already fetched, get from database
     mysqlcon->setParamRelease(release);
@@ -129,10 +138,7 @@ SContainer* SParDatabaseSource::getContainer(const std::string& name, long runid
     if (!cont.has_value()) return nullptr;
 
     // and add to the local storage for future use
-    auto new_cont = std::make_unique<SContainer>(cont.value());
-    auto new_cont_ptr = new_cont.get();
-    containers[name].insert({cont.value().validity, std::move(new_cont)});
-    return new_cont_ptr;
+    return std::make_shared<SContainer>(cont.value());
 }
 
 bool SParDatabaseSource::setContainer(const std::string& name, SContainer&& cont)

@@ -114,7 +114,7 @@ struct validity_runs_range
     /// Checks whether #time is within the range
     /// \param time time to compare
     /// \return whether the #time is within the range
-    bool operator==(uint64_t time) const { return from <= time and time < to; }
+    bool inside(uint64_t time) const { return from <= time and (time < to or to == 0); }
 
     /// Check for overlap
     /// \param range tested range

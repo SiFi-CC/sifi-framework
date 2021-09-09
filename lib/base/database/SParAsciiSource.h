@@ -48,7 +48,10 @@ public:
     SParAsciiSource(std::string&& source);
     virtual ~SParAsciiSource() = default;
 
-    virtual SContainer* getContainer(const std::string& name, long runid) override;
+    virtual auto findContainer(const std::string& name) -> bool override;
+
+    virtual auto getContainer(const std::string& name, long runid)
+        -> std::shared_ptr<SContainer> override;
 
     void print() const override;
 
@@ -57,7 +60,7 @@ private:
 
 private:
     std::string source;                                            ///< ascii file name
-    std::map<std::string, std::unique_ptr<SContainer>> containers; ///< Containers mirrors
+    std::map<std::string, std::shared_ptr<SContainer>> containers; ///< Containers mirrors
 };
 
 #endif /* SPARASCIISOURCE_H */

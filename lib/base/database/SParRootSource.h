@@ -46,7 +46,10 @@ public:
     SParRootSource(std::string&& source);
     virtual ~SParRootSource() = default;
 
-    virtual SContainer* getContainer(const std::string& name, long runid) override;
+    virtual auto findContainer(const std::string& name) -> bool override;
+
+    virtual auto getContainer(const std::string& name, long runid)
+        -> std::shared_ptr<SContainer> override;
 
     void print() const override;
 
@@ -54,10 +57,11 @@ private:
     bool parseSource();
 
 private:
-    std::map<std::string, std::map<validity_runs_range, SContainer*>>
-        containers;                                    ///< Containers mirrors
-    std::map<std::string, SContainer*> last_container; ///< Last used container, for caching purpose
-    std::string source;                                ///< Root file name
+    std::map<std::string, std::map<validity_runs_range, std::shared_ptr<SContainer>>>
+        containers; ///< Containers mirrors
+    std::map<std::string, std::shared_ptr<SContainer>>
+        last_container; ///< Last used container, for caching purpose
+    std::string source; ///< Root file name
 };
 
 #endif /* SPARROOTSOURCE_H */

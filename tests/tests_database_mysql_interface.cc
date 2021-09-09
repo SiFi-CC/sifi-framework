@@ -77,6 +77,28 @@ TEST(tests_database_mysql_interface, run_range_from_release)
     EXPECT_EQ(run_cont.size(), 7);
 }
 
+TEST(tests_database_mysql_interface, container_find)
+{
+    const char* token = getenv("SIFIAUTH");
+    ASSERT_STRNE(token, nullptr);
+
+    SMysqlInterface api("http://127.0.0.1:8000", token);
+    api.setParamRelease("TEST"); // runs 3-9
+
+    // GeomPar, params 3-7 are validated, 8-9 are not validated
+    auto cont = api.findContainer("FibersGeomPar");
+    EXPECT_TRUE(cont); // params for runs 1 are not existing (utside test)
+
+    cont = api.findContainer("BadFibersGeomPar");
+    EXPECT_FALSE(cont); // params for runs 1 are not existing (utside test)
+
+    api.setParamRelease("BAD_TEST"); // runs 3-9
+
+    // GeomPar, params 3-7 are validated, 8-9 are not validated
+    cont = api.findContainer("FibersGeomPar");
+    EXPECT_FALSE(cont); // params for runs 1 are not existing (utside test)
+}
+
 TEST(tests_database_mysql_interface, container_request)
 {
     const char* token = getenv("SIFIAUTH");

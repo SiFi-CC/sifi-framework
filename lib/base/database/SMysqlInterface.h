@@ -78,6 +78,7 @@ public:
     auto getRunContainers(long runid_min, long runid_max) -> std::vector<std::shared_ptr<SRun>>;
     void addRunContainer(SRun&& runcont);
 
+    auto findContainer(std::string_view&& name) -> bool;
     auto getContainer(std::string_view&& name, long runid) -> std::optional<SContainer>;
     auto getContainers(std::string_view&& name, long runid_min) -> std::vector<SContainer>;
     auto getContainers(std::string_view&& name, long runid_min, long runid_max)

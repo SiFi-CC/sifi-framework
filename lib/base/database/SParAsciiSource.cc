@@ -147,10 +147,19 @@ void SParAsciiSource::print() const
     SParSource::print();
 }
 
-SContainer* SParAsciiSource::getContainer(const std::string& name, long runid)
+auto SParAsciiSource::getContainer(const std::string& name, long runid)
+    -> std::shared_ptr<SContainer>
 {
     auto it = containers.find(name);
     if (it == containers.end()) { return nullptr; }
 
-    return it->second.get();
+    return it->second;
+}
+
+auto SParAsciiSource::findContainer(const std::string& name) -> bool
+{
+    auto it = containers.find(name);
+    if (it != containers.end()) return true;
+
+    return false;
 }

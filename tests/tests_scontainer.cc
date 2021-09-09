@@ -19,9 +19,9 @@ TEST(tests_scontainer, valid_runs_range_test)
     ASSERT_FALSE(r1 < t1);
     ASSERT_LT(r1, t2);
     ASSERT_LT(r1, t3);
-    ASSERT_EQ(r1, t1);
-    ASSERT_EQ(r1, t2);
-    ASSERT_FALSE(r1 == t3);
+    ASSERT_TRUE(r1.inside(t1));
+    ASSERT_TRUE(r1.inside(t2));
+    ASSERT_FALSE(r1.inside(t3));
 
     ASSERT_TRUE(r2.check_overlap(r1));
     ASSERT_FALSE(r3.check_overlap(r1));

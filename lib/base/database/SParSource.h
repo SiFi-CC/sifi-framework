@@ -33,6 +33,7 @@
 
 #include "sifi_export.h"
 
+#include <memory>
 #include <string>
 
 class SContainer;
@@ -43,6 +44,14 @@ public:
     virtual ~SParSource() = default;
 
     /**
+     * Checke whether source provides given container name.
+     *
+     * \param name container name
+     * \return true if found
+     */
+    virtual auto findContainer(const std::string& name) -> bool = 0;
+
+    /**
      * Get plain container by name. Intepretation of the content must be done by appropriate class,
      * see SDatabase::getParContainer, SDatabase::getLookupContainer, SDatabase::getCalContainer for
      * examples.
@@ -51,7 +60,8 @@ public:
      * \param runid run id
      * \return pointer to the container
      */
-    virtual SContainer* getContainer(const std::string& name, long runid) = 0;
+    virtual auto getContainer(const std::string& name, long runid)
+        -> std::shared_ptr<SContainer> = 0;
 
     /// Print containers stored in the source. Details about source must be print by subclass
     /// method.

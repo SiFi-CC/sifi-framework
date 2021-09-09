@@ -122,7 +122,7 @@ bool SParRootSource::parseSource()
 
             while (TObject* c = next())
             {
-                SContainer* cont = dynamic_cast<SContainer*>(c);
+                auto cont = std::shared_ptr<SContainer>(dynamic_cast<SContainer*>(c));
                 if (cont) { cont_map.insert({cont->validity, cont}); }
             }
         }
@@ -130,7 +130,7 @@ bool SParRootSource::parseSource()
     return false;
 }
 
-SContainer* SParRootSource::getContainer(const std::string& name, long runid)
+auto SParRootSource::findContainer(const std::string& name) -> bool
 {
     // check if same release
     std::string_view release = SDatabase::instance()->getRelease();
@@ -139,21 +139,33 @@ SContainer* SParRootSource::getContainer(const std::string& name, long runid)
 
     // check if container is in the source at all
     auto it = containers.find(name);
+    if (it != containers.end()) return true;
+
+    return false;
+}
+
+auto SParRootSource::getContainer(const std::string& name, long runid)
+    -> std::shared_ptr<SContainer>
+{
+    // check if same release
+    // TODO if release has name, then check whether it matches the one from file
+    // if (!release.empty() and release != this_release_from_file) return 0;
+
+    // check if container is in the source at all
+    auto it = containers.find(name);
     if (it == containers.end()) { return nullptr; }
 
     // if it was the same version like before, return cached one
-    SContainer* last = last_container[name];
-    if (last and last->validity == runid) return last;
+    auto last = last_container[name];
+    if (last and last->validity.inside(runid)) return last;
 
     // get fresh version, need to set flag reinit! TODO
-    // also runid -> time conversion
-    auto time = runid;
 
     auto&& cont_map = containers[name];
-    auto it2 = cont_map.lower_bound(validity_runs_range(time, time));
+    auto it2 = cont_map.lower_bound(validity_runs_range(runid, runid));
     if (it2 != cont_map.end())
     {
-        if (it2->second->validity == time)
+        if (it2->second->validity.inside(runid))
         {
             // TODO force DB to reinit here
             return it2->second;

@@ -49,7 +49,10 @@ public:
     SParDatabaseSource();
     virtual ~SParDatabaseSource() = default;
 
-    virtual auto getContainer(const std::string& name, long runid) -> SContainer* override;
+    virtual auto findContainer(const std::string& name) -> bool override;
+
+    virtual auto getContainer(const std::string& name, long runid)
+        -> std::shared_ptr<SContainer> override;
     virtual auto setContainer(const std::string& name, SContainer&& cont) -> bool;
 
     void print() const override;
