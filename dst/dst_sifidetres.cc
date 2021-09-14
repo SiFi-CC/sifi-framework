@@ -32,6 +32,9 @@ int main(int argc, char** argv)
     std::string output("test.root");
     std::string params_file("params.txt");
 
+    SDatabase db;
+    SRuntimeDb::init(&db);
+
     sifi()->setSimulation(true);
 
     while (1)
@@ -88,7 +91,7 @@ int main(int argc, char** argv)
     std::cout << source1->getEntries() << " events, analyze " << ev_limit << std::endl;
 
     // initialize parameters
-    pm()->addSource(new SParAsciiSource(params_file));
+    SRuntimeDb::get()->addSource(new SParAsciiSource(params_file));
 
     // initialize detectors
     SDetectorManager* detm = SDetectorManager::instance();
@@ -101,8 +104,9 @@ int main(int argc, char** argv)
     detm->initParameterContainers();
     detm->initTasks();
 
-    pm()->addLookupContainer("FibersDDLookupTable", std::make_unique<SFibersLookupTable>(
-                                                        "FibersDDLookupTable", 0x1000, 0x1fff, 32));
+    SRuntimeDb::get()->addContainer(
+        "FibersDDLookupTable",
+        []() { return new SFibersLookupTable("FibersDDLookupTable", 0x1000, 0x1fff, 32); });
 
     // initialize tasks
     STaskManager* tm = STaskManager::instance();

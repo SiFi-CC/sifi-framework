@@ -90,7 +90,7 @@ bool SParDatabaseSource::parseSource() { return true; }
 
 auto SParDatabaseSource::findContainer(const std::string& name) -> bool
 {
-    std::string_view release = pm()->getRelease();
+    std::string_view release = SRuntimeDb::get()->getRelease();
 
     mysqlcon->setParamRelease(release);
     return mysqlcon->findContainer(name);
@@ -107,7 +107,7 @@ auto SParDatabaseSource::getContainer(const std::string& name, long runid)
     -> std::shared_ptr<SContainer>
 {
     // check if same release
-    std::string_view release = SDatabase::instance()->getRelease();
+    std::string_view release = SRuntimeDb::get()->getRelease();
     // TODO if release has name, then check whether it matches the one from file
     // if (!release.empty() and release != this_release_from_file) return 0;
 
@@ -144,7 +144,7 @@ auto SParDatabaseSource::getContainer(const std::string& name, long runid)
 bool SParDatabaseSource::setContainer(const std::string& name, SContainer&& cont)
 {
     // check if same release
-    std::string_view release = SDatabase::instance()->getRelease();
+    std::string_view release = SRuntimeDb::get()->getRelease();
     // TODO if release has name, then check whether it matches the one from file
     // if (!release.empty() and release != this_release_from_file) return 0;
 

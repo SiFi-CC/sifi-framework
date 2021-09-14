@@ -11,27 +11,27 @@ class tests_database_mysql_source : public ::testing::Test
 protected:
     void SetUp() override
     {
-        db = SDatabase::instance();
-        db->setRelease("TEST");
+        SRuntimeDb::init(&db);
+        rdb()->setRelease("TEST");
 
-        db->addContainer("FibersGeomPar", []() { return new SFibersGeomPar; });
-        //         db->addLookupContainer(
+        rdb()->addContainer("FibersGeomPar", []() { return new SFibersGeomPar; });
+        //         rdb()->addLookupContainer(
         //             "FibersDDLookupTable",
         //             std::make_unique<SFibersLookupTable>("FibersDDLookupTable", 0x1000, 0x1fff,
         //             32));
-        //         db->addLookupContainer("LookupTableMissing",
+        //         rdb()->addLookupContainer("LookupTableMissing",
         //         std::make_unique<SFibersLookupTable>(
         //                                                          "LookupTableMissing", 0x2000,
         //                                                          0x2fff, 32));
-        //         db->addCalContainer("FibersCalibratorPar",
+        //         rdb()->addCalContainer("FibersCalibratorPar",
         //                             std::make_unique<SFibersCalibratorPar>("FibersCalibratorPar"));
-        //         db->addCalContainer("CalibratorParMissing",
+        //         rdb()->addCalContainer("CalibratorParMissing",
         //                             std::make_unique<SFibersCalibratorPar>("CalibratorParMissing"));
 
         mysql = new SParDatabaseSource();
         //         mysql->print();
 
-        db->addSource(mysql);
+        rdb()->addSource(mysql);
     }
     void TearDown() override
     {
@@ -39,7 +39,7 @@ protected:
         sifi()->enableAssertations();
     }
 
-    SDatabase* db{nullptr};
+    SDatabase db;
     SParDatabaseSource* mysql{nullptr};
 };
 
@@ -58,10 +58,11 @@ TEST_F(tests_database_mysql_source, mysql_source_test)
 //     ASSERT_EQ(mysql->getContainer("Cont2", 0), nullptr);
 //     ASSERT_NE(mysql->getContainer("FibersGeomPar", 0), nullptr);
 //
-//     ASSERT_EQ(db->getParContainer("Cont1"), nullptr);
-//     ASSERT_EQ(db->getParContainer("Cont2"), nullptr);
+//     ASSERT_EQ(rdb()->getParContainer("Cont1"), nullptr);
+//     ASSERT_EQ(rdb()->getParContainer("Cont2"), nullptr);
 //
-//     auto* pFibersGeomPar = dynamic_cast<SFibersGeomPar*>(db->getParContainer("FibersGeomPar"));
+//     auto* pFibersGeomPar =
+//     dynamic_cast<SFibersGeomPar*>(rdb()->getParContainer("FibersGeomPar"));
 //     ASSERT_NE(pFibersGeomPar, nullptr);
 //
 //     ASSERT_EQ(pFibersGeomPar->getModules(), 2);
@@ -69,26 +70,26 @@ TEST_F(tests_database_mysql_source, mysql_source_test)
 //     ASSERT_EQ(pFibersGeomPar->getLayers(1), 30);
 //
 //     // Test lookup containers
-//     ASSERT_EQ(db->getLookupContainer("Cont1"), nullptr);
-//     ASSERT_EQ(db->getLookupContainer("Cont2"), nullptr);
+//     ASSERT_EQ(rdb()->getLookupContainer("Cont1"), nullptr);
+//     ASSERT_EQ(rdb()->getLookupContainer("Cont2"), nullptr);
 //
 //     auto* pFibersLookup =
-//         dynamic_cast<SFibersLookupTable*>(db->getLookupContainer("FibersDDLookupTable"));
+//         dynamic_cast<SFibersLookupTable*>(rdb()->getLookupContainer("FibersDDLookupTable"));
 //     ASSERT_NE(pFibersLookup, nullptr);
-//     ASSERT_EQ(db->getLookupContainer("FibersLookupTableMissing"), nullptr);
+//     ASSERT_EQ(rdb()->getLookupContainer("FibersLookupTableMissing"), nullptr);
 //
 //     ASSERT_NE(pFibersLookup->getAddress(0x1000, 0), nullptr);
 //     ASSERT_NE(pFibersLookup->getAddress(0x1000, 1), nullptr);
 //     ASSERT_EQ(pFibersLookup->getAddress(0x2000, 0), nullptr);
 //
 //     // Test cal containers
-//     ASSERT_EQ(db->getCalContainer("Cont1"), nullptr);
-//     ASSERT_EQ(db->getCalContainer("Cont2"), nullptr);
+//     ASSERT_EQ(rdb()->getCalContainer("Cont1"), nullptr);
+//     ASSERT_EQ(rdb()->getCalContainer("Cont2"), nullptr);
 //
 //     auto* pCalibPar =
-//         dynamic_cast<SFibersCalibratorPar*>(db->getCalContainer("FibersCalibratorPar"));
+//         dynamic_cast<SFibersCalibratorPar*>(rdb()->getCalContainer("FibersCalibratorPar"));
 //     ASSERT_NE(pCalibPar, nullptr);
-//     ASSERT_EQ(db->getCalContainer("CalibratorParMissing"), nullptr);
+//     ASSERT_EQ(rdb()->getCalContainer("CalibratorParMissing"), nullptr);
 //
 //     SFibersChannel lc;
 //     lc.m = 0;

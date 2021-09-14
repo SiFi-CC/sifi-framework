@@ -36,6 +36,9 @@ int main(int argc, char** argv)
     std::string output("test.root");
     std::string params_file("params.txt");
 
+    SDatabase db;
+    SRuntimeDb::init(&db);
+
     while (1)
     {
         static struct option long_options[] = {{"ss", no_argument, &save_samples, 1},
@@ -138,7 +141,7 @@ int main(int argc, char** argv)
     sifi()->getCategory(SCategory::CatGeantTrack, true);
 
     // initialize parameters
-    pm()->addSource(new SParAsciiSource(params_file));
+    SRuntimeDb::get()->addSource(new SParAsciiSource(params_file));
 
     // initialize detectors
     SDetectorManager* detm = SDetectorManager::instance();
@@ -149,11 +152,13 @@ int main(int argc, char** argv)
     detm->initParameterContainers();
     detm->initCategories();
 
-    pm()->addContainer("FibersDDLookupTable", []() { return new SFibersLookupTable(
-        "FibersDDLookupTable", 0x1000, 0x1fff, 32); } );
+    SRuntimeDb::get()->addContainer(
+        "FibersDDLookupTable",
+        []() { return new SFibersLookupTable("FibersDDLookupTable", 0x1000, 0x1fff, 32); });
 
-    pm()->addContainer("FibersPMILookupTable", []() { return new SFibersLookupTable(
-        "FibersPMILookupTable", 0x1000, 0x1fff, 64); } );
+    SRuntimeDb::get()->addContainer(
+        "FibersPMILookupTable",
+        []() { return new SFibersLookupTable("FibersPMILookupTable", 0x1000, 0x1fff, 64); });
 
     // initialize tasks
     STaskManager* tm = STaskManager::instance();

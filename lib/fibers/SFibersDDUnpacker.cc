@@ -166,7 +166,7 @@ bool SFibersDDUnpacker::init()
 
     // get calibrator parameters
     pDDUnpackerPar =
-        dynamic_cast<SFibersDDUnpackerPar*>(pm()->getParContainer("FibersDDUnpackerPar"));
+        dynamic_cast<SFibersDDUnpackerPar*>(rdb()->getParContainer("FibersDDUnpackerPar"));
     if (!pDDUnpackerPar)
     {
         std::cerr << "Parameter container 'SFibersDDUnpackerPar' was not obtained!" << std::endl;
@@ -176,14 +176,14 @@ bool SFibersDDUnpacker::init()
 
     // get calibrator parameters
     pDDCalPar =
-        dynamic_cast<SFibersDDCalibratorPar*>(pm()->getCalContainer("FibersDDCalibratorPar"));
+        dynamic_cast<SFibersDDCalibratorPar*>(rdb()->getCalContainer("FibersDDCalibratorPar"));
     if (!pDDCalPar)
     {
         std::cerr << "Parameter container 'SFibersDDCalibratorPar' was not obtained!" << std::endl;
         exit(EXIT_FAILURE);
     }
 
-    pLookUp = dynamic_cast<SFibersLookupTable*>(pm()->getLookupContainer("FibersDDLookupTable"));
+    pLookUp = dynamic_cast<SFibersLookupTable*>(rdb()->getLookupContainer("FibersDDLookupTable"));
     pLookUp->print();
 
     return true;

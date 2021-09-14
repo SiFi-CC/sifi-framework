@@ -133,7 +133,7 @@ bool SParRootSource::parseSource()
 auto SParRootSource::findContainer(const std::string& name) -> bool
 {
     // check if same release
-    std::string_view release = SDatabase::instance()->getRelease();
+    std::string_view release = SRuntimeDb::get()->getRelease();
     // TODO if release has name, then check whether it matches the one from file
     // if (!release.empty() and release != this_release_from_file) return 0;
 

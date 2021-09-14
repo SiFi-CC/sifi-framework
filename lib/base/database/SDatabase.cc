@@ -38,30 +38,20 @@ the requested parameter containers exists.
 // for trim functions see
 // https://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
 
-SDatabase* SDatabase::pm = nullptr;
-
-/**
- * Returns instance of the Detector Manager class.
- *
- * \return manager instance
- */
-SDatabase* SDatabase::instance()
-{
-    if (!pm) pm = new SDatabase;
-
-    return pm;
-}
+SDatabase* SRuntimeDb::mdb = nullptr;
 
 /**
  * Shortcut
  * \return SDatabase instance
  */
-SDatabase* pm() { return SDatabase::instance(); }
+SDatabase* rdb() { return SRuntimeDb::get(); }
 
 /**
- * Destructor
+ * See
+ * https://stackoverflow.com/questions/9954518/stdunique-ptr-with-an-incomplete-type-wont-compile#comment31948555_9954553
  */
-SDatabase::~SDatabase() { pm = nullptr; }
+SDatabase::SDatabase() = default;
+SDatabase::~SDatabase() = default;
 
 /**
  * Write all containers to destination file. Internally it creates a list of

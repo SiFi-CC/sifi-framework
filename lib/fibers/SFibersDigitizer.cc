@@ -67,7 +67,7 @@ bool SFibersDigitizer::init()
         return false;
     }
 
-    pGeomPar = dynamic_cast<SFibersGeomPar*>(pm()->getParContainer("FibersGeomPar"));
+    pGeomPar = dynamic_cast<SFibersGeomPar*>(rdb()->getParContainer("FibersGeomPar"));
     if (!pGeomPar)
     {
         std::cerr << "Parameter container 'SFibersGeomPar' was not obtained!" << std::endl;

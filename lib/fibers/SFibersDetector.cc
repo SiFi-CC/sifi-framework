@@ -95,25 +95,25 @@ bool SFibersDetector::initTasks()
  */
 bool SFibersDetector::initContainers()
 {
-    pm()->addContainer("FibersGeomPar", []() { return new SFibersGeomPar; });
+    rdb()->addContainer("FibersGeomPar", []() { return new SFibersGeomPar; });
 
     if (isSimulation())
     {
-        pm()->addContainer("FibersDigitizerPar", []() { return new SFibersDigitizerPar; });
+        rdb()->addContainer("FibersDigitizerPar", []() { return new SFibersDigitizerPar; });
     }
     else
     {
-        pm()->addContainer("FibersDDUnpackerPar", []() { return new SFibersDDUnpackerPar; });
-        pm()->addContainer("FibersDDCalibratorPar",
-                           []() { return new SFibersDDCalibratorPar("FibersDDCalibratorPar"); });
-        pm()->addContainer("FibersDDUnpackerPar",
-                           []() { return new SFibersCalibratorPar("FibersCalibratorPar"); });
+        rdb()->addContainer("FibersDDUnpackerPar", []() { return new SFibersDDUnpackerPar; });
+        rdb()->addContainer("FibersDDCalibratorPar",
+                            []() { return new SFibersDDCalibratorPar("FibersDDCalibratorPar"); });
+        rdb()->addContainer("FibersDDUnpackerPar",
+                            []() { return new SFibersCalibratorPar("FibersCalibratorPar"); });
     }
 
-    pm()->addContainer("FibersHitFinderFiberPar",
-                       []() { return new SCalContainer<3>("FibersHitFinderFiberPar"); });
-    pm()->addContainer("FibersHitFinderPar", []() { return new SFibersHitFinderPar; });
-    pm()->addContainer("FibersClusterFinderPar", []() { return new SFibersClusterFinderPar; });
+    rdb()->addContainer("FibersHitFinderFiberPar",
+                        []() { return new SCalContainer<3>("FibersHitFinderFiberPar"); });
+    rdb()->addContainer("FibersHitFinderPar", []() { return new SFibersHitFinderPar; });
+    rdb()->addContainer("FibersClusterFinderPar", []() { return new SFibersClusterFinderPar; });
 
     return true;
 }

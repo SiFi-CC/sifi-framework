@@ -64,17 +64,8 @@ protected:
     std::map<std::string, cont_obj_factory> obj_factory;        ///< Container object factory
     std::string_view release; ///< stores parameters release name
 
-private:
-    // constructors
-    SDatabase() = default;
-    SDatabase(SDatabase const&) = delete;
-
-    SDatabase& operator=(SDatabase const&) = delete;
-
 public:
-    // instance method
-    static SDatabase* instance();
-    // destructor
+    SDatabase();
     ~SDatabase();
 
     // methods
@@ -107,6 +98,26 @@ public:
     friend class SParAsciiSource;
 };
 
-extern SIFI_EXPORT SDatabase* pm();
+/**
+ * Helper class to provide unique interface for db whichever class is used. Could be as well
+ * a namespace but then the mdb variable would be exposed.
+ */
+class SIFI_EXPORT SRuntimeDb
+{
+private:
+    // constructors
+    SRuntimeDb() = default;
+    SRuntimeDb(SRuntimeDb const&) = delete;
+
+    SRuntimeDb& operator=(SRuntimeDb const&) = delete;
+
+    static SDatabase* mdb; ///< Instance of the SDatabase
+
+public:
+    static void init(SDatabase* db) { mdb = db; }
+    static auto get() -> SDatabase* { return mdb; };
+};
+
+extern SIFI_EXPORT SDatabase* rdb();
 
 #endif /* SDATABASE_H */

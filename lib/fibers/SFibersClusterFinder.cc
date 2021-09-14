@@ -95,14 +95,14 @@ bool SFibersClusterFinder::init()
 
     // get cluster finder parameters
     pClusterFinderPar =
-        dynamic_cast<SFibersClusterFinderPar*>(pm()->getParContainer("FibersClusterFinderPar"));
+        dynamic_cast<SFibersClusterFinderPar*>(rdb()->getParContainer("FibersClusterFinderPar"));
     if (!pClusterFinderPar)
     {
         std::cerr << "Parameter container 'SFibersClusterFinderPar' was not obtained!" << std::endl;
         exit(EXIT_FAILURE);
     }
 
-    pGeomPar = dynamic_cast<SFibersGeomPar*>(pm()->getParContainer("FibersGeomPar"));
+    pGeomPar = dynamic_cast<SFibersGeomPar*>(rdb()->getParContainer("FibersGeomPar"));
     if (!pGeomPar)
     {
         std::cerr << "Parameter container 'SFibersGeomPar' was not obtained!" << std::endl;

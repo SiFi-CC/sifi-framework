@@ -52,8 +52,7 @@ bool SFibersPMIUnpacker::init()
         return false;
     }
 
-    pLookUp = dynamic_cast<SFibersLookupTable*>(pm()->getLookupContainer("FibersPMILookupTable"));
-    //     pLookUp->print();
+    pLookUp = dynamic_cast<SFibersLookupTable*>(rdb()->getLookupContainer("FibersPMILookupTable"));
 
     return true;
 }

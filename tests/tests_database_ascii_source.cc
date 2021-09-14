@@ -23,23 +23,23 @@ protected:
     {
         sifi()->disableAssertations();
 
-        db = SDatabase::instance();
-        db->addContainer("FibersGeomPar", []() { return new SFibersGeomPar; });
-        db->addContainer(
+        SRuntimeDb::init(&db);
+        rdb()->addContainer("FibersGeomPar", []() { return new SFibersGeomPar; });
+        rdb()->addContainer(
             "FibersDDLookupTable",
             []() { return new SFibersLookupTable("FibersDDLookupTable", 0x1000, 0x1fff, 32); });
-        db->addContainer(
+        rdb()->addContainer(
             "LookupTableMissing",
             []() { return new SFibersLookupTable("LookupTableMissing", 0x2000, 0x2fff, 32); });
-        db->addContainer("FibersCalibratorPar",
+        rdb()->addContainer("FibersCalibratorPar",
                             []() { return new SFibersCalibratorPar("FibersCalibratorPar"); });
-        db->addContainer("CalibratorParMissing",
+        rdb()->addContainer("CalibratorParMissing",
                             []() { return new SFibersCalibratorPar("CalibratorParMissing"); });
 
         ascii = new SParAsciiSource(tests_path + "params.txt");
         // ascii->print();
 
-        db->addSource(ascii);
+        rdb()->addSource(ascii);
     }
     void TearDown() override
     {
@@ -47,7 +47,7 @@ protected:
         sifi()->enableAssertations();
     }
 
-    SDatabase* db{nullptr};
+    SDatabase db;
     SParAsciiSource* ascii{nullptr};
 };
 
@@ -58,10 +58,10 @@ TEST_F(tests_database_ascii_source, ascii_source_test)
     ASSERT_EQ(ascii->getContainer("Cont2", 0), nullptr);
     ASSERT_NE(ascii->getContainer("FibersGeomPar", 0), nullptr);
 
-    ASSERT_EQ(db->getParContainer("Cont1"), nullptr);
-    ASSERT_EQ(db->getParContainer("Cont2"), nullptr);
+    ASSERT_EQ(rdb()->getParContainer("Cont1"), nullptr);
+    ASSERT_EQ(rdb()->getParContainer("Cont2"), nullptr);
 
-    auto* pFibersGeomPar = dynamic_cast<SFibersGeomPar*>(db->getParContainer("FibersGeomPar"));
+    auto* pFibersGeomPar = dynamic_cast<SFibersGeomPar*>(rdb()->getParContainer("FibersGeomPar"));
     ASSERT_NE(pFibersGeomPar, nullptr);
 
     ASSERT_EQ(pFibersGeomPar->getModules(), 2);
@@ -69,26 +69,26 @@ TEST_F(tests_database_ascii_source, ascii_source_test)
     ASSERT_EQ(pFibersGeomPar->getLayers(1), 30);
 
     // Test lookup containers
-    ASSERT_EQ(db->getLookupContainer("Cont1"), nullptr);
-    ASSERT_EQ(db->getLookupContainer("Cont2"), nullptr);
+    ASSERT_EQ(rdb()->getLookupContainer("Cont1"), nullptr);
+    ASSERT_EQ(rdb()->getLookupContainer("Cont2"), nullptr);
 
     auto* pFibersLookup =
-        dynamic_cast<SFibersLookupTable*>(db->getLookupContainer("FibersDDLookupTable"));
+        dynamic_cast<SFibersLookupTable*>(rdb()->getLookupContainer("FibersDDLookupTable"));
     ASSERT_NE(pFibersLookup, nullptr);
-    ASSERT_EQ(db->getLookupContainer("FibersLookupTableMissing"), nullptr);
+    ASSERT_EQ(rdb()->getLookupContainer("FibersLookupTableMissing"), nullptr);
 
     ASSERT_NE(pFibersLookup->getAddress(0x1000, 0), nullptr);
     ASSERT_NE(pFibersLookup->getAddress(0x1000, 1), nullptr);
     ASSERT_EQ(pFibersLookup->getAddress(0x2000, 0), nullptr);
 
     // Test cal containers
-    ASSERT_EQ(db->getCalContainer("Cont1"), nullptr);
-    ASSERT_EQ(db->getCalContainer("Cont2"), nullptr);
+    ASSERT_EQ(rdb()->getCalContainer("Cont1"), nullptr);
+    ASSERT_EQ(rdb()->getCalContainer("Cont2"), nullptr);
 
     auto* pCalibPar =
-        dynamic_cast<SFibersCalibratorPar*>(db->getCalContainer("FibersCalibratorPar"));
+        dynamic_cast<SFibersCalibratorPar*>(rdb()->getCalContainer("FibersCalibratorPar"));
     ASSERT_NE(pCalibPar, nullptr);
-    ASSERT_EQ(db->getCalContainer("CalibratorParMissing"), nullptr);
+    ASSERT_EQ(rdb()->getCalContainer("CalibratorParMissing"), nullptr);
 
     SFibersChannel lc;
     lc.m = 0;

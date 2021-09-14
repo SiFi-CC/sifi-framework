@@ -35,22 +35,21 @@ protected:
         file->Close();
         sifi()->disableAssertations();
 
-        db = SDatabase::instance();
+        SRuntimeDb::init(&db);
 
         root = std::make_unique<SParRootSource>("/tmp/test_params.root");
-        db->addSource(root.get());
+        rdb()->addSource(root.get());
 
         root->print();
     }
 
     void TearDown() override
     {
-        delete db;
         gSystem->Exec("rm /tmp/test_params.root");
         sifi()->enableAssertations();
     }
 
-    SDatabase* db{nullptr};
+    SDatabase db;
     std::unique_ptr<SParRootSource> root;
     const size_t N{10};
     std::unique_ptr<SContainer> c[10];
