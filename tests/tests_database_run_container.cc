@@ -15,9 +15,10 @@ TEST(tests_database_run_container, basic_test)
     run1.setStop(t2);
     run1.setType(7);
 
-    auto [id, sta, sto, type] = run1.getData();
+    auto [id, sta, sto, type, status] = run1.getData();
     ASSERT_EQ(id, 13);
     ASSERT_EQ(sta, t1);
     ASSERT_EQ(sto, t2);
     ASSERT_EQ(type, 7);
+    ASSERT_EQ(status, SRun::Status::Valid);
 }

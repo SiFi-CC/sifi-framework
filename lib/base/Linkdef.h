@@ -21,6 +21,9 @@
 #pragma link C++ class STask+;
 #pragma link C++ class STaskManager+;
 
+#pragma link C++ class SRun+;
+#pragma link C++ class SRelease+;
+
 #pragma link C++ class SiFi;
 
 // datasources

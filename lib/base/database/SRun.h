@@ -19,22 +19,33 @@
 #include <ctime>
 #include <tuple>
 
+/**
+ * \class SRun
+ * Store information about the single acquisition store.
+ *
+ * The run can be marked invalid, and as such, can/should be ignored by analysis.
+ */
 struct SIFI_EXPORT SRun : public TObject
 {
-    long runid;             ///< run id
+    ulong runid;             ///< run id
     std::time_t start_time; ///< run timestamp in UTC
     std::time_t stop_time;  ///< run timestamp in UTC
     int runtype;            ///< run type
+    enum class Status
+    {
+        Valid,
+        Invalid
+    } status; ///< run is invalid
 
 public:
     SRun() = default;
 
     /// Set run id
     /// \param id run id
-    void setId(long id) { runid = id; }
+    auto setId(long id) { runid = id; }
     /// Get run id
     /// \return run id
-    long getId() const { return runid; }
+    auto getId() const { return runid; }
 
     /// Set run start time
     /// \param t start time
@@ -58,13 +69,37 @@ public:
 
     /// Get all data as tuple
     /// \return tuple with data
-    auto getData() -> std::tuple<long, std::time_t, std::time_t, long>
+    auto getData() -> std::tuple<long, std::time_t, std::time_t, long, Status>
     {
-        return std::make_tuple(runid, start_time, stop_time, runtype);
+        return std::make_tuple(runid, start_time, stop_time, runtype, status);
     }
+
+    /// Mark run as Valid
+    void markValid() { status = Status::Valid; }
+    /// Mark run as Invalid
+    void markInvalid() { status = Status::Invalid; }
+    /// Get run status
+    auto getStatus() const -> Status { return status; };
 
     /// Print the contaner name and content
     void print() const;
+
+    ClassDef(SRun, 0);
+};
+
+struct SIFI_EXPORT SRelease : public TObject
+{
+    SRelease() = default;
+    SRelease(const std::string name, ulong first, ulong last)
+        : name(name), first_run(first), last_run(last)
+    {
+    }
+
+    std::string name;
+    ulong first_run{0};
+    ulong last_run{0};
+
+    ClassDef(SRelease, 0);
 };
 
 #endif /* SRUNCALCONTAINER_H */
