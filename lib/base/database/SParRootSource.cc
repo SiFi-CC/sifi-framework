@@ -56,19 +56,28 @@ Reads parameters from ascii file. Can be also used as a target to write paramete
  *
  * \param source ascii source file name
  */
-SParRootSource::SParRootSource(const std::string& source) : SParSource(), source(source)
-{
-    parseSource();
-}
+SParRootSource::SParRootSource(const std::string& source) : SParSource(), source(source) {}
 
 /**
  * Constructor.
  *
  * \param source ascii source file name
  */
-SParRootSource::SParRootSource(std::string&& source) : SParSource(), source(source)
+SParRootSource::SParRootSource(std::string&& source) : SParSource(), source(source) {}
+
+auto SParRootSource::setOpenMode(SourceOpenMode mode) -> void
 {
-    parseSource();
+    switch (mode)
+    {
+        case SourceOpenMode::Input:
+            file_source = TFile::Open(source.c_str(), "READ");
+            if (!file_source) file_source = TFile::Open(source.c_str(), "RECREATE");
+            parseSource();
+            break;
+        case SourceOpenMode::Output:
+            file_source = TFile::Open(source.c_str(), "RECREATE");
+            break;
+    }
 }
 
 /**
@@ -78,10 +87,7 @@ SParRootSource::SParRootSource(std::string&& source) : SParSource(), source(sour
  */
 bool SParRootSource::parseSource()
 {
-    TFile* first_source = TFile::Open(source.c_str(), "READ");
-    if (!first_source) return false;
-
-    first_source->cd();
+    file_source->cd();
     TDirectory* current_sourcedir = gDirectory;
     // gain time, do not add the objects in the list in memory
     // Bool_t status = TH1::AddDirectoryStatus();
@@ -96,7 +102,7 @@ bool SParRootSource::parseSource()
         if (oldkey && !strcmp(oldkey->GetName(), key->GetName())) continue;
 
         // read object from first source file
-        first_source->cd();
+        file_source->cd();
         TObject* obj = key->ReadObj();
 
         if (obj->IsA()->InheritsFrom(TList::Class()))

@@ -39,12 +39,16 @@
 #include <map>
 #include <string>
 
+class TFile;
+
 class SIFI_EXPORT SParRootSource : public SParSource
 {
 public:
     SParRootSource(const std::string& source);
     SParRootSource(std::string&& source);
     virtual ~SParRootSource() = default;
+
+    virtual auto setOpenMode(SourceOpenMode mode) -> void override;
 
     virtual auto findContainer(const std::string& name) -> bool override;
 
@@ -57,6 +61,8 @@ private:
     bool parseSource();
 
 private:
+    TFile* file_source{nullptr};
+
     std::map<std::string, std::map<validity_runs_range, std::shared_ptr<SContainer>>>
         containers; ///< Containers mirrors
     std::map<std::string, std::shared_ptr<SContainer>>

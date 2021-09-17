@@ -38,10 +38,18 @@
 
 class SContainer;
 
+enum class SourceOpenMode
+{
+    Input,
+    Output
+};
+
 class SIFI_EXPORT SParSource
 {
 public:
     virtual ~SParSource() = default;
+
+    virtual auto setOpenMode(SourceOpenMode mode) -> void = 0;
 
     /**
      * Checke whether source provides given container name.

@@ -48,6 +48,8 @@ public:
     SParAsciiSource(std::string&& source);
     virtual ~SParAsciiSource() = default;
 
+    virtual auto setOpenMode(SourceOpenMode mode) -> void override {}
+
     virtual auto findContainer(const std::string& name) -> bool override;
 
     virtual auto getContainer(const std::string& name, long runid)
