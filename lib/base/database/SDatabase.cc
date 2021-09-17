@@ -53,6 +53,22 @@ SDatabase* rdb() { return SRuntimeDb::get(); }
 SDatabase::SDatabase() = default;
 SDatabase::~SDatabase() = default;
 
+// methods
+/// Set parameters source
+/// \param source source file name
+void SDatabase::addSource(SParSource* source)
+{
+    source->setOpenMode(SourceOpenMode::Input);
+    sources.push_back(source);
+}
+/// Set parameters destination
+/// \param target destination file name
+void SDatabase::setTarget(SParSource* target)
+{
+    target->setOpenMode(SourceOpenMode::Output);
+    this->target = target;
+}
+
 /**
  * Write all containers to destination file. Internally it creates a list of
  * containers and calls writeContainers();

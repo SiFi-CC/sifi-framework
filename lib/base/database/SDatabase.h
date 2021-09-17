@@ -71,10 +71,10 @@ public:
     // methods
     /// Set parameters source
     /// \param source source file name
-    void addSource(SParSource* source) { sources.push_back(source); }
+    void addSource(SParSource* source);
     /// Set parameters destination
     /// \param target destination file name
-    void setTarget(SParSource* target) { this->target = target; }
+    void setTarget(SParSource* target);
 
     void writeDestination();
     void writeContainers(const std::vector<std::string>& names);
