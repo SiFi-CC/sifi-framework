@@ -52,8 +52,11 @@ public:
 
     virtual auto findContainer(const std::string& name) -> bool override;
 
-    virtual auto getContainer(const std::string& name, long runid)
+    virtual auto getContainer(const std::string& name, ulong runid)
         -> std::shared_ptr<SContainer> override;
+
+    virtual auto insertContainer(const std::string& name, std::vector<SContainer*> cont)
+        -> bool override;
 
     void print() const override;
 

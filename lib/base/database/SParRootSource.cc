@@ -150,7 +150,7 @@ auto SParRootSource::findContainer(const std::string& name) -> bool
     return false;
 }
 
-auto SParRootSource::getContainer(const std::string& name, long runid)
+auto SParRootSource::getContainer(const std::string& name, ulong runid)
     -> std::shared_ptr<SContainer>
 {
     // check if same release
@@ -179,6 +179,24 @@ auto SParRootSource::getContainer(const std::string& name, long runid)
     }
 
     return nullptr;
+}
+
+auto SParRootSource::insertContainer(const std::string& name, std::vector<SContainer*> cont) -> bool
+{
+    if (file_source)
+    {
+        file_source->cd();
+        auto list = new TObjArray;
+        list->SetName(name.c_str());
+
+        for (auto& c : cont)
+            list->Add(c);
+
+        list->Write(name.c_str(), TObject::kSingleKey);
+        return true;
+    }
+
+    return false;
 }
 
 #include "tabulate/table.hpp"

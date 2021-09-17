@@ -103,7 +103,7 @@ auto SParDatabaseSource::findContainer(const std::string& name) -> bool
  * \param runid run id number
  * \return pointer to the container
  */
-auto SParDatabaseSource::getContainer(const std::string& name, long runid)
+auto SParDatabaseSource::getContainer(const std::string& name, ulong runid)
     -> std::shared_ptr<SContainer>
 {
     // check if same release
@@ -152,6 +152,13 @@ bool SParDatabaseSource::setContainer(const std::string& name, SContainer&& cont
     // DBOBJECT->getContainer(release, name, runid);
     mysqlcon->setParamRelease(release);
     return mysqlcon->addContainer(std::move(name), std::move(cont));
+}
+
+auto SParDatabaseSource::insertContainer(const std::string& name, std::vector<SContainer*> cont)
+    -> bool
+{
+    // TODO implement this
+    return true;
 }
 
 #include "tabulate/table.hpp"

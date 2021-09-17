@@ -35,6 +35,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 class SContainer;
 
@@ -68,8 +69,11 @@ public:
      * \param runid run id
      * \return pointer to the container
      */
-    virtual auto getContainer(const std::string& name, long runid)
+    virtual auto getContainer(const std::string& name, ulong runid)
         -> std::shared_ptr<SContainer> = 0;
+
+    virtual auto insertContainer(const std::string& name, std::vector<SContainer*> cont)
+        -> bool = 0;
 
     /// Print containers stored in the source. Details about source must be print by subclass
     /// method.
