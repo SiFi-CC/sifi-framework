@@ -1,8 +1,8 @@
 #----------------------------------------------------------------------------
 # Setup the project
-cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
 project(SiFi
-    VERSION 0.2.0
+    VERSION 0.3.0
     LANGUAGES CXX
 )
 
@@ -11,45 +11,151 @@ list(APPEND CMAKE_MODULE_PATH
     ${CMAKE_SOURCE_DIR}/Modules
     ${CMAKE_SOURCE_DIR}
     $ENV{ROOTSYS}
-    ${CMAKE_SOURCE_DIR}/cmake-scripts
 )
 
+include(GNUInstallDirs)
+
+# options
+set(BUILTIN_CPR AUTO CACHE STRING "Use built-in cpr")
+set_property(CACHE BUILTIN_CPR PROPERTY STRINGS AUTO ON OFF)
+
+set(BUILTIN_TABULATE AUTO CACHE STRING "Use built-in tabulate")
+set_property(CACHE BUILTIN_TABULATE PROPERTY STRINGS AUTO ON OFF)
+
+set(BUILTIN_MAGICENUM AUTO CACHE STRING "Use built-in magic_enum")
+set_property(CACHE BUILTIN_MAGICENUM PROPERTY STRINGS AUTO ON OFF)
+
+# =================================================================================================
+# fetch external content
+include(FetchContent) # requires >= cmake-3.11
+
 #-------------------------------------------------------------------------------
-##### HELPER file
-include(helpers)
+# cmake-scripts
+FetchContent_Declare(cmake-scripts
+    GIT_REPOSITORY https://github.com/StableCoder/cmake-scripts.git
+    GIT_TAG        774a07ece3945b4f72e3ddc11646ab7cc9a349e2 # from main after sanitizer updates
+)
+
+FetchContent_MakeAvailable(cmake-scripts)
+list(APPEND CMAKE_MODULE_PATH
+    ${cmake-scripts_SOURCE_DIR}
+)
+include(c++-standards)
+include(code-coverage)
+include(sanitizers)
+include(doxygen)
+include(formatting)
+include(tools)
+
+#-------------------------------------------------------------------------------
+# cpr
+SET (REQUIRED_CPR_VERSION 1.6.2)
+
+FetchContent_Declare(cpr
+    GIT_REPOSITORY https://github.com/whoshuu/cpr
+    GIT_TAG        ${REQUIRED_CPR_VERSION}
+)
+
+if(BUILTIN_CPR STREQUAL "AUTO")
+    find_package(cpr ${REQUIRED_CPR_VERSION} QUIET)
+    if (NOT cpr_FOUND)
+        SET(USE_BUILTIN_CPR TRUE)
+    endif()
+elseif(BUILTIN_CPR)     # a true value (such as ON) was used
+    SET(USE_BUILTIN_CPR TRUE)
+else()                  # a false value (such as OFF) was used
+    find_package(cpr ${REQUIRED_CPR_VERSION} REQUIRED)
+endif()
+
+if (USE_BUILTIN_CPR)
+    set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Build shared CPR")
+    set(CPR_FORCE_USE_SYSTEM_CURL ON)
+    set(CPR_USE_SYSTEM_GTEST ON)
+    # based on https://stackoverflow.com/questions/65527126/disable-install-for-fetchcontent
+    #FetchContent_MakeAvailable(cpr EXCLUDE_FROM_ALL)
+    FetchContent_GetProperties(cpr)
+    if(NOT cpr_POPULATED)
+        FetchContent_Populate(cpr)
+        add_subdirectory(${cpr_SOURCE_DIR} ${cpr_BINARY_DIR} EXCLUDE_FROM_ALL)
+    endif()
+else()
+    message(STATUS "Uses system-provided cpr")
+endif()
+
+#-------------------------------------------------------------------------------
+# tabulate
+SET (REQUIRED_TABULATE_VERSION 1.4)
+
+FetchContent_Declare(tabulate
+    GIT_REPOSITORY https://github.com/p-ranav/tabulate
+    GIT_TAG        v${REQUIRED_TABULATE_VERSION}
+)
+
+if(BUILTIN_TABULATE STREQUAL "AUTO")
+    find_package(tabulate ${REQUIRED_TABULATE_VERSION} QUIET)
+    if (NOT tabulate_FOUND)
+        SET(USE_BUILTIN_TABULATE TRUE)
+    endif()
+elseif(BUILTIN_TABULATE)     # a true value (such as ON) was used
+    SET(USE_BUILTIN_TABULATE TRUE)
+else()                  # a false value (such as OFF) was used
+    find_package(tabulate ${REQUIRED_TABULATE_VERSION} REQUIRED)
+endif()
+
+if (USE_BUILTIN_TABULATE)
+    #FetchContent_MakeAvailable(tabulate)
+    FetchContent_GetProperties(tabulate)
+    if(NOT tabulate_POPULATED)
+        FetchContent_Populate(tabulate)
+        add_subdirectory(${tabulate_SOURCE_DIR} ${tabulate_BINARY_DIR} EXCLUDE_FROM_ALL)
+    endif()
+else()
+    message(STATUS "Uses system-provided tabulate")
+endif()
+
+
+# magic-enum
+SET (REQUIRED_MAGICENUM_VERSION 0.7.3)
+
+FetchContent_Declare(magic_enum
+    GIT_REPOSITORY https://github.com/Neargye/magic_enum
+    GIT_TAG        v${REQUIRED_MAGICENUM_VERSION}
+)
+
+if(BUILTIN_MAGICENUM STREQUAL "AUTO")
+    find_package(magic_enum ${REQUIRED_MAGICENUM_VERSION} QUIET)
+    if (NOT magic_enum_FOUND)
+        SET(USE_BUILTIN_MAGICENUM TRUE)
+    endif()
+elseif(BUILTIN_MAGICENUM)     # a true value (such as ON) was used
+    SET(USE_BUILTIN_MAGICENUM TRUE)
+else()                  # a false value (such as OFF) was used
+    find_package(magic_enum ${REQUIRED_MAGICENUM_VERSION} REQUIRED)
+endif()
+
+if (USE_BUILTIN_MAGICENUM)
+    #FetchContent_MakeAvailable(magic_enum)
+    FetchContent_GetProperties(magic_enum)
+    if(NOT magic_enum_POPULATED)
+        FetchContent_Populate(magic_enum)
+        add_subdirectory(${magic_enum_SOURCE_DIR} ${magic_enum_BINARY_DIR} EXCLUDE_FROM_ALL)
+    endif()
+else()
+    message(STATUS "Uses system-provided magic_enum")
+endif()
+
+# =================================================================================================
+
 
 #-------------------------------------------------------------------------------
 ##### Symbols export control
 # Export the package for use from the build-tree
 # (this registers the build-tree with a global CMake-registry)
-export(PACKAGE ${CMAKE_PROJECT_NAME})
-string(TOUPPER "${PROJECT_NAME}" CAPS_PROJECT_NAME)
-
-option(SIFI_TREE "SiFi Install Tree" OFF)
+export(PACKAGE ${PROJECT_NAME})
 
 ##### set paths
-if(WIN32 AND NOT CYGWIN)
-    set(DEF_CMAKE_INSTALL_CMAKEDIR cmake)
-else()
-    if(CMAKE_SIZEOF_VOID_P EQUAL "8")
-        set(DEF_CMAKE_INSTALL_LIBDIR lib64)
-    else()
-        set(DEF_CMAKE_INSTALL_LIBDIR lib)
-    endif()
-    set(DEF_CMAKE_INSTALL_CMAKEDIR ${DEF_CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME})
-endif()
-
-if (SIFI_TREE)
-    set(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/sifi)
-    set(LOCAL_SIFI_TREE "")
-    set(CMAKE_INSTALL_LIBDIR ${DEF_CMAKE_INSTALL_LIBDIR}${LOCAL_SIFI_TREE} CACHE PATH "Object code libraries" FORCE)
-    set(_RPATH "\$ORIGIN/../${DEF_CMAKE_INSTALL_LIBDIR}")
-else()
-    set(LOCAL_SIFI_TREE "")
-    set(CMAKE_INSTALL_LIBDIR ${DEF_CMAKE_INSTALL_LIBDIR}${LOCAL_SIFI_TREE} CACHE PATH "Object code libraries" FORCE)
-    set(_RPATH "\$ORIGIN/../${DEF_CMAKE_INSTALL_LIBDIR}${LOCAL_SIFI_TREE}")
-endif()
-set(CMAKE_INSTALL_CMAKEDIR ${DEF_CMAKE_INSTALL_CMAKEDIR} CACHE PATH "Installation directory for CMake files" FORCE)
+set(_RPATH "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}")
+set(CMAKE_INSTALL_CMAKEDIR ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 
 # use, i.e. don't skip the full RPATH for the build tree
 # SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
@@ -81,12 +187,7 @@ set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
 #   find_package(Geant4 QUIET)
 # endif()
 
-include(c++-standards)
-include(code-coverage)
-include(sanitizers)
-include(doxygen)
-include(formatting)
-include(tools)
+
 
 clang_format(format ${ALL_SOURCES})
 include_what_you_use("-Xiwyu;any;-Xiwyu;iwyu;-Xiwyu;args")
@@ -110,8 +211,6 @@ if (ROOT_XREF)
     add_dependencies(doc ROOT_tag)
 endif()
 
-
-#cxx_17()
 if (CODE_COVERAGE)
     add_code_coverage()
     add_code_coverage_all_targets()
@@ -119,33 +218,25 @@ endif()
 
 # Root
 find_package(ROOT 6.20 CONFIG REQUIRED COMPONENTS Core Tree)
-
-include(GNUInstallDirs)
+include(${ROOT_USE_FILE})
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
-#----------------------------------------------------------------------------
-# Setup include directory for this project
-include_directories(
-    ${CMAKE_SOURCE_DIR}/tabulate/include
-    ${CMAKE_BINARY_DIR}
-)
+#-------------------------------------------------------------------------------
+##### HELPER file
+include(helpers)
+
 
 option(BUILD_SIFIDETRES_SUPPORT "Build SiFi Detector Response" OFF)
 if (BUILD_SIFIDETRES_SUPPORT)
     find_package(CCDetectorResponse)
 endif()
 
-#----------------------------------------------------------------------------
-set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Build shared CPR")
-set(CPR_FORCE_USE_SYSTEM_CURL ON)
-set(CPR_USE_SYSTEM_GTEST ON)
-
-add_subdirectory(cpr)
-set_property(TARGET cpr PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 #----------------------------------------------------------------------------
+include_directories(${CMAKE_BINARY_DIR})
+
 add_subdirectory(lib)
 # add_subdirectory(geometry)
 # add_subdirectory(simulation)

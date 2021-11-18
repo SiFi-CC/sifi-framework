@@ -19,9 +19,9 @@ the detector and the data structure.
 
 ### Requirements
 
-* c++17
-* root-6
-* geant4
+* c++17 comaptible compiler (gcc-9 or higher)
+* root-6 (tested with 6.22.06 and higher, compiled with c++17 support)
+* geant4 (for running simulations, optional)
 
 ### Dependencies
 
@@ -33,23 +33,23 @@ The framework is always tested on the Latest Ubuntu. The bare system requires a 
 * rapidjson-dev (MySQL interface)
 * libcurl4-openssl-dev (for cpr)
 
-The default root in Ubuntu is compield against c++14. We provide our custom toot compilation available from http://gccb.if.uj.edu.pl/code/root-cpp17_6.22.08_amd64.deb which has following depedencies:
+The default root in Ubuntu is compiled against c++14. We provide our custom toot compilation available from `http://gccb.if.uj.edu.pl/code/root-cpp17_6.24.06_amd64.deb` which has following dependencies:
 
 * python3-numpy
 * libtbb-dev
 * libxxhash0
 
-An example how to install depedenceis and prepare environment can be found in github workflow in `.github/workflows/main.yml` or below:
+An example how to install dependencies and prepare environment can be found in github workflow in `.github/workflows/configurations.yml` or below:
 
     bash
     sudo apt update
-    sudo apt install libgtest-dev cmake lcov python3-numpy libtbb-dev libxxhash0 -y
-    wget http://gccb.if.uj.edu.pl/code/root-cpp17_6.22.08_amd64.deb
-    sudo dpkg -i root-cpp17_6.22.08_amd64.deb
+    sudo apt install cmake libgtest-dev lcov rapidjson-dev libcurl4-openssl-dev -y
+    sudo apt install python3-numpy libtbb-dev libxxhash0 -y
+    wget http://gccb.if.uj.edu.pl/code/root-cpp17_6.24.06_amd64.deb
+    sudo dpkg -i root-cpp17_6.24.06_amd64.deb
     . /etc/profile
 
-
-For other Linux distributions, you need to handkle depedensies manually.
+For other Linux distributions, you need to handle dependencies manually.
 
 ### Getting source
 
@@ -86,7 +86,7 @@ They read data from one category, process, and store in the other. One task can 
 
 ### Data category
 
-It store data on each stage of the analysis. They are stored in the root tree as branches. Category contain header information and the data object storing actuall data. All values are borwsable in the tree.
+It store data on each stage of the analysis. They are stored in the root tree as branches. Category contain header information and the data object storing actual data. All values are browseable in the tree.
 
 ### Parameter containers
 
@@ -96,7 +96,7 @@ There are three types of the parameter container
 2. Cal(ibration) container
 3. Lookup container
 
-Par container store general parameters, like parameters for digitizer, or track finder, which are independend from input data.
+Par container store general parameters, like parameters for digitizer, or track finder, which are independent from input data.
 
 Cal containers store calibration parameters, individual for input data, e.g. for channels.
 
