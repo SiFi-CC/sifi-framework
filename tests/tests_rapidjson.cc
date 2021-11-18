@@ -6,16 +6,15 @@ using namespace rapidjson;
 
 TEST(tests_rapidjson, basic_test)
 {
-    constexpr const char * test_json =
-"{"
-"   \"hello\": \"world\","
-"   \"t\": true,"
-"   \"f\": false,"
-"   \"n\": null,"
-"   \"i\": 123,"
-"   \"pi\": 3.1416,"
-"   \"a\": [1, 2, 3, 4]"
-"}";
+    constexpr const char* test_json = "{"
+                                      "   \"hello\": \"world\","
+                                      "   \"t\": true,"
+                                      "   \"f\": false,"
+                                      "   \"n\": null,"
+                                      "   \"i\": 123,"
+                                      "   \"pi\": 3.1416,"
+                                      "   \"a\": [1, 2, 3, 4]"
+                                      "}";
 
     Document document;
     document.Parse(test_json);

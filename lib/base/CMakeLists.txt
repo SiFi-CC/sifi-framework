@@ -103,6 +103,7 @@ SIFI_GENERATE_LIBRARY(
         SiFiTools
         Geant
         cpr::cpr
+        tabulate::tabulate
     INCLUDE_DIRS
         core
         database

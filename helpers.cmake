@@ -49,11 +49,11 @@ set_target_properties(${ARG_TARGET}
 
 # Install the export set for use with the install-tree
 install(TARGETS ${ARG_TARGET}
-    EXPORT ${CMAKE_PROJECT_NAME}Targets
+    EXPORT ${PROJECT_NAME}Targets
     LIBRARY
         DESTINATION ${CMAKE_INSTALL_LIBDIR}
     PUBLIC_HEADER
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}${LOCAL_SIFI_TREE}
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
 endmacro(SIFI_GENERATE_LIBRARY)
