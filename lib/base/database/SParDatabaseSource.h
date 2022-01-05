@@ -33,15 +33,15 @@
 
 #include "sifi_export.h"
 
-#include "SContainer.h"
 #include "SMysqlInterface.h"
 #include "SParSource.h"
+#include "SRun.h"
 
 #include <map>
 #include <memory>
 #include <string>
 
-class SContainer;
+struct SContainer;
 
 class SIFI_EXPORT SParDatabaseSource : public SParSource
 {
@@ -60,18 +60,23 @@ public:
     virtual auto insertContainer(const std::string& name, std::vector<SContainer*> cont)
         -> bool override;
 
-    void print() const override;
+    auto doGetRuns() -> std::vector<SRun> override;
+    auto doGetRun(ulong runid) -> SRun override;
+    auto doInsertRun(SRun run) -> bool override;
 
-private:
+    auto doGetRelease() const -> std::optional<SRelease> override;
+
+    void doPrint() const override;
+
     bool parseSource();
 
 private:
-    std::map<std::string, std::map<validity_runs_range, std::unique_ptr<SContainer>>>
-        containers;                                    ///< Containers mirrors
-    std::map<std::string, SContainer*> last_container; ///< Caching of the last container
-    std::string source;                                ///< DATABASE file name
+    std::string dbapi;
+    std::string token;
 
     std::unique_ptr<SMysqlInterface> mysqlcon;
+
+    std::optional<SRelease> release;
 };
 
 #endif /* SParDatabaseSource_H */

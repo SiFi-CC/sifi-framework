@@ -72,8 +72,7 @@ bool SFibersCalibrator::init()
     }
 
     // get calibrator parameters
-    pCalibratorPar =
-        dynamic_cast<SCalContainer<6>*>(rdb()->getCalContainer("FibersCalibratorPar"));
+    pCalibratorPar = dynamic_cast<SCalContainer<6>*>(rdb()->getCalContainer("FibersCalibratorPar"));
 
     if (!pCalibratorPar)
     {

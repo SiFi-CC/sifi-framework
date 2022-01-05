@@ -41,7 +41,7 @@
 
 class TFile;
 
-class SIFI_EXPORT SParRootSource : public SParSource
+class SIFI_EXPORT SParRootSource final : public SParSource
 {
 public:
     SParRootSource(const std::string& source);
@@ -57,8 +57,13 @@ public:
 
     virtual auto insertContainer(const std::string& name, std::vector<SContainer*> cont)
         -> bool override;
+    auto doGetRuns() -> std::vector<SRun> override;
+    auto doGetRun(ulong runid) -> SRun override;
+    auto doInsertRun(SRun run) -> bool override;
 
-    void print() const override;
+    auto doGetRelease() const -> std::optional<SRelease> override;
+
+    auto doPrint() const -> void override;
 
 private:
     bool parseSource();
@@ -66,11 +71,14 @@ private:
 private:
     TFile* file_source{nullptr};
 
-    std::map<std::string, std::map<validity_runs_range, std::shared_ptr<SContainer>>>
+    std::map<ulong, SRun> runs;
+    std::map<std::string, std::map<SRunsValidityRange, std::shared_ptr<SContainer>>>
         containers; ///< Containers mirrors
     std::map<std::string, std::shared_ptr<SContainer>>
         last_container; ///< Last used container, for caching purpose
     std::string source; ///< Root file name
+
+    std::optional<SRelease> release;
 };
 
 #endif /* SPARROOTSOURCE_H */

@@ -7,9 +7,9 @@
 
 TEST(tests_scontainer, valid_runs_range_test)
 {
-    validity_runs_range r1 = {100, 200};
-    validity_runs_range r2 = {150, 250};
-    validity_runs_range r3 = {225, 450};
+    SRunsValidityRange r1 = {100, 200};
+    SRunsValidityRange r2 = {150, 250};
+    SRunsValidityRange r3 = {225, 450};
 
     std::time_t t1 = 100;
     std::time_t t2 = 120;

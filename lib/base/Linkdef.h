@@ -31,8 +31,7 @@
 #pragma link C++ class SDDSamples+;
 
 // databases
-#pragma link C++ class validity_date_range+;
-#pragma link C++ class validity_runs_range+;
+#pragma link C++ class SRunsValidityRange+;
 #pragma link C++ class SContainer+;
 #pragma link C++ class SParSource+;
 #pragma link C++ class SParAsciiSource+;

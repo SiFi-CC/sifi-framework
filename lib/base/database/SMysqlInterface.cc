@@ -81,16 +81,42 @@ std::vector<std::string> split_lines(const std::string& s)
 SMysqlInterface::SMysqlInterface(std::string_view url, std::string_view token)
     : api_url(url), auth_token(token)
 {
-    cpr::Response r = cpr::Get(cpr::Url{std::string(api_url) + "/api/connection"},
-                               cpr::Header{{"Authorization", "Token " + std::string(auth_token)}});
+    cpr::Response r = cpr::Get(cpr::Url{api_url + "/api/connection"},
+                               cpr::Header{{"Authorization", "Token " + auth_token}});
     connection_ok = (r.status_code == 204);
 }
 
-auto SMysqlInterface::getRunContainer(long runid) -> std::shared_ptr<SRun>
+auto SMysqlInterface::getReleaseContainer(std::string_view&& name) -> std::optional<SRelease>
 {
-    cpr::Response r =
-        cpr::Get(cpr::Url{std::string(api_url) + "/api/fetch/run/" + std::to_string(runid)},
-                 cpr::Header{{"Authorization", "Token " + std::string(auth_token)}});
+    cpr::Response r = cpr::Get(cpr::Url{api_url + "/api/fetch/release/" + std::string(name)},
+                               cpr::Header{{"Authorization", "Token " + auth_token}});
+
+    if (r.status_code == 200)
+    {
+        // full json response
+        const char* json = r.text.c_str();
+        rapidjson::Document top_doc;
+        top_doc.Parse(json);
+        rapidjson::Document doc;
+        doc.Parse(top_doc.GetString());
+
+        // data are stored as an array
+        assert(doc.IsArray() and doc.Size() == 1);
+
+        auto release = SRelease();
+        release.name = doc["name"].GetString();
+        release.first_run = doc["first_run"].GetUint64();
+        release.last_run = doc["last_run"].GetUint64();
+
+        return release;
+    }
+    return std::nullopt;
+}
+
+auto SMysqlInterface::getRunContainer(long runid) -> SRun
+{
+    cpr::Response r = cpr::Get(cpr::Url{api_url + "/api/fetch/run/" + std::to_string(runid)},
+                               cpr::Header{{"Authorization", "Token " + auth_token}});
 
     if (r.status_code == 200)
     {
@@ -114,14 +140,14 @@ auto SMysqlInterface::getRunContainer(long runid) -> std::shared_ptr<SRun>
         std::time_t valid_to =
             extract_date(std::string(d["stop_time"].GetString(), d["stop_time"].GetStringLength()));
 
-        auto run = std::make_shared<SRun>();
-        run->setId(run_id);
-        run->setStart(valid_from);
-        run->setStop(valid_to);
-        run->setType(d["run_type"].GetInt());
+        SRun run;
+        run.setId(run_id);
+        run.setStart(valid_from);
+        run.setStop(valid_to);
+        run.setType(d["run_type"].GetInt());
         return run;
     }
-    return std::unique_ptr<SRun>();
+    return SRun{};
     ;
 }
 
@@ -133,19 +159,19 @@ auto SMysqlInterface::getRunContainer(long runid) -> std::shared_ptr<SRun>
  * \return array of objects, empty if no matches
  */
 auto SMysqlInterface::getRunContainers(long runid_min, long runid_max)
-    -> std::vector<std::shared_ptr<SRun>>
+    -> std::vector<SRun>
 {
     cpr::Response r;
 
     if (runid_min == 0 and runid_max == 0)
-        r = cpr::Get(cpr::Url{std::string(api_url) + "/api/fetch/run/" + param_release},
-                     cpr::Header{{"Authorization", "Token " + std::string(auth_token)}});
+        r = cpr::Get(cpr::Url{api_url + "/api/fetch/run/" + param_release},
+                     cpr::Header{{"Authorization", "Token " + auth_token}});
     else
-        r = cpr::Get(cpr::Url{std::string(api_url) + "/api/fetch/run/" + std::to_string(runid_min) +
-                              "/" + std::to_string(runid_max)},
-                     cpr::Header{{"Authorization", "Token " + std::string(auth_token)}});
+        r = cpr::Get(cpr::Url{api_url + "/api/fetch/run/" + std::to_string(runid_min) + "/" +
+                              std::to_string(runid_max)},
+                     cpr::Header{{"Authorization", "Token " + auth_token}});
 
-    std::vector<std::shared_ptr<SRun>> array;
+    std::vector<SRun> array;
     if (r.status_code == 200)
     {
         // full json response
@@ -165,11 +191,11 @@ auto SMysqlInterface::getRunContainers(long runid_min, long runid_max)
             std::time_t valid_to = extract_date(
                 std::string(d["stop_time"].GetString(), d["stop_time"].GetStringLength()));
 
-            auto run = std::make_shared<SRun>();
-            run->setId(d["id"].GetInt());
-            run->setStart(valid_from);
-            run->setStop(valid_to);
-            run->setType(d["run_type"].GetInt());
+            SRun run;
+            run.setId(d["id"].GetInt());
+            run.setStart(valid_from);
+            run.setStop(valid_to);
+            run.setType(d["run_type"].GetInt());
             array.push_back(run);
         }
     }
@@ -206,12 +232,12 @@ void SMysqlInterface::addRunContainer(SRun&& runcont)
 
     std::string strJson = s.GetString();
 
-    cpr::Response r = cpr::Post(cpr::Url{std::string(api_url) + "runs/"}, cpr::Body{strJson},
-                                cpr::Header{{"Authorization", "Token " + std::string(auth_token)},
+    cpr::Response r = cpr::Post(cpr::Url{api_url + "runs/"}, cpr::Body{strJson},
+                                cpr::Header{{"Authorization", "Token " + auth_token},
                                             {"Content-Type", "application/json"}});
 }
 
-auto SMysqlInterface::findContainer(std::string_view&& name) -> bool
+auto SMysqlInterface::findContainer(std::string_view name) -> bool
 {
     cpr::Response r = cpr::Get(cpr::Url{std::string(api_url) + "/api/fetch/cont/" + param_release +
                                         "/" + std::string(name) + "/find/"},
@@ -296,13 +322,11 @@ auto SMysqlInterface::getContainers(std::string_view&& name, long runid_min, lon
 
         for (auto& d : doc.GetArray())
         {
-            int run_id = d["run_id"].GetInt();
-            assert(runid == run_id);
-
             uint32_t valid_from = d["valid_from_id"].GetInt();
             uint32_t valid_to = d["valid_to_id"].GetInt();
 
             SContainer cont;
+            cont.SetName(std::string(name).c_str());
             cont.lines = split_lines(d["content"].GetString());
             cont.updated = true;
             cont.validity = {valid_from, valid_to};

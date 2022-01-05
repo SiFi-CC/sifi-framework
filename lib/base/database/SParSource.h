@@ -34,10 +34,13 @@
 #include "sifi_export.h"
 
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
 class SContainer;
+struct SRun;
+struct SRelease;
 
 enum class SourceOpenMode
 {
@@ -51,7 +54,16 @@ public:
     virtual ~SParSource() = default;
 
     virtual auto setOpenMode(SourceOpenMode mode) -> void = 0;
+    auto getRuns() -> std::vector<SRun>;
+    auto getRun(ulong runid) -> SRun;
+    auto insertRun(SRun run) -> bool;
 
+    auto getRelease() const -> std::optional<SRelease>;
+    /// Print containers stored in the source. Details about source must be print by subclass
+    /// method.
+    auto print() const -> void;
+
+private:
     /**
      * Checke whether source provides given container name.
      *
@@ -75,9 +87,14 @@ public:
     virtual auto insertContainer(const std::string& name, std::vector<SContainer*> cont)
         -> bool = 0;
 
+    virtual auto doGetRuns() -> std::vector<SRun> = 0;
+    virtual auto doGetRun(ulong runid) -> SRun = 0;
+    virtual auto doInsertRun(SRun run) -> bool = 0;
+
+    virtual auto doGetRelease() const -> std::optional<SRelease> = 0;
     /// Print containers stored in the source. Details about source must be print by subclass
     /// method.
-    virtual void print() const;
+    virtual auto doPrint() const -> void = 0;
 };
 
 #endif /* SPARSOURCE_H */

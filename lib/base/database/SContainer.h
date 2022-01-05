@@ -14,8 +14,10 @@
 
 #include "sifi_export.h"
 
+#include "SRun.h"
+
 #include <Rtypes.h> // for THashConsistencyHolder, ClassDef
-#include <TObject.h>
+#include <TNamed.h>
 
 #include <ctime>
 #include <string> // for string, basic_string
@@ -28,61 +30,7 @@ class TMemberInspector;
 /**
  * Simple structure to hold data validty range for a single version of container.
  */
-struct validity_date_range
-{
-    std::time_t from{0};      ///< beginning of the range
-    std::time_t to{0};        ///< end of the range
-    std::time_t truncated{0}; ///< if truncate, stores the previous value
-
-    /// Constructor
-    /// \param l valid from time
-    /// \param r valid to time
-    validity_date_range()
-    {
-        from = std::time(nullptr);
-        to = std::time(nullptr);
-    }
-
-    /// Constructor
-    /// \param f valid from time
-    /// \param t valid to time
-    validity_date_range(std::time_t f, std::time_t t) : from(f), to(t) {}
-
-    /// Compare ranges, the smaller one has lower start time. Ranges may overlap.
-    /// \param r range to compare
-    /// \return whether the object is smaller than compared
-    bool operator<(const validity_date_range& r) { return from < r.from; }
-    /// Compare ranges, the smaller one has lower start time. Ranges may overlap.
-    /// \param time time to compare
-    /// \return whether the object is smaller than compared
-    bool operator<(std::time_t time) const { return from < time; }
-
-    /// Checks whether #time is within the range
-    /// \param time time to compare
-    /// \return whether the #time is within the range
-    bool operator==(std::time_t time) const { return from <= time and time < to; }
-
-    /// Check for overlap
-    /// \param range tested range
-    /// \return overlap test result
-    bool check_overlap(const validity_date_range& range) const { return from < range.to; }
-
-    /// Check for overlap
-    /// \param range tested range
-    void truncate(const validity_date_range& range)
-    {
-        if (check_overlap(range))
-        {
-            truncated = to;
-            to = range.from;
-        }
-    }
-};
-
-/**
- * Simple structure to hold data validty range for a single version of container.
- */
-struct validity_runs_range
+struct SRunsValidityRange
 {
     uint64_t from{0};         ///< beginning of the range
     uint64_t to{0};           ///< end of the range
@@ -91,7 +39,7 @@ struct validity_runs_range
     /// Constructor
     /// \param l valid from time
     /// \param r valid to time
-    validity_runs_range()
+    SRunsValidityRange()
     {
         from = 0;
         to = 0;
@@ -100,30 +48,43 @@ struct validity_runs_range
     /// Constructor
     /// \param f valid from time
     /// \param t valid to time
-    validity_runs_range(uint64_t f, uint64_t t) : from(f), to(t) {}
+    SRunsValidityRange(uint64_t f, uint64_t t) : from(f), to(t) {}
 
     /// Compare ranges, the smaller one has lower start time. Ranges may overlap.
     /// \param r range to compare
     /// \return whether the object is smaller than compared
-    bool operator<(const validity_runs_range& r) { return from < r.from; }
+    bool operator<(const SRunsValidityRange& r) { return from < r.from; }
     /// Compare ranges, the smaller one has lower start time. Ranges may overlap.
     /// \param time time to compare
     /// \return whether the object is smaller than compared
-    bool operator<(uint64_t time) const { return from < time; }
+    bool operator<(uint64_t run) const { return from < run; }
+
+    /// Compare ranges, the smaller one has lower start time. Ranges may overlap.
+    /// \param time time to compare
+    /// \return whether the object is smaller than compared
+    bool operator<(const SRun& run) const { return from < run.getId(); }
 
     /// Checks whether #time is within the range
     /// \param time time to compare
     /// \return whether the #time is within the range
-    bool inside(uint64_t time) const { return from <= time and (time < to or to == 0); }
+    bool inside(uint64_t run) const { return from <= run and (run < to or to == 0); }
+
+    /// Checks whether #time is within the range
+    /// \param time time to compare
+    /// \return whether the #time is within the range
+    bool inside(const SRun& run) const
+    {
+        return from <= run.getId() and (run.getId() < to or to == 0);
+    }
 
     /// Check for overlap
     /// \param range tested range
     /// \return overlap test result
-    bool check_overlap(const validity_runs_range& range) const { return from < range.to; }
+    bool check_overlap(const SRunsValidityRange& range) const { return from < range.to; }
 
     /// Check for overlap
     /// \param range tested range
-    void truncate(const validity_runs_range& range)
+    void truncate(const SRunsValidityRange& range)
     {
         if (check_overlap(range))
         {
@@ -137,16 +98,16 @@ struct validity_runs_range
 /// \param lhs left range to compare
 /// \param rhs right range to compare
 /// return whether the object is smaller than compared
-inline bool operator<(const validity_date_range& lhs, const validity_date_range& rhs)
-{
-    return lhs.from < rhs.from;
-}
+// inline bool operator<(const validity_date_range& lhs, const validity_date_range& rhs)
+// {
+//     return lhs.from < rhs.from;
+// }
 
 /// Compare ranges, the smaller one has lower start time. Ranges may overlap.
 /// \param lhs left range to compare
 /// \param rhs right range to compare
 /// return whether the object is smaller than compared
-inline bool operator<(const validity_runs_range& lhs, const validity_runs_range& rhs)
+inline bool operator<(const SRunsValidityRange& lhs, const SRunsValidityRange& rhs)
 {
     return lhs.from < rhs.from;
 }
@@ -166,12 +127,11 @@ inline bool operator<(const validity_runs_range& lhs, const validity_runs_range&
 /**
  * Stores content of the container read out from the disk.
  */
-class SIFI_EXPORT SContainer : public TObject
+struct SIFI_EXPORT SContainer : public TNamed
 {
-public:
     std::vector<std::string> lines; ///< lines read out from the container
     bool updated{false};            ///< flag -- was container updated?
-    validity_runs_range validity;   ///< run validity start,end id
+    SRunsValidityRange validity;    ///< run validity start,end id
 
     void print(std::string_view name = {}) const;
 

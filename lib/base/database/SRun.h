@@ -27,7 +27,7 @@
  */
 struct SIFI_EXPORT SRun : public TObject
 {
-    ulong runid;             ///< run id
+    ulong runid;            ///< run id
     std::time_t start_time; ///< run timestamp in UTC
     std::time_t stop_time;  ///< run timestamp in UTC
     int runtype;            ///< run type
@@ -91,7 +91,7 @@ struct SIFI_EXPORT SRelease : public TObject
 {
     SRelease() = default;
     SRelease(const std::string name, ulong first, ulong last)
-        : name(name), first_run(first), last_run(last)
+        : TObject(), name(name), first_run(first), last_run(last)
     {
     }
 

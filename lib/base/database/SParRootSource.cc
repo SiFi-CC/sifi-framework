@@ -168,7 +168,7 @@ auto SParRootSource::getContainer(const std::string& name, ulong runid)
     // get fresh version, need to set flag reinit! TODO
 
     auto&& cont_map = containers[name];
-    auto it2 = cont_map.lower_bound(validity_runs_range(runid, runid));
+    auto it2 = cont_map.lower_bound(SRunsValidityRange(runid, runid));
     if (it2 != cont_map.end())
     {
         if (it2->second->validity.inside(runid))
@@ -199,17 +199,58 @@ auto SParRootSource::insertContainer(const std::string& name, std::vector<SConta
     return false;
 }
 
+auto SParRootSource::doGetRuns() -> std::vector<SRun>
+{
+    // check if same release
+    std::string_view rel_name = SRuntimeDb::get()->getRelease();
+    if (release.has_value() && release.value().name != rel_name) return {};
+
+    std::vector<SRun> ret;
+    for (auto& r : runs)
+        ret.push_back(r.second);
+
+    return ret;
+}
+
+auto SParRootSource::doGetRun(ulong runid) -> SRun
+{
+    auto it = runs.find(runid);
+    if (it != runs.end()) return it->second;
+
+    return {};
+}
+
+auto SParRootSource::doInsertRun(SRun run) -> bool
+{
+    if (runs.find(run.getId()) == runs.end())
+    {
+        runs[run.getId()] = run;
+
+        if (file_source)
+        {
+            file_source->cd();
+            run.Write();
+            return true;
+        }
+    }
+    return false;
+}
+
+auto SParRootSource::doGetRelease() const -> std::optional<SRelease> { return {}; }
+
 #include "tabulate/table.hpp"
 using namespace tabulate;
 
-void SParRootSource::print() const
+#include <magic_enum.hpp>
+
+void SParRootSource::doPrint() const
 {
     std::cout << "=== ROOT Source Info ===" << std::endl;
     std::cout << "    File name: " << source << std::endl;
 
     for (auto& container : containers)
     {
-        const validity_runs_range* cache = nullptr;
+        const SRunsValidityRange* cache = nullptr;
         Table cont_summary;
         cont_summary.add_row({container.first, "Valid from", "Valid to", "Overlap", "Truncated"});
 

@@ -13,6 +13,8 @@
 #include "SContainer.h"
 #include "SHelperFunctions.h"
 
+#include <spdlog/spdlog.h>
+
 #include <algorithm>
 #include <cstdlib>
 #include <fstream>
@@ -114,7 +116,7 @@ bool SParAsciiSource::parseSource()
             }
             else
             {
-                std::cerr << "Didn't expected container here: " << std::endl << str << std::endl;
+                spdlog::error("[{0}] Didn't expected container here:\n {1}\n", __func__, str);
                 delete[] cbuff;
                 return false;
             }
@@ -124,7 +126,7 @@ bool SParAsciiSource::parseSource()
             // check if container name is found
             if (wn == WNContainer)
             {
-                std::cerr << "Expected container name here: " << std::endl << str << std::endl;
+                spdlog::error("[{0}] Expected container name here:\n {1}\n", __func__, str);
                 delete[] cbuff;
                 return false;
             }
@@ -140,7 +142,7 @@ bool SParAsciiSource::parseSource()
     return true;
 }
 
-void SParAsciiSource::print() const
+void SParAsciiSource::doPrint() const
 {
     std::cout << "=== Ascii Source Info ===" << std::endl;
     std::cout << "    File name: " << source << std::endl;

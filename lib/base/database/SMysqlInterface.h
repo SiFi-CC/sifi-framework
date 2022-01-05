@@ -46,10 +46,6 @@
 
 class SIFI_EXPORT SMysqlInterface
 {
-private:
-    std::string api_url;
-    std::string auth_token;
-    bool connection_ok;
 
     // auth_token might change on the server side.
 public:
@@ -73,12 +69,14 @@ public:
     /// Maych change between different calls to database
     void setParamRelease(std::string_view release) { param_release = release; }
 
+    auto getReleaseContainer(std::string_view && name) -> std::optional<SRelease>;
+
     // Implement these
-    auto getRunContainer(long runid) -> std::shared_ptr<SRun>;
-    auto getRunContainers(long runid_min, long runid_max) -> std::vector<std::shared_ptr<SRun>>;
+    auto getRunContainer(long runid) -> SRun;
+    auto getRunContainers(long runid_min, long runid_max) -> std::vector<SRun>;
     void addRunContainer(SRun&& runcont);
 
-    auto findContainer(std::string_view&& name) -> bool;
+    auto findContainer(std::string_view name) -> bool;
     auto getContainer(std::string_view&& name, long runid) -> std::optional<SContainer>;
     auto getContainers(std::string_view&& name, long runid_min) -> std::vector<SContainer>;
     auto getContainers(std::string_view&& name, long runid_min, long runid_max)
@@ -86,6 +84,9 @@ public:
     bool addContainer(std::string_view&& name, SContainer&& cont);
 
 private:
+    std::string api_url;
+    std::string auth_token;
+    bool connection_ok;
     std::string param_release;
 };
 

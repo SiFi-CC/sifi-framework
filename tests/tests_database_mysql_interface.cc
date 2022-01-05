@@ -34,6 +34,23 @@ TEST(tests_database_mysql_interface, auth_tests)
     EXPECT_FALSE(url3.connected());
 }
 
+TEST(tests_database_mysql_interface, release_request)
+{
+    const char* token = getenv("SIFIAUTH");
+    ASSERT_STRNE(token, nullptr);
+
+    SMysqlInterface api("http://127.0.0.1:8000", token);
+    auto rel_cont = api.getReleaseContainer("TEST");
+    EXPECT_TRUE(rel_cont.has_value());
+    EXPECT_STREQ(rel_cont.value().name.c_str(), "TEST");
+    EXPECT_EQ(rel_cont.value().first_run, 3);
+    EXPECT_EQ(rel_cont.value().last_run, 9);
+    rel_cont = api.getReleaseContainer("BAD_TEST");
+    EXPECT_FALSE(rel_cont.has_value());
+    rel_cont = api.getReleaseContainer("");
+    EXPECT_FALSE(rel_cont.has_value());
+}
+
 TEST(tests_database_mysql_interface, run_request)
 {
     const char* token = getenv("SIFIAUTH");
@@ -41,13 +58,13 @@ TEST(tests_database_mysql_interface, run_request)
 
     SMysqlInterface api("http://127.0.0.1:8000", token);
     auto run_cont = api.getRunContainer(1);
-    EXPECT_TRUE(run_cont.get());
+    EXPECT_EQ(run_cont.runid, 1);
     run_cont = api.getRunContainer(2);
-    EXPECT_TRUE(run_cont.get());
+    EXPECT_EQ(run_cont.runid, 2);
     run_cont = api.getRunContainer(3);
-    EXPECT_TRUE(run_cont.get());
+    EXPECT_EQ(run_cont.runid, 3);
     run_cont = api.getRunContainer(40);
-    EXPECT_FALSE(run_cont.get());
+    EXPECT_EQ(run_cont.runid, 40);
 }
 
 TEST(tests_database_mysql_interface, run_range_request)

@@ -104,6 +104,8 @@ SIFI_GENERATE_LIBRARY(
         Geant
         cpr::cpr
         tabulate::tabulate
+        magic_enum::magic_enum
+        spdlog
     INCLUDE_DIRS
         core
         database

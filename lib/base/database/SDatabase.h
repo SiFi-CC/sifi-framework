@@ -33,10 +33,15 @@
 
 #include "sifi_export.h"
 
+#include "SContainer.h"
+#include "SRun.h"
+// #include "SLookup.h"
+
 #include <algorithm> // for max
 #include <functional>
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <variant>
@@ -60,9 +65,11 @@ protected:
     std::map<std::string, SParSource*> conts_sources;                            ///< Input sources
 
     static SDatabase* pm; ///< Instance of the SDatabase
+    std::map<std::string, cont_obj_factory> obj_factory;       ///< Container object factory
 
-    std::map<std::string, cont_obj_factory> obj_factory;        ///< Container object factory
-    std::string_view release; ///< stores parameters release name
+    std::string release; ///< stores parameters release name
+    unsigned long current_runid;
+    unsigned long reference_runid{0};
 
 public:
     SDatabase();
@@ -79,7 +86,7 @@ public:
     void writeDestination();
     void writeContainers(const std::vector<std::string>& names);
 
-    bool addContainer(const std::string& name, cont_obj_factory && f);
+    bool addContainer(const std::string& name, cont_obj_factory&& f);
     SPar* getParContainer(const std::string& name);
     SLookupTable* getLookupContainer(const std::string& name);
     SVirtualCalContainer* getCalContainer(const std::string& name);
@@ -91,7 +98,7 @@ public:
     void setRelease(std::string_view r) { release = r; }
     /// Get release value.
     /// \return release value
-    std::string_view getRelease() const { return release; }
+    auto getRelease() const { return release; }
 
     void print() const;
 

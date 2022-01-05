@@ -33,7 +33,9 @@
 
 #include "sifi_export.h"
 
+#include "SDatabase.h"
 #include "SParSource.h"
+#include "SRun.h"
 
 #include <map>
 #include <memory>
@@ -41,7 +43,7 @@
 
 class SContainer;
 
-class SIFI_EXPORT SParAsciiSource : public SParSource
+class SIFI_EXPORT SParAsciiSource final : public SParSource
 {
 public:
     SParAsciiSource(const std::string& source);
@@ -57,15 +59,26 @@ public:
 
     virtual auto insertContainer(const std::string& name, std::vector<SContainer*> cont)
         -> bool override;
+    auto doGetRuns() -> std::vector<SRun> override
+    {
+        return std::vector{dummy_run};
+    };
+    auto doGetRun(ulong runid) -> SRun override { return dummy_run; }
+    auto doInsertRun(SRun run) -> bool override { dummy_run = run; return true; };
 
-    void print() const override;
+    auto doGetRelease() const -> std::optional<SRelease> override
+    {
+        return SRelease(SRuntimeDb::get()->getRelease(), 0, 0);
+    }
 
-private:
+    void doPrint() const override;
+
     bool parseSource();
 
 private:
     std::string source;                                            ///< ascii file name
     std::map<std::string, std::shared_ptr<SContainer>> containers; ///< Containers mirrors
+    SRun dummy_run;
 };
 
 #endif /* SPARASCIISOURCE_H */

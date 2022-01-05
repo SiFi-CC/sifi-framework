@@ -11,6 +11,8 @@
 
 #include "SParSource.h"
 
+#include "SRun.h"
+
 #include <iostream>
 
 /**
@@ -30,7 +32,12 @@ the requested parameter containers exists.
 // for trim functions see
 // https://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
 
-void SParSource::print() const
-{
-    std::cout << "=== THIS Source has not print function implemented. ===" << std::endl;
-}
+auto SParSource::getRuns() -> std::vector<SRun> { return doGetRuns(); }
+
+auto SParSource::getRun(ulong runid) -> SRun { return doGetRun(runid); }
+
+auto SParSource::insertRun(SRun run) -> bool { return doInsertRun(run); }
+
+auto SParSource::getRelease() const -> std::optional<SRelease> { return doGetRelease(); }
+
+auto SParSource::print() const -> void { doPrint(); }

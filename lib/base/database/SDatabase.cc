@@ -17,6 +17,10 @@
 #include "SParSource.h"
 #include "SiFi.h"
 
+#include <magic_enum.hpp>
+#include <spdlog/spdlog.h>
+
+#include <algorithm>
 #include <cstdlib> // for exit, EXIT_FAILURE, abort
 #include <iostream>
 #include <utility> // for pair, make_pair, move
@@ -142,7 +146,11 @@ void SDatabase::print() const
 bool SDatabase::addContainer(const std::string& name, cont_obj_factory&& f)
 {
     auto it = obj_factory.find(name);
-    if (it != obj_factory.end()) return false;
+    if (it != obj_factory.end())
+    {
+        spdlog::info("[{0}] Container {1} already added!", __func__, name);
+        return false;
+    }
 
     obj_factory.insert(std::make_pair(name, std::move(f)));
     //     container_mode[name] = ContainerMode::Read;
@@ -162,7 +170,7 @@ SPar* SDatabase::getParContainer(const std::string& name)
     auto it = obj_factory.find(name);
     if (it == obj_factory.end())
     {
-        std::cerr << "Parameter container " << name << " not known!" << std::endl;
+        spdlog::warn("[{0}] Parameter container {1} not known!", __func__, name);
         if (!sifi()->assertationsDisabled()) exit(EXIT_FAILURE);
         return nullptr;
     }
@@ -193,7 +201,7 @@ SLookupTable* SDatabase::getLookupContainer(const std::string& name)
     auto it = obj_factory.find(name);
     if (it == obj_factory.end())
     {
-        std::cerr << "Lookup table " << name << " not known!" << std::endl;
+        spdlog::warn("[{0}] Lookup table {1} not known!", __func__, name);
         if (!sifi()->assertationsDisabled()) exit(EXIT_FAILURE);
         return nullptr;
     }
@@ -224,8 +232,9 @@ SVirtualCalContainer* SDatabase::getCalContainer(const std::string& name)
     auto it = obj_factory.find(name);
     if (it == obj_factory.end())
     {
-        std::cerr << "Calibration container " << name << " not known!" << std::endl;
+        spdlog::warn("[{0}] Calibration container {1} not known!", __func__, name);
         if (!sifi()->assertationsDisabled()) exit(EXIT_FAILURE);
+
         return nullptr;
     }
 

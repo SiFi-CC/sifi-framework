@@ -75,8 +75,8 @@ SContainer) -> int`
  */
 SParDatabaseSource::SParDatabaseSource() : SParSource()
 {
-    const char* dbapi = getenv("SIFIDBAPI");
-    const char* token = getenv("SIFIAUTH");
+    dbapi = getenv("SIFIDBAPI");
+    token = getenv("SIFIAUTH");
     mysqlcon = std::make_unique<SMysqlInterface>(dbapi, token);
     parseSource();
 }
@@ -161,57 +161,87 @@ auto SParDatabaseSource::insertContainer(const std::string& name, std::vector<SC
     return true;
 }
 
+auto SParDatabaseSource::doGetRuns() -> std::vector<SRun>
+{
+    // check if same release
+    std::string_view release = SRuntimeDb::get()->getRelease();
+
+    // if not already fetched, get from database
+    mysqlcon->setParamRelease(release);
+    return mysqlcon->getRunContainers(0, 0);
+}
+
+auto SParDatabaseSource::doGetRun(ulong runid) -> SRun
+{
+    // check if same release
+    std::string_view release = SRuntimeDb::get()->getRelease();
+
+    // if not already fetched, get from database
+    mysqlcon->setParamRelease(release);
+    return mysqlcon->getRunContainer(runid);
+}
+
+auto SParDatabaseSource::doInsertRun(SRun run) -> bool { return true; }
+
+auto SParDatabaseSource::doGetRelease() const -> std::optional<SRelease>
+{
+    // if not already fetched, get from database
+    return mysqlcon->getReleaseContainer(SRuntimeDb::get()->getRelease());
+}
+
 #include "tabulate/table.hpp"
 using namespace tabulate;
 
-void SParDatabaseSource::print() const
+void SParDatabaseSource::doPrint() const
 {
-    std::cout << "=== Daatbase Source Info ===" << std::endl;
-    std::cout << "    Database: " << source << std::endl;
+    std::cout << "  * Database Source Info *\n";
+    std::cout << "    Database: " << dbapi << std::endl;
 
-    for (auto& container : containers)
-    {
-        const validity_runs_range* cache = nullptr;
-        Table cont_summary;
-        cont_summary.add_row({container.first, "Valid from", "Valid to", "Overlap", "Truncated"});
-
-        for (auto& revision : container.second)
-        {
-            //             std::stringstream s_from;
-            //             s_from << std::put_time(std::gmtime(&revision.first.from), "%c %Z");
-            //
-            //             std::stringstream s_to;
-            //             s_to << std::put_time(std::gmtime(&revision.first.to), "%c %Z");
-            //
-            std::stringstream trunc_from;
-            if (revision.first.truncated > 0)
-                trunc_from << std::put_time(std::gmtime(&revision.first.truncated), "%c %Z");
-
-            bool overlap = cache ? revision.first.check_overlap(*cache) : false;
-
-            //             cont_summary.add_row(
-            //                 {"", s_from.str(), s_to.str(), std::to_string(overlap),
-            //                 trunc_from.str()});
-
-            cont_summary.add_row({"", std::to_string(revision.first.from),
-                                  std::to_string(revision.first.to), std::to_string(overlap),
-                                  trunc_from.str()});
-
-            cache = &revision.first;
-        }
-
-        cont_summary.column(3).format().font_align(FontAlign::center);
-        cont_summary.column(4).format().font_align(FontAlign::center).font_color(Color::red);
-
-        for (size_t i = 0; i < 5; ++i)
-        {
-            cont_summary[0][i]
-                .format()
-                .font_color(Color::yellow)
-                .font_align(FontAlign::center)
-                .font_style({FontStyle::bold});
-        }
-
-        std::cout << cont_summary << std::endl;
-    }
+    //     for (auto& container : containers)
+    //     {
+    //         const validity_runs_range* cache = nullptr;
+    //         Table cont_summary;
+    //         cont_summary.add_row({container.first, "Valid from", "Valid to", "Overlap",
+    //         "Truncated"});
+    //
+    //         for (auto& revision : container.second)
+    //         {
+    //             //             std::stringstream s_from;
+    //             //             s_from << std::put_time(std::gmtime(&revision.first.from), "%c
+    //             %Z");
+    //             //
+    //             //             std::stringstream s_to;
+    //             //             s_to << std::put_time(std::gmtime(&revision.first.to), "%c %Z");
+    //             //
+    //             std::stringstream trunc_from;
+    //             if (revision.first.truncated > 0)
+    //                 trunc_from << std::put_time(std::gmtime(&revision.first.truncated), "%c %Z");
+    //
+    //             bool overlap = cache ? revision.first.check_overlap(*cache) : false;
+    //
+    //             //             cont_summary.add_row(
+    //             //                 {"", s_from.str(), s_to.str(), std::to_string(overlap),
+    //             //                 trunc_from.str()});
+    //
+    //             cont_summary.add_row({"", std::to_string(revision.first.from),
+    //                                   std::to_string(revision.first.to), std::to_string(overlap),
+    //                                   trunc_from.str()});
+    //
+    //             cache = &revision.first;
+    //         }
+    //
+    //         cont_summary.column(3).format().font_align(FontAlign::center);
+    //         cont_summary.column(4).format().font_align(FontAlign::center).font_color(Color::red);
+    //
+    //         for (size_t i = 0; i < 5; ++i)
+    //         {
+    //             cont_summary[0][i]
+    //                 .format()
+    //                 .font_color(Color::yellow)
+    //                 .font_align(FontAlign::center)
+    //                 .font_style({FontStyle::bold});
+    //         }
+    //
+    //         std::cout << cont_summary << std::endl;
+    //     }
 }
