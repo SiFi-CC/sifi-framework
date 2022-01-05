@@ -16,14 +16,17 @@ list(APPEND CMAKE_MODULE_PATH
 include(GNUInstallDirs)
 
 # options
-set(BUILTIN_CPR AUTO CACHE STRING "Use built-in cpr")
-set_property(CACHE BUILTIN_CPR PROPERTY STRINGS AUTO ON OFF)
+set(SIFI_BUILTIN_CPR AUTO CACHE STRING "Use built-in cpr")
+set_property(CACHE SIFI_BUILTIN_CPR PROPERTY STRINGS AUTO ON OFF)
 
-set(BUILTIN_TABULATE AUTO CACHE STRING "Use built-in tabulate")
-set_property(CACHE BUILTIN_TABULATE PROPERTY STRINGS AUTO ON OFF)
+set(SIFI_BUILTIN_TABULATE AUTO CACHE STRING "Use built-in tabulate")
+set_property(CACHE SIFI_BUILTIN_TABULATE PROPERTY STRINGS AUTO ON OFF)
 
-set(BUILTIN_MAGICENUM AUTO CACHE STRING "Use built-in magic_enum")
-set_property(CACHE BUILTIN_MAGICENUM PROPERTY STRINGS AUTO ON OFF)
+set(SIFI_BUILTIN_MAGICENUM AUTO CACHE STRING "Use built-in magic_enum")
+set_property(CACHE SIFI_BUILTIN_MAGICENUM PROPERTY STRINGS AUTO ON OFF)
+
+set(SIFI_BUILTIN_SPDLOG AUTO CACHE STRING "Use built-in spdlog")
+set_property(CACHE SIFI_BUILTIN_SPDLOG PROPERTY STRINGS AUTO ON OFF)
 
 # =================================================================================================
 # fetch external content
@@ -48,103 +51,26 @@ include(formatting)
 include(tools)
 
 #-------------------------------------------------------------------------------
+# 3rd party software
+
 # cpr
 SET (REQUIRED_CPR_VERSION 1.6.2)
+include(cmake/check_3rdparty_cpr.cmake)
 
-FetchContent_Declare(cpr
-    GIT_REPOSITORY https://github.com/whoshuu/cpr
-    GIT_TAG        ${REQUIRED_CPR_VERSION}
-)
-
-if(BUILTIN_CPR STREQUAL "AUTO")
-    find_package(cpr ${REQUIRED_CPR_VERSION} QUIET)
-    if (NOT cpr_FOUND)
-        SET(USE_BUILTIN_CPR TRUE)
-    endif()
-elseif(BUILTIN_CPR)     # a true value (such as ON) was used
-    SET(USE_BUILTIN_CPR TRUE)
-else()                  # a false value (such as OFF) was used
-    find_package(cpr ${REQUIRED_CPR_VERSION} REQUIRED)
-endif()
-
-if (USE_BUILTIN_CPR)
-    set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Build shared CPR")
-    set(CPR_FORCE_USE_SYSTEM_CURL ON)
-    set(CPR_USE_SYSTEM_GTEST ON)
-    # based on https://stackoverflow.com/questions/65527126/disable-install-for-fetchcontent
-    #FetchContent_MakeAvailable(cpr EXCLUDE_FROM_ALL)
-    FetchContent_GetProperties(cpr)
-    if(NOT cpr_POPULATED)
-        FetchContent_Populate(cpr)
-        add_subdirectory(${cpr_SOURCE_DIR} ${cpr_BINARY_DIR} EXCLUDE_FROM_ALL)
-    endif()
-else()
-    message(STATUS "Uses system-provided cpr")
-endif()
-
-#-------------------------------------------------------------------------------
 # tabulate
 SET (REQUIRED_TABULATE_VERSION 1.4)
-
-FetchContent_Declare(tabulate
-    GIT_REPOSITORY https://github.com/p-ranav/tabulate
-    GIT_TAG        v${REQUIRED_TABULATE_VERSION}
-)
-
-if(BUILTIN_TABULATE STREQUAL "AUTO")
-    find_package(tabulate ${REQUIRED_TABULATE_VERSION} QUIET)
-    if (NOT tabulate_FOUND)
-        SET(USE_BUILTIN_TABULATE TRUE)
-    endif()
-elseif(BUILTIN_TABULATE)     # a true value (such as ON) was used
-    SET(USE_BUILTIN_TABULATE TRUE)
-else()                  # a false value (such as OFF) was used
-    find_package(tabulate ${REQUIRED_TABULATE_VERSION} REQUIRED)
-endif()
-
-if (USE_BUILTIN_TABULATE)
-    #FetchContent_MakeAvailable(tabulate)
-    FetchContent_GetProperties(tabulate)
-    if(NOT tabulate_POPULATED)
-        FetchContent_Populate(tabulate)
-        add_subdirectory(${tabulate_SOURCE_DIR} ${tabulate_BINARY_DIR} EXCLUDE_FROM_ALL)
-    endif()
-else()
-    message(STATUS "Uses system-provided tabulate")
-endif()
-
+include(cmake/check_3rdparty_tabulate.cmake)
 
 # magic-enum
 SET (REQUIRED_MAGICENUM_VERSION 0.7.3)
+include(cmake/check_3rdparty_magicenum.cmake)
 
-FetchContent_Declare(magic_enum
-    GIT_REPOSITORY https://github.com/Neargye/magic_enum
-    GIT_TAG        v${REQUIRED_MAGICENUM_VERSION}
-)
+# spdlog
+SET (REQUIRED_SPDLOG_VERSION 1.9.2)
+include(cmake/check_3rdparty_spdlog.cmake)
 
-if(BUILTIN_MAGICENUM STREQUAL "AUTO")
-    find_package(magic_enum ${REQUIRED_MAGICENUM_VERSION} QUIET)
-    if (NOT magic_enum_FOUND)
-        SET(USE_BUILTIN_MAGICENUM TRUE)
-    endif()
-elseif(BUILTIN_MAGICENUM)     # a true value (such as ON) was used
-    SET(USE_BUILTIN_MAGICENUM TRUE)
-else()                  # a false value (such as OFF) was used
-    find_package(magic_enum ${REQUIRED_MAGICENUM_VERSION} REQUIRED)
-endif()
+#-------------------------------------------------------------------------------
 
-if (USE_BUILTIN_MAGICENUM)
-    #FetchContent_MakeAvailable(magic_enum)
-    FetchContent_GetProperties(magic_enum)
-    if(NOT magic_enum_POPULATED)
-        FetchContent_Populate(magic_enum)
-        add_subdirectory(${magic_enum_SOURCE_DIR} ${magic_enum_BINARY_DIR} EXCLUDE_FROM_ALL)
-    endif()
-else()
-    message(STATUS "Uses system-provided magic_enum")
-endif()
-
-# =================================================================================================
 
 
 #-------------------------------------------------------------------------------
@@ -192,9 +118,9 @@ set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
 clang_format(format ${ALL_SOURCES})
 include_what_you_use("-Xiwyu;any;-Xiwyu;iwyu;-Xiwyu;args")
 
-option(ROOT_DOC_XREF "Root Cross-reference in doc" OFF)
+option(SIFI_ROOT_DOC_XREF "Root Cross-reference in doc" OFF)
 
-if (ROOT_DOC_XREF)
+if (SIFI_ROOT_DOC_XREF)
     set(TAGFILES ${CMAKE_BINARY_DIR}/ROOT.tag=https://root.cern/doc/master/)
 else()
     unset(TAGFILES)
@@ -225,14 +151,13 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 #-------------------------------------------------------------------------------
 ##### HELPER file
-include(helpers)
+include(cmake/helpers)
 
 
-option(BUILD_SIFIDETRES_SUPPORT "Build SiFi Detector Response" OFF)
-if (BUILD_SIFIDETRES_SUPPORT)
+option(SIFI_BUILD_SIFIDETRES_SUPPORT "Build SiFi Detector Response" OFF)
+if (SIFI_BUILD_SIFIDETRES_SUPPORT)
     find_package(CCDetectorResponse)
 endif()
-
 
 #----------------------------------------------------------------------------
 include_directories(${CMAKE_BINARY_DIR})
@@ -247,8 +172,8 @@ add_subdirectory(dst)
 
 configure_file(SiFiConfig.h.in SiFiConfig.h)
 
-option(BUILD_PYTHON_WRAPPER "Build python wrapper" OFF)
-if(BUILD_PYTHON_WRAPPER)
+option(SIFI_BUILD_PYTHON_WRAPPER "Build python wrapper" OFF)
+if(SIFI_BUILD_PYTHON_WRAPPER)
     add_subdirectory(python)
 endif()
 
@@ -287,9 +212,9 @@ export(TARGETS ${PROJECT_TARGETS} cpr
 # Register package in user's package registry
 export(PACKAGE SIFI)
 
-option(ENABLE_TESTING "Build tests" ON)
+option(SIFI_ENABLE_TESTING "Build tests" ON)
 
-if(ENABLE_TESTING)
+if(SIFI_ENABLE_TESTING)
     enable_testing()
     add_subdirectory(tests)
 endif()

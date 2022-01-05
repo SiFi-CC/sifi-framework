@@ -98,7 +98,7 @@ jobs:
           cmake \
             -S . \
             -B build \
-            -DENABLE_TESTING=On \
+            -DSIFI_ENABLE_TESTING=On \
             -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
             -DCMAKE_INSTALL_PREFIX:PATH=instdir \
             ${{ matrix.root-version.cmake_args }}
