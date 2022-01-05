@@ -9,7 +9,7 @@
 class SCategory;
 class SFibersGeomPar;
 class SFibersHitFinderPar;
-template <int N> class SCalContainer;
+template <unsigned int N> class SCalContainer;
 
 class SFibersHitFinder : public STask
 {

@@ -36,13 +36,13 @@ class SContainer;
  *  * write() - writes cal pars to the container
  *  * print() - print cal par values
  */
-template <int N> class SIFI_EXPORT SCalPar
+template <unsigned int N> class SIFI_EXPORT SCalPar
 {
 private:
-    float par[N]; ///< various parameters
+    std::array<float, N> par; ///< various parameters
 
 public:
-    virtual ~SCalPar() {}
+    virtual ~SCalPar() = default;
     virtual uint read(const char* buffer);
     virtual uint write(char* buffer, size_t n) const;
     virtual void print(bool newline = true, const char* prefix = 0);
@@ -84,7 +84,7 @@ protected:
  * virtual address (SCalContainer) and this virtual address is a key to
  * individual calibration parameters.
  */
-template <int N> class SIFI_EXPORT SCalContainer : public SVirtualCalContainer
+template <unsigned int N> class SIFI_EXPORT SCalContainer : public SVirtualCalContainer
 {
 protected:
     std::string name;                      ///< container name

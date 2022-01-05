@@ -15,7 +15,7 @@
 #include "STask.h"
 
 class SCategory;
-template <int N> class SCalContainer;
+template <unsigned int N> class SCalContainer;
 
 class SFibersCalibrator : public STask
 {

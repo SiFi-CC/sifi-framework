@@ -53,7 +53,7 @@ parameters in the container and write to param file.
  * \param buffer string containing data to parse
  * \return number of parsed elements.
  */
-template <int N> uint SCalPar<N>::read(const char* buffer)
+template <unsigned int N> uint SCalPar<N>::read(const char* buffer)
 {
     int cnt = 0;
     std::istringstream sstr(buffer);
@@ -74,7 +74,7 @@ template <int N> uint SCalPar<N>::read(const char* buffer)
  * \param n buffer length
  * \return number of written bytes.
  */
-template <int N> uint SCalPar<N>::write(char* buffer, size_t n) const
+template <unsigned int N> uint SCalPar<N>::write(char* buffer, size_t n) const
 {
     std::ostringstream sstr;
     for (const auto& v : par)
@@ -96,7 +96,7 @@ template <int N> uint SCalPar<N>::write(char* buffer, size_t n) const
  * \param n component index
  * \return reference to paramater array component
  */
-template <int N> float& SCalPar<N>::operator[](int n)
+template <unsigned int N> float& SCalPar<N>::operator[](int n)
 {
     if (n < 0 or n > N - 1)
     {
@@ -111,7 +111,7 @@ template <int N> float& SCalPar<N>::operator[](int n)
  * \param n component index
  * \return value of the paramater array component
  */
-template <int N> const float SCalPar<N>::operator[](int n) const
+template <unsigned int N> const float SCalPar<N>::operator[](int n) const
 {
     if (n < 0 or n > N - 1)
     {
@@ -130,7 +130,7 @@ template <int N> const float SCalPar<N>::operator[](int n) const
  * \param prefix a text which should be displayed before the content of the
  * channel params. If prefix is empty, then
  */
-template <int N> void SCalPar<N>::print(bool newline, const char* prefix)
+template <unsigned int N> void SCalPar<N>::print(bool newline, const char* prefix)
 {
     std::cout << prefix << " ";
     std::copy(std::begin(par), std::end(par),
@@ -143,12 +143,12 @@ template <int N> void SCalPar<N>::print(bool newline, const char* prefix)
  *
  * \param container container name
  */
-template <int N>
+template <unsigned int N>
 SCalContainer<N>::SCalContainer(const std::string& container) : name(container), is_init(false)
 {
 }
 
-template <int N> SCalContainer<N>::~SCalContainer()
+template <unsigned int N> SCalContainer<N>::~SCalContainer()
 {
     for (auto& p : calpars)
         delete p.second;
@@ -160,7 +160,7 @@ template <int N> SCalContainer<N>::~SCalContainer()
  *
  * \sa SLookupTable::fromContainer()
  */
-template <int N> void SCalContainer<N>::fromContainer(SContainer* sc)
+template <unsigned int N> void SCalContainer<N>::fromContainer(SContainer* sc)
 {
     if (!sc) throw "No lookup container.";
 
@@ -184,7 +184,7 @@ template <int N> void SCalContainer<N>::fromContainer(SContainer* sc)
  * \sa fromContainer()
  * \sa SLookupTable::toContainer()
  */
-template <int N> void SCalContainer<N>::toContainer(SContainer* sc) const
+template <unsigned int N> void SCalContainer<N>::toContainer(SContainer* sc) const
 {
     if (!sc) throw "No lookup container.";
 
@@ -217,7 +217,7 @@ template <int N> void SCalContainer<N>::toContainer(SContainer* sc) const
  * \param channel channel object
  * \return calibration parameter object
  */
-template <int N> SCalPar<N>* SCalContainer<N>::getPar(const SLookupChannel* channel)
+template <unsigned int N> SCalPar<N>* SCalContainer<N>::getPar(const SLookupChannel* channel)
 {
     uint64_t hash = channel->quickHash();
     auto it = calpars.find(hash);
@@ -243,7 +243,7 @@ template <int N> SCalPar<N>* SCalContainer<N>::getPar(const SLookupChannel* chan
 /**
  * Print all parameters from given cal container.
  */
-template <int N> void SCalContainer<N>::print()
+template <unsigned int N> void SCalContainer<N>::print()
 {
     printf("[%s]\n", name.c_str());
     for (auto& calpar : calpars)
