@@ -38,6 +38,6 @@ auto SParSource::getRun(ulong runid) -> SRun { return doGetRun(runid); }
 
 auto SParSource::insertRun(SRun run) -> bool { return doInsertRun(run); }
 
-auto SParSource::getRelease() const -> std::optional<SRelease> { return doGetRelease(); }
+auto SParSource::getExperiment() const -> std::optional<SExperiment> { return doGetExperiment(); }
 
 auto SParSource::print() const -> void { doPrint(); }

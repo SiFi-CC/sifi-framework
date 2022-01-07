@@ -64,7 +64,7 @@ public:
     auto doGetRun(ulong runid) -> SRun override;
     auto doInsertRun(SRun run) -> bool override;
 
-    auto doGetRelease() const -> std::optional<SRelease> override;
+    auto doGetExperiment() const -> std::optional<SExperiment> override;
 
     void doPrint() const override;
 
@@ -76,7 +76,7 @@ private:
 
     std::unique_ptr<SMysqlInterface> mysqlcon;
 
-    std::optional<SRelease> release;
+    std::optional<SExperiment> release;
 };
 
 #endif /* SParDatabaseSource_H */

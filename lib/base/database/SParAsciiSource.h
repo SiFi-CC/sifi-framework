@@ -66,9 +66,9 @@ public:
     auto doGetRun(ulong runid) -> SRun override { return dummy_run; }
     auto doInsertRun(SRun run) -> bool override { dummy_run = run; return true; };
 
-    auto doGetRelease() const -> std::optional<SRelease> override
+    auto doGetExperiment() const -> std::optional<SExperiment> override
     {
-        return SRelease(SRuntimeDb::get()->getRelease(), 0, 0);
+        return SExperiment(SRuntimeDb::get()->getExperiment(), 0, 0);
     }
 
     void doPrint() const override;

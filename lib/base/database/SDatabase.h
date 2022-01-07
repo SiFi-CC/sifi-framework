@@ -95,10 +95,10 @@ public:
 
     /// Set release value.
     /// \param r release name
-    void setRelease(std::string_view r) { release = r; }
+    void setExperiment(std::string r) { release = r; }
     /// Get release value.
     /// \return release value
-    auto getRelease() const { return release; }
+    auto getExperiment() const { return release; }
 
     void print() const;
 

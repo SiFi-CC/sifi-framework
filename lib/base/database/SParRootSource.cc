@@ -139,7 +139,10 @@ bool SParRootSource::parseSource()
 auto SParRootSource::findContainer(const std::string& name) -> bool
 {
     // check if same release
-    std::string_view release = SRuntimeDb::get()->getRelease();
+    auto experiment = SRuntimeDb::get()->getExperiment();
+    // TODO do we need to verify Experiment for root files or we just assume that they are always
+    // correct (user responsibility)
+
     // TODO if release has name, then check whether it matches the one from file
     // if (!release.empty() and release != this_release_from_file) return 0;
 
@@ -154,6 +157,7 @@ auto SParRootSource::getContainer(const std::string& name, ulong runid)
     -> std::shared_ptr<SContainer>
 {
     // check if same release
+    auto exp = SRuntimeDb::get()->getExperiment();
     // TODO if release has name, then check whether it matches the one from file
     // if (!release.empty() and release != this_release_from_file) return 0;
 
@@ -202,8 +206,8 @@ auto SParRootSource::insertContainer(const std::string& name, std::vector<SConta
 auto SParRootSource::doGetRuns() -> std::vector<SRun>
 {
     // check if same release
-    std::string_view rel_name = SRuntimeDb::get()->getRelease();
-    if (release.has_value() && release.value().name != rel_name) return {};
+    auto exp = SRuntimeDb::get()->getExperiment();
+    if (experiment.value_or(SExperiment()).name != exp) return {};
 
     std::vector<SRun> ret;
     for (auto& r : runs)
@@ -236,7 +240,7 @@ auto SParRootSource::doInsertRun(SRun run) -> bool
     return false;
 }
 
-auto SParRootSource::doGetRelease() const -> std::optional<SRelease> { return {}; }
+auto SParRootSource::doGetExperiment() const -> std::optional<SExperiment> { return {}; }
 
 #include "tabulate/table.hpp"
 using namespace tabulate;

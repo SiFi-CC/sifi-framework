@@ -55,7 +55,7 @@ public:
      * \param url REST api api_url
      * \param token authentication token
      */
-    SMysqlInterface(std::string_view url, std::string_view token);
+    SMysqlInterface(std::string url, std::string token);
     SMysqlInterface(SMysqlInterface const&) = delete;
 
     SMysqlInterface& operator=(SMysqlInterface const&) = delete;
@@ -67,27 +67,27 @@ public:
 
     /// Call this after conenction to select which param release we are about to work on
     /// Maych change between different calls to database
-    void setParamRelease(std::string_view release) { param_release = release; }
+    void setExperiment(std::string exp) { experiment = exp; }
 
-    auto getReleaseContainer(std::string_view && name) -> std::optional<SRelease>;
+    auto getExperimentContainer(std::string name) -> std::optional<SExperiment>;
 
     // Implement these
     auto getRunContainer(long runid) -> SRun;
     auto getRunContainers(long runid_min, long runid_max) -> std::vector<SRun>;
     void addRunContainer(SRun&& runcont);
 
-    auto findContainer(std::string_view name) -> bool;
-    auto getContainer(std::string_view&& name, long runid) -> std::optional<SContainer>;
-    auto getContainers(std::string_view&& name, long runid_min) -> std::vector<SContainer>;
-    auto getContainers(std::string_view&& name, long runid_min, long runid_max)
+    auto findContainer(std::string name) -> bool;
+    auto getContainer(std::string name, long runid) -> std::optional<SContainer>;
+    auto getContainers(std::string name, long runid_min) -> std::vector<SContainer>;
+    auto getContainers(std::string name, long runid_min, long runid_max)
         -> std::vector<SContainer>;
-    bool addContainer(std::string_view&& name, SContainer&& cont);
+    bool addContainer(std::string name, SContainer&& cont);
 
 private:
     std::string api_url;
     std::string auth_token;
     bool connection_ok;
-    std::string param_release;
+    std::string experiment;
 };
 
 #endif /* SMYSQLINTERFACE_H */

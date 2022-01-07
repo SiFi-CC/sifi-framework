@@ -12,7 +12,7 @@ protected:
     void SetUp() override
     {
         SRuntimeDb::init(&db);
-        rdb()->setRelease("TEST");
+        rdb()->setExperiment("TEST");
 
         rdb()->addContainer("FibersGeomPar", []() { return new SFibersGeomPar; });
         //         rdb()->addLookupContainer(

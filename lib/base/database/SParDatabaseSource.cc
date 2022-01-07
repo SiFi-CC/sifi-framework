@@ -90,9 +90,7 @@ bool SParDatabaseSource::parseSource() { return true; }
 
 auto SParDatabaseSource::findContainer(const std::string& name) -> bool
 {
-    std::string_view release = SRuntimeDb::get()->getRelease();
-
-    mysqlcon->setParamRelease(release);
+    mysqlcon->setExperiment(SRuntimeDb::get()->getExperiment());
     return mysqlcon->findContainer(name);
 }
 
@@ -106,8 +104,6 @@ auto SParDatabaseSource::findContainer(const std::string& name) -> bool
 auto SParDatabaseSource::getContainer(const std::string& name, ulong runid)
     -> std::shared_ptr<SContainer>
 {
-    // check if same release
-    std::string_view release = SRuntimeDb::get()->getRelease();
     // TODO if release has name, then check whether it matches the one from file
     // if (!release.empty() and release != this_release_from_file) return 0;
 
@@ -131,7 +127,7 @@ auto SParDatabaseSource::getContainer(const std::string& name, ulong runid)
     //     }
 
     // if not already fetched, get from database
-    mysqlcon->setParamRelease(release);
+    mysqlcon->setExperiment(SRuntimeDb::get()->getExperiment());
     auto cont = mysqlcon->getContainer(name, runid);
 
     // if database has no given container (or is not validated)
@@ -143,14 +139,12 @@ auto SParDatabaseSource::getContainer(const std::string& name, ulong runid)
 
 bool SParDatabaseSource::setContainer(const std::string& name, SContainer&& cont)
 {
-    // check if same release
-    std::string_view release = SRuntimeDb::get()->getRelease();
     // TODO if release has name, then check whether it matches the one from file
     // if (!release.empty() and release != this_release_from_file) return 0;
 
     // DB call
     // DBOBJECT->getContainer(release, name, runid);
-    mysqlcon->setParamRelease(release);
+    mysqlcon->setExperiment(SRuntimeDb::get()->getExperiment());
     return mysqlcon->addContainer(std::move(name), std::move(cont));
 }
 
@@ -163,30 +157,24 @@ auto SParDatabaseSource::insertContainer(const std::string& name, std::vector<SC
 
 auto SParDatabaseSource::doGetRuns() -> std::vector<SRun>
 {
-    // check if same release
-    std::string_view release = SRuntimeDb::get()->getRelease();
-
     // if not already fetched, get from database
-    mysqlcon->setParamRelease(release);
+    mysqlcon->setExperiment(SRuntimeDb::get()->getExperiment());
     return mysqlcon->getRunContainers(0, 0);
 }
 
 auto SParDatabaseSource::doGetRun(ulong runid) -> SRun
 {
-    // check if same release
-    std::string_view release = SRuntimeDb::get()->getRelease();
-
     // if not already fetched, get from database
-    mysqlcon->setParamRelease(release);
+    mysqlcon->setExperiment(SRuntimeDb::get()->getExperiment());
     return mysqlcon->getRunContainer(runid);
 }
 
 auto SParDatabaseSource::doInsertRun(SRun run) -> bool { return true; }
 
-auto SParDatabaseSource::doGetRelease() const -> std::optional<SRelease>
+auto SParDatabaseSource::doGetExperiment() const -> std::optional<SExperiment>
 {
     // if not already fetched, get from database
-    return mysqlcon->getReleaseContainer(SRuntimeDb::get()->getRelease());
+    return mysqlcon->getExperimentContainer(SRuntimeDb::get()->getExperiment());
 }
 
 #include "tabulate/table.hpp"

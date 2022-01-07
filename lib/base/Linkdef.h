@@ -22,7 +22,7 @@
 #pragma link C++ class STaskManager+;
 
 #pragma link C++ class SRun+;
-#pragma link C++ class SRelease+;
+#pragma link C++ class SExperiment+;
 
 #pragma link C++ class SiFi;
 

@@ -78,7 +78,7 @@ std::vector<std::string> split_lines(const std::string& s)
     return v;
 }
 
-SMysqlInterface::SMysqlInterface(std::string_view url, std::string_view token)
+SMysqlInterface::SMysqlInterface(std::string url, std::string token)
     : api_url(url), auth_token(token)
 {
     cpr::Response r = cpr::Get(cpr::Url{api_url + "/api/connection"},
@@ -86,9 +86,9 @@ SMysqlInterface::SMysqlInterface(std::string_view url, std::string_view token)
     connection_ok = (r.status_code == 204);
 }
 
-auto SMysqlInterface::getReleaseContainer(std::string_view&& name) -> std::optional<SRelease>
+auto SMysqlInterface::getExperimentContainer(std::string name) -> std::optional<SExperiment>
 {
-    cpr::Response r = cpr::Get(cpr::Url{api_url + "/api/fetch/release/" + std::string(name)},
+    cpr::Response r = cpr::Get(cpr::Url{api_url + "/api/fetch/release/" + name},
                                cpr::Header{{"Authorization", "Token " + auth_token}});
 
     if (r.status_code == 200)
@@ -103,7 +103,7 @@ auto SMysqlInterface::getReleaseContainer(std::string_view&& name) -> std::optio
         // data are stored as an array
         assert(doc.IsArray() and doc.Size() == 1);
 
-        auto release = SRelease();
+        auto release = SExperiment();
         release.name = doc["name"].GetString();
         release.first_run = doc["first_run"].GetUint64();
         release.last_run = doc["last_run"].GetUint64();
@@ -158,13 +158,12 @@ auto SMysqlInterface::getRunContainer(long runid) -> SRun
  * \param runid_max maximal runid, strong ordering
  * \return array of objects, empty if no matches
  */
-auto SMysqlInterface::getRunContainers(long runid_min, long runid_max)
-    -> std::vector<SRun>
+auto SMysqlInterface::getRunContainers(long runid_min, long runid_max) -> std::vector<SRun>
 {
     cpr::Response r;
 
     if (runid_min == 0 and runid_max == 0)
-        r = cpr::Get(cpr::Url{api_url + "/api/fetch/run/" + param_release},
+        r = cpr::Get(cpr::Url{api_url + "/api/fetch/run/" + experiment},
                      cpr::Header{{"Authorization", "Token " + auth_token}});
     else
         r = cpr::Get(cpr::Url{api_url + "/api/fetch/run/" + std::to_string(runid_min) + "/" +
@@ -237,21 +236,20 @@ void SMysqlInterface::addRunContainer(SRun&& runcont)
                                             {"Content-Type", "application/json"}});
 }
 
-auto SMysqlInterface::findContainer(std::string_view name) -> bool
+auto SMysqlInterface::findContainer(std::string name) -> bool
 {
-    cpr::Response r = cpr::Get(cpr::Url{std::string(api_url) + "/api/fetch/cont/" + param_release +
-                                        "/" + std::string(name) + "/find/"},
-                               cpr::Header{{"Authorization", "Token " + std::string(auth_token)}});
+    cpr::Response r = cpr::Get(
+        cpr::Url{api_url + "/api/fetch/cont/" + experiment + "/" + name + "/find/"},
+        cpr::Header{{"Authorization", "Token " + auth_token}});
 
     return r.status_code == 200;
 }
 
-std::optional<SContainer> SMysqlInterface::getContainer(std::string_view&& name, long runid)
+std::optional<SContainer> SMysqlInterface::getContainer(std::string name, long runid)
 {
-    cpr::Response r =
-        cpr::Get(cpr::Url{std::string(api_url) + "/api/fetch/cont/" + param_release + "/" +
-                          std::string(name) + "/" + std::to_string(runid) + "/"},
-                 cpr::Header{{"Authorization", "Token " + std::string(auth_token)}});
+    cpr::Response r = cpr::Get(cpr::Url{api_url + "/api/fetch/cont/" + experiment + "/" +
+                                        name + "/" + std::to_string(runid) + "/"},
+                               cpr::Header{{"Authorization", "Token " + auth_token}});
 
     if (r.status_code == 200)
     {
@@ -273,6 +271,7 @@ std::optional<SContainer> SMysqlInterface::getContainer(std::string_view&& name,
         uint32_t valid_to = d["valid_to_id"].GetInt();
 
         SContainer cont;
+        cont.SetName(name.c_str());
         cont.lines = split_lines(d["content"].GetString());
         cont.updated = true;
         cont.validity = {valid_from, valid_to};
@@ -287,7 +286,7 @@ std::optional<SContainer> SMysqlInterface::getContainer(std::string_view&& name,
  * \param rinid_min minimal runid, weak ordering
  * \return array of objects, empty if no matches
  */
-std::vector<SContainer> SMysqlInterface::getContainers(std::string_view&& name, long runid_min)
+std::vector<SContainer> SMysqlInterface::getContainers(std::string name, long runid_min)
 {
     return getContainers(std::move(name), runid_min, 0);
 }
@@ -299,13 +298,13 @@ std::vector<SContainer> SMysqlInterface::getContainers(std::string_view&& name, 
  * \param runid_max maximal runid, strong ordering
  * \return array of objects, empty if no matches
  */
-auto SMysqlInterface::getContainers(std::string_view&& name, long runid_min, long runid_max)
+auto SMysqlInterface::getContainers(std::string name, long runid_min, long runid_max)
     -> std::vector<SContainer>
 {
-    cpr::Response r = cpr::Get(cpr::Url{std::string(api_url) + "/api/fetch/cont/" + param_release +
-                                        "/" + std::string(name) + "/" + std::to_string(runid_min) +
-                                        "/" + std::to_string(runid_max) + "/"},
-                               cpr::Header{{"Authorization", "Token " + std::string(auth_token)}});
+    cpr::Response r =
+        cpr::Get(cpr::Url{api_url + "/api/fetch/cont/" + experiment + "/" + name +
+                          "/" + std::to_string(runid_min) + "/" + std::to_string(runid_max) + "/"},
+                 cpr::Header{{"Authorization", "Token " + auth_token}});
 
     std::vector<SContainer> array;
     if (r.status_code == 200)
@@ -326,7 +325,7 @@ auto SMysqlInterface::getContainers(std::string_view&& name, long runid_min, lon
             uint32_t valid_to = d["valid_to_id"].GetInt();
 
             SContainer cont;
-            cont.SetName(std::string(name).c_str());
+            cont.SetName(name.c_str());
             cont.lines = split_lines(d["content"].GetString());
             cont.updated = true;
             cont.validity = {valid_from, valid_to};
@@ -341,4 +340,4 @@ auto SMysqlInterface::getContainers(std::string_view&& name, long runid_min, lon
  * Add new container to the database, by name. It must be later validated via web interface.
  * \return success of the operation
  */
-bool SMysqlInterface::addContainer(std::string_view&& name, SContainer&& cont) { return false; }
+bool SMysqlInterface::addContainer(std::string name, SContainer&& cont) { return false; }

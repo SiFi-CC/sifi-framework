@@ -61,7 +61,7 @@ public:
     auto doGetRun(ulong runid) -> SRun override;
     auto doInsertRun(SRun run) -> bool override;
 
-    auto doGetRelease() const -> std::optional<SRelease> override;
+    auto doGetExperiment() const -> std::optional<SExperiment> override;
 
     auto doPrint() const -> void override;
 
@@ -78,7 +78,7 @@ private:
         last_container; ///< Last used container, for caching purpose
     std::string source; ///< Root file name
 
-    std::optional<SRelease> release;
+    std::optional<SExperiment> experiment;
 };
 
 #endif /* SPARROOTSOURCE_H */

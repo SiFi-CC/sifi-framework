@@ -87,10 +87,10 @@ public:
     ClassDef(SRun, 0);
 };
 
-struct SIFI_EXPORT SRelease : public TObject
+struct SIFI_EXPORT SExperiment : public TObject
 {
-    SRelease() = default;
-    SRelease(const std::string name, ulong first, ulong last)
+    SExperiment() = default;
+    SExperiment(const std::string name, ulong first, ulong last)
         : TObject(), name(name), first_run(first), last_run(last)
     {
     }
@@ -99,7 +99,7 @@ struct SIFI_EXPORT SRelease : public TObject
     ulong first_run{0};
     ulong last_run{0};
 
-    ClassDef(SRelease, 0);
+    ClassDef(SExperiment, 0);
 };
 
 #endif /* SRUNCALCONTAINER_H */

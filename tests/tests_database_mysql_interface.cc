@@ -6,48 +6,55 @@
 
 TEST(tests_database_mysql_interface, connection_tests)
 {
+    const char* apiurl = getenv("SIFIDBAPI");
     const char* token = getenv("SIFIAUTH");
+    ASSERT_STRNE(apiurl, nullptr);
     ASSERT_STRNE(token, nullptr);
 
-    SMysqlInterface url1("http://127.0.0.1:8000", token);
-    EXPECT_TRUE(url1.connected());
+    std::vector<std::pair<std::string, bool>> inputs = {{apiurl, true},
+                                                        {"http://localhost:800000", false}};
 
-    SMysqlInterface url2("http://127.0.0.1:8001", token);
-    EXPECT_FALSE(url2.connected());
-
-    SMysqlInterface url3("http://127.0.0.1:8002", token);
-    EXPECT_FALSE(url3.connected());
+    for (auto& i : inputs)
+    {
+        SMysqlInterface url(i.first, token);
+        EXPECT_TRUE(url.connected() == i.second) << " on input " << i.first;
+    }
 }
 
 TEST(tests_database_mysql_interface, auth_tests)
 {
+    const char* apiurl = getenv("SIFIDBAPI");
     const char* token = getenv("SIFIAUTH");
+    ASSERT_STRNE(apiurl, nullptr);
     ASSERT_STRNE(token, nullptr);
 
-    SMysqlInterface url1("http://127.0.0.1:8000", "982675c1f8e6e5cddb08084adce759e925a82880");
-    EXPECT_FALSE(url1.connected());
+    std::vector<std::pair<std::string, bool>> inputs = {
+        {token, true}, {"0123456789", false}, {"deadbeef0a", false}};
 
-    SMysqlInterface url2("http://127.0.0.1:8000", token);
-    EXPECT_TRUE(url2.connected());
-
-    SMysqlInterface url3("http://127.0.0.1:8000", "982675c1f8e6e5cddb08084adce759e925a82881");
-    EXPECT_FALSE(url3.connected());
+    for (auto& i : inputs)
+    {
+        SMysqlInterface url(apiurl, i.first);
+        EXPECT_TRUE(url.connected() == i.second) << " on input " << i.first;
+    }
 }
 
-TEST(tests_database_mysql_interface, release_request)
+TEST(tests_database_mysql_interface, experiment_request)
 {
+    const char* apiurl = getenv("SIFIDBAPI");
     const char* token = getenv("SIFIAUTH");
+    ASSERT_STRNE(apiurl, nullptr);
     ASSERT_STRNE(token, nullptr);
 
-    SMysqlInterface api("http://127.0.0.1:8000", token);
-    auto rel_cont = api.getReleaseContainer("TEST");
+    SMysqlInterface api(apiurl, token);
+
+    auto rel_cont = api.getExperimentContainer("TEST");
     EXPECT_TRUE(rel_cont.has_value());
     EXPECT_STREQ(rel_cont.value().name.c_str(), "TEST");
     EXPECT_EQ(rel_cont.value().first_run, 3);
     EXPECT_EQ(rel_cont.value().last_run, 9);
-    rel_cont = api.getReleaseContainer("BAD_TEST");
+    rel_cont = api.getExperimentContainer("BAD_TEST");
     EXPECT_FALSE(rel_cont.has_value());
-    rel_cont = api.getReleaseContainer("");
+    rel_cont = api.getExperimentContainer("");
     EXPECT_FALSE(rel_cont.has_value());
 }
 
@@ -79,16 +86,16 @@ TEST(tests_database_mysql_interface, run_range_request)
     run_cont = api.getRunContainers(1, 0);
 }
 
-TEST(tests_database_mysql_interface, run_range_from_release)
+TEST(tests_database_mysql_interface, run_range_from_experiment)
 {
-    /* Test whether you can get runs by release name. The TEST release contains
+    /* Test whether you can get runs by experiment name. The TEST experiment contains
      * runs 3-9 which is 7 entities.
      */
     const char* token = getenv("SIFIAUTH");
     ASSERT_STRNE(token, nullptr);
 
     SMysqlInterface api("http://127.0.0.1:8000", token);
-    api.setParamRelease("TEST");
+    api.setExperiment("TEST");
 
     auto run_cont = api.getRunContainers(0, 0);
     EXPECT_EQ(run_cont.size(), 7);
@@ -100,7 +107,7 @@ TEST(tests_database_mysql_interface, container_find)
     ASSERT_STRNE(token, nullptr);
 
     SMysqlInterface api("http://127.0.0.1:8000", token);
-    api.setParamRelease("TEST"); // runs 3-9
+    api.setExperiment("TEST"); // runs 3-9
 
     // GeomPar, params 3-7 are validated, 8-9 are not validated
     auto cont = api.findContainer("FibersGeomPar");
@@ -109,7 +116,7 @@ TEST(tests_database_mysql_interface, container_find)
     cont = api.findContainer("BadFibersGeomPar");
     EXPECT_FALSE(cont); // params for runs 1 are not existing (utside test)
 
-    api.setParamRelease("BAD_TEST"); // runs 3-9
+    api.setExperiment("BAD_TEST"); // runs 3-9
 
     // GeomPar, params 3-7 are validated, 8-9 are not validated
     cont = api.findContainer("FibersGeomPar");
@@ -122,7 +129,7 @@ TEST(tests_database_mysql_interface, container_request)
     ASSERT_STRNE(token, nullptr);
 
     SMysqlInterface api("http://127.0.0.1:8000", token);
-    api.setParamRelease("TEST"); // runs 3-9
+    api.setExperiment("TEST"); // runs 3-9
 
     // GeomPar, params 3-7 are validated, 8-9 are not validated
     auto cont = api.getContainer("FibersGeomPar", 1);
@@ -182,7 +189,7 @@ TEST(tests_database_mysql_interface, container_range_request)
     ASSERT_STRNE(token, nullptr);
 
     SMysqlInterface api("http://127.0.0.1:8000", token);
-    api.setParamRelease("TEST");
+    api.setExperiment("TEST");
 
     // GeomPar
     auto cont = api.getContainers("FibersGeomPar", 1, 3);

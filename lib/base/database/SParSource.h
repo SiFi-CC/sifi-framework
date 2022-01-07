@@ -40,7 +40,7 @@
 
 class SContainer;
 struct SRun;
-struct SRelease;
+struct SExperiment;
 
 enum class SourceOpenMode
 {
@@ -58,7 +58,7 @@ public:
     auto getRun(ulong runid) -> SRun;
     auto insertRun(SRun run) -> bool;
 
-    auto getRelease() const -> std::optional<SRelease>;
+    auto getExperiment() const -> std::optional<SExperiment>;
     /// Print containers stored in the source. Details about source must be print by subclass
     /// method.
     auto print() const -> void;
@@ -91,7 +91,7 @@ private:
     virtual auto doGetRun(ulong runid) -> SRun = 0;
     virtual auto doInsertRun(SRun run) -> bool = 0;
 
-    virtual auto doGetRelease() const -> std::optional<SRelease> = 0;
+    virtual auto doGetExperiment() const -> std::optional<SExperiment> = 0;
     /// Print containers stored in the source. Details about source must be print by subclass
     /// method.
     virtual auto doPrint() const -> void = 0;
