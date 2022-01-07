@@ -186,6 +186,25 @@ SPar* SDatabase::getParContainer(const std::string& name)
         return nullptr;
     };
 
+    auto [cont, reinit] = getContainer(name);
+    if (cont)
+    {
+        if (reinit)
+        {
+            SParContainer* pc = new SParContainer(name);
+            pc->fromContainer(cont);
+            //             obj_par_cont.emplace(name, pc); FIXME
+            par->getParams(pc);
+        }
+        return par;
+    }
+    else
+    {
+        spdlog::critical("[{0}] Parameter container {1} could not be initialized!", __func__, name);
+        if (!sifi()->assertationsDisabled()) exit(EXIT_FAILURE);
+        return nullptr;
+    }
+
     return par;
 }
 
@@ -216,6 +235,21 @@ SLookupTable* SDatabase::getLookupContainer(const std::string& name)
         std::cout << ex.what() << '\n';
         return nullptr;
     };
+
+    auto [cont, reinit] = getContainer(name);
+    if (cont)
+    {
+        if (reinit) lu->fromContainer(cont);
+
+        return lu;
+    }
+    else
+    {
+        spdlog::critical("[{0}] Lookup table {1} could not be initialized from sources!", __func__,
+                         name);
+        if (!sifi()->assertationsDisabled()) exit(EXIT_FAILURE);
+        return nullptr;
+    }
 
     return lu;
 }
@@ -249,5 +283,97 @@ SVirtualCalContainer* SDatabase::getCalContainer(const std::string& name)
         return nullptr;
     };
 
+    auto [cont, reinit] = getContainer(name);
+    if (cont)
+    {
+        if (reinit) cal->fromContainer(cont);
+        return cal;
+    }
+    else
+    {
+        spdlog::critical("[{0}] Calibration container {1} could not be initialized from sources!",
+                         __func__, name);
+        if (!sifi()->assertationsDisabled()) exit(EXIT_FAILURE);
+        return nullptr;
+    }
+
     return cal;
+}
+
+auto SDatabase::getContainer(const std::string& name) -> std::pair<SContainer*, bool>
+{
+    return getContainer(name, current_runid);
+}
+/**
+ * Get plain container for given run id. First check whether it is cached and has valid run, then
+ * return cached. Othwerwise search in source for new valid range if source provides it;
+ *
+ * \param name container name
+ * \return valid container pointer
+ */
+auto SDatabase::getContainer(const std::string& name, ulong runid) -> std::pair<SContainer*, bool>
+{
+    /**
+     * Get container by name. First check whetehr it is cached. Cache is ether
+     * a local copy of source-based container or the only instance of the container.
+     * If cache does not exist, make action depending on the mode which is assigned
+     * to the container:
+     *  - for Raad or Forward, obtain the container from physical source, and put into cache
+     *  - for Create, put container into cache
+     */
+
+    // If it was the same version like before, return cached one
+    auto last_it = cached.find(name);
+    if (last_it != cached.end() and last_it->second->validity.inside(runid))
+        return {last_it->second.get(), false};
+
+    // Find mode for the container. If mode is None, then return nothing.
+    auto mode_it = container_mode.find(name);
+
+    //     auto mode = mode_it->second;
+    auto mode = ContainerMode::None;
+
+    if (mode_it == container_mode.end())
+    {
+        container_mode[name] = ContainerMode::Read;
+        mode = ContainerMode::Read;
+    }
+    else
+    {
+        mode = mode_it->second;
+        //         return {nullptr, true};
+    }
+
+    // Read container from the source
+    if (mode == ContainerMode::Read or mode == ContainerMode::Forward)
+    {
+        auto source = container_source[name];
+        if (source != nullptr)
+        {
+            auto cont = source->getContainer(name, runid);
+            containers[name].insert({cont->validity, cont});
+            cached[name] = cont;
+            return {cont.get(), true};
+        }
+
+        return {nullptr, true};
+    }
+
+    // Create new container in the cache
+    if (mode_it->second == ContainerMode::Create)
+    {
+        auto source = container_source[name];
+        if (source == nullptr)
+        {
+            auto cont = std::make_shared<SContainer>();
+            cont->SetName(name.c_str());
+            containers[name].insert({cont->validity, cont});
+            cached[name] = cont;
+            return {cont.get(), true};
+        }
+
+        return {nullptr, true};
+    }
+
+    return {nullptr, true};
 }

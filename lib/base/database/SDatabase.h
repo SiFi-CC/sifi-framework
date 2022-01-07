@@ -58,14 +58,28 @@ using cont_obj_factory = std::function<cont_obj()>;
 
 class SIFI_EXPORT SDatabase
 {
+public:
+    enum class ContainerMode
+    {
+        None,
+        Read,
+        Create,
+        Forward
+    };
+
 protected:
     std::vector<SParSource*> sources; ///< Parameters source file
     SParSource* target{0};            ///< Parameters destination file
 
     std::map<std::string, SParSource*> conts_sources;                            ///< Input sources
 
-    static SDatabase* pm; ///< Instance of the SDatabase
+    // Technical containers
+    std::map<std::string, SParSource*> container_source;       ///< Input sources
+    std::map<std::string, ContainerMode> container_mode;       ///< Container mode
     std::map<std::string, cont_obj_factory> obj_factory;       ///< Container object factory
+    std::map<std::string, std::shared_ptr<SContainer>> cached; ///< Caching of the last container
+    std::map<std::string, std::map<SRunsValidityRange, std::shared_ptr<SContainer>>>
+        containers; ///< Containers mirrors
 
     std::string release; ///< stores parameters release name
     unsigned long current_runid;
@@ -91,7 +105,14 @@ public:
     SLookupTable* getLookupContainer(const std::string& name);
     SVirtualCalContainer* getCalContainer(const std::string& name);
 
-
+    auto getContainerMode(const std::string& name) -> ContainerMode
+    {
+        return ContainerMode::None;
+    } // TODO
+    void setContainerMode(const std::string& name, ContainerMode mode)
+    {
+        container_mode[name] = mode;
+    }
 
     /// Set release value.
     /// \param r release name
@@ -103,6 +124,9 @@ public:
     void print() const;
 
     friend class SParAsciiSource;
+    auto getContainer(const std::string& name) -> std::pair<SContainer*, bool>;
+    auto getContainer(const std::string& name, ulong) -> std::pair<SContainer*, bool>;
+
 };
 
 /**
