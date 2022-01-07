@@ -108,6 +108,7 @@ bool SParAsciiSource::parseSource()
                 cont_name = str.substr(1, pos - 1);
 
                 cont = new SContainer;
+                cont->SetName(cont_name.c_str());
                 cont->updated = true;
                 containers.emplace(cont_name, std::unique_ptr<SContainer>(cont));
 
@@ -149,7 +150,7 @@ void SParAsciiSource::doPrint() const
     SParSource::print();
 }
 
-auto SParAsciiSource::getContainer(const std::string& name, ulong runid)
+auto SParAsciiSource::doGetContainer(const std::string& name, ulong runid)
     -> std::shared_ptr<SContainer>
 {
     auto it = containers.find(name);
@@ -158,13 +159,16 @@ auto SParAsciiSource::getContainer(const std::string& name, ulong runid)
     return it->second;
 }
 
-auto SParAsciiSource::insertContainer(const std::string& name, std::vector<SContainer*> cont) -> bool
+auto SParAsciiSource::doInsertContainer(const std::string& name, SContainer* cont) -> bool {}
+
+auto SParAsciiSource::doInsertContainer(const std::string& name, std::vector<SContainer*> cont)
+    -> bool
 {
     // TODO implement this
     return false;
 }
 
-auto SParAsciiSource::findContainer(const std::string& name) -> bool
+auto SParAsciiSource::doFindContainer(const std::string& name) -> bool
 {
     auto it = containers.find(name);
     if (it != containers.end()) return true;

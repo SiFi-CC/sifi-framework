@@ -43,22 +43,24 @@
 
 struct SContainer;
 
-class SIFI_EXPORT SParDatabaseSource : public SParSource
+class SIFI_EXPORT SParDatabaseSource final : public SParSource
 {
 public:
     SParDatabaseSource();
-    virtual ~SParDatabaseSource() = default;
+    ~SParDatabaseSource() = default;
 
-    virtual auto setOpenMode(SourceOpenMode mode) -> void override{};
+private:
+    auto doSetOpenMode(SourceOpenMode mode) -> void override{};
 
-    virtual auto findContainer(const std::string& name) -> bool override;
+    auto doFindContainer(const std::string& name) -> bool override;
 
-    virtual auto getContainer(const std::string& name, ulong runid)
+    auto doGetContainer(const std::string& name, ulong runid)
         -> std::shared_ptr<SContainer> override;
-    virtual auto setContainer(const std::string& name, SContainer&& cont) -> bool;
+    auto doSetContainer(const std::string& name, SContainer&& cont) -> bool;
 
-    virtual auto insertContainer(const std::string& name, std::vector<SContainer*> cont)
-        -> bool override;
+    auto doInsertContainer(const std::string& name, SContainer* cont) -> bool override;
+
+    auto doInsertContainer(const std::string& name, std::vector<SContainer*> cont) -> bool override;
 
     auto doGetRuns() -> std::vector<SRun> override;
     auto doGetRun(ulong runid) -> SRun override;

@@ -48,23 +48,27 @@ class SIFI_EXPORT SParAsciiSource final : public SParSource
 public:
     SParAsciiSource(const std::string& source);
     SParAsciiSource(std::string&& source);
-    virtual ~SParAsciiSource() = default;
+    ~SParAsciiSource() = default;
 
-    virtual auto setOpenMode(SourceOpenMode mode) -> void override {}
+private:
+    auto doSetOpenMode(SourceOpenMode mode) -> void override {}
 
-    virtual auto findContainer(const std::string& name) -> bool override;
+    auto doFindContainer(const std::string& name) -> bool override;
 
-    virtual auto getContainer(const std::string& name, ulong runid)
+    auto doGetContainer(const std::string& name, ulong runid)
         -> std::shared_ptr<SContainer> override;
 
-    virtual auto insertContainer(const std::string& name, std::vector<SContainer*> cont)
-        -> bool override;
-    auto doGetRuns() -> std::vector<SRun> override
-    {
-        return std::vector{dummy_run};
-    };
+    auto doInsertContainer(const std::string& name, SContainer* cont) -> bool override;
+
+    auto doInsertContainer(const std::string& name, std::vector<SContainer*> cont) -> bool override;
+
+    auto doGetRuns() -> std::vector<SRun> override { return std::vector{dummy_run}; };
     auto doGetRun(ulong runid) -> SRun override { return dummy_run; }
-    auto doInsertRun(SRun run) -> bool override { dummy_run = run; return true; };
+    auto doInsertRun(SRun run) -> bool override
+    {
+        dummy_run = run;
+        return true;
+    };
 
     auto doGetExperiment() const -> std::optional<SExperiment> override
     {

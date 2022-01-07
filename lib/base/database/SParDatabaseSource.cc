@@ -88,7 +88,7 @@ SParDatabaseSource::SParDatabaseSource() : SParSource()
  */
 bool SParDatabaseSource::parseSource() { return true; }
 
-auto SParDatabaseSource::findContainer(const std::string& name) -> bool
+auto SParDatabaseSource::doFindContainer(const std::string& name) -> bool
 {
     mysqlcon->setExperiment(SRuntimeDb::get()->getExperiment());
     return mysqlcon->findContainer(name);
@@ -101,7 +101,7 @@ auto SParDatabaseSource::findContainer(const std::string& name) -> bool
  * \param runid run id number
  * \return pointer to the container
  */
-auto SParDatabaseSource::getContainer(const std::string& name, ulong runid)
+auto SParDatabaseSource::doGetContainer(const std::string& name, ulong runid)
     -> std::shared_ptr<SContainer>
 {
     // TODO if release has name, then check whether it matches the one from file
@@ -137,7 +137,7 @@ auto SParDatabaseSource::getContainer(const std::string& name, ulong runid)
     return std::make_shared<SContainer>(cont.value());
 }
 
-bool SParDatabaseSource::setContainer(const std::string& name, SContainer&& cont)
+bool SParDatabaseSource::doSetContainer(const std::string& name, SContainer&& cont)
 {
     // TODO if release has name, then check whether it matches the one from file
     // if (!release.empty() and release != this_release_from_file) return 0;
@@ -148,7 +148,9 @@ bool SParDatabaseSource::setContainer(const std::string& name, SContainer&& cont
     return mysqlcon->addContainer(std::move(name), std::move(cont));
 }
 
-auto SParDatabaseSource::insertContainer(const std::string& name, std::vector<SContainer*> cont)
+auto SParDatabaseSource::doInsertContainer(const std::string& name, SContainer* cont) -> bool {}
+
+auto SParDatabaseSource::doInsertContainer(const std::string& name, std::vector<SContainer*> cont)
     -> bool
 {
     // TODO implement this

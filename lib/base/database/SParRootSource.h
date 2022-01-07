@@ -35,8 +35,10 @@
 
 #include "SContainer.h"
 #include "SParSource.h"
+#include "SRun.h"
 
 #include <map>
+#include <optional>
 #include <string>
 
 class TFile;
@@ -48,15 +50,17 @@ public:
     SParRootSource(std::string&& source);
     virtual ~SParRootSource() = default;
 
-    virtual auto setOpenMode(SourceOpenMode mode) -> void override;
+private:
+    auto doSetOpenMode(SourceOpenMode mode) -> void override;
 
-    virtual auto findContainer(const std::string& name) -> bool override;
+    auto doFindContainer(const std::string& name) -> bool override;
 
-    virtual auto getContainer(const std::string& name, ulong runid)
+    auto doGetContainer(const std::string& name, ulong runid)
         -> std::shared_ptr<SContainer> override;
 
-    virtual auto insertContainer(const std::string& name, std::vector<SContainer*> cont)
-        -> bool override;
+    auto doInsertContainer(const std::string& name, SContainer* cont) -> bool override;
+    auto doInsertContainer(const std::string& name, std::vector<SContainer*> cont) -> bool override;
+
     auto doGetRuns() -> std::vector<SRun> override;
     auto doGetRun(ulong runid) -> SRun override;
     auto doInsertRun(SRun run) -> bool override;
@@ -65,8 +69,10 @@ public:
 
     auto doPrint() const -> void override;
 
-private:
-    bool parseSource();
+    auto parseSource() -> bool;
+
+    auto getDirectory(const std::string& name) -> TDirectory*;
+    auto createDirectory(const std::string& name) -> TDirectory*;
 
 private:
     TFile* file_source{nullptr};

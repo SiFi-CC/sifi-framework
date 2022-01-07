@@ -65,7 +65,7 @@ SParRootSource::SParRootSource(const std::string& source) : SParSource(), source
  */
 SParRootSource::SParRootSource(std::string&& source) : SParSource(), source(source) {}
 
-auto SParRootSource::setOpenMode(SourceOpenMode mode) -> void
+auto SParRootSource::doSetOpenMode(SourceOpenMode mode) -> void
 {
     switch (mode)
     {
@@ -98,33 +98,31 @@ bool SParRootSource::parseSource()
     TKey *key, *oldkey = 0;
     while ((key = (TKey*)nextkey()))
     {
-        // keep only the highest cycle number for each key
-        if (oldkey && !strcmp(oldkey->GetName(), key->GetName())) continue;
-
         // read object from first source file
         file_source->cd();
         TObject* obj = key->ReadObj();
 
-        if (obj->IsA()->InheritsFrom(TList::Class()))
-        {
-            // descendant of TH1 -> merge it
+        printf("Obj name = %s\n", obj->GetName());
 
+        if (obj->IsA()->InheritsFrom(TCollection::Class()))
+        {
             std::string name = obj->GetName();
             auto& cont_map = containers[name];
-            TIter next(dynamic_cast<TList*>(obj));
+            TIter next(dynamic_cast<TCollection*>(obj));
             SContainer* cache = nullptr;
 
             while (TObject* c = next())
             {
+                printf(" C name = %s\n", c->GetName());
                 SContainer* cont = dynamic_cast<SContainer*>(c);
                 if (cont)
                 {
-                    if (cache) cache->validity.truncate(cont->validity);
+                    //                     if (cache) cache->validity.truncate(cont->validity);
                     cache = cont;
                 }
             }
 
-            next = TIter(dynamic_cast<TList*>(obj));
+            next = TIter(dynamic_cast<TCollection*>(obj));
 
             while (TObject* c = next())
             {
@@ -136,10 +134,10 @@ bool SParRootSource::parseSource()
     return false;
 }
 
-auto SParRootSource::findContainer(const std::string& name) -> bool
+auto SParRootSource::doFindContainer(const std::string& name) -> bool
 {
     // check if same release
-    auto experiment = SRuntimeDb::get()->getExperiment();
+    auto exp = SRuntimeDb::get()->getExperiment();
     // TODO do we need to verify Experiment for root files or we just assume that they are always
     // correct (user responsibility)
 
@@ -153,7 +151,7 @@ auto SParRootSource::findContainer(const std::string& name) -> bool
     return false;
 }
 
-auto SParRootSource::getContainer(const std::string& name, ulong runid)
+auto SParRootSource::doGetContainer(const std::string& name, ulong runid)
     -> std::shared_ptr<SContainer>
 {
     // check if same release
@@ -185,7 +183,10 @@ auto SParRootSource::getContainer(const std::string& name, ulong runid)
     return nullptr;
 }
 
-auto SParRootSource::insertContainer(const std::string& name, std::vector<SContainer*> cont) -> bool
+auto SParRootSource::doInsertContainer(const std::string& name, SContainer* cont) -> bool {}
+
+auto SParRootSource::doInsertContainer(const std::string& name, std::vector<SContainer*> cont)
+    -> bool
 {
     if (file_source)
     {
@@ -242,7 +243,17 @@ auto SParRootSource::doInsertRun(SRun run) -> bool
 
 auto SParRootSource::doGetExperiment() const -> std::optional<SExperiment> { return {}; }
 
-#include "tabulate/table.hpp"
+auto SParRootSource::getDirectory(const std::string& name) -> TDirectory*
+{
+    return file_source->GetDirectory(name.c_str());
+}
+
+auto SParRootSource::createDirectory(const std::string& name) -> TDirectory*
+{
+    return file_source->mkdir(name.c_str());
+}
+
+#include <tabulate/table.hpp>
 using namespace tabulate;
 
 #include <magic_enum.hpp>
@@ -297,4 +308,24 @@ void SParRootSource::doPrint() const
 
         std::cout << cont_summary << std::endl;
     }
+
+    Table runs_summary;
+    runs_summary.add_row({"Run", "Validated", "Start", "Stop"});
+
+    std::cout << "Number of run containers: " << runs.size() << "\n";
+
+    for (auto& r : runs)
+    {
+        auto t1 = r.second.getStart();
+        auto t2 = r.second.getStop();
+        std::stringstream s1;
+        s1 << std::put_time(std::gmtime(&t1), "%c %Z");
+        std::stringstream s2;
+        s2 << std::put_time(std::gmtime(&t2), "%c %Z");
+        runs_summary.add_row({std::to_string(r.second.getId()),
+                              std::string(magic_enum::enum_name(r.second.getStatus())), s1.str(),
+                              s2.str()});
+    }
+
+    std::cout << runs_summary << std::endl;
 }
