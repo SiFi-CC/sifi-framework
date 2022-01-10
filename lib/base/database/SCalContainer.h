@@ -47,7 +47,7 @@ public:
     virtual uint write(char* buffer, size_t n) const;
     virtual void print(bool newline = true, const char* prefix = 0);
     float& operator[](int n);
-    const float operator[](int n) const;
+    float operator[](int n) const;
 };
 
 /**

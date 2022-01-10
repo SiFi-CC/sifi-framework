@@ -36,9 +36,9 @@ protected:
         rdb()->addContainer("CalibratorParMissing",
                             []() { return new SFibersCalibratorPar("CalibratorParMissing"); });
 
-        rdb()->setContainerMode("FibersGeomPar", SDatabase::ContainerMode::Read);
-        rdb()->setContainerMode("FibersLookupTable", SDatabase::ContainerMode::Read);
-        rdb()->setContainerMode("FibersCalibratorPar", SDatabase::ContainerMode::Read);
+        // missing containers cannot be marked READ
+        rdb()->setContainerMode("LookupTableMissing", SDatabase::ContainerMode::None);
+        rdb()->setContainerMode("CalibratorParMissing", SDatabase::ContainerMode::None);
 
         ascii = new SParAsciiSource(tests_path + "params_ascii.txt");
         // ascii->print();

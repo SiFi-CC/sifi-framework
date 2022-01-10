@@ -50,7 +50,7 @@ public:
     ~SParDatabaseSource() = default;
 
 private:
-    auto doSetOpenMode(SourceOpenMode mode) -> void override{};
+    auto doSetOpenMode(SourceOpenMode /*mode*/) -> void override{};
 
     auto doFindContainer(const std::string& name) -> bool override;
 

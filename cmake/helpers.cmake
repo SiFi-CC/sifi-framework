@@ -32,6 +32,10 @@ target_include_directories(${ARG_TARGET}
         ${CMAKE_CURRENT_SOURCE_DIR}/inc
 )
 
+target_compile_options(${ARG_TARGET} PRIVATE
+-Wall -Wextra
+)
+
 target_link_libraries(${ARG_TARGET}
     PUBLIC
         ${ARG_LIBRARIES}

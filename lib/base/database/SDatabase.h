@@ -106,10 +106,7 @@ public:
     SLookupTable* getLookupContainer(const std::string& name);
     SVirtualCalContainer* getCalContainer(const std::string& name);
 
-    auto getContainerMode(const std::string& name) -> ContainerMode
-    {
-        return ContainerMode::None;
-    } // TODO
+    auto getContainerMode(const std::string& name) -> std::optional<ContainerMode>;
     void setContainerMode(const std::string& name, ContainerMode mode)
     {
         container_mode[name] = mode;

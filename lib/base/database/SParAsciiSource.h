@@ -51,7 +51,7 @@ public:
     ~SParAsciiSource() = default;
 
 private:
-    auto doSetOpenMode(SourceOpenMode mode) -> void override {}
+    auto doSetOpenMode(SourceOpenMode /*mode*/) -> void override {}
 
     auto doFindContainer(const std::string& name) -> bool override;
 
@@ -63,7 +63,7 @@ private:
     auto doInsertContainer(const std::string& name, std::vector<SContainer*> cont) -> bool override;
 
     auto doGetRuns() -> std::vector<SRun> override { return std::vector{dummy_run}; };
-    auto doGetRun(ulong runid) -> SRun override { return dummy_run; }
+    auto doGetRun(ulong /*runid*/) -> SRun override { return dummy_run; }
     auto doInsertRun(SRun run) -> bool override
     {
         dummy_run = run;

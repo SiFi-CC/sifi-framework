@@ -111,7 +111,7 @@ template <unsigned int N> float& SCalPar<N>::operator[](int n)
  * \param n component index
  * \return value of the paramater array component
  */
-template <unsigned int N> const float SCalPar<N>::operator[](int n) const
+template <unsigned int N> float SCalPar<N>::operator[](int n) const
 {
     if (n < 0 or n > N - 1)
     {

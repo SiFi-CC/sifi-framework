@@ -158,6 +158,13 @@ bool SDatabase::addContainer(const std::string& name, cont_obj_factory&& f)
     return true;
 }
 
+auto SDatabase::getContainerMode(const std::string& name) -> std::optional<ContainerMode>
+{
+    if (auto const& it = container_mode.find(name); it != container_mode.cend()) return it->second;
+
+    return {};
+}
+
 /**
  * Get parameter container by name.
  *
