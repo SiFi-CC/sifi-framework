@@ -148,10 +148,6 @@ int main(int argc, char** argv)
 
     detm->addDetector(new SFibersDetector("Fibers"));
 
-    detm->initTasks();
-    detm->initParameterContainers();
-    detm->initCategories();
-
     SRuntimeDb::get()->addContainer(
         "FibersDDLookupTable",
         []() { return new SFibersLookupTable("FibersDDLookupTable", 0x1000, 0x1fff, 32); });

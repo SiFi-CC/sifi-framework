@@ -54,7 +54,7 @@ include(tools)
 # 3rd party software
 
 # cpr
-SET (REQUIRED_CPR_VERSION 1.6.2)
+SET (REQUIRED_CPR_VERSION 1.7.2)
 include(cmake/check_3rdparty_cpr.cmake)
 
 # tabulate

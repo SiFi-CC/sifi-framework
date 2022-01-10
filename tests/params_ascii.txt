@@ -31,7 +31,7 @@ fFibersPitch: Float_t \
 [FibersDDUnpackerPar]
 fThreshold: Float_t \
 -164 -164 -41 0 0 0 0 0 \
-0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0
 fPolarity: Int_t 0
 fAnaMode: Int_t 0
 fIntMode: Int_t 150
@@ -42,7 +42,7 @@ fVetoThreshold: Float_t \
 fBLMode: Int_t \
 0 0 0 0 0 0 0 0 \
 0 0 0 0 0 0 0 0
-[FibersDDLookupTable]
+[FibersLookupTable]
 # FTAB ID   channel         mod     layer   fiber   side
 0x1000      0               0       0       0       l
 0x1000      1               0       0       0       r

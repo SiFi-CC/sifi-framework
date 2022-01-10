@@ -13,7 +13,8 @@
 
 #include "SDetectorManager.h"
 
-#include <cstdio>  // for printf
+#include <spdlog/spdlog.h>
+
 #include <cstdlib> // for exit, EXIT_FAILURE
 #include <iostream>
 #include <utility> // for pair
@@ -72,7 +73,28 @@ SDetectorManager::~SDetectorManager()
 void SDetectorManager::addDetector(SDetector* detector)
 {
     detectors.insert(std::pair<std::string, SDetector*>(detector->GetName(), detector));
-    printf("Detector %s add\n", detector->GetName());
+    spdlog::info("[{0}] Detector {1} added.", __func__, detector->GetName());
+
+    auto res = detector->initTasks();
+    if (!res)
+    {
+        spdlog::error("[{0}] Tasks init failed.", __func__);
+        std::exit(EXIT_FAILURE);
+    }
+
+    res = detector->initContainers();
+    if (!res)
+    {
+        spdlog::error("[{0}] Tasks init failed.", __func__);
+        std::exit(EXIT_FAILURE);
+    }
+
+    res = detector->initCategories();
+    if (!res)
+    {
+        spdlog::error("[{0}] Categories init failed.", __func__);
+        std::exit(EXIT_FAILURE);
+    }
 }
 
 /**
@@ -88,60 +110,4 @@ SDetector* SDetectorManager::getDetector(const std::string& name)
         return it->second;
     else
         return nullptr;
-}
-
-/**
- * Init all detectors tasks.
- */
-void SDetectorManager::initTasks()
-{
-    for (const auto& d : detectors)
-    {
-        bool res = d.second->initTasks();
-
-        if (!res)
-        {
-            std::cerr << "Tasks init failed!" << std::endl;
-            std::exit(EXIT_FAILURE);
-        }
-    }
-}
-
-/**
- * Init all detectors parameter containers.
- *
- * It must be called after the MParameterManager has been setup.
- */
-void SDetectorManager::initParameterContainers()
-{
-    for (const auto& d : detectors)
-    {
-        bool res = d.second->initContainers();
-
-        if (!res)
-        {
-            std::cerr << "Tasks init failed!" << std::endl;
-            std::exit(EXIT_FAILURE);
-        }
-    }
-}
-
-/**
- * Init all detectors categories.
- *
- * It must be called before any detector categor is opened or created. See
- * SiFiManager and MCategory for details about categories.
- */
-void SDetectorManager::initCategories()
-{
-    for (const auto& d : detectors)
-    {
-        bool res = d.second->initCategories();
-
-        if (!res)
-        {
-            std::cerr << "Categories init failed!" << std::endl;
-            std::exit(EXIT_FAILURE);
-        }
-    }
 }

@@ -18,7 +18,7 @@ class tests_database_root_source : public ::testing::Test
 protected:
     void SetUp() override
     {
-        auto file = std::unique_ptr<TFile>(TFile::Open("/tmp/test_params.root", "RECREATE"));
+        auto file = std::unique_ptr<TFile>(TFile::Open( "/tmp/params_root.root", "RECREATE"));
         if (!file.get()) abort();
 
         TList list;
@@ -37,7 +37,7 @@ protected:
 
         SRuntimeDb::init(&db);
 
-        root = std::make_unique<SParRootSource>("/tmp/test_params.root");
+        root = std::make_unique<SParRootSource>("/tmp/params_root.root");
         rdb()->addSource(root.get());
 
         root->print();
@@ -45,7 +45,7 @@ protected:
 
     void TearDown() override
     {
-        gSystem->Exec("rm /tmp/test_params.root");
+        gSystem->Exec("rm /tmp/params_root.root");
         sifi()->enableAssertations();
     }
 

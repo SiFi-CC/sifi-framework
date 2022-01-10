@@ -42,10 +42,6 @@ public:
     // methods
     void addDetector(SDetector* detector);
     SDetector* getDetector(const std::string& name);
-
-    void initTasks();
-    void initParameterContainers();
-    void initCategories();
 };
 
 extern SDetectorManager* dm();

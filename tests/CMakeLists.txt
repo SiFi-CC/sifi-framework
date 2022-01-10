@@ -5,14 +5,15 @@ configure_file(tests_config.h.in tests_config.h)
 #file(GLOB tests_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "tests_*.cc")
 set(tests_SRCS
     tests_cpr.cc
+    tests_rapidjson.cc
+    tests_database.cc
+    tests_scontainer.cc
+    tests_sparcontainer.cc
     tests_database_ascii_source.cc
     tests_database_mysql_interface.cc
     tests_database_mysql_source.cc
     tests_database_root_source.cc
     tests_database_run_container.cc
-    tests_rapidjson.cc
-    tests_scontainer.cc
-    tests_sparcontainer.cc
 )
 
 add_executable(

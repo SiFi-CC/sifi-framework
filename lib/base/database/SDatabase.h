@@ -71,7 +71,8 @@ protected:
     std::vector<SParSource*> sources; ///< Parameters source file
     SParSource* target{0};            ///< Parameters destination file
 
-    std::map<std::string, SParSource*> conts_sources;                            ///< Input sources
+    // Runs
+    std::map<ulong, SRun> runs;
 
     // Technical containers
     std::map<std::string, SParSource*> container_source;       ///< Input sources
@@ -121,12 +122,27 @@ public:
     /// \return release value
     auto getExperiment() const { return release; }
 
+    void initRun(ulong runid);
+    void initContainers(ulong runid);
+    /**
+     * Init all containers belonging to the given release, and if release not given, abort
+     * execution.
+     */
+    void initContainers();
+
     void print() const;
 
     friend class SParAsciiSource;
+
+private:
+    [[nodiscard]] auto getContainerSource(const std::string& name) -> SParSource*;
+    [[nodiscard]] auto findContainerSource(const std::string& name) -> SParSource*;
     auto getContainer(const std::string& name) -> std::pair<SContainer*, bool>;
     auto getContainer(const std::string& name, ulong) -> std::pair<SContainer*, bool>;
 
+    auto updateContainerModes() -> bool;
+
+    auto getExperimentObjectFromSources() const -> std::optional<SExperiment>;
 };
 
 /**

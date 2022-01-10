@@ -106,7 +106,7 @@ bool SFibersDetector::initContainers()
         rdb()->addContainer("FibersDDUnpackerPar", []() { return new SFibersDDUnpackerPar; });
         rdb()->addContainer("FibersDDCalibratorPar",
                             []() { return new SFibersDDCalibratorPar("FibersDDCalibratorPar"); });
-        rdb()->addContainer("FibersDDUnpackerPar",
+        rdb()->addContainer("FibersCalibratorPar",
                             []() { return new SFibersCalibratorPar("FibersCalibratorPar"); });
     }
 
