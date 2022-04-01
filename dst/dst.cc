@@ -7,9 +7,12 @@
 #include "SFibersDetector.h"
 #include "SFibersLookup.h"
 #include "SFibersPMIUnpacker.h"
+#include "SFibersPetirocUnpacker.h"
+#include "SFibersPMIUnpacker.h"
 #include "SKSSource.h"
 #include "SLookup.h"
 #include "SPMISource.h"
+#include "SPetirocSource.h"
 #include "SParAsciiSource.h"
 #include "STaskManager.h"
 #include "SiFi.h"
@@ -103,6 +106,20 @@ int main(int argc, char** argv)
                 source->setInput(name);
                 sifi()->addSource(source);
             }
+            /*
+             * technically the output file from the Petiroc2A board is in the CSV format with a space delimiter
+             * but we use the .roc extension since the .csv extension has been used for the oscilloscope csv
+             * output
+             */
+            else if (ext == ".roc")
+            {
+                //./sifi_dst 0x1000::data_44358_8859100231.roc -e 100000 -p params.txt -o sifi_results.root
+                SFibersPetirocUnpacker* unp = new SFibersPetirocUnpacker();
+                SPetirocSource* source = new SPetirocSource(addr);
+                source->addUnpacker(unp, {addr});
+                source->setInput(name);
+                sifi()->addSource(source);
+            }
             else if (ext == ".pmi")
             {
                 SFibersPMIUnpacker* unp = new SFibersPMIUnpacker();
@@ -115,7 +132,7 @@ int main(int argc, char** argv)
             else
             {
                 std::cerr << "##### Error in dst: unknown data file extension!" << std::endl;
-                std::cerr << "Acceptable extensions: *.dat, *.csv and *.pmi" << std::endl;
+                std::cerr << "Acceptable extensions: *.dat, *.csv, *.pmi and *.roc" << std::endl;
                 std::cerr << "Given data file: " << name << std::endl;
                 std::exit(EXIT_FAILURE);
             }
@@ -149,11 +166,9 @@ int main(int argc, char** argv)
     detm->initParameterContainers();
     detm->initCategories();
 
-    pm()->addLookupContainer("FibersDDLookupTable", std::make_unique<SFibersLookupTable>(
-                                                        "FibersDDLookupTable", 0x1000, 0x1fff, 32));
-    pm()->addLookupContainer(
-        "FibersPMILookupTable",
-        std::make_unique<SFibersLookupTable>("FibersPMILookupTable", 0x1000, 0x1fff, 64));
+    pm()->addLookupContainer("FibersDDLookupTable", std::make_unique<SFibersLookupTable>("FibersDDLookupTable", 0x1000, 0x1fff, 32));
+    pm()->addLookupContainer("FibersPMILookupTable", std::make_unique<SFibersLookupTable>("FibersPMILookupTable", 0x1000, 0x1fff, 64));
+    pm()->addLookupContainer("FibersPETIROCLookupTable", std::make_unique<SFibersLookupTable>("FibersPETIROCLookupTable", 0x1000, 0x1fff, 64));
 
     // initialize tasks
     STaskManager* tm = STaskManager::instance();
