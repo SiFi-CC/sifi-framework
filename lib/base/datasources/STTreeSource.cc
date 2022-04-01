@@ -35,7 +35,7 @@ bool STTreeSource::open()
 {
     TFile *file = new TFile(input.c_str(), "READ");
     if (file->IsZombie()) {
-        std::cerr << "##### Error in STTreeSource::open()! Could not open input file!" << std::endl;
+        std::cerr << "##### Error in " << __PRETTY_FUNCTION__ << "! Could not open input file!" << std::endl;
         std::cerr << input << std::endl;
         return false;
     }
@@ -46,8 +46,12 @@ bool STTreeSource::open()
     tree->SetBranchAddress("TimeStampR", &TimeStampR);
     tree->SetBranchAddress("TimeStampL", &TimeStampL);
 
-    std::string header;
-    getline(istream, header);
+    /**
+     * get acquisition T_0
+     */
+    tree->GetEntry(0);
+    acqT0L = TimeStampL;
+    acqT0R = TimeStampR;
 
     if (unpackers.size() == 0) return false;
 
@@ -93,22 +97,23 @@ bool STTreeSource::close()
         for (; iter != unpackers.end(); ++iter)
             iter->second->finalize();
     }
-
-    istream.close();
+    delete tree;
     return true;
 }
 
 bool STTreeSource::readCurrentEvent()
 {
     if (unpackers.size() == 0) return false;
-
     std::vector<TTreeHit> hits;
-
+    if(getCurrentEvent() > tree->GetEntries() ) {
+        std::cerr << "##### Error in " << __PRETTY_FUNCTION__ << "! Invalid TTree entry" << std::endl;
+        return false;
+    }
     tree->GetEntry(getCurrentEvent() );
     TTreeHit hit_cache;
     //I think this timestamp is since the beginning of the acquisition
-    hit_cache.time_l = TimeStampL;
-    hit_cache.time_r = TimeStampR;
+    hit_cache.time_l = 1e-3 * (TimeStampL - acqT0L); //ps to ns
+    hit_cache.time_r = 1e-3 * (TimeStampR - acqT0R);
     //photon numbers, analogous to QDC
     hit_cache.qdc_l = PhotonsRoiL;
     hit_cache.qdc_r = PhotonsRoiR;

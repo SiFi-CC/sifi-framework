@@ -61,11 +61,12 @@ private:
     std::ifstream istream; ///< input file stream
 
     //ROOT TTree based
+    Long64_t acqT0L, acqT0R; //acquisition T_0
     TTree*   tree; //FiberCoincidences
     Int_t GlobalFiberNumber;
     Int_t PhotonsRoiR;
     Int_t PhotonsRoiL;
-    Long64_t TimeStampR;
-    Long64_t TimeStampL;
+    Long64_t TimeStampR; //ns
+    Long64_t TimeStampL; //ns
 };
 #endif /* STTREESOURCE_H */
