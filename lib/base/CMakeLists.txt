@@ -37,6 +37,7 @@ SIFI_GENERATE_LIBRARY(
         datasources/SKSSource.cc
         datasources/SPMISource.cc
         datasources/SPetirocSource.cc
+        datasources/STTreeSource.cc
         ${SDR_CC}
         datasources/SRootSource.cc
         datasources/SUnpacker.cc
@@ -82,6 +83,7 @@ SIFI_GENERATE_LIBRARY(
         datasources/SKSSource.h
         datasources/SPMISource.h
         datasources/SPetirocSource.h
+        datasources/STTreeSource.h
         ${SDR_H}
         datasources/SRootSource.h
         datasources/SUnpacker.h

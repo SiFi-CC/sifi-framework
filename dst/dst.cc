@@ -8,11 +8,13 @@
 #include "SFibersLookup.h"
 #include "SFibersPMIUnpacker.h"
 #include "SFibersPetirocUnpacker.h"
+#include "SFibersTTreeUnpacker.h"
 #include "SFibersPMIUnpacker.h"
 #include "SKSSource.h"
 #include "SLookup.h"
 #include "SPMISource.h"
 #include "SPetirocSource.h"
+#include "STTreeSource.h"
 #include "SParAsciiSource.h"
 #include "STaskManager.h"
 #include "SiFi.h"
@@ -120,6 +122,18 @@ int main(int argc, char** argv)
                 source->setInput(name);
                 sifi()->addSource(source);
             }
+            /*
+             *
+             *
+             */
+            else if(name.substr(name.find_last_of(".") + 1) == "root")
+            {
+                SFibersTTreeUnpacker* unp = new SFibersTTreeUnpacker();
+                STTreeSource* source = new STTreeSource(addr);
+                source->addUnpacker(unp, {addr});
+                source->setInput(name);
+                sifi()->addSource(source);
+            }
             else if (ext == ".pmi")
             {
                 SFibersPMIUnpacker* unp = new SFibersPMIUnpacker();
@@ -132,7 +146,7 @@ int main(int argc, char** argv)
             else
             {
                 std::cerr << "##### Error in dst: unknown data file extension!" << std::endl;
-                std::cerr << "Acceptable extensions: *.dat, *.csv, *.pmi and *.roc" << std::endl;
+                std::cerr << "Acceptable extensions: *.dat, *.csv, *.pmi, *.roc and *.root" << std::endl;
                 std::cerr << "Given data file: " << name << std::endl;
                 std::exit(EXIT_FAILURE);
             }
@@ -169,6 +183,7 @@ int main(int argc, char** argv)
     pm()->addLookupContainer("FibersDDLookupTable", std::make_unique<SFibersLookupTable>("FibersDDLookupTable", 0x1000, 0x1fff, 32));
     pm()->addLookupContainer("FibersPMILookupTable", std::make_unique<SFibersLookupTable>("FibersPMILookupTable", 0x1000, 0x1fff, 64));
     pm()->addLookupContainer("FibersPETIROCLookupTable", std::make_unique<SFibersLookupTable>("FibersPETIROCLookupTable", 0x1000, 0x1fff, 64));
+    pm()->addLookupContainer("FibersTTreeLookupTable", std::make_unique<SFibersLookupTable>("FibersTTreeLookupTable", 0x1000, 0x1fff, 64));
 
     // initialize tasks
     STaskManager* tm = STaskManager::instance();
