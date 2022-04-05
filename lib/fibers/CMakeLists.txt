@@ -10,6 +10,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersPMIUnpacker.cc
         SFibersPetirocUnpacker.cc
         SFibersTTreeUnpacker.cc
+        SFibersHLDUnpacker.cc
         SFibersDDUnpacker.cc
         SFibersDDUnpackerPar.cc
         SFibersDDCalibratorPar.cc
@@ -35,6 +36,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersPMIUnpacker.h
         SFibersPetirocUnpacker.h
         SFibersTTreeUnpacker.h
+        SFibersHLDUnpacker.h
         SFibersDDUnpacker.h
         SFibersDDUnpackerPar.h
         SFibersDDCalibratorPar.h

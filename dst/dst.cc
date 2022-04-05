@@ -10,11 +10,13 @@
 #include "SFibersPetirocUnpacker.h"
 #include "SFibersTTreeUnpacker.h"
 #include "SFibersPMIUnpacker.h"
+#include "SFibersHLDUnpacker.h"
 #include "SKSSource.h"
 #include "SLookup.h"
 #include "SPMISource.h"
 #include "SPetirocSource.h"
 #include "STTreeSource.h"
+#include "SHLDSource.h"
 #include "SParAsciiSource.h"
 #include "STaskManager.h"
 #include "SiFi.h"
@@ -84,10 +86,11 @@ int main(int argc, char** argv)
             std::string saddr = inpstr.substr(0, pos1);
             std::string type = inpstr.substr(pos1 + 1, pos2 - pos1 - 1);
             std::string name = inpstr.substr(pos2 + 1, inpstr.length() - pos2 - 1);
-            std::string ext = name.substr(name.size() - 4, name.size() - 1);
+            //std::string ext = name.substr(name.size() - 4, name.size() - 1);
+            std::string ext = name.substr(name.find_last_of(".") + 1);
             uint16_t addr = std::stoi(saddr, nullptr, 16);
 
-            if (ext == ".dat")
+            if (ext == "dat")
             {
                 SFibersDDUnpacker* unp = new SFibersDDUnpacker();
                 SFibersDDUnpacker::saveSamples(save_samples);
@@ -98,7 +101,7 @@ int main(int argc, char** argv)
                 source->setInput(name, 1024 * sizeof(float));
                 sifi()->addSource(source);
             }
-            else if (ext == ".csv")
+            else if (ext == "csv")
             {
                 SFibersDDUnpacker* unp = new SFibersDDUnpacker();
                 SFibersDDUnpacker::saveSamples(save_samples);
@@ -113,7 +116,7 @@ int main(int argc, char** argv)
              * but we use the .roc extension since the .csv extension has been used for the oscilloscope csv
              * output
              */
-            else if (ext == ".roc")
+            else if (ext == "roc")
             {
                 //./sifi_dst 0x1000::data_44358_8859100231.roc -e 100000 -p params.txt -o sifi_results.root
                 SFibersPetirocUnpacker* unp = new SFibersPetirocUnpacker();
@@ -123,10 +126,12 @@ int main(int argc, char** argv)
                 sifi()->addSource(source);
             }
             /*
-             *
-             *
+             * Only considers the final ROOT TTree file named FiberCoincidence.
+             * There is a process of fiber identification with the Dec21 PMI datset before this TTree is
+             * constructed.
+             * see https://bragg.if.uj.edu.pl/elog/Analysis/6
              */
-            else if(name.substr(name.find_last_of(".") + 1) == "root")
+            else if(ext == "root")
             {
                 SFibersTTreeUnpacker* unp = new SFibersTTreeUnpacker();
                 STTreeSource* source = new STTreeSource(addr);
@@ -134,7 +139,7 @@ int main(int argc, char** argv)
                 source->setInput(name);
                 sifi()->addSource(source);
             }
-            else if (ext == ".pmi")
+            else if (ext == "pmi")
             {
                 SFibersPMIUnpacker* unp = new SFibersPMIUnpacker();
 
@@ -143,10 +148,19 @@ int main(int argc, char** argv)
                 source->setInput(name);
                 sifi()->addSource(source);
             }
+            else if (ext == "hld")
+            {
+                SFibersHLDUnpacker* unp = new SFibersHLDUnpacker();
+
+                SHLDSource* source = new SHLDSource(addr);
+                source->addUnpacker(unp, {addr});
+                source->setInput(name);
+                sifi()->addSource(source);
+            }
             else
             {
                 std::cerr << "##### Error in dst: unknown data file extension!" << std::endl;
-                std::cerr << "Acceptable extensions: *.dat, *.csv, *.pmi, *.roc and *.root" << std::endl;
+                std::cerr << "Acceptable extensions: *.dat, *.csv, *.pmi, *.roc, *.hld and *.root" << std::endl;
                 std::cerr << "Given data file: " << name << std::endl;
                 std::exit(EXIT_FAILURE);
             }
@@ -184,6 +198,7 @@ int main(int argc, char** argv)
     pm()->addLookupContainer("FibersPMILookupTable", std::make_unique<SFibersLookupTable>("FibersPMILookupTable", 0x1000, 0x1fff, 64));
     pm()->addLookupContainer("FibersPETIROCLookupTable", std::make_unique<SFibersLookupTable>("FibersPETIROCLookupTable", 0x1000, 0x1fff, 64));
     pm()->addLookupContainer("FibersTTreeLookupTable", std::make_unique<SFibersLookupTable>("FibersTTreeLookupTable", 0x1000, 0x1fff, 64));
+    pm()->addLookupContainer("FibersHLDLookupTable", std::make_unique<SFibersLookupTable>("FibersHLDLookupTable", 0x1000, 0x1fff, 64));
 
     // initialize tasks
     STaskManager* tm = STaskManager::instance();

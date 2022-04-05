@@ -38,6 +38,7 @@ SIFI_GENERATE_LIBRARY(
         datasources/SPMISource.cc
         datasources/SPetirocSource.cc
         datasources/STTreeSource.cc
+        datasources/SHLDSource.cc
         ${SDR_CC}
         datasources/SRootSource.cc
         datasources/SUnpacker.cc
@@ -84,6 +85,7 @@ SIFI_GENERATE_LIBRARY(
         datasources/SPMISource.h
         datasources/SPetirocSource.h
         datasources/STTreeSource.h
+        datasources/SHLDSource.h
         ${SDR_H}
         datasources/SRootSource.h
         datasources/SUnpacker.h
@@ -100,7 +102,10 @@ SIFI_GENERATE_LIBRARY(
 
         util/SLoop.h
         util/SRootFileHeader.h
-
+ 
+        ${dabc_BINARY_DIR}/include/hadaq/api.h
+        ${dabc_BINARY_DIR}/include/dabc/Url.h
+        ${dabc_BINARY_DIR}/include/dabc/api.h
     PRIVATE_LIBRARIES
         ROOT::Core
         ROOT::Tree
@@ -108,6 +113,9 @@ SIFI_GENERATE_LIBRARY(
         Geant
         cpr::cpr
         tabulate::tabulate
+        DabcBase
+        DabcHadaq
+        DabcMbs
     INCLUDE_DIRS
         core
         database

@@ -144,6 +144,15 @@ else()
     message(STATUS "Uses system-provided magic_enum")
 endif()
 
+#-------------------------------------------------------------------------------
+# dabc
+FetchContent_Declare(DABC
+    GIT_REPOSITORY https://github.com/quiksilv/dabc
+    GIT_TAG        master
+)
+FetchContent_MakeAvailable(DABC)
+message(STATUS "Uses system-provided DABC")
+
 # =================================================================================================
 
 
@@ -235,7 +244,7 @@ endif()
 
 
 #----------------------------------------------------------------------------
-include_directories(${CMAKE_BINARY_DIR})
+include_directories(${CMAKE_BINARY_DIR} ${dabc_BINARY_DIR}/include)
 
 add_subdirectory(lib)
 # add_subdirectory(geometry)
@@ -280,7 +289,7 @@ install(FILES
 )
 
 # Add all targets to the build-tree export set
-export(TARGETS ${PROJECT_TARGETS} cpr
+export(TARGETS ${PROJECT_TARGETS} cpr DabcBase DabcHadaq DabcMbs
     FILE ${CMAKE_PROJECT_NAME}Targets.cmake
     NAMESPACE SIFI::)
 
@@ -293,7 +302,6 @@ if(ENABLE_TESTING)
     enable_testing()
     add_subdirectory(tests)
 endif()
-
 
 install(EXPORT ${CMAKE_PROJECT_NAME}Targets
     DESTINATION ${CMAKE_INSTALL_CMAKEDIR}
