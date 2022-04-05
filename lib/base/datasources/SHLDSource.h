@@ -60,18 +60,10 @@ public:
     virtual bool readCurrentEvent() override;
     virtual void setInput(const std::string& filename, size_t length = 0);
 
+    hadaq::ReadoutHandle ref;
 private:
     uint16_t subevent;     ///< subevent id
     std::string input;     ///< source file name
     std::ifstream istream; ///< input file stream
-
-    //ROOT HLD based
-    Long64_t acqT0L, acqT0R; //acquisition T_0
-    TTree*   tree; //FiberCoincidences
-    Int_t GlobalFiberNumber;
-    Int_t PhotonsRoiR;
-    Int_t PhotonsRoiL;
-    Long64_t TimeStampR; //ns
-    Long64_t TimeStampL; //ns
 };
 #endif /* SHLDSOURCE_H */
