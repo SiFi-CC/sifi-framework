@@ -174,7 +174,8 @@ set(CMAKE_INSTALL_CMAKEDIR ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 # SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 
 # the RPATH to be used when installing
-SET(CMAKE_INSTALL_RPATH ${_RPATH})
+#SET(CMAKE_INSTALL_RPATH ${_RPATH})
+SET(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_LIBDIR})
 
 # don't add the automatically determined parts of the RPATH
 # which point to directories outside the build tree to the install RPATH
