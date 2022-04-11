@@ -13,7 +13,6 @@ add_library(${ARG_TARGET} SHARED
     ${ARG_SOURCES}
 )
 set(DABC_FOR_ROOT ${dabc_BINARY_DIR}/include)
-message(STATUS "including directories, ${dabc_BINARY_DIR} for ROOT dictionary building")
 ROOT_GENERATE_DICTIONARY(G__${ARG_TARGET}_cc
     ${ARG_HEADERS} ${DABC_FOR_ROOT}/dabc/defines.h ${DABC_FOR_ROOT}/hadaq/api.h ${DABC_FOR_ROOT}/dabc/api.h ${DABC_FOR_ROOT}/dabc/Url.h ${DABC_FOR_ROOT}/mbs/api.h
     MODULE ${ARG_TARGET}

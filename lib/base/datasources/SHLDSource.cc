@@ -90,40 +90,60 @@ bool SHLDSource::readCurrentEvent()
 //        std::cerr << "##### Error in " << __PRETTY_FUNCTION__ << "! Invalid HLD entry" << std::endl;
 //        return false;
 //    }
-
-    hadaq::RawEvent *evnt = ref.NextEvent(1.);
-
-    hadaq::RawSubevent *sub = nullptr;
-    while ((sub = evnt->NextSubevent(sub) ) != nullptr) {
+    hadaq::RawEvent *evnt;
+    if((evnt = ref.NextEvent(1.) ) == 0) return false;
+    hadaq::RawSubevent *sub = 0;
+    while ((sub = evnt->NextSubevent(sub) ) != 0) {
         unsigned trbSubEvSize = sub->GetSize() / 4 - 4;
         unsigned ix = 0;
         while (ix < trbSubEvSize) {
             unsigned data = sub->Data(ix++);
-            unsigned datalen = (data >> 16) & 0xFFFF;
             unsigned datakind = data & 0xFFFF;
-            unsigned channel = (data >> 22) & 0x7F;
-            unsigned isrising = (data >> 11) & 0x1;
-            unsigned epoch = data & 0xFFFFFFF;
-            unsigned coarse = (data & 0x7FF);
-            unsigned fine = (data >> 12) & 0x3FF;
-            unsigned stamp = coarse << 10 | fine;
-            printf("ch=%d is_rising=%d epoch=%d coarse=%d fine=%d stamp=%d\n", channel, isrising, epoch, coarse, fine, stamp);
-            ix+=datalen;
+            if(datakind != 0xbeef) continue;
+            unsigned len = (data >> 16) & 0xFFFF;
+            unsigned epoch = 0;
+            double last_rising[32] = {0}, last_falling[32] = {0};
+            HLDHit hit_cache;
+            for(unsigned cnt=0; cnt < len; cnt++, ix++) {
+                unsigned msg = sub->Data(ix);    
+                if((msg & 0xe0000000) == 0x60000000) {
+                    //epoch is not used at the moment
+                    epoch = msg & 0xFFFFFFF;
+                } else if((msg & 0xe0000000) == 0x80000000) {
+                    unsigned datalen = (msg >> 16) & 0xFFFF;
+                    Int_t channel = (msg >> 22) & 0x7F;
+                    unsigned isrising = (msg >> 11) & 0x1;
+                    unsigned coarse = (msg & 0x7FF);
+                    unsigned fine = (msg >> 12) & 0x3FF;
+                    Double_t tm = coarse * 5.; //bins to ns
+                    tm -= (fine > 31 ? fine - 31 : 0) / (0. + 491 - 31) * 5.; //simple approximation of fine time from range 31 - 491, uncalibrated fine time
+                    Double_t tot = 0;
+                    if (isrising) {
+                        last_rising[channel] = tm;
+                    } else {
+                        last_falling[channel] = tm;
+                        if (last_rising[channel] > 0) {
+                            tot = last_falling[channel] - last_rising[channel];
+                            last_rising[channel] = 0;
+                        }
+                    }
+                    //printf("cnt=%d msg=%x datakind=%x ch=%d is_rising=%d epoch=%d coarse=%x fine=%x stamp=%f tot=%f\n", cnt, msg, datakind, channel, isrising, epoch, coarse, fine, tm, tot);
+                    if(isrising) {
+                        hit_cache.time_l = tm;
+                        hit_cache.time_r = 0.;
+                    } else {
+                        if(tot > 0) {
+                            hit_cache.qdc_l = tot;
+                            hit_cache.qdc_r = 0.;
+                            hit_cache.fiberID = channel;
+                            hits.push_back(hit_cache);
+                        }
+                    }
+                }
+            }
+            ix+=len;
         }
     }
-
-
-//    tree->GetEntry(getCurrentEvent() );
-//    HLDHit hit_cache;
-//    //I think this timestamp is since the beginning of the acquisition
-//    hit_cache.time_l = 1e-3 * (TimeStampL - acqT0L); //ps to ns
-//    hit_cache.time_r = 1e-3 * (TimeStampR - acqT0R);
-//    //photon numbers, analogous to QDC
-//    hit_cache.qdc_l = PhotonsRoiL;
-//    hit_cache.qdc_r = PhotonsRoiR;
-//    //this is after fiber identification
-//    hit_cache.fiberID = GlobalFiberNumber;
-//    hits.push_back(hit_cache);
 
     if (subevent != 0x0000)
     {
