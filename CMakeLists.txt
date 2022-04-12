@@ -147,7 +147,7 @@ endif()
 #-------------------------------------------------------------------------------
 # dabc
 FetchContent_Declare(DABC
-    GIT_REPOSITORY https://github.com/quiksilv/dabc
+    GIT_REPOSITORY https://github.com/linev/dabc
     GIT_TAG        master
 )
 FetchContent_MakeAvailable(DABC)
