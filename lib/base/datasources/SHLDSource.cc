@@ -102,7 +102,7 @@ bool SHLDSource::readCurrentEvent()
             if(datakind != 0xbeef) continue;
             unsigned len = (data >> 16) & 0xFFFF;
             unsigned epoch = 0;
-            double last_rising[32] = {0}, last_falling[32] = {0};
+            double last_rising[32] = {0}, last_falling[32] = {0}, tot[32] = {0};
             HLDHit hit_cache;
             for(unsigned cnt=0; cnt < len; cnt++, ix++) {
                 unsigned msg = sub->Data(ix);    
@@ -117,30 +117,29 @@ bool SHLDSource::readCurrentEvent()
                     unsigned fine = (msg >> 12) & 0x3FF;
                     Double_t tm = coarse * 5.; //bins to ns
                     tm -= (fine > 31 ? fine - 31 : 0) / (0. + 491 - 31) * 5.; //simple approximation of fine time from range 31 - 491, uncalibrated fine time
-                    Double_t tot = 0;
                     if (isrising) {
                         last_rising[channel] = tm;
                     } else {
                         last_falling[channel] = tm;
                         if (last_rising[channel] > 0) {
-                            tot = last_falling[channel] - last_rising[channel];
-                            last_rising[channel] = 0;
+                            tot[channel] = last_falling[channel] - last_rising[channel];
+                            last_rising[channel] = 0;                            
                         }
                     }
-                    //printf("cnt=%d msg=%x datakind=%x ch=%d is_rising=%d epoch=%d coarse=%x fine=%x stamp=%f tot=%f\n", cnt, msg, datakind, channel, isrising, epoch, coarse, fine, tm, tot);
-                    if(isrising) {
-                        hit_cache.time_l = tm;
-                        hit_cache.time_r = 0.;
-                    } else {
-                        if(tot > 0) {
-                            hit_cache.qdc_l = tot;
-                            hit_cache.qdc_r = 0.;
-                            hit_cache.fiberID = channel;
-                            hits.push_back(hit_cache);
-                        }
+                    //printf("cnt=%d msg=%x datakind=%x ch=%d is_rising=%d epoch=%d coarse=%x fine=%x stamp=%f tot=%f\n", cnt, msg, datakind, channel, isrising, epoch, coarse, fine, tm, tot[channel]);
+                    if(channel==2) {
+                        hit_cache.time_l = last_rising[channel];
+                        hit_cache.qdc_l = tot[channel];
                     }
+                    if(channel==18) {
+                        hit_cache.time_r = last_rising[channel];
+                        hit_cache.qdc_r = tot[channel];
+                    }
+                    hit_cache.fiberID = 0;
                 }
             }
+            if(hit_cache.time_l > 1  && hit_cache.time_r > 1 && hit_cache.qdc_l > 1  && hit_cache.qdc_r > 1)
+                hits.push_back(hit_cache);
             ix+=len;
         }
     }

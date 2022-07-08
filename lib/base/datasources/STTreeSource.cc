@@ -111,9 +111,10 @@ bool STTreeSource::readCurrentEvent()
     }
     tree->GetEntry(getCurrentEvent() );
     TTreeHit hit_cache;
-    //I think this timestamp is since the beginning of the acquisition
-    hit_cache.time_l = 1e-3 * (TimeStampL - acqT0L); //ps to ns
-    hit_cache.time_r = 1e-3 * (TimeStampR - acqT0R);
+    //record time as the difference instead of time since the beginning of the measurement.
+    //The results ROOT file stores time as float so it will lose precision.
+    hit_cache.time_l = 1e-3 * (TimeStampL - TimeStampR);
+    hit_cache.time_r = 0;
     //photon numbers, analogous to QDC
     hit_cache.qdc_l = PhotonsRoiL;
     hit_cache.qdc_r = PhotonsRoiR;
