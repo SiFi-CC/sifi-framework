@@ -32,12 +32,15 @@ struct TTreeHit
     Int_t fiberID = -100;
     Double_t time_l = -100;
     Double_t time_r = -100;
-    Double_t qdc_l = -100;
-    Double_t qdc_r = -100;
+//    Double_t qdc_l = -100;
+//    Double_t qdc_r = -100;
+    Long64_t qdc_l = -100;
+    Long64_t qdc_r = -100;
 
     void print() const
     {
-        printf("TTREE: fiberID = %i, time_l = %f, time_r = %f, qdc_l = %f, qdc_r = %f\n", fiberID,
+//        printf("TTREE: fiberID = %i, time_l = %f, time_r = %f, qdc_l = %f, qdc_r = %f\n", fiberID,
+        printf("TTREE: fiberID = %i, time_l = %f, time_r = %f, qdc_l = %lld, qdc_r = %lld\n", fiberID,
                time_l, time_r, qdc_l, qdc_r);
     }
 };

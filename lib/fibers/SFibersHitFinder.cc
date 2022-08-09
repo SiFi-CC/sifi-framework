@@ -200,6 +200,11 @@ bool SFibersHitFinder::execute()
         pHit->getErrors().SetXYZ(s_x, s_y, s_z);
         pHit->setU(u, 10.);
 
+        // set time
+        Float_t time = time_l;
+        if(time_r < time_l) time = time_r;
+        pHit->setTime(time, 1e-3);
+
         // calculate energy
         Float_t E = alpha * sqrt(qdc_r * qdc_l);
         pHit->setE(E, 0);

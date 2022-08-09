@@ -116,7 +116,7 @@ public:
     Float_t getTime() const { return t; }
     /// Get sigma of Time value
     /// \return time sigma
-    Float_t getTimeError() const { return sE; }
+    Float_t getTimeError() const { return st; }
 
     /// Get point vector
     /// \return hit position
