@@ -7,9 +7,11 @@
 #include "SFibersDetector.h"
 #include "SFibersLookup.h"
 #include "SFibersPMIUnpacker.h"
+#include "SFibersCBUnpacker.h"
 #include "SKSSource.h"
 #include "SLookup.h"
 #include "SPMISource.h"
+#include "SCBSource.h"
 #include "SParAsciiSource.h"
 #include "STaskManager.h"
 #include "SiFi.h"
@@ -112,6 +114,16 @@ int main(int argc, char** argv)
                 source->setInput(name);
                 sifi()->addSource(source);
             }
+            
+            else if (ext == ".txt")
+            {
+                SFibersCBUnpacker* unp = new SFibersCBUnpacker();
+                SCBSource* source = new SCBSource(addr);
+                source->addUnpacker(unp, {addr});
+                source->setInput(name);
+                sifi()->addSource(source);
+            }
+            
             else
             {
                 std::cerr << "##### Error in dst: unknown data file extension!" << std::endl;
