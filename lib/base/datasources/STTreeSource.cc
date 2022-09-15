@@ -116,8 +116,8 @@ bool STTreeSource::readCurrentEvent()
     //Add +1 so future time_l and time_l > 0 cuts will pass
     //hit_cache.time_l = 1e-3 * (TimeStampL - TimeStampR) + 1;
     //hit_cache.time_r = 0 + 1;
-    hit_cache.time_l = 1e-3 * TimeStampL; //ns
-    hit_cache.time_r = 1e-3 * TimeStampR; //ns
+    hit_cache.time_l = TimeStampL; //fs
+    hit_cache.time_r = TimeStampR; //fs
     //photon numbers, analogous to QDC
     hit_cache.qdc_l = PhotonsRoiL;
     hit_cache.qdc_r = PhotonsRoiR;
