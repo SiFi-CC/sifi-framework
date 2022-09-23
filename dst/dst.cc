@@ -8,10 +8,12 @@
 #include "SFibersLookup.h"
 #include "SFibersPMIUnpacker.h"
 #include "SFibersCBUnpacker.h"
+#include "SFibersTPUnpacker.h"
 #include "SKSSource.h"
 #include "SLookup.h"
 #include "SPMISource.h"
 #include "SCBSource.h"
+#include "STPSource.h"
 #include "SParAsciiSource.h"
 #include "STaskManager.h"
 #include "SiFi.h"
@@ -126,10 +128,22 @@ int main(int argc, char** argv)
             
             else
             {
-                std::cerr << "##### Error in dst: unknown data file extension!" << std::endl;
-                std::cerr << "Acceptable extensions: *.dat, *.csv and *.pmi" << std::endl;
-                std::cerr << "Given data file: " << name << std::endl;
-                std::exit(EXIT_FAILURE);
+                ext = name.substr(name.size() - 5, name.size() - 1);
+                if (ext == ".root")
+                {
+                    SFibersTPUnpacker* unp = new SFibersTPUnpacker();
+                    STPSource* source = new STPSource(addr);
+                    source->addUnpacker(unp, {addr});
+                    source->setInput(name);
+                    sifi()->addSource(source);
+                }
+                else
+                {
+                    std::cerr << "##### Error in dst: unknown data file extension!" << std::endl;
+                    std::cerr << "Acceptable extensions: *.dat, *.csv, *.pmi, *.txt and .root" << std::endl;
+                    std::cerr << "Given data file: " << name << std::endl;
+                    std::exit(EXIT_FAILURE);
+                }
             }
         }
 
@@ -165,7 +179,7 @@ int main(int argc, char** argv)
                                                         "FibersDDLookupTable", 0x1000, 0x1fff, 32));
     pm()->addLookupContainer(
         "FibersPMILookupTable",
-        std::make_unique<SFibersLookupTable>("FibersPMILookupTable", 0x1000, 0x1fff, 64));
+        std::make_unique<SFibersLookupTable>("FibersPMILookupTable", 0x1000, 0x1fff, 5000)); //arbitrary size. TODO make the size dynamic (if needed)
 
     // initialize tasks
     STaskManager* tm = STaskManager::instance();
