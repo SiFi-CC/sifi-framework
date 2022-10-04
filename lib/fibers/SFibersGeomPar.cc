@@ -115,6 +115,14 @@ bool SFibersGeomPar::getParams(SParContainer* parcont)
         return false;
     }
 
+    TArrayF _foz;
+    if (!parcont->fill("fFiberOffsetZ", _foz)) return false;
+    if (_foz.GetSize() != (n_layers))
+    {
+        std::cerr << "Size of fFiberOffsetZ doesn't match nModules" << std::endl;
+        return false;
+    }
+
     TArrayF _fsp;
     if (!parcont->fill("fFibersPitch", _fsp)) return false;
     if (_fsp.GetSize() != (n_layers))
@@ -132,6 +140,7 @@ bool SFibersGeomPar::getParams(SParContainer* parcont)
         mods[m].layer_rotation.Set(mods[m].layers);
         mods[m].fiber_offset_x.Set(mods[m].layers);
         mods[m].fiber_offset_y.Set(mods[m].layers);
+        mods[m].fiber_offset_z.Set(mods[m].layers);
         mods[m].fibers_pitch.Set(mods[m].layers);
 
         for (int l = 0; l < _l[m]; ++l)
@@ -140,12 +149,14 @@ bool SFibersGeomPar::getParams(SParContainer* parcont)
             Int_t layrot = _lr[cnt_layers * m + l];
             Float_t fox = _fox[cnt_layers * m + l];
             Float_t foy = _foy[cnt_layers * m + l];
+            Float_t foz = _foz[cnt_layers * m + l];
             Float_t fsp = _fsp[cnt_layers * m + l];
 
             mods[m].fibers[l] = fibers;
             mods[m].layer_rotation[l] = layrot;
             mods[m].fiber_offset_x[l] = fox;
             mods[m].fiber_offset_y[l] = foy;
+            mods[m].fiber_offset_z[l] = foz;
             mods[m].fibers_pitch[l] = fsp;
         }
         cnt_layers += _l[m];
@@ -185,6 +196,9 @@ void SFibersGeomPar::print() const
         printf("\n  off y:");
         for (int l = 0; l < mods[m].layers; ++l)
             printf(" %#.2f", mods[m].fiber_offset_y[l]);
+        printf("\n  off z:");
+        for (int l = 0; l < mods[m].layers; ++l)
+            printf(" %#.2f", mods[m].fiber_offset_z[l]);
         printf("\n  pitch:");
         for (int l = 0; l < mods[m].layers; ++l)
             printf(" %#.2f", mods[m].fibers_pitch[l]);
@@ -276,6 +290,21 @@ Float_t SFibersGeomPar::getFiberOffsetY(Int_t m, Int_t l) const
 {
     if (mods and m < modules and l < mods[m].layers)
         return mods[m].fiber_offset_y[l];
+    else
+        return -10000.;
+}
+
+/**
+ * Get layers offset Z
+ *
+ * \param m module
+ * \param l layer
+ * \return offset Z
+ */
+Float_t SFibersGeomPar::getFiberOffsetZ(Int_t m, Int_t l) const
+{
+    if (mods and m < modules and l < mods[m].layers)
+        return mods[m].fiber_offset_z[l];
     else
         return -10000.;
 }
