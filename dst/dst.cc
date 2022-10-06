@@ -131,11 +131,33 @@ int main(int argc, char** argv)
                 ext = name.substr(name.size() - 5, name.size() - 1);
                 if (ext == ".root")
                 {
-                    SFibersTPUnpacker* unp = new SFibersTPUnpacker();
-                    STPSource* source = new STPSource(addr);
-                    source->addUnpacker(unp, {addr});
-                    source->setInput(name);
-                    sifi()->addSource(source);
+                    TFile * input_file;
+                    input_file = new TFile(name.c_str());
+                    if(!input_file->IsOpen()) {
+                        std::cerr << "##### Error in dst.cc Could not open input .root file!" << std::endl;
+                        std::cerr << name << std::endl;
+                    }
+
+//                         t = (TTree*)input_file->Get("data");
+                        //file close
+                    if((TTree*)input_file->Get("data"))
+                    {
+                        SFibersTPUnpacker* unp = new SFibersTPUnpacker();
+                        STPSource* source = new STPSource(addr);
+                        source->addUnpacker(unp, {addr});
+                        source->setInput(name);
+                        sifi()->addSource(source);
+                    }
+//                     else if(/*treename==...*/)
+//                     {
+//
+//                     }
+                    else
+                    {
+                        std::cerr << "##### Error in dst: unknown tree name in the input .root file!" << std::endl;
+                        std::cerr << "Acceptable tree names: data, ..." << std::endl;
+                    }
+
                 }
                 else
                 {
