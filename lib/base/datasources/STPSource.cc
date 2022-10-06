@@ -31,7 +31,7 @@
  * \param subevent subevent id
  */
 STPSource::STPSource(uint16_t subevent)
-    : SDataSource(), subevent(subevent), input(),  /*istream(), */ input_file(), t(), /*state(INIT),*/ hit_cache(nullptr)
+    : SDataSource(), subevent(subevent), input(),  /*istream(), */ input_file(), t(),  hit_cache(nullptr), state(READING)
 {
 }
 
@@ -104,17 +104,20 @@ bool STPSource::readCurrentEvent()
     if (unpackers.size() == 0) return false;
     
     std::vector<std::shared_ptr<TPHit>> hits;
+    if (state == DONE) { return false; }
 
     hit_cache = std::make_shared<TPHit>();
     t->SetBranchAddress("time",&(hit_cache->time));
     t->SetBranchAddress("channelID",&(hit_cache->channelID));
     t->SetBranchAddress("energy",&(hit_cache->energy));
 
-    t->GetEntry(getCurrentEvent() );
-    entries_counter++;
-
-    if(entries_counter == nentries) return true;
-    hits.push_back(hit_cache);
+        if (state == READING)
+    {
+        t->GetEntry(getCurrentEvent() );
+        entries_counter++;
+        if(entries_counter == nentries) state = DONE;
+        hits.push_back(hit_cache);
+    }
     int n_hits = hits.size();
     
     if (subevent != 0x0000)

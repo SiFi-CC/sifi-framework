@@ -60,5 +60,10 @@ private:
     Long64_t nentries;
     std::shared_ptr<TPHit> hit_cache;
     Long64_t entries_counter;
+    enum State
+    {
+        READING,
+        DONE
+    } state;
 };
 #endif /* STPSOURCE_H */
