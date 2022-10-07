@@ -14,6 +14,7 @@
 #include "SFibersHLDUnpacker.h"
 #include "SKSSource.h"
 #include "SLookup.h"
+#include "SHLDSource.h"
 #include "SPMISource.h"
 #include "SCBSource.h"
 #include "STPSource.h"
