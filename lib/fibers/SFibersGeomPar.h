@@ -36,6 +36,7 @@ protected:
         TArrayF layer_rotation; ///< layer rotation around the axis
         TArrayF fiber_offset_x; ///< offset of the first fiber in the layer
         TArrayF fiber_offset_y; ///< offset of the layers
+        TArrayF fiber_offset_z; ///< offset of the layers
         TArrayF fibers_pitch;   ///< fibers pitch in a layer
     };
 
@@ -62,6 +63,7 @@ public:
     Float_t getLayerRotation(Int_t m, Int_t l) const;
     Float_t getFiberOffsetX(Int_t m, Int_t l) const;
     Float_t getFiberOffsetY(Int_t m, Int_t l) const;
+    Float_t getFiberOffsetZ(Int_t m, Int_t l) const;
     Float_t getFibersPitch(Int_t m, Int_t l) const;
 };
 

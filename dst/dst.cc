@@ -9,11 +9,16 @@
 #include "SFibersPMIUnpacker.h"
 #include "SFibersCBUnpacker.h"
 #include "SFibersTPUnpacker.h"
+#include "SFibersPetirocUnpacker.h"
+#include "SFibersTTreeUnpacker.h"
+#include "SFibersHLDUnpacker.h"
 #include "SKSSource.h"
 #include "SLookup.h"
 #include "SPMISource.h"
 #include "SCBSource.h"
 #include "STPSource.h"
+#include "SPetirocSource.h"
+#include "STTreeSource.h"
 #include "SParAsciiSource.h"
 #include "STaskManager.h"
 #include "SiFi.h"
@@ -83,10 +88,11 @@ int main(int argc, char** argv)
             std::string saddr = inpstr.substr(0, pos1);
             std::string type = inpstr.substr(pos1 + 1, pos2 - pos1 - 1);
             std::string name = inpstr.substr(pos2 + 1, inpstr.length() - pos2 - 1);
-            std::string ext = name.substr(name.size() - 4, name.size() - 1);
+            //std::string ext = name.substr(name.size() - 4, name.size() - 1);
+            std::string ext = name.substr(name.find_last_of(".") + 1);
             uint16_t addr = std::stoi(saddr, nullptr, 16);
 
-            if (ext == ".dat")
+            if (ext == "dat")
             {
                 SFibersDDUnpacker* unp = new SFibersDDUnpacker();
                 SFibersDDUnpacker::saveSamples(save_samples);
@@ -97,7 +103,7 @@ int main(int argc, char** argv)
                 source->setInput(name, 1024 * sizeof(float));
                 sifi()->addSource(source);
             }
-            else if (ext == ".csv")
+            else if (ext == "csv")
             {
                 SFibersDDUnpacker* unp = new SFibersDDUnpacker();
                 SFibersDDUnpacker::saveSamples(save_samples);
@@ -107,7 +113,21 @@ int main(int argc, char** argv)
                 source->setInput(name);
                 sifi()->addSource(source);
             }
-            else if (ext == ".pmi")
+            /*
+             * technically the output file from the Petiroc2A board is in the CSV format with a space delimiter
+             * but we use the .roc extension since the .csv extension has been used for the oscilloscope csv
+             * output
+             */
+            else if (ext == "roc")
+            {
+                //./sifi_dst 0x1000::data_44358_8859100231.roc -e 100000 -p params.txt -o sifi_results.root
+                SFibersPetirocUnpacker* unp = new SFibersPetirocUnpacker();
+                SPetirocSource* source = new SPetirocSource(addr);
+                source->addUnpacker(unp, {addr});
+                source->setInput(name);
+                sifi()->addSource(source);
+            }
+            else if (ext == "pmi")
             {
                 SFibersPMIUnpacker* unp = new SFibersPMIUnpacker();
 
@@ -116,42 +136,51 @@ int main(int argc, char** argv)
                 source->setInput(name);
                 sifi()->addSource(source);
             }
-            
             else if (ext == ".txt")
             {
                 SFibersCBUnpacker* unp = new SFibersCBUnpacker();
+                
                 SCBSource* source = new SCBSource(addr);
                 source->addUnpacker(unp, {addr});
                 source->setInput(name);
                 sifi()->addSource(source);
             }
-            
-            else
+            else if (ext == "hld")
             {
-                ext = name.substr(name.size() - 5, name.size() - 1);
-                if (ext == ".root")
-                {
-                    TFile * input_file;
-                    input_file = new TFile(name.c_str());
-                    if(!input_file->IsOpen()) {
-                        std::cerr << "##### Error in dst.cc Could not open input .root file!" << std::endl;
-                        std::cerr << name << std::endl;
-                    }
+                SFibersHLDUnpacker* unp = new SFibersHLDUnpacker();
 
-//                         t = (TTree*)input_file->Get("data");
-                        //file close
-                    if((TTree*)input_file->Get("data"))
+                SHLDSource* source = new SHLDSource(addr);
+                source->addUnpacker(unp, {addr});
+                source->setInput(name);
+                sifi()->addSource(source);
+            }
+            else if(ext == "root")
+            {
+                TFile * input_file;
+                input_file = new TFile(name.c_str());
+                if(!input_file->IsOpen())
+                {
+                     std::cerr << "##### Error in dst.cc Could not open input .root file!" << std::endl;
+                     std::cerr << name << std::endl;
+                 }
+                 
+                  //file close
+                  if((TTree*)input_file->Get("data"))
+                  {
+                     SFibersTPUnpacker* unp = new SFibersTPUnpacker();
+                     STPSource* source = new STPSource(addr);
+                     source->addUnpacker(unp, {addr});
+                     source->setInput(name);
+                     sifi()->addSource(source);
+                   }
+                    else if((TTree*)input_file->Get("FiberCoincidences"))
                     {
-                        SFibersTPUnpacker* unp = new SFibersTPUnpacker();
-                        STPSource* source = new STPSource(addr);
-                        source->addUnpacker(unp, {addr});
-                        source->setInput(name);
-                        sifi()->addSource(source);
+                       SFibersTTreeUnpacker* unp = new SFibersTTreeUnpacker();
+                       STTreeSource* source = new STTreeSource(addr);
+                       source->addUnpacker(unp, {addr});
+                       source->setInput(name);
+                       sifi()->addSource(source);
                     }
-//                     else if(/*treename==...*/)
-//                     {
-//
-//                     }
                     else
                     {
                         std::cerr << "##### Error in dst: unknown tree name in the input .root file!" << std::endl;
@@ -166,7 +195,6 @@ int main(int argc, char** argv)
                     std::cerr << "Given data file: " << name << std::endl;
                     std::exit(EXIT_FAILURE);
                 }
-            }
         }
 
         ++optind;
@@ -202,6 +230,10 @@ int main(int argc, char** argv)
     pm()->addLookupContainer(
         "FibersPMILookupTable",
         std::make_unique<SFibersLookupTable>("FibersPMILookupTable", 0x1000, 0x1fff, 5000)); //arbitrary size. TODO make the size dynamic (if needed)
+    //pm()->addLookupContainer("FibersPMILookupTable", std::make_unique<SFibersLookupTable>("FibersPMILookupTable", 0x1000, 0x1fff, 64)); // TODO change name of the container or other fix
+    pm()->addLookupContainer("FibersPETIROCLookupTable", std::make_unique<SFibersLookupTable>("FibersPETIROCLookupTable", 0x1000, 0x1fff, 64));
+    pm()->addLookupContainer("FibersTTreeLookupTable", std::make_unique<SFibersLookupTable>("FibersTTreeLookupTable", 0x1000, 0x1fff, 64));
+    pm()->addLookupContainer("FibersHLDLookupTable", std::make_unique<SFibersLookupTable>("FibersHLDLookupTable", 0x1000, 0x1fff, 64));
 
     // initialize tasks
     STaskManager* tm = STaskManager::instance();

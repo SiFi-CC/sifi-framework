@@ -144,6 +144,15 @@ else()
     message(STATUS "Uses system-provided magic_enum")
 endif()
 
+#-------------------------------------------------------------------------------
+# dabc
+FetchContent_Declare(DABC
+    GIT_REPOSITORY https://github.com/linev/dabc
+    GIT_TAG        master
+)
+FetchContent_MakeAvailable(DABC)
+message(STATUS "Uses system-provided DABC")
+
 # =================================================================================================
 
 
@@ -165,7 +174,8 @@ set(CMAKE_INSTALL_CMAKEDIR ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 # SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 
 # the RPATH to be used when installing
-SET(CMAKE_INSTALL_RPATH ${_RPATH})
+#SET(CMAKE_INSTALL_RPATH ${_RPATH})
+SET(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_LIBDIR})
 
 # don't add the automatically determined parts of the RPATH
 # which point to directories outside the build tree to the install RPATH
@@ -235,7 +245,7 @@ endif()
 
 
 #----------------------------------------------------------------------------
-include_directories(${CMAKE_BINARY_DIR})
+include_directories(${CMAKE_BINARY_DIR} ${dabc_BINARY_DIR}/include)
 
 add_subdirectory(lib)
 # add_subdirectory(geometry)
@@ -280,7 +290,7 @@ install(FILES
 )
 
 # Add all targets to the build-tree export set
-export(TARGETS ${PROJECT_TARGETS} cpr
+export(TARGETS ${PROJECT_TARGETS} cpr DabcBase DabcHadaq DabcMbs
     FILE ${CMAKE_PROJECT_NAME}Targets.cmake
     NAMESPACE SIFI::)
 
@@ -293,7 +303,6 @@ if(ENABLE_TESTING)
     enable_testing()
     add_subdirectory(tests)
 endif()
-
 
 install(EXPORT ${CMAKE_PROJECT_NAME}Targets
     DESTINATION ${CMAKE_INSTALL_CMAKEDIR}

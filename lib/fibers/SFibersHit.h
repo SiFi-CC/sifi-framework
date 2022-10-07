@@ -40,7 +40,7 @@ protected:
     Float_t E{0};  ///< Energy
     Float_t sE{0}; ///< sigma of energy
 
-    Float_t t{0};  ///< time
+    Long64_t t{0};  ///< time
     Float_t st{0}; ///< sigma of time
 
 public:
@@ -92,7 +92,7 @@ public:
     /// Set Time value
     /// \param _t time
     /// \param _st sigma of time
-    void setTime(Float_t _t, Float_t _st)
+    void setTime(Long64_t _t, Float_t _st)
     {
         t = _t;
         st = _st;
@@ -113,10 +113,10 @@ public:
     Float_t getEError() const { return sE; }
     /// Get Time value
     /// \return time
-    Float_t getTime() const { return t; }
+    Long64_t getTime() const { return t; }
     /// Get sigma of Time value
     /// \return time sigma
-    Float_t getTimeError() const { return sE; }
+    Float_t getTimeError() const { return st; }
 
     /// Get point vector
     /// \return hit position
