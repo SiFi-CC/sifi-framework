@@ -8,6 +8,8 @@ SIFI_GENERATE_LIBRARY(
         SFibersUnpacker.cc
         SFibersLookup.cc
         SFibersPMIUnpacker.cc
+        SFibersCBUnpacker.cc
+        SFibersTPUnpacker.cc
         SFibersPetirocUnpacker.cc
         SFibersTTreeUnpacker.cc
         SFibersHLDUnpacker.cc
@@ -34,6 +36,8 @@ SIFI_GENERATE_LIBRARY(
         SFibersUnpacker.h
         SFibersLookup.h
         SFibersPMIUnpacker.h
+        SFibersCBUnpacker.h
+        SFibersTPUnpacker.h
         SFibersPetirocUnpacker.h
         SFibersTTreeUnpacker.h
         SFibersHLDUnpacker.h

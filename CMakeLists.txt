@@ -297,7 +297,7 @@ export(TARGETS ${PROJECT_TARGETS} cpr DabcBase DabcHadaq DabcMbs
 # Register package in user's package registry
 export(PACKAGE SIFI)
 
-option(ENABLE_TESTING "Build tests" ON)
+option(ENABLE_TESTING "Build tests" OFF)
 
 if(ENABLE_TESTING)
     enable_testing()

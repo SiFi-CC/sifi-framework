@@ -7,16 +7,19 @@
 #include "SFibersDetector.h"
 #include "SFibersLookup.h"
 #include "SFibersPMIUnpacker.h"
+#include "SFibersCBUnpacker.h"
+#include "SFibersTPUnpacker.h"
 #include "SFibersPetirocUnpacker.h"
 #include "SFibersTTreeUnpacker.h"
-#include "SFibersPMIUnpacker.h"
 #include "SFibersHLDUnpacker.h"
 #include "SKSSource.h"
 #include "SLookup.h"
+#include "SHLDSource.h"
 #include "SPMISource.h"
+#include "SCBSource.h"
+#include "STPSource.h"
 #include "SPetirocSource.h"
 #include "STTreeSource.h"
-#include "SHLDSource.h"
 #include "SParAsciiSource.h"
 #include "STaskManager.h"
 #include "SiFi.h"
@@ -125,25 +128,20 @@ int main(int argc, char** argv)
                 source->setInput(name);
                 sifi()->addSource(source);
             }
-            /*
-             * Only considers the final ROOT TTree file named FiberCoincidence.
-             * There is a process of fiber identification with the Dec21 PMI datset before this TTree is
-             * constructed.
-             * see https://bragg.if.uj.edu.pl/elog/Analysis/6
-             */
-            else if(ext == "root")
-            {
-                SFibersTTreeUnpacker* unp = new SFibersTTreeUnpacker();
-                STTreeSource* source = new STTreeSource(addr);
-                source->addUnpacker(unp, {addr});
-                source->setInput(name);
-                sifi()->addSource(source);
-            }
             else if (ext == "pmi")
             {
                 SFibersPMIUnpacker* unp = new SFibersPMIUnpacker();
 
                 SPMISource* source = new SPMISource(addr);
+                source->addUnpacker(unp, {addr});
+                source->setInput(name);
+                sifi()->addSource(source);
+            }
+            else if (ext == ".txt")
+            {
+                SFibersCBUnpacker* unp = new SFibersCBUnpacker();
+                
+                SCBSource* source = new SCBSource(addr);
                 source->addUnpacker(unp, {addr});
                 source->setInput(name);
                 sifi()->addSource(source);
@@ -157,13 +155,47 @@ int main(int argc, char** argv)
                 source->setInput(name);
                 sifi()->addSource(source);
             }
-            else
+            else if(ext == "root")
             {
-                std::cerr << "##### Error in dst: unknown data file extension!" << std::endl;
-                std::cerr << "Acceptable extensions: *.dat, *.csv, *.pmi, *.roc, *.hld and *.root" << std::endl;
-                std::cerr << "Given data file: " << name << std::endl;
-                std::exit(EXIT_FAILURE);
-            }
+                TFile * input_file;
+                input_file = new TFile(name.c_str());
+                if(!input_file->IsOpen())
+                {
+                     std::cerr << "##### Error in dst.cc Could not open input .root file!" << std::endl;
+                     std::cerr << name << std::endl;
+                 }
+                 
+                  //file close
+                  if((TTree*)input_file->Get("data"))
+                  {
+                     SFibersTPUnpacker* unp = new SFibersTPUnpacker();
+                     STPSource* source = new STPSource(addr);
+                     source->addUnpacker(unp, {addr});
+                     source->setInput(name);
+                     sifi()->addSource(source);
+                   }
+                    else if((TTree*)input_file->Get("FiberCoincidences"))
+                    {
+                       SFibersTTreeUnpacker* unp = new SFibersTTreeUnpacker();
+                       STTreeSource* source = new STTreeSource(addr);
+                       source->addUnpacker(unp, {addr});
+                       source->setInput(name);
+                       sifi()->addSource(source);
+                    }
+                    else
+                    {
+                        std::cerr << "##### Error in dst: unknown tree name in the input .root file!" << std::endl;
+                        std::cerr << "Acceptable tree names: data, ..." << std::endl;
+                    }
+
+                }
+                else
+                {
+                    std::cerr << "##### Error in dst: unknown data file extension!" << std::endl;
+                    std::cerr << "Acceptable extensions: *.dat, *.csv, *.pmi, *.txt and .root" << std::endl;
+                    std::cerr << "Given data file: " << name << std::endl;
+                    std::exit(EXIT_FAILURE);
+                }
         }
 
         ++optind;
@@ -194,8 +226,12 @@ int main(int argc, char** argv)
     detm->initParameterContainers();
     detm->initCategories();
 
-    pm()->addLookupContainer("FibersDDLookupTable", std::make_unique<SFibersLookupTable>("FibersDDLookupTable", 0x1000, 0x1fff, 32));
-    pm()->addLookupContainer("FibersPMILookupTable", std::make_unique<SFibersLookupTable>("FibersPMILookupTable", 0x1000, 0x1fff, 64));
+    pm()->addLookupContainer("FibersDDLookupTable", std::make_unique<SFibersLookupTable>(
+                                                        "FibersDDLookupTable", 0x1000, 0x1fff, 32));
+    pm()->addLookupContainer(
+        "FibersPMILookupTable",
+        std::make_unique<SFibersLookupTable>("FibersPMILookupTable", 0x1000, 0x1fff, 5000)); //arbitrary size. TODO make the size dynamic (if needed)
+    //pm()->addLookupContainer("FibersPMILookupTable", std::make_unique<SFibersLookupTable>("FibersPMILookupTable", 0x1000, 0x1fff, 64)); // TODO change name of the container or other fix
     pm()->addLookupContainer("FibersPETIROCLookupTable", std::make_unique<SFibersLookupTable>("FibersPETIROCLookupTable", 0x1000, 0x1fff, 64));
     pm()->addLookupContainer("FibersTTreeLookupTable", std::make_unique<SFibersLookupTable>("FibersTTreeLookupTable", 0x1000, 0x1fff, 64));
     pm()->addLookupContainer("FibersHLDLookupTable", std::make_unique<SFibersLookupTable>("FibersHLDLookupTable", 0x1000, 0x1fff, 64));
