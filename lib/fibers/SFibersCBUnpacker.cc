@@ -71,6 +71,11 @@ bool SFibersCBUnpacker::execute(ulong /*event*/, ulong /*seq_number*/, uint16_t 
 //     std::cout << "hit->ch: " << hit->ch << std::endl;
 //     SFibersChannel* lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000, hit->fiberID));
     SFibersChannel* lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000, hit->ch));
+    if (!lc) {
+        std::cerr << "No associated channel<->fiber value in " << pLookUp->GetName() << std::endl;
+        std::cerr << "The container(params.txt) might be empty or the channel, fiber information doesn't exist." << std::endl;
+        exit(0);
+    }
     SLocator loc(3);
     loc[0] = lc->m; // mod;
     loc[1] = lc->l; // lay;
