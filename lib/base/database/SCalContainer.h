@@ -46,8 +46,10 @@ public:
     virtual uint read(const char* buffer);
     virtual uint write(char* buffer, size_t n) const;
     virtual void print(bool newline = true, const char* prefix = 0);
-    float& operator[](int n);
-    float operator[](int n) const;
+    float& operator[](std::size_t n);
+    float operator[](std::size_t n) const;
+    float& at(std::size_t n);
+    float at(std::size_t n) const;
 };
 
 /**
@@ -88,14 +90,14 @@ template <unsigned int N> class SIFI_EXPORT SCalContainer : public SVirtualCalCo
 {
 protected:
     std::string name;                      ///< container name
-    std::map<size_t, SCalPar<N>*> calpars; ///< individual calibration parameters
+    std::map<size_t, std::unique_ptr<SCalPar<N>>> calpars; ///< individual calibration parameters
     bool is_init;                          ///< is container init
     /// default channel value
     SCalPar<N>* def{nullptr}; //!
 public:
     // constructor
     explicit SCalContainer(const std::string& container);
-    virtual ~SCalContainer();
+    virtual ~SCalContainer() {};
 
     /// return empty object of Lookup channel
     /// \sa SLookupTable::createChannel()

@@ -33,9 +33,9 @@ uint SFibersChannel::read(const char* buffer)
 
 uint SFibersChannel::write(char* buffer, size_t n) const
 {
-    uint cnt = snprintf(buffer, n, "%3d  %3d  %3d   %c", m, l, s, side);
+    auto cnt = snprintf(buffer, n, "%3d  %3d  %3d   %c", m, l, s, side);
     if (cnt < 0) return cnt;
-    if (cnt < n) return 0;
+    if (size_t(cnt) < n) return 0;
     return cnt;
 }
 

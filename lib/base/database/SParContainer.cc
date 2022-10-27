@@ -305,7 +305,7 @@ bool SParContainer::fill(const std::string& name, TArrayI& val)
     }
 
     val.Set(it->second.second.size());
-    for (int i = 0; i < it->second.second.size(); ++i)
+    for (uint i = 0; i < it->second.second.size(); ++i)
         val[i] = std::stoi(it->second.second[i].c_str());
 
     return true;
@@ -335,7 +335,7 @@ bool SParContainer::fill(const std::string& name, TArrayF& val)
     }
 
     val.Set(it->second.second.size());
-    for (int i = 0; i < it->second.second.size(); ++i)
+    for (uint i = 0; i < it->second.second.size(); ++i)
         val[i] = std::stof(it->second.second[i].c_str());
 
     return true;
@@ -365,7 +365,7 @@ bool SParContainer::fill(const std::string& name, TArrayD& val)
     }
 
     val.Set(it->second.second.size());
-    for (int i = 0; i < it->second.second.size(); ++i)
+    for (uint i = 0; i < it->second.second.size(); ++i)
         val[i] = std::stod(it->second.second[i].c_str());
 
     return true;
@@ -380,7 +380,7 @@ void SParContainer::print() const
     for (const auto& p : parameters)
     {
         printf("%s:  %s", p.first.c_str(), p.second.first.c_str());
-        for (int i = 0; i < p.second.second.size(); ++i)
+        for (uint i = 0; i < p.second.second.size(); ++i)
         {
             printf("  %s", p.second.second[i].c_str());
         }

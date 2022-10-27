@@ -109,7 +109,7 @@ void SDatabase::writeTarget()
  *
  * \param names vector of container names
  */
-void SDatabase::writeContainers(const std::vector<std::string>& names)
+void SDatabase::writeContainers(const std::vector<std::string>& /*names*/)
 {
     //     for (const auto& pc : obj_par_cont)    FIXME x3
     //         pc.second->toContainer();
@@ -618,15 +618,11 @@ auto SDatabase::openRun(int run_type) -> bool
 
 auto SDatabase::openRun(std::chrono::time_point<std::chrono::system_clock> ts, int run_type) -> bool {
     if (target->canAcceptRuns()) {
-        SRun run;
-        run.id = 0;
-        run.type = run_type;
-        run.start_time = std::chrono::system_clock::to_time_t(ts);
-
-        target->insertRun(run);
+        auto run = target->openRunContainer(run_type, std::chrono::system_clock::to_time_t(ts), "");
+        return run.has_value();
     }
 
-    return false;
+    return true;
 }
 
 auto SDatabase::closeRun() -> bool {
@@ -634,7 +630,12 @@ auto SDatabase::closeRun() -> bool {
 }
 
 auto SDatabase::closeRun(std::chrono::time_point<std::chrono::system_clock> ts) -> bool {
-    return false;
+    if (target->canAcceptRuns()) {
+        auto run = target->closeRunContainer(std::chrono::system_clock::to_time_t(ts));
+        return run.has_value();
+    }
+
+    return true;
 }
 
 /**

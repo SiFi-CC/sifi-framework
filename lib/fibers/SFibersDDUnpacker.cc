@@ -47,7 +47,7 @@ A unpacker task.
 Float_t FindT0(Float_t* samples, size_t len, Float_t threshold, Int_t pol)
 {
     Float_t t0 = 0.;
-    Int_t istop = -1;
+    uint istop = 0;
 
     for (uint i = 0; i < len; ++i)
     {
@@ -79,9 +79,9 @@ Float_t FindTMax(Float_t* samples, size_t len, Float_t threshold, Int_t _t0, Int
     if (_t0 == -100) return -100.;
 
     Float_t tmax = -1.;
-    Int_t wait_for_pileup = 0;
+    uint wait_for_pileup = 0;
 
-    for (Int_t ii = _t0; ii < len; ii++)
+    for (int ii = _t0; ii < int(len); ii++)
     {
         if (tmax == -1. and
             ((pol == 0 and samples[ii] > threshold) or (pol == 1 and samples[ii] < threshold)))
@@ -107,14 +107,14 @@ Int_t FindVeto(Float_t* samples, size_t limit, Float_t threshold, Int_t pol)
 
     if (pol == 0)
     {
-        for (int i = 0; i < limit; i++)
+        for (uint i = 0; i < limit; i++)
         {
             if (samples[i] > threshold) return 1;
         }
     }
     else if (pol == 1)
     {
-        for (int i = 0; i < limit; i++)
+        for (uint i = 0; i < limit; i++)
         {
             if (samples[i] < threshold) return 1;
         }
