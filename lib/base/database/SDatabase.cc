@@ -17,12 +17,14 @@
 #include "SParSource.h"
 #include "SiFi.h"
 
+#include <tabulate/table.hpp>
 #include <magic_enum.hpp>
 #include <spdlog/spdlog.h>
 
 #include <algorithm>
 #include <cstdlib> // for exit, EXIT_FAILURE, abort
 #include <iostream>
+#include <iterator>
 #include <utility> // for pair, make_pair, move
 
 /**
@@ -77,21 +79,29 @@ void SDatabase::setTarget(SParSource* target)
  * Write all containers to destination file. Internally it creates a list of
  * containers and calls writeContainers();
  */
-void SDatabase::writeDestination()
+void SDatabase::writeTarget()
 {
-    //     std::vector<std::string> names; FIXME
-    //     names.reserve(containers.size());
-    //
-    //     for (auto& p : parconts)
-    //     {
-    //         SParContainer* pc = par_containers[p.first];
-    //         p.second->putParams(pc);
-    //     }
-    //
-    //     std::transform(containers.begin(), containers.end(), std::back_inserter(names),
-    //                    [](std::pair<std::string, SContainer*> const& e) { return e.first; });
-    //
-    //     writeContainers(names);
+    auto search_fun = [](const auto& it1, const auto& it2) -> auto
+    {
+        return std::find_if(it1, it2,
+                            [&](auto pair) {
+                                return pair.second.mode == ContainerMode::Create or
+                                       pair.second.mode == ContainerMode::Forward;
+                            });
+    };
+
+    std::vector<std::string> names;
+    auto end = std::end(container_data);
+    auto it = search_fun(std::begin(container_data), end);
+    while (it != end)
+    {
+        names.push_back(it->first);
+        it = search_fun(std::next(it), end);
+    }
+
+    //     std::copy(names.begin(), names.end(), std::ostream_iterator<std::string>(std::cout, "
+    //     "));
+    writeContainers(names);
 }
 
 /**
@@ -101,13 +111,13 @@ void SDatabase::writeDestination()
  */
 void SDatabase::writeContainers(const std::vector<std::string>& names)
 {
-    //     for (const auto& pc : par_containers)    FIXME x3
+    //     for (const auto& pc : obj_par_cont)    FIXME x3
     //         pc.second->toContainer();
 
-    //     for (const auto& cc : cal_containers)
+    //     for (const auto& cc : obj_cal_cont)
     //         cc.second->toContainer();
 
-    //     for (const auto& lc : lu_containers)
+    //     for (const auto& lc : obj_lu_cont)
     //         lc.second->toContainer();
 
     if (!target)
@@ -116,24 +126,64 @@ void SDatabase::writeContainers(const std::vector<std::string>& names)
         abort();
     }
 
-    //     std::ofstream ofs(destination); FIXME
-    //     if (ofs.is_open())
-    //     {
-    //         for (auto& c : names)
-    //         {
-    //             ofs << "[" << c << "]" << std::endl;
-    //             for (const auto& l : containers.at(c)->lines)
-    //                 ofs << l << std::endl;
-    //         }
-    //     }
-    //     ofs.close();
+    for (auto& r : runs)
+        target->insertRun(r.second);
+
+    for (auto& c : container_data)
+    {
+        std::vector<SContainer*> v;
+        v.reserve(c.second.validity.size());
+
+        std::transform(c.second.validity.begin(), c.second.validity.end(), std::back_inserter(v),
+                       [](const auto& p) { return p.second.get(); });
+
+        std::cout << "Writing " << c.first << " with " << v.size() << " elements.\n";
+        target->insertContainer(c.first, v);
+    }
 }
 
-/**
- * Print containers
- */
-void SDatabase::print() const
+void SDatabase::writeContainer(const std::string& name)
 {
+    //     // Find mode for the container. If mode is None, then return nothing.
+    //     auto mode_it = container_mode.find(name);
+    //
+    //     auto mode = ContainerMode::None;
+    //
+    //     if (mode_it == container_mode.end()) return;
+    //
+    //     mode = ContainerMode::Read;
+    //
+    //     auto it = obj_cal_cont.find(name);
+    //     if (it != obj_cal_cont.end())
+    //     {
+    //
+    //     }
+    //
+    //     // Read container from the source
+    //     if (mode == ContainerMode::Forward)
+    //     {
+    //         auto source = container_source[name];
+    //         if (source != nullptr)
+    //         {
+    //             auto cont = source->getContainer(name, current_run_id);
+    //             cached[name] = cont;
+    //             return {cont, true};
+    //         }
+    //     }
+    //
+    //     // Create new container in the cache
+    //     if (mode_it->second == ContainerMode::Create)
+    //     {
+    //         auto source = container_source[name];
+    //         if (source == nullptr)
+    //         {
+    //             auto cont = new SContainer();
+    //             cached[name] = cont;
+    //             return {cont, true};
+    //         }
+    //     }
+    //
+    //     return {nullptr, true};
 }
 
 /**
@@ -145,22 +195,28 @@ void SDatabase::print() const
  */
 bool SDatabase::addContainer(const std::string& name, cont_obj_factory&& f)
 {
-    auto it = obj_factory.find(name);
-    if (it != obj_factory.end())
+    auto it = container_data.find(name);
+    if (it != container_data.end())
     {
         spdlog::info("[{0}] Container {1} already added!", __func__, name);
         return false;
     }
 
-    obj_factory.insert(std::make_pair(name, std::move(f)));
-    container_mode[name] = ContainerMode::Read;
+    container_data[name] = {
+        .name = name,
+        .source = nullptr,
+        .mode = ContainerMode::Read,
+        .build_factory = std::move(f),
+        .cache = {},
+        .validity = {}
+    };
 
     return true;
 }
 
 auto SDatabase::getContainerMode(const std::string& name) -> std::optional<ContainerMode>
 {
-    if (auto const& it = container_mode.find(name); it != container_mode.cend()) return it->second;
+    if (auto const& it = container_data.find(name); it != container_data.cend()) return it->second.mode;
 
     return {};
 }
@@ -174,8 +230,8 @@ auto SDatabase::getContainerMode(const std::string& name) -> std::optional<Conta
 SPar* SDatabase::getParContainer(const std::string& name)
 {
     // If SPar was not registerd before, exit with failure.
-    auto it = obj_factory.find(name);
-    if (it == obj_factory.end())
+    auto it = container_data.find(name);
+    if (it == container_data.end())
     {
         spdlog::critical("[{0}] Parameter container {1} not known!", __func__, name);
         if (!sifi()->assertationsDisabled()) exit(EXIT_FAILURE);
@@ -185,7 +241,7 @@ SPar* SDatabase::getParContainer(const std::string& name)
     SPar* par = nullptr;
     try
     {
-        par = std::get<SPar*>(it->second());
+        par = std::get<SPar*>(it->second.build_factory());
     }
     catch (const std::bad_variant_access& ex)
     {
@@ -224,8 +280,8 @@ SPar* SDatabase::getParContainer(const std::string& name)
 SLookupTable* SDatabase::getLookupContainer(const std::string& name)
 {
     // If SLookupTable was not registerd before, exit with failure.
-    auto it = obj_factory.find(name);
-    if (it == obj_factory.end())
+    auto it = container_data.find(name);
+    if (it == container_data.end())
     {
         spdlog::critical("[{0}] Lookup table {1} not known!", __func__, name);
         if (!sifi()->assertationsDisabled()) exit(EXIT_FAILURE);
@@ -235,7 +291,7 @@ SLookupTable* SDatabase::getLookupContainer(const std::string& name)
     SLookupTable* lu = nullptr;
     try
     {
-        lu = std::get<SLookupTable*>(it->second());
+        lu = std::get<SLookupTable*>(it->second.build_factory());
     }
     catch (const std::bad_variant_access& ex)
     {
@@ -270,8 +326,8 @@ SLookupTable* SDatabase::getLookupContainer(const std::string& name)
 SVirtualCalContainer* SDatabase::getCalContainer(const std::string& name)
 {
     // If SLookupTable was not registerd before, exit with failure.
-    auto it = obj_factory.find(name);
-    if (it == obj_factory.end())
+    auto it = container_data.find(name);
+    if (it == container_data.end())
     {
         spdlog::critical("[{0}] Calibration container {1} not known!", __func__, name);
         if (!sifi()->assertationsDisabled()) exit(EXIT_FAILURE);
@@ -282,7 +338,7 @@ SVirtualCalContainer* SDatabase::getCalContainer(const std::string& name)
     SVirtualCalContainer* cal = nullptr;
     try
     {
-        cal = std::get<SVirtualCalContainer*>(it->second());
+        cal = std::get<SVirtualCalContainer*>(it->second.build_factory());
     }
     catch (const std::bad_variant_access& ex)
     {
@@ -307,22 +363,22 @@ SVirtualCalContainer* SDatabase::getCalContainer(const std::string& name)
     return cal;
 }
 
-void SDatabase::initRun(ulong runid)
+void SDatabase::initRun(ulong run_id)
 {
     for (auto& source : sources)
     {
-        if (runid == 0)
+        if (run_id == 0)
         {
             auto res = source->getRuns();
             for (auto& r : res)
             {
-                runs.insert({r.runid, r});
+                runs.insert({r.id, r});
             }
         }
         else
         {
-            auto res = source->getRun(runid);
-            runs.insert({res.runid, res});
+            auto res = source->getRun(run_id);
+            runs.insert({res.id, res});
         }
     }
 }
@@ -334,16 +390,16 @@ auto SDatabase::updateContainerModes() -> bool
         spdlog::warn("[{0}] No sources defined, turn all READ container modes into NONE.",
                      __func__);
 
-        for (auto& cm : container_mode)
+        for (auto& cd : container_data)
         {
-            if (cm.second == ContainerMode::Read)
+            if (cd.second.mode == ContainerMode::Read)
             {
-                spdlog::info("[{0}] mark {1} as NONE mode.", __func__, cm.first);
-                cm.second = ContainerMode::None;
+                spdlog::info("[{0}] mark {1} as NONE mode.", __func__, cd.first);
+                cd.second.mode = ContainerMode::None;
             }
-            else if (cm.second == ContainerMode::Forward)
+            else if (cd.second.mode == ContainerMode::Forward)
             {
-                spdlog::error("[{0}] Forward mode for {1} must have source.", __func__, cm.first);
+                spdlog::error("[{0}] Forward mode for {1} must have source.", __func__, cd.first);
             }
         }
         return true;
@@ -362,36 +418,23 @@ void SDatabase::initContainers()
 
     if (updateContainerModes()) return;
 
-    for (auto i = rel.first_run; i <= rel.last_run; ++i)
+    initRun(0);
+    // for (auto i = rel.first_run; i <= rel.last_run; ++i)
+    for (auto & r : runs)
     {
-        initRun(i);
+        int i = r.first;
 
-        for (auto& cm : container_mode)
+        for (auto& cd : container_data)
         {
-            if (cm.second != ContainerMode::None)
+            initContainer(i, cd.second);
+
+            if (cd.second.mode != ContainerMode::None)
             {
-                auto cs = container_source[cm.first];
-                if (cs == nullptr)
+                if (cd.second.source)
                 {
-                    cs = findContainerSource(cm.first);
-                    if (cs) container_source[cm.first] = cs;
+                    auto cont = cd.second.source->getContainer(cd.first, i);
 
-                    // If not found, at least cannot have mode Read or Forward, mode Write allows
-                    // for no container in the input.
-                    if (!cs and
-                        (cm.second == ContainerMode::Read or cm.second == ContainerMode::Forward))
-                    {
-                        spdlog::critical("[{0}] Container {1} missing in the sources!", __func__,
-                                         cm.first);
-                        std::abort();
-                    }
-                }
-
-                if (cs)
-                {
-                    auto cont = cs->getContainer(cm.first, i);
-
-                    if (cont) containers[cm.first].insert({cont->validity, cont});
+                    if (cont) cd.second.validity.insert({cont->validity, cont});
                 }
             }
         }
@@ -404,37 +447,39 @@ void SDatabase::initContainers()
  * When fetching, find container source as well.
  * Not fetched containers can be eventually fetch later.
  */
-void SDatabase::initContainers(ulong runid)
+void SDatabase::initContainers(ulong run_id)
 {
     SExperiment rel;
 
     auto rel_obj = getExperimentObjectFromSources();
     if (rel_obj.has_value()) rel = rel_obj.value();
 
-    initRun(0);
-    //     initRuns(runid);
+    // initRun(run_id);
 
     if (updateContainerModes()) return;
 
-    for (auto& cm : container_mode)
+    for (auto& cd : container_data)
     {
-        if (cm.second != ContainerMode::None)
-        {
-            auto cs = container_source[cm.first];
-            if (cs == nullptr)
-            {
-                cs = findContainerSource(cm.first);
-                if (cs) container_source[cm.first] = cs;
+        initContainer(run_id, cd.second);
+    }
+}
 
-                // If not found, at least cannot have mode Read or Forward, mode Write allows for
-                // no container in the input.
-                if (!cs and
-                    (cm.second == ContainerMode::Read or cm.second == ContainerMode::Forward))
-                {
-                    spdlog::error("[{0}] Container {1} missing in the sources.", __func__,
-                                  cm.first);
-                    std::abort();
-                }
+void SDatabase::initContainer(ulong run_id, ContainerData & cd)
+{
+    if (cd.mode != ContainerMode::None)
+    {
+        if (cd.source == nullptr)
+        {
+            cd.source = findContainerSource(cd.name);
+
+            // If not found, at least cannot have mode Read or Forward, mode Write allows for
+            // no container in the input.
+            if (!cd.source and
+                (cd.mode == ContainerMode::Read or cd.mode == ContainerMode::Forward))
+            {
+                spdlog::error("[{0}] Container {1} missing in the sources.", __func__,
+                              cd.name);
+                std::abort();
             }
         }
     }
@@ -443,9 +488,9 @@ void SDatabase::initContainers(ulong runid)
 auto SDatabase::getContainerSource(const std::string& name) -> SParSource*
 {
     // Check if Container was initialized from source, and if not, do it.
-    auto it = container_source.find(name);
+    auto it = container_data.find(name);
 
-    if (it != container_source.end()) return it->second;
+    if (it != container_data.end()) return it->second.source;
 
     return nullptr;
 }
@@ -462,7 +507,7 @@ auto SDatabase::findContainerSource(const std::string& name) -> SParSource*
 
 auto SDatabase::getContainer(const std::string& name) -> std::pair<SContainer*, bool>
 {
-    return getContainer(name, current_runid);
+    return getContainer(name, current_run_id);
 }
 /**
  * Get plain container for given run id. First check whether it is cached and has valid run, then
@@ -471,7 +516,7 @@ auto SDatabase::getContainer(const std::string& name) -> std::pair<SContainer*, 
  * \param name container name
  * \return valid container pointer
  */
-auto SDatabase::getContainer(const std::string& name, ulong runid) -> std::pair<SContainer*, bool>
+auto SDatabase::getContainer(const std::string& name, ulong run_id) -> std::pair<SContainer*, bool>
 {
     /**
      * Get container by name. First check whetehr it is cached. Cache is ether
@@ -483,36 +528,19 @@ auto SDatabase::getContainer(const std::string& name, ulong runid) -> std::pair<
      */
 
     // If it was the same version like before, return cached one
-    auto last_it = cached.find(name);
-    if (last_it != cached.end() and last_it->second->validity.inside(runid))
-        return {last_it->second.get(), false};
-
-    // Find mode for the container. If mode is None, then return nothing.
-    auto mode_it = container_mode.find(name);
-
-    //     auto mode = mode_it->second;
-    auto mode = ContainerMode::None;
-
-    if (mode_it == container_mode.end())
-    {
-        container_mode[name] = ContainerMode::Read;
-        mode = ContainerMode::Read;
-    }
-    else
-    {
-        mode = mode_it->second;
-        //         return {nullptr, true};
-    }
+    auto cd = container_data.find(name);
+    if (cd != container_data.end() and cd->second.cache and cd->second.cache->validity.inside(run_id))
+        return {cd->second.cache.get(), false};
 
     // Read container from the source
-    if (mode == ContainerMode::Read or mode == ContainerMode::Forward)
+    if (cd->second.mode == ContainerMode::Read or cd->second.mode == ContainerMode::Forward)
     {
-        auto source = container_source[name];
+        auto source = cd->second.source;
         if (source != nullptr)
         {
-            auto cont = source->getContainer(name, runid);
-            containers[name].insert({cont->validity, cont});
-            cached[name] = cont;
+            auto cont = source->getContainer(name, run_id);
+            cd->second.validity.insert({cont->validity, cont});
+            cd->second.cache = cont;
             return {cont.get(), true};
         }
 
@@ -520,15 +548,14 @@ auto SDatabase::getContainer(const std::string& name, ulong runid) -> std::pair<
     }
 
     // Create new container in the cache
-    if (mode_it->second == ContainerMode::Create)
+    if (cd->second.mode == ContainerMode::Create)
     {
-        auto source = container_source[name];
-        if (source == nullptr)
+        if (cd->second.source == nullptr)
         {
             auto cont = std::make_shared<SContainer>();
             cont->SetName(name.c_str());
-            containers[name].insert({cont->validity, cont});
-            cached[name] = cont;
+            cd->second.validity.insert({cont->validity, cont});
+            cd->second.cache = cont;
             return {cont.get(), true};
         }
 
@@ -547,4 +574,119 @@ auto SDatabase::getExperimentObjectFromSources() const -> std::optional<SExperim
     }
 
     return std::nullopt;
+}
+
+auto SDatabase::findRun(ulong run_id) const -> std::optional<SRun>
+{
+    // Check if Container was initialized from source, and if not, do it.
+    auto run_iter = runs.find(run_id);
+    if (run_iter != runs.end()) return run_iter->second;
+
+    return {};
+}
+
+auto SDatabase::getRun(ulong run_id) -> SRun
+{
+    auto r = findRun(run_id);
+    if (!r) r = getRunFromSources(run_id);
+
+    if (r)
+    {
+        runs.insert({r.value().id, r.value()});
+        return r.value();
+    }
+
+    return {};
+}
+
+auto SDatabase::getRunFromSources(ulong run_id) const -> SRun
+{
+    for (auto s : sources)
+    {
+        auto c = s->getRun(run_id);
+        if (c.id == run_id) { return c; }
+    }
+
+    return {};
+}
+
+
+auto SDatabase::openRun(int run_type) -> bool
+{
+    return openRun(std::chrono::system_clock::now(), run_type);
+}
+
+auto SDatabase::openRun(std::chrono::time_point<std::chrono::system_clock> ts, int run_type) -> bool {
+    if (target->canAcceptRuns()) {
+        SRun run;
+        run.id = 0;
+        run.type = run_type;
+        run.start_time = std::chrono::system_clock::to_time_t(ts);
+
+        target->insertRun(run);
+    }
+
+    return false;
+}
+
+auto SDatabase::closeRun() -> bool {
+    return closeRun(std::chrono::system_clock::now());
+}
+
+auto SDatabase::closeRun(std::chrono::time_point<std::chrono::system_clock> ts) -> bool {
+    return false;
+}
+
+/**
+ * Print containers
+ */
+void SDatabase::print() const
+{
+    std::cout << "\n";
+    std::cout << "Container maps sizes\n";
+    tabulate::Table map_mult_summary;
+    map_mult_summary.add_row({"Sources", "Container sources", "Modes", "Factories", "Runs"});
+
+    // map_mult_summary.add_row({std::to_string(sources.size()),
+    //                           std::to_string(container_source.size()),
+    //                           std::to_string(container_mode.size()),
+    //                           std::to_string(obj_factory.size()), std::to_string(runs.size())});
+
+    std::cout << map_mult_summary << "\n\n";
+
+    std::cout << "Containers summary\n";
+    tabulate::Table cont_summary;
+    cont_summary.add_row({"Name", "Source", "Mode"});
+    for (auto& cd : container_data)
+    {
+        auto src_ptr = cd.second.source;
+        auto mode = cd.second.mode;
+
+        char hex_string[20];
+        sprintf(hex_string, "%#lx", (unsigned long)src_ptr); // convert number to hex
+
+        auto mode_str = magic_enum::enum_name(mode);
+        cont_summary.add_row({cd.first, hex_string, std::string(mode_str)});
+    }
+    std::cout << cont_summary << "\n";
+
+    std::cout << "=== Runtime Database Summary ===\n";
+
+    //     for (const auto& p : sources)
+    //         p->print();
+}
+
+auto operator"" _par(const char* name, std::size_t) -> SPar*
+{
+    return SRuntimeDb::get()->getParContainer(name);
+}
+
+auto operator"" _lookup(const char* name, std::size_t) -> SLookupTable*
+{
+    return SRuntimeDb::get()->getLookupContainer(name);
+}
+
+auto operator"" _cal(const char* name, std::size_t) -> SVirtualCalContainer*
+{
+    return SRuntimeDb::get()->getCalContainer(name);
 }

@@ -1,4 +1,4 @@
-#include "SMysqlInterface.h"
+#include "SRESTInterface.h"
 #include <TObjArray.h>
 #include <gtest/gtest.h>
 
@@ -12,7 +12,7 @@ TEST(tests_cpr, basic_tests)
     ASSERT_EQ(r.status_code, 200); // 200
     ASSERT_EQ(r.header["content-type"], "application/json; charset=utf-8");
     // printf(r.text.c_str());
-    //     SMysqlInterface api("http://127.0.0.1:9801/api/");
+    //     SRESTInterface api("http://127.0.0.1:9801/api/");
     //     auto run_cont = api.getRunContainer(1);
     //     printf("API 1 = %d\n", run_cont.has_value());
     //     run_cont->print();

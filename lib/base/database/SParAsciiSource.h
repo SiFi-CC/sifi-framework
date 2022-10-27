@@ -64,7 +64,7 @@ private:
 
     auto doGetRuns() -> std::vector<SRun> override { return std::vector{dummy_run}; };
     auto doGetRun(ulong /*runid*/) -> SRun override { return dummy_run; }
-    auto doInsertRun(SRun run) -> bool override
+    virtual auto insertRun(SRun run) -> bool override
     {
         dummy_run = run;
         return true;
@@ -72,10 +72,12 @@ private:
 
     auto doGetExperiment() const -> std::optional<SExperiment> override
     {
-        return SExperiment(SRuntimeDb::get()->getExperiment(), 0, 0);
+        return SExperiment(SRuntimeDb::get()->getExperiment(), {}, {});
     }
 
     void doPrint() const override;
+
+    auto canAcceptRuns() -> bool override { return false; }
 
     bool parseSource();
 

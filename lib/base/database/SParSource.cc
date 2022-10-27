@@ -56,8 +56,6 @@ auto SParSource::getRuns() -> std::vector<SRun> { return doGetRuns(); }
 
 auto SParSource::getRun(ulong runid) -> SRun { return doGetRun(runid); }
 
-auto SParSource::insertRun(SRun run) -> bool { return doInsertRun(run); }
-
 auto SParSource::getExperiment() const -> std::optional<SExperiment> { return doGetExperiment(); }
 
 auto SParSource::print() const -> void { doPrint(); }

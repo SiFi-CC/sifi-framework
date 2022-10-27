@@ -63,11 +63,13 @@ private:
 
     auto doGetRuns() -> std::vector<SRun> override;
     auto doGetRun(ulong runid) -> SRun override;
-    auto doInsertRun(SRun run) -> bool override;
+    virtual auto insertRun(SRun run) -> bool override;
 
     auto doGetExperiment() const -> std::optional<SExperiment> override;
 
     auto doPrint() const -> void override;
+
+    auto canAcceptRuns() -> bool override { return false; }
 
     auto parseSource() -> bool;
 

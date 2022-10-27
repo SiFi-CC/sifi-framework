@@ -34,7 +34,7 @@ runtype -- type of run, to be defined by user
 
 void SRun::print() const
 {
-    std::cout << "=== Run info === id: " << runid << "  type: " << runtype
+    std::cout << "=== Run info === id: " << id << "  type: " << type
               << "  start: " << std::put_time(gmtime(&start_time), "%F %T %Z")
               << "  stop: " << std::put_time(gmtime(&stop_time), "%F %T %Z") << std::endl;
 }

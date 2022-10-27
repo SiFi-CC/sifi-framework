@@ -28,8 +28,8 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#ifndef SMYSQLINTERFACE_H
-#define SMYSQLINTERFACE_H
+#ifndef SRESTINTERFACE_H
+#define SRESTINTERFACE_H
 
 #include "sifi_export.h"
 
@@ -44,24 +44,24 @@
 #include <string_view>
 #include <vector>
 
-class SIFI_EXPORT SMysqlInterface
+class SIFI_EXPORT SRESTInterface
 {
 
     // auth_token might change on the server side.
 public:
     // constructors
-    SMysqlInterface() = delete;
+    SRESTInterface() = delete;
     /**
      * \param url REST api api_url
      * \param token authentication token
      */
-    SMysqlInterface(std::string url, std::string token);
-    SMysqlInterface(SMysqlInterface const&) = delete;
+    SRESTInterface(std::string url, std::string token);
+    SRESTInterface(SRESTInterface const&) = delete;
 
-    SMysqlInterface& operator=(SMysqlInterface const&) = delete;
+    SRESTInterface& operator=(SRESTInterface const&) = delete;
 
     // destructor
-    virtual ~SMysqlInterface() = default;
+    virtual ~SRESTInterface() = default;
 
     auto connected() const -> bool { return connection_ok; }
 
@@ -74,13 +74,13 @@ public:
     // Implement these
     auto getRunContainer(long runid) -> SRun;
     auto getRunContainers(long runid_min, long runid_max) -> std::vector<SRun>;
-    void addRunContainer(SRun&& runcont);
+    auto openRunContainer(int run_type, std::time_t start_time, std::string file_name) -> std::optional<SRun>;
+    auto closeRunContainer(std::time_t stop_time) -> std::optional<SRun>;
 
     auto findContainer(std::string name) -> bool;
     auto getContainer(std::string name, long runid) -> std::optional<SContainer>;
     auto getContainers(std::string name, long runid_min) -> std::vector<SContainer>;
-    auto getContainers(std::string name, long runid_min, long runid_max)
-        -> std::vector<SContainer>;
+    auto getContainers(std::string name, long runid_min, long runid_max) -> std::vector<SContainer>;
     bool addContainer(std::string name, SContainer&& cont);
 
 private:
@@ -90,4 +90,4 @@ private:
     std::string experiment;
 };
 
-#endif /* SMYSQLINTERFACE_H */
+#endif /* SRESTINTERFACE_H */

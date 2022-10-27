@@ -10,9 +10,9 @@ set(tests_SRCS
     tests_scontainer.cc
     tests_sparcontainer.cc
     tests_database_ascii_source.cc
-    tests_database_mysql_interface.cc
-    tests_database_mysql_source.cc
     tests_database_root_source.cc
+    tests_database_rest_interface.cc
+    tests_database_db_source.cc
     tests_database_run_container.cc
 )
 

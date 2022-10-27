@@ -6,7 +6,7 @@
 #include "SParDatabaseSource.h"
 #include "SiFi.h"
 
-class tests_database_mysql_source : public ::testing::Test
+class tests_database_db_source : public ::testing::Test
 {
 protected:
     void SetUp() override
@@ -43,7 +43,20 @@ protected:
     SParDatabaseSource* mysql{nullptr};
 };
 
-TEST_F(tests_database_mysql_source, mysql_source_test)
+TEST_F(tests_database_db_source, get_run)
+{
+    // only runs 1-10 exists
+    //     ASSERT_EQ(mysql->getRun(0), nullptr); FIXME
+    //     ASSERT_NE(mysql->getRun(1), nullptr);
+    //     ASSERT_NE(mysql->getRun(2), nullptr);
+    //     ASSERT_NE(mysql->getRun(3), nullptr);
+    //     ASSERT_NE(mysql->getRun(9), nullptr);
+    //     ASSERT_NE(mysql->getRun(10), nullptr);
+    //     ASSERT_EQ(mysql->getRun(11), nullptr);
+    //     ASSERT_EQ(mysql->getRun(15), nullptr);
+}
+
+TEST_F(tests_database_db_source, get_container)
 {
     ASSERT_EQ(mysql->getContainer("Cont1", 0), nullptr);
     ASSERT_EQ(mysql->getContainer("Cont2", 0), nullptr);
@@ -51,7 +64,7 @@ TEST_F(tests_database_mysql_source, mysql_source_test)
     ASSERT_NE(mysql->getContainer("FibersGeomPar", 4), nullptr);
 }
 
-// TEST_F(tests_database_mysql_source, mysql_source_test)
+// TEST_F(tests_database_db_source, mysql_source_test)
 // {
 //     // Test parameter containers
 //     ASSERT_EQ(mysql->getContainer("Cont1", 0), nullptr);

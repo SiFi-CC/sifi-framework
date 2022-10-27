@@ -18,7 +18,7 @@ class tests_database_root_source : public ::testing::Test
 protected:
     void SetUp() override
     {
-        auto file = std::unique_ptr<TFile>(TFile::Open( "/tmp/params_root.root", "RECREATE"));
+        auto file = std::unique_ptr<TFile>(TFile::Open("/tmp/params_root.root", "RECREATE"));
         if (!file.get()) abort();
 
         TList list;

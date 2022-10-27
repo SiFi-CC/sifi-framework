@@ -9,7 +9,7 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#include "SMysqlInterface.h"
+#include "SRESTInterface.h"
 #include "SCalContainer.h"
 #include "SContainer.h"
 #include "SLookup.h"
@@ -34,7 +34,7 @@
 #include <vector>
 
 /**
- * \class SMysqlInterface
+ * \class SRESTInterface
 
 \ingroup lib_base
 
@@ -56,12 +56,19 @@ struct Parameter
  * \return object or empty slot
  */
 
-std::time_t extract_date(std::string date_str)
+std::time_t date_from_string(std::string date_str)
 {
-    std::tm t = {0};
+    std::tm t = {};
     std::istringstream ss(date_str);
-    ss >> std::get_time(&t, "%Y-%m-%dT%H:%M");
-    return mktime(&t);
+    ss >> std::get_time(&t, "%Y-%m-%dT%H:%M:%SZ");
+    return mktime(&t) - timezone;
+}
+
+std::string date_to_string(std::time_t date)
+{
+    char date_str[80];
+    std::strftime(date_str, sizeof(date_str), "%FT%TZ", gmtime(&date));
+    return std::string(date_str);
 }
 
 std::vector<std::string> split_lines(const std::string& s)
@@ -78,17 +85,16 @@ std::vector<std::string> split_lines(const std::string& s)
     return v;
 }
 
-SMysqlInterface::SMysqlInterface(std::string url, std::string token)
-    : api_url(url), auth_token(token)
+SRESTInterface::SRESTInterface(std::string url, std::string token) : api_url(url), auth_token(token)
 {
     cpr::Response r = cpr::Get(cpr::Url{api_url + "/api/connection"},
                                cpr::Header{{"Authorization", "Token " + auth_token}});
     connection_ok = (r.status_code == 204);
 }
 
-auto SMysqlInterface::getExperimentContainer(std::string name) -> std::optional<SExperiment>
+auto SRESTInterface::getExperimentContainer(std::string name) -> std::optional<SExperiment>
 {
-    cpr::Response r = cpr::Get(cpr::Url{api_url + "/api/fetch/release/" + name},
+    cpr::Response r = cpr::Get(cpr::Url{api_url + "/api/fetch/experiment/" + name},
                                cpr::Header{{"Authorization", "Token " + auth_token}});
 
     if (r.status_code == 200)
@@ -100,20 +106,17 @@ auto SMysqlInterface::getExperimentContainer(std::string name) -> std::optional<
         rapidjson::Document doc;
         doc.Parse(top_doc.GetString());
 
-        // data are stored as an array
-        assert(doc.IsArray() and doc.Size() == 1);
-
         auto release = SExperiment();
         release.name = doc["name"].GetString();
-        release.first_run = doc["first_run"].GetUint64();
-        release.last_run = doc["last_run"].GetUint64();
+        release.start_date = doc["start_date"].GetString();
+        release.close_date = doc["close_date"].IsNull() ? "" : doc["close_date"].GetString();
 
         return release;
     }
     return std::nullopt;
 }
 
-auto SMysqlInterface::getRunContainer(long runid) -> SRun
+auto SRESTInterface::getRunContainer(long runid) -> SRun
 {
     cpr::Response r = cpr::Get(cpr::Url{api_url + "/api/fetch/run/" + std::to_string(runid)},
                                cpr::Header{{"Authorization", "Token " + auth_token}});
@@ -135,16 +138,16 @@ auto SMysqlInterface::getRunContainer(long runid) -> SRun
 
         assert(runid == run_id);
 
-        std::time_t valid_from = extract_date(
-            std::string(d["start_time"].GetString(), d["start_time"].GetStringLength()));
-        std::time_t valid_to =
-            extract_date(std::string(d["stop_time"].GetString(), d["stop_time"].GetStringLength()));
-
+        // printf("READ = %s\n", d["start_time"].GetString());
         SRun run;
-        run.setId(run_id);
-        run.setStart(valid_from);
-        run.setStop(valid_to);
-        run.setType(d["run_type"].GetInt());
+        run.id = run_id;
+        run.start_time = date_from_string(
+            std::string(d["start_time"].GetString(), d["start_time"].GetStringLength()));
+        ;
+        run.stop_time = date_from_string(
+            std::string(d["stop_time"].GetString(), d["stop_time"].GetStringLength()));
+        ;
+        run.type = d["run_type"].GetInt();
         return run;
     }
     return SRun{};
@@ -158,7 +161,7 @@ auto SMysqlInterface::getRunContainer(long runid) -> SRun
  * \param runid_max maximal runid, strong ordering
  * \return array of objects, empty if no matches
  */
-auto SMysqlInterface::getRunContainers(long runid_min, long runid_max) -> std::vector<SRun>
+auto SRESTInterface::getRunContainers(long runid_min, long runid_max) -> std::vector<SRun>
 {
     cpr::Response r;
 
@@ -185,16 +188,16 @@ auto SMysqlInterface::getRunContainers(long runid_min, long runid_max) -> std::v
 
         for (auto& d : doc.GetArray())
         {
-            std::time_t valid_from = extract_date(
+            std::time_t valid_from = date_from_string(
                 std::string(d["start_time"].GetString(), d["start_time"].GetStringLength()));
-            std::time_t valid_to = extract_date(
+            std::time_t valid_to = date_from_string(
                 std::string(d["stop_time"].GetString(), d["stop_time"].GetStringLength()));
 
             SRun run;
-            run.setId(d["id"].GetInt());
-            run.setStart(valid_from);
-            run.setStop(valid_to);
-            run.setType(d["run_type"].GetInt());
+            run.id = d["id"].GetInt();
+            run.start_time = valid_from;
+            run.stop_time = valid_to;
+            run.type = d["run_type"].GetInt();
             array.push_back(run);
         }
     }
@@ -205,50 +208,104 @@ auto SMysqlInterface::getRunContainers(long runid_min, long runid_max) -> std::v
  * Add new run contaniner. The runid is stored inside the container.
  * \param runcont run container to add.
  */
-void SMysqlInterface::addRunContainer(SRun&& runcont)
+auto SRESTInterface::openRunContainer(int run_type, std::time_t start_time, std::string file_name)
+    -> std::optional<SRun>
 {
-    std::time_t valid_from = runcont.getStart();
-    std::time_t valid_to = runcont.getStop();
-    auto run_id = runcont.getId();
+    cpr::Response r = cpr::Post(cpr::Url{api_url + "/api/run/open"},
+                                cpr::Multipart{{"run_type", run_type},
+                                               {"start_time", date_to_string(start_time)},
+                                               {"file_name", file_name}},
+                                cpr::Authentication("sifiadmin", "pass4sifi"));
 
-    char valid_from_str[256];
-    char valid_to_str[256];
+    if (r.status_code == 200)
+    {
+        // full json response
+        const char* json = r.text.c_str();
+        rapidjson::Document top_doc;
+        top_doc.Parse(json);
+        rapidjson::Document doc;
+        doc.Parse(top_doc.GetString());
 
-    std::strftime(valid_from_str, sizeof(valid_from_str), "%Y-%m-%dT%H:%M", gmtime(&valid_from));
-    std::strftime(valid_to_str, sizeof(valid_to_str), "%Y-%m-%dT%H:%M", gmtime(&valid_to));
+        auto& d = doc[0];
+        auto& fields = d["fields"];
+        SRun run;
+        run.id = d["pk"].GetInt();
+        run.start_time = date_from_string(
+            std::string(fields["start_time"].GetString(), fields["start_time"].GetStringLength()));
+        run.stop_time = fields["stop_time"].IsNull()
+                            ? 0
+                            : date_from_string(std::string(fields["stop_time"].GetString(),
+                                                           fields["stop_time"].GetStringLength()));
+        run.type = fields["run_type"].GetInt();
+        run.status = fields["validated"].IsNull()    ? SRun::Status::Invalid
+                     : fields["validated"].GetBool() ? SRun::Status::Valid
+                                                     : SRun::Status::Invalid;
+         return run;
+    }
+    else
+    {
+        printf("ERROR = %s\n",r.text.c_str());
+    }
 
-    rapidjson::StringBuffer s;
-    rapidjson::Writer<rapidjson::StringBuffer> writer(s);
-
-    writer.StartObject();
-    writer.Key("start_time");
-    writer.String(valid_from_str);
-    writer.Key("stop_time");
-    writer.String(valid_to_str);
-    writer.Key("run_id");
-    writer.Int(run_id);
-    writer.EndObject();
-
-    std::string strJson = s.GetString();
-
-    cpr::Response r = cpr::Post(cpr::Url{api_url + "runs/"}, cpr::Body{strJson},
-                                cpr::Header{{"Authorization", "Token " + auth_token},
-                                            {"Content-Type", "application/json"}});
+    return std::nullopt;
 }
 
-auto SMysqlInterface::findContainer(std::string name) -> bool
+/**
+ * Add new run contaniner. The runid is stored inside the container.
+ * \param runcont run container to add.
+ */
+auto SRESTInterface::closeRunContainer(std::time_t stop_time) -> std::optional<SRun>
 {
-    cpr::Response r = cpr::Get(
-        cpr::Url{api_url + "/api/fetch/cont/" + experiment + "/" + name + "/find/"},
-        cpr::Header{{"Authorization", "Token " + auth_token}});
+    cpr::Response r = cpr::Post(cpr::Url{api_url + "/api/run/close"},
+                                cpr::Multipart{{"stop_time", date_to_string(stop_time)}},
+                                cpr::Authentication("sifiadmin", "pass4sifi"));
+
+    if (r.status_code == 200)
+    {
+        // full json response
+        const char* json = r.text.c_str();
+        rapidjson::Document top_doc;
+        top_doc.Parse(json);
+        rapidjson::Document doc;
+        doc.Parse(top_doc.GetString());
+
+        auto& d = doc[0];
+        auto& fields = d["fields"];
+        SRun run;
+        run.id = d["pk"].GetInt();
+        run.start_time = date_from_string(
+            std::string(fields["start_time"].GetString(), fields["start_time"].GetStringLength()));
+        run.stop_time = fields["stop_time"].IsNull()
+        ? 0
+                                    : date_from_string(std::string(fields["stop_time"].GetString(),
+                                                                   fields["stop_time"].GetStringLength()));
+        run.type = fields["run_type"].GetInt();
+        run.status = fields["validated"].IsNull()    ? SRun::Status::Invalid
+                     : fields["validated"].GetBool() ? SRun::Status::Valid
+                                                     : SRun::Status::Invalid;
+
+        return run;
+    }
+    else
+    {
+        printf("ERROR = %s\n",r.text.c_str());
+    }
+
+    return std::nullopt;
+}
+
+auto SRESTInterface::findContainer(std::string name) -> bool
+{
+    cpr::Response r = cpr::Get(cpr::Url{api_url + "/api/fetch/cont/" + experiment + "/" + name},
+                               cpr::Header{{"Authorization", "Token " + auth_token}});
 
     return r.status_code == 200;
 }
 
-std::optional<SContainer> SMysqlInterface::getContainer(std::string name, long runid)
+std::optional<SContainer> SRESTInterface::getContainer(std::string name, long runid)
 {
-    cpr::Response r = cpr::Get(cpr::Url{api_url + "/api/fetch/cont/" + experiment + "/" +
-                                        name + "/" + std::to_string(runid) + "/"},
+    cpr::Response r = cpr::Get(cpr::Url{api_url + "/api/fetch/cont/" + experiment + "/" + name +
+                                        "/" + std::to_string(runid) + "/"},
                                cpr::Header{{"Authorization", "Token " + auth_token}});
 
     if (r.status_code == 200)
@@ -264,8 +321,7 @@ std::optional<SContainer> SMysqlInterface::getContainer(std::string name, long r
         assert(doc.IsArray() and doc.Size() == 1);
 
         auto& d = doc[0];
-        int run_id = d["run_id"].GetInt();
-        assert(runid == run_id);
+        int run_id = d["id"].GetInt();
 
         uint32_t valid_from = d["valid_from_id"].GetInt();
         uint32_t valid_to = d["valid_to_id"].GetInt();
@@ -275,7 +331,7 @@ std::optional<SContainer> SMysqlInterface::getContainer(std::string name, long r
         cont.lines = split_lines(d["content"].GetString());
         cont.updated = true;
         cont.validity = {valid_from, valid_to};
-        return {std::move(cont)};
+        return cont;
     }
     return std::nullopt;
 }
@@ -286,7 +342,7 @@ std::optional<SContainer> SMysqlInterface::getContainer(std::string name, long r
  * \param rinid_min minimal runid, weak ordering
  * \return array of objects, empty if no matches
  */
-std::vector<SContainer> SMysqlInterface::getContainers(std::string name, long runid_min)
+std::vector<SContainer> SRESTInterface::getContainers(std::string name, long runid_min)
 {
     return getContainers(std::move(name), runid_min, 0);
 }
@@ -298,12 +354,12 @@ std::vector<SContainer> SMysqlInterface::getContainers(std::string name, long ru
  * \param runid_max maximal runid, strong ordering
  * \return array of objects, empty if no matches
  */
-auto SMysqlInterface::getContainers(std::string name, long runid_min, long runid_max)
+auto SRESTInterface::getContainers(std::string name, long runid_min, long runid_max)
     -> std::vector<SContainer>
 {
     cpr::Response r =
-        cpr::Get(cpr::Url{api_url + "/api/fetch/cont/" + experiment + "/" + name +
-                          "/" + std::to_string(runid_min) + "/" + std::to_string(runid_max) + "/"},
+        cpr::Get(cpr::Url{api_url + "/api/fetch/cont/" + experiment + "/" + name + "/" +
+                          std::to_string(runid_min) + "/" + std::to_string(runid_max) + "/"},
                  cpr::Header{{"Authorization", "Token " + auth_token}});
 
     std::vector<SContainer> array;
@@ -340,4 +396,4 @@ auto SMysqlInterface::getContainers(std::string name, long runid_min, long runid
  * Add new container to the database, by name. It must be later validated via web interface.
  * \return success of the operation
  */
-bool SMysqlInterface::addContainer(std::string name, SContainer&& cont) { return false; }
+bool SRESTInterface::addContainer(std::string name, SContainer&& cont) { return false; }

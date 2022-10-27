@@ -27,52 +27,19 @@
  */
 struct SIFI_EXPORT SRun : public TObject
 {
-    ulong runid;            ///< run id
-    std::time_t start_time; ///< run timestamp in UTC
-    std::time_t stop_time;  ///< run timestamp in UTC
-    int runtype;            ///< run type
+    ulong id{0};             ///< run id
+    std::time_t start_time{};   ///< run timestamp in UTC
+    std::time_t stop_time{};    ///< run timestamp in UTC
+    int type{0};             ///< run type
     enum class Status
     {
         Valid,
         Invalid
-    } status; ///< run is invalid
+    } status{Status::Invalid}; ///< run is invalid
+    std::string file_name;
 
 public:
     SRun() = default;
-
-    /// Set run id
-    /// \param id run id
-    auto setId(long id) { runid = id; }
-    /// Get run id
-    /// \return run id
-    auto getId() const { return runid; }
-
-    /// Set run start time
-    /// \param t start time
-    void setStart(std::time_t t) { start_time = t; }
-    /// Get run start time
-    /// \return start time
-    std::time_t getStart() const { return start_time; }
-    /// Set run stop time
-    /// \param t stop time
-    void setStop(std::time_t t) { stop_time = t; }
-    /// Get run stop time
-    /// \return stop time
-    std::time_t getStop() const { return stop_time; }
-
-    /// Set run type
-    /// \param t run type
-    void setType(int t) { runtype = t; }
-    /// Get run type
-    /// \return run type
-    long getType() const { return runtype; }
-
-    /// Get all data as tuple
-    /// \return tuple with data
-    auto getData() -> std::tuple<long, std::time_t, std::time_t, long, Status>
-    {
-        return std::make_tuple(runid, start_time, stop_time, runtype, status);
-    }
 
     /// Mark run as Valid
     void markValid() { status = Status::Valid; }
@@ -90,14 +57,14 @@ public:
 struct SIFI_EXPORT SExperiment : public TObject
 {
     SExperiment() = default;
-    SExperiment(const std::string name, ulong first, ulong last)
-        : TObject(), name(name), first_run(first), last_run(last)
+    SExperiment(std::string name, std::string start, std::string close)
+        : TObject(), name(name), start_date(start), close_date(close)
     {
     }
 
     std::string name;
-    ulong first_run{0};
-    ulong last_run{0};
+    std::string start_date;
+    std::string close_date;
 
     ClassDef(SExperiment, 0);
 };

@@ -62,7 +62,7 @@ struct SRunsValidityRange
     /// Compare ranges, the smaller one has lower start time. Ranges may overlap.
     /// \param time time to compare
     /// \return whether the object is smaller than compared
-    bool operator<(const SRun& run) const { return from < run.getId(); }
+    bool operator<(const SRun& run) const { return from < run.id; }
 
     /// Checks whether #time is within the range
     /// \param time time to compare
@@ -74,7 +74,7 @@ struct SRunsValidityRange
     /// \return whether the #time is within the range
     bool inside(const SRun& run) const
     {
-        return from <= run.getId() and (run.getId() < to or to == 0);
+        return from <= run.id and (run.id < to or to == 0);
     }
 
     /// Check for overlap

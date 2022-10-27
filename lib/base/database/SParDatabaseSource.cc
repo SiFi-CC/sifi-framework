@@ -77,7 +77,7 @@ SParDatabaseSource::SParDatabaseSource() : SParSource()
 {
     dbapi = getenv("SIFIDBAPI");
     token = getenv("SIFIAUTH");
-    mysqlcon = std::make_unique<SMysqlInterface>(dbapi, token);
+    mysqlcon = std::make_unique<SRESTInterface>(dbapi, token);
     parseSource();
 }
 
@@ -171,13 +171,25 @@ auto SParDatabaseSource::doGetRun(ulong runid) -> SRun
     return mysqlcon->getRunContainer(runid);
 }
 
-auto SParDatabaseSource::doInsertRun(SRun run) -> bool { return true; }
+auto SParDatabaseSource::insertRun(SRun run) -> bool { return false; }
 
 auto SParDatabaseSource::doGetExperiment() const -> std::optional<SExperiment>
 {
     // if not already fetched, get from database
     return mysqlcon->getExperimentContainer(SRuntimeDb::get()->getExperiment());
 }
+
+auto SParDatabaseSource::openRunContainer(int run_type, std::time_t start_time, std::string file_name)
+-> std::optional<SRun>
+{
+    return mysqlcon->openRunContainer(run_type, start_time, file_name);
+}
+
+auto SParDatabaseSource::closeRunContainer(std::time_t stop_time) -> std::optional<SRun>
+{
+    return mysqlcon->closeRunContainer(stop_time);
+}
+
 
 #include "tabulate/table.hpp"
 using namespace tabulate;

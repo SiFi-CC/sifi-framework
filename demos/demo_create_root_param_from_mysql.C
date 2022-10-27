@@ -31,7 +31,7 @@ void demo_create_root_param_from_mysql()
 
     rdb()->print();
 
-    rdb()->writeDestination();
+    rdb()->writeTarget();
 
     src_root->print();
 }

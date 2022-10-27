@@ -198,6 +198,7 @@ auto SParRootSource::doInsertContainer(const std::string& name, std::vector<SCon
             list->Add(c);
 
         list->Write(name.c_str(), TObject::kSingleKey);
+        //         list->Write(name.c_str());
         return true;
     }
 
@@ -225,11 +226,11 @@ auto SParRootSource::doGetRun(ulong runid) -> SRun
     return {};
 }
 
-auto SParRootSource::doInsertRun(SRun run) -> bool
+auto SParRootSource::insertRun(SRun run) -> bool
 {
-    if (runs.find(run.getId()) == runs.end())
+    if (runs.find(run.id) == runs.end())
     {
-        runs[run.getId()] = run;
+        runs[run.id] = run;
 
         if (file_source)
         {
@@ -316,13 +317,13 @@ void SParRootSource::doPrint() const
 
     for (auto& r : runs)
     {
-        auto t1 = r.second.getStart();
-        auto t2 = r.second.getStop();
+        auto t1 = r.second.start_time;
+        auto t2 = r.second.stop_time;
         std::stringstream s1;
         s1 << std::put_time(std::gmtime(&t1), "%c %Z");
         std::stringstream s2;
         s2 << std::put_time(std::gmtime(&t2), "%c %Z");
-        runs_summary.add_row({std::to_string(r.second.getId()),
+        runs_summary.add_row({std::to_string(r.second.id),
                               std::string(magic_enum::enum_name(r.second.getStatus())), s1.str(),
                               s2.str()});
     }

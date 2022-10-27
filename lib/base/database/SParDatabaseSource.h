@@ -33,7 +33,7 @@
 
 #include "sifi_export.h"
 
-#include "SMysqlInterface.h"
+#include "SRESTInterface.h"
 #include "SParSource.h"
 #include "SRun.h"
 
@@ -64,11 +64,15 @@ private:
 
     auto doGetRuns() -> std::vector<SRun> override;
     auto doGetRun(ulong runid) -> SRun override;
-    auto doInsertRun(SRun run) -> bool override;
+    virtual auto insertRun(SRun run) -> bool override;
 
     auto doGetExperiment() const -> std::optional<SExperiment> override;
 
     void doPrint() const override;
+
+    auto canAcceptRuns() -> bool override { return true; }
+    auto openRunContainer(int run_type, std::time_t start_time, std::string file_name) -> std::optional<SRun> override;
+    auto closeRunContainer(std::time_t stop_time) -> std::optional<SRun> override;
 
     bool parseSource();
 
@@ -76,7 +80,7 @@ private:
     std::string dbapi;
     std::string token;
 
-    std::unique_ptr<SMysqlInterface> mysqlcon;
+    std::unique_ptr<SRESTInterface> mysqlcon;
 
     std::optional<SExperiment> release;
 };

@@ -156,6 +156,15 @@ int main(int argc, char** argv)
         "FibersPMILookupTable",
         []() { return new SFibersLookupTable("FibersPMILookupTable", 0x1000, 0x1fff, 64); });
 
+    //     SRuntimeDb::get()->addLookupContainer(
+    //         "FibersDDLookupTable",
+    //         std::make_unique<SFibersLookupTable>("FibersDDLookupTable", 0x1000, 0x1fff, 32));
+    //     SRuntimeDb::get()->addLookupContainer(
+    //         "FibersPMILookupTable",
+    //         std::make_unique<SFibersLookupTable>("FibersPMILookupTable", 0x1000, 0x1fff, 64));
+
+    SRuntimeDb::get()->initContainers(0);
+
     // initialize tasks
     STaskManager* tm = STaskManager::instance();
     tm->initTasks();
@@ -167,8 +176,8 @@ int main(int argc, char** argv)
 
     sifi()->save();
 
-    //     pm()->setParamDest("p.txt");
-    //     pm()->writeDestination();
+    //     SRuntimeDb::get()->setParamDest("p.txt");
+    //     SRuntimeDb::get()->writeDestination();
 
     return 0;
 }

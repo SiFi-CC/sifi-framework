@@ -38,6 +38,7 @@
 // #include "SLookup.h"
 
 #include <algorithm> // for max
+#include <chrono>
 #include <functional>
 #include <map>
 #include <memory>
@@ -75,16 +76,20 @@ protected:
     std::map<ulong, SRun> runs;
 
     // Technical containers
-    std::map<std::string, SParSource*> container_source;       ///< Input sources
-    std::map<std::string, ContainerMode> container_mode;       ///< Container mode
-    std::map<std::string, cont_obj_factory> obj_factory;       ///< Container object factory
-    std::map<std::string, std::shared_ptr<SContainer>> cached; ///< Caching of the last container
-    std::map<std::string, std::map<SRunsValidityRange, std::shared_ptr<SContainer>>>
-        containers; ///< Containers mirrors
+    struct ContainerData {
+        std::string name;
+        SParSource * source;
+        ContainerMode mode;
+        cont_obj_factory build_factory;
+        std::shared_ptr<SContainer> cache;
+        std::map<SRunsValidityRange, std::shared_ptr<SContainer>> validity;
+    };
+
+    std::map<std::string, ContainerData> container_data;
 
     std::string release; ///< stores parameters release name
-    unsigned long current_runid;
-    unsigned long reference_runid{0};
+    unsigned long current_run_id;
+    unsigned long reference_run_id{0};
 
 public:
     SDatabase();
@@ -98,8 +103,9 @@ public:
     /// \param target destination file name
     void setTarget(SParSource* target);
 
-    void writeDestination();
+    void writeTarget();
     void writeContainers(const std::vector<std::string>& names);
+    void writeContainer(const std::string& name);
 
     bool addContainer(const std::string& name, cont_obj_factory&& f);
     SPar* getParContainer(const std::string& name);
@@ -109,7 +115,7 @@ public:
     auto getContainerMode(const std::string& name) -> std::optional<ContainerMode>;
     void setContainerMode(const std::string& name, ContainerMode mode)
     {
-        container_mode[name] = mode;
+        container_data[name].mode = mode;
     }
 
     /// Set release value.
@@ -119,8 +125,17 @@ public:
     /// \return release value
     auto getExperiment() const { return release; }
 
-    void initRun(ulong runid);
-    void initContainers(ulong runid);
+    constexpr void setCurrentRun(ulong run_id) { current_run_id = run_id; }
+    constexpr void setReferenceRun(ulong run_id) { reference_run_id = run_id; }
+
+    auto openRun(int run_type = 0) -> bool;
+    auto openRun(std::chrono::time_point<std::chrono::system_clock> ts, int run_type = 0) -> bool;
+
+    auto closeRun() -> bool;
+    auto closeRun(std::chrono::time_point<std::chrono::system_clock> ts) -> bool;
+
+    void initRun(ulong run_id);
+    void initContainers(ulong run_id);
     /**
      * Init all containers belonging to the given release, and if release not given, abort
      * execution.
@@ -140,6 +155,12 @@ private:
     auto updateContainerModes() -> bool;
 
     auto getExperimentObjectFromSources() const -> std::optional<SExperiment>;
+
+    auto findRun(ulong run_id) const -> std::optional<SRun>;
+    auto getRun(ulong run_id) -> SRun;
+    auto getRunFromSources(ulong run_id) const -> SRun;
+
+    void initContainer(ulong run_id, ContainerData & cd);
 };
 
 /**
@@ -163,5 +184,9 @@ public:
 };
 
 extern SIFI_EXPORT SDatabase* rdb();
+
+auto operator"" _par(const char* name, std::size_t) -> SPar*;
+auto operator"" _lookup(const char* name, std::size_t) -> SLookupTable*;
+auto operator"" _cal(const char* name, std::size_t) -> SVirtualCalContainer*;
 
 #endif /* SDATABASE_H */
