@@ -196,14 +196,14 @@ TEST(tests_database_rest_interface, container_request)
         {"Container1", 3, false, 4}, // same as above
         {"Container1", 4, true, 4},  // params exist and validated
         {"Container1", 9, false, 9}, // params for runs 8-9 are not validated
-        {"Container2", 4, true, 4}, // params for runs 1 are not existing (utside test)
+        {"Container2", 4, true, 4},  // params for runs 1 are not existing (utside test)
         {"Container2", 5, true, 5},  // same as above
         {"Container2", 8, true, 8},  // params exist and validated
         {"Container2", 9, false, 9}, // params for runs 8-9 are not validated
         {"Container3", 4, false, 4}, // params for runs 1 are not existing (utside test)
         {"Container3", 5, true, 5},  // same as above
         {"Container3", 8, false, 8}, // params do not exist
-        {"Container3", 9, false, 9}   // params for runs 9-10 are not validated
+        {"Container3", 9, false, 9}  // params for runs 9-10 are not validated
     };
 
     SRESTInterface api(apiurl, token);
@@ -230,13 +230,13 @@ TEST(tests_database_rest_interface, container_range_request)
     ASSERT_STRNE(token, nullptr);
 
     std::vector<std::tuple<std::string, int, int, int>> inputs = {
-        {"Container1", 2, 4, 0},       //
-        {"Container1", 3, 4, 0},       //
-        {"Container1", 4, 5, 1},       //
-        {"Container1", 2, 3, 0},       //
-        {"Container1", 3, 1, 1},       // only one bot second set is not validated
+        {"Container1", 2, 4, 0}, //
+        {"Container1", 3, 4, 0}, //
+        {"Container1", 4, 5, 1}, //
+        {"Container1", 2, 3, 0}, //
+        {"Container1", 3, 1, 1}, // only one bot second set is not validated
         {"Container2", 3, 1, 2}, // only one bot second set is not validated
-        {"Container3", 3, 1, 2},  // only one bot second set is not validated
+        {"Container3", 3, 1, 2}, // only one bot second set is not validated
     };
 
     SRESTInterface api(apiurl, token);

@@ -27,10 +27,10 @@
  */
 struct SIFI_EXPORT SRun : public TObject
 {
-    ulong id{0};             ///< run id
-    std::time_t start_time{};   ///< run timestamp in UTC
-    std::time_t stop_time{};    ///< run timestamp in UTC
-    int type{0};             ///< run type
+    ulong id{0};              ///< run id
+    std::time_t start_time{}; ///< run timestamp in UTC
+    std::time_t stop_time{};  ///< run timestamp in UTC
+    int type{0};              ///< run type
     enum class Status
     {
         Valid,

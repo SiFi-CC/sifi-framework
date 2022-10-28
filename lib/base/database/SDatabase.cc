@@ -17,9 +17,9 @@
 #include "SParSource.h"
 #include "SiFi.h"
 
-#include <tabulate/table.hpp>
 #include <magic_enum.hpp>
 #include <spdlog/spdlog.h>
+#include <tabulate/table.hpp>
 
 #include <algorithm>
 #include <cstdlib> // for exit, EXIT_FAILURE, abort
@@ -84,7 +84,8 @@ void SDatabase::writeTarget()
     auto search_fun = [](const auto& it1, const auto& it2) -> auto
     {
         return std::find_if(it1, it2,
-                            [&](auto pair) {
+                            [&](auto pair)
+                            {
                                 return pair.second.mode == ContainerMode::Create or
                                        pair.second.mode == ContainerMode::Forward;
                             });
@@ -202,21 +203,20 @@ bool SDatabase::addContainer(const std::string& name, cont_obj_factory&& f)
         return false;
     }
 
-    container_data[name] = {
-        .name = name,
-        .source = nullptr,
-        .mode = ContainerMode::Read,
-        .build_factory = std::move(f),
-        .cache = {},
-        .validity = {}
-    };
+    container_data[name] = {.name = name,
+                            .source = nullptr,
+                            .mode = ContainerMode::Read,
+                            .build_factory = std::move(f),
+                            .cache = {},
+                            .validity = {}};
 
     return true;
 }
 
 auto SDatabase::getContainerMode(const std::string& name) -> std::optional<ContainerMode>
 {
-    if (auto const& it = container_data.find(name); it != container_data.cend()) return it->second.mode;
+    if (auto const& it = container_data.find(name); it != container_data.cend())
+        return it->second.mode;
 
     return {};
 }
@@ -420,7 +420,7 @@ void SDatabase::initContainers()
 
     initRun(0);
     // for (auto i = rel.first_run; i <= rel.last_run; ++i)
-    for (auto & r : runs)
+    for (auto& r : runs)
     {
         int i = r.first;
 
@@ -464,7 +464,7 @@ void SDatabase::initContainers(ulong run_id)
     }
 }
 
-void SDatabase::initContainer(ulong run_id, ContainerData & cd)
+void SDatabase::initContainer(ulong run_id, ContainerData& cd)
 {
     if (cd.mode != ContainerMode::None)
     {
@@ -477,8 +477,7 @@ void SDatabase::initContainer(ulong run_id, ContainerData & cd)
             if (!cd.source and
                 (cd.mode == ContainerMode::Read or cd.mode == ContainerMode::Forward))
             {
-                spdlog::error("[{0}] Container {1} missing in the sources.", __func__,
-                              cd.name);
+                spdlog::error("[{0}] Container {1} missing in the sources.", __func__, cd.name);
                 std::abort();
             }
         }
@@ -529,7 +528,8 @@ auto SDatabase::getContainer(const std::string& name, ulong run_id) -> std::pair
 
     // If it was the same version like before, return cached one
     auto cd = container_data.find(name);
-    if (cd != container_data.end() and cd->second.cache and cd->second.cache->validity.inside(run_id))
+    if (cd != container_data.end() and cd->second.cache and
+        cd->second.cache->validity.inside(run_id))
         return {cd->second.cache.get(), false};
 
     // Read container from the source
@@ -608,34 +608,6 @@ auto SDatabase::getRunFromSources(ulong run_id) const -> SRun
     }
 
     return {};
-}
-
-
-auto SDatabase::openRun(int run_type) -> bool
-{
-    return openRun(std::chrono::system_clock::now(), run_type);
-}
-
-auto SDatabase::openRun(std::chrono::time_point<std::chrono::system_clock> ts, int run_type) -> bool {
-    if (target->canAcceptRuns()) {
-        auto run = target->openRunContainer(run_type, std::chrono::system_clock::to_time_t(ts), "");
-        return run.has_value();
-    }
-
-    return true;
-}
-
-auto SDatabase::closeRun() -> bool {
-    return closeRun(std::chrono::system_clock::now());
-}
-
-auto SDatabase::closeRun(std::chrono::time_point<std::chrono::system_clock> ts) -> bool {
-    if (target->canAcceptRuns()) {
-        auto run = target->closeRunContainer(std::chrono::system_clock::to_time_t(ts));
-        return run.has_value();
-    }
-
-    return true;
 }
 
 /**

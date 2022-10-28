@@ -14,6 +14,7 @@ set(tests_SRCS
     tests_database_rest_interface.cc
     tests_database_db_source.cc
     tests_database_run_container.cc
+    tests_event_builder_connector.cc
 )
 
 add_executable(

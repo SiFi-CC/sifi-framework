@@ -16,6 +16,7 @@ SIFI_GENERATE_LIBRARY(
         core/STask.cc
         core/SDetectorManager.cc
         core/SDetector.cc
+        core/SEventBuilderConnector.cc
 
         database/SDatabase.cc
         database/SRun.cc
@@ -60,6 +61,7 @@ SIFI_GENERATE_LIBRARY(
         core/STask.h
         core/SDetectorManager.h
         core/SDetector.h
+        core/SEventBuilderConnector.h
 
         database/SDatabase.h
         database/SRun.h

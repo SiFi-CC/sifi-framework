@@ -69,8 +69,6 @@ private:
 
     auto doPrint() const -> void override;
 
-    auto canAcceptRuns() -> bool override { return false; }
-
     auto parseSource() -> bool;
 
     auto getDirectory(const std::string& name) -> TDirectory*;

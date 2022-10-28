@@ -240,12 +240,9 @@ auto SRESTInterface::openRunContainer(int run_type, std::time_t start_time, std:
         run.status = fields["validated"].IsNull()    ? SRun::Status::Invalid
                      : fields["validated"].GetBool() ? SRun::Status::Valid
                                                      : SRun::Status::Invalid;
-         return run;
+        return run;
     }
-    else
-    {
-        printf("ERROR = %s\n",r.text.c_str());
-    }
+    else { printf("ERROR = %s\n", r.text.c_str()); }
 
     return std::nullopt;
 }
@@ -276,9 +273,9 @@ auto SRESTInterface::closeRunContainer(std::time_t stop_time) -> std::optional<S
         run.start_time = date_from_string(
             std::string(fields["start_time"].GetString(), fields["start_time"].GetStringLength()));
         run.stop_time = fields["stop_time"].IsNull()
-        ? 0
-                                    : date_from_string(std::string(fields["stop_time"].GetString(),
-                                                                   fields["stop_time"].GetStringLength()));
+                            ? 0
+                            : date_from_string(std::string(fields["stop_time"].GetString(),
+                                                           fields["stop_time"].GetStringLength()));
         run.type = fields["run_type"].GetInt();
         run.status = fields["validated"].IsNull()    ? SRun::Status::Invalid
                      : fields["validated"].GetBool() ? SRun::Status::Valid
@@ -286,10 +283,7 @@ auto SRESTInterface::closeRunContainer(std::time_t stop_time) -> std::optional<S
 
         return run;
     }
-    else
-    {
-        printf("ERROR = %s\n",r.text.c_str());
-    }
+    else { printf("ERROR = %s\n", r.text.c_str()); }
 
     return std::nullopt;
 }

@@ -77,8 +77,6 @@ private:
 
     void doPrint() const override;
 
-    auto canAcceptRuns() -> bool override { return false; }
-
     bool parseSource();
 
 private:

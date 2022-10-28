@@ -179,8 +179,8 @@ auto SParDatabaseSource::doGetExperiment() const -> std::optional<SExperiment>
     return mysqlcon->getExperimentContainer(SRuntimeDb::get()->getExperiment());
 }
 
-auto SParDatabaseSource::openRunContainer(int run_type, std::time_t start_time, std::string file_name)
--> std::optional<SRun>
+auto SParDatabaseSource::openRunContainer(int run_type, std::time_t start_time,
+                                          std::string file_name) -> std::optional<SRun>
 {
     return mysqlcon->openRunContainer(run_type, start_time, file_name);
 }
@@ -189,7 +189,6 @@ auto SParDatabaseSource::closeRunContainer(std::time_t stop_time) -> std::option
 {
     return mysqlcon->closeRunContainer(stop_time);
 }
-
 
 #include "tabulate/table.hpp"
 using namespace tabulate;

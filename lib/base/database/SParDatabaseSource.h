@@ -33,8 +33,8 @@
 
 #include "sifi_export.h"
 
-#include "SRESTInterface.h"
 #include "SParSource.h"
+#include "SRESTInterface.h"
 #include "SRun.h"
 
 #include <map>
@@ -48,6 +48,10 @@ class SIFI_EXPORT SParDatabaseSource final : public SParSource
 public:
     SParDatabaseSource();
     ~SParDatabaseSource() = default;
+
+    auto openRunContainer(int run_type, std::time_t start_time, std::string file_name)
+        -> std::optional<SRun>;
+    auto closeRunContainer(std::time_t stop_time) -> std::optional<SRun>;
 
 private:
     auto doSetOpenMode(SourceOpenMode /*mode*/) -> void override{};
@@ -69,10 +73,6 @@ private:
     auto doGetExperiment() const -> std::optional<SExperiment> override;
 
     void doPrint() const override;
-
-    auto canAcceptRuns() -> bool override { return true; }
-    auto openRunContainer(int run_type, std::time_t start_time, std::string file_name) -> std::optional<SRun> override;
-    auto closeRunContainer(std::time_t stop_time) -> std::optional<SRun> override;
 
     bool parseSource();
 

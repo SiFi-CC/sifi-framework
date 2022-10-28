@@ -74,7 +74,8 @@ public:
     // Implement these
     auto getRunContainer(long runid) -> SRun;
     auto getRunContainers(long runid_min, long runid_max) -> std::vector<SRun>;
-    auto openRunContainer(int run_type, std::time_t start_time, std::string file_name) -> std::optional<SRun>;
+    auto openRunContainer(int run_type, std::time_t start_time, std::string file_name)
+        -> std::optional<SRun>;
     auto closeRunContainer(std::time_t stop_time) -> std::optional<SRun>;
 
     auto findContainer(std::string name) -> bool;

@@ -76,9 +76,10 @@ protected:
     std::map<ulong, SRun> runs;
 
     // Technical containers
-    struct ContainerData {
+    struct ContainerData
+    {
         std::string name;
-        SParSource * source;
+        SParSource* source;
         ContainerMode mode;
         cont_obj_factory build_factory;
         std::shared_ptr<SContainer> cache;
@@ -128,12 +129,6 @@ public:
     constexpr void setCurrentRun(ulong run_id) { current_run_id = run_id; }
     constexpr void setReferenceRun(ulong run_id) { reference_run_id = run_id; }
 
-    auto openRun(int run_type = 0) -> bool;
-    auto openRun(std::chrono::time_point<std::chrono::system_clock> ts, int run_type = 0) -> bool;
-
-    auto closeRun() -> bool;
-    auto closeRun(std::chrono::time_point<std::chrono::system_clock> ts) -> bool;
-
     void initRun(ulong run_id);
     void initContainers(ulong run_id);
     /**
@@ -160,7 +155,7 @@ private:
     auto getRun(ulong run_id) -> SRun;
     auto getRunFromSources(ulong run_id) const -> SRun;
 
-    void initContainer(ulong run_id, ContainerData & cd);
+    void initContainer(ulong run_id, ContainerData& cd);
 };
 
 /**

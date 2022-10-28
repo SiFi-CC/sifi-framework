@@ -72,10 +72,7 @@ struct SRunsValidityRange
     /// Checks whether #time is within the range
     /// \param time time to compare
     /// \return whether the #time is within the range
-    bool inside(const SRun& run) const
-    {
-        return from <= run.id and (run.id < to or to == 0);
-    }
+    bool inside(const SRun& run) const { return from <= run.id and (run.id < to or to == 0); }
 
     /// Check for overlap
     /// \param range tested range

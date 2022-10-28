@@ -35,11 +35,11 @@
 
 #include "SRun.h"
 
+#include <ctime>
 #include <memory>
 #include <optional>
 #include <string>
 #include <vector>
-#include <ctime>
 
 class SContainer;
 struct SRun;
@@ -89,10 +89,6 @@ public:
     /// Print containers stored in the source. Details about source must be print by subclass
     /// method.
     auto print() const -> void;
-
-    virtual auto canAcceptRuns() -> bool = 0;
-    virtual auto openRunContainer(int /*run_type*/, std::time_t /*start_time*/, std::string /*file_name*/) -> std::optional<SRun> { return {}; }
-    virtual auto closeRunContainer(std::time_t /*stop_time*/) -> std::optional<SRun> { return {}; }
 
 private:
     virtual auto doSetOpenMode(SourceOpenMode mode) -> void = 0;
