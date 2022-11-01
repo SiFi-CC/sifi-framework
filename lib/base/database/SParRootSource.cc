@@ -32,6 +32,9 @@
 #include "tabulate/row.hpp"            // for Row
 #include "tabulate/table_internal.hpp" // for Cell::format
 
+#include <magic_enum.hpp>
+#include <tabulate/table.hpp>
+
 #include <cstring> // for strcmp
 #include <ctime>
 #include <cxxabi.h> // for __forced_unwind
@@ -51,6 +54,8 @@
 Reads parameters from ascii file. Can be also used as a target to write parameters.
 */
 
+namespace SIFI
+{
 /**
  * Constructor.
  *
@@ -65,7 +70,7 @@ SParRootSource::SParRootSource(const std::string& source) : SParSource(), source
  */
 SParRootSource::SParRootSource(std::string&& source) : SParSource(), source(source) {}
 
-auto SParRootSource::doSetOpenMode(SourceOpenMode mode) -> void
+auto SParRootSource::setOpenMode(SourceOpenMode mode) -> void
 {
     switch (mode)
     {
@@ -254,12 +259,7 @@ auto SParRootSource::createDirectory(const std::string& name) -> TDirectory*
     return file_source->mkdir(name.c_str());
 }
 
-#include <tabulate/table.hpp>
-using namespace tabulate;
-
-#include <magic_enum.hpp>
-
-void SParRootSource::doPrint() const
+auto SParRootSource::print() const -> void
 {
     std::cout << "=== ROOT Source Info ===" << std::endl;
     std::cout << "    File name: " << source << std::endl;
@@ -267,7 +267,7 @@ void SParRootSource::doPrint() const
     for (auto& container : containers)
     {
         const SRunsValidityRange* cache = nullptr;
-        Table cont_summary;
+        tabulate::Table cont_summary;
         cont_summary.add_row({container.first, "Valid from", "Valid to", "Overlap", "Truncated"});
 
         for (auto& revision : container.second)
@@ -295,22 +295,25 @@ void SParRootSource::doPrint() const
             cache = &revision.first;
         }
 
-        cont_summary.column(3).format().font_align(FontAlign::center);
-        cont_summary.column(4).format().font_align(FontAlign::center).font_color(Color::red);
+        cont_summary.column(3).format().font_align(tabulate::FontAlign::center);
+        cont_summary.column(4)
+            .format()
+            .font_align(tabulate::FontAlign::center)
+            .font_color(tabulate::Color::red);
 
         for (size_t i = 0; i < 5; ++i)
         {
             cont_summary[0][i]
                 .format()
-                .font_color(Color::yellow)
-                .font_align(FontAlign::center)
-                .font_style({FontStyle::bold});
+                .font_color(tabulate::Color::yellow)
+                .font_align(tabulate::FontAlign::center)
+                .font_style({tabulate::FontStyle::bold});
         }
 
         std::cout << cont_summary << std::endl;
     }
 
-    Table runs_summary;
+    tabulate::Table runs_summary;
     runs_summary.add_row({"Run", "Validated", "Start", "Stop"});
 
     std::cout << "Number of run containers: " << runs.size() << "\n";
@@ -330,3 +333,10 @@ void SParRootSource::doPrint() const
 
     std::cout << runs_summary << std::endl;
 }
+
+auto make_root_source(std::string fn) -> std::unique_ptr<SParRootSource>
+{
+    return std::make_unique<SParRootSource>(fn);
+}
+
+}; // namespace SIFI

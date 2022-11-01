@@ -30,6 +30,8 @@
 Reads parameters from ascii file. Can be also used as a target to write parameters.
 */
 
+namespace SIFI
+{
 /**
  * Constructor.
  *
@@ -143,11 +145,12 @@ bool SParAsciiSource::parseSource()
     return true;
 }
 
-void SParAsciiSource::doPrint() const
+auto SParAsciiSource::setOpenMode(SourceOpenMode /*mode*/) -> void {}
+
+auto SParAsciiSource::print() const -> void
 {
     std::cout << "=== Ascii Source Info ===" << std::endl;
     std::cout << "    File name: " << source << std::endl;
-    SParSource::print();
 }
 
 auto SParAsciiSource::doGetContainer(const std::string& name, ulong runid)
@@ -175,3 +178,10 @@ auto SParAsciiSource::doFindContainer(const std::string& name) -> bool
 
     return false;
 }
+
+auto make_ascii_source(std::string fn) -> std::unique_ptr<SParAsciiSource>
+{
+    return std::make_unique<SParAsciiSource>(fn);
+}
+
+}; // namespace SIFI

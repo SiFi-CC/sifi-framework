@@ -35,7 +35,6 @@
 
 #include "SContainer.h"
 #include "SRun.h"
-// #include "SLookup.h"
 
 #include <algorithm> // for max
 #include <chrono>
@@ -69,8 +68,8 @@ public:
     };
 
 protected:
-    std::vector<SParSource*> sources; ///< Parameters source file
-    SParSource* target{0};            ///< Parameters destination file
+    std::vector<std::unique_ptr<SParSource>> sources; ///< Parameters source file
+    std::unique_ptr<SParSource> target;               ///< Parameters destination file
 
     // Runs
     std::map<ulong, SRun> runs;
@@ -99,10 +98,10 @@ public:
     // methods
     /// Set parameters source
     /// \param source source file name
-    void addSource(SParSource* source);
+    void addSource(std::unique_ptr<SParSource>&& source);
     /// Set parameters destination
     /// \param target destination file name
-    void setTarget(SParSource* target);
+    void setTarget(std::unique_ptr<SParSource>&& target);
 
     void writeTarget();
     void writeContainers(const std::vector<std::string>& names);

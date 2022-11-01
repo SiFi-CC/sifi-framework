@@ -13,15 +13,17 @@
 
 #include "SContainer.h"
 #include "SDatabase.h"
+#include "SRESTInterface.h"
 
-#include "tabulate/cell.hpp"           // for Cell
-#include "tabulate/color.hpp"          // for Color, Color::red, Color::yellow
-#include "tabulate/column.hpp"         // for Column, ColumnFormat::font_align
-#include "tabulate/column_format.hpp"  // for ColumnFormat
-#include "tabulate/font_align.hpp"     // for FontAlign, FontAlign::center
-#include "tabulate/font_style.hpp"     // for FontStyle, FontStyle::bold
-#include "tabulate/format.hpp"         // for Format
-#include "tabulate/row.hpp"            // for Row
+#include "tabulate/cell.hpp"          // for Cell
+#include "tabulate/color.hpp"         // for Color, Color::red, Color::yellow
+#include "tabulate/column.hpp"        // for Column, ColumnFormat::font_align
+#include "tabulate/column_format.hpp" // for ColumnFormat
+#include "tabulate/font_align.hpp"    // for FontAlign, FontAlign::center
+#include "tabulate/font_style.hpp"    // for FontStyle, FontStyle::bold
+#include "tabulate/format.hpp"        // for Format
+#include "tabulate/row.hpp"           // for Row
+#include "tabulate/table.hpp"
 #include "tabulate/table_internal.hpp" // for Cell::format
 
 #include <ctime>
@@ -68,18 +70,67 @@ SContainer) -> int`
 
 */
 
+namespace SIFI
+{
+
+// from cppreference about std::visitor
+// https://en.cppreference.com/w/cpp/utility/variant/visit
+// helper type for the visitor
+template <class... Ts> struct db_type_overloaded : Ts...
+{
+    using Ts::operator()...;
+};
+// explicit deduction guide (not needed as of C++20)
+template <class... Ts> db_type_overloaded(Ts...) -> db_type_overloaded<Ts...>;
+
+const char* getenv_or_alt(const char* envvar, const char* alt)
+{
+    auto var = getenv(envvar);
+    return var ? var : alt;
+}
+
 /**
  * Constructor.
  *
  * \param source ascii source file name
  */
-SParDatabaseSource::SParDatabaseSource() : SParSource()
+SParDatabaseSource::SParDatabaseSource() : SParSource() /*, interface_type(db_type)*/
 {
-    dbapi = getenv("SIFIDBAPI");
-    token = getenv("SIFIAUTH");
-    mysqlcon = std::make_unique<SRESTInterface>(dbapi, token);
+    // std::visit(db_type_overloaded {
+    //     [](auto arg) { std::cout << arg << ' '; },
+    //     [](double arg) { std::cout << std::fixed << arg << ' '; },
+    //     [](const std::string& arg) { std::cout << std::quoted(arg) << ' '; }
+    // }, v);
+
+    std::string dbapi = getenv_or_alt("SIFI_DB_API_URL", "");
+    std::string user = getenv_or_alt("SIFI_DB_AUTH_USER", "");
+    std::string pass = getenv_or_alt("SIFI_DB_AUTH_PASS", "");
+    std::string token = getenv_or_alt("SIFI_DB_AUTH_TOKEN", "");
+
+    if (!user.empty() and !pass.empty()) { credentials = Auth::BasicAuth{user, pass}; }
+    else if (!token.empty()) { credentials = Auth::TokenAuth{token}; }
+    else { credentials = Auth::OnDemandAuth{}; }
+
+    dbcon = std::make_unique<SRESTInterface>(dbapi);
     parseSource();
 }
+
+// SParDatabaseSource::SParDatabaseSource(db_interface_t db_type, std::string user, std::string
+// pass) : SParSource()
+// {
+//     credentials = Auth::BasicAuth{user, pass};
+//     dbcon = std::make_unique<SRESTInterface>("", user, pass);
+//     parseSource();
+// }
+//
+// SParDatabaseSource::SParDatabaseSource(db_interface_t db_type, std::string token) : SParSource()
+// {
+//     credentials = Auth::TokenAuth{token};
+//     dbcon = std::make_unique<SRESTInterface>("", token);
+//     parseSource();
+// }
+
+auto SParDatabaseSource::setOpenMode(SourceOpenMode /*mode*/) -> void {}
 
 /**
  * Parse source file. Implemented based on hadd.C from ROOT.
@@ -90,8 +141,8 @@ bool SParDatabaseSource::parseSource() { return true; }
 
 auto SParDatabaseSource::doFindContainer(const std::string& name) -> bool
 {
-    mysqlcon->setExperiment(SRuntimeDb::get()->getExperiment());
-    return mysqlcon->findContainer(name);
+    dbcon->setExperiment(SRuntimeDb::get()->getExperiment());
+    return dbcon->findContainer(name);
 }
 
 /**
@@ -127,8 +178,8 @@ auto SParDatabaseSource::doGetContainer(const std::string& name, ulong runid)
     //     }
 
     // if not already fetched, get from database
-    mysqlcon->setExperiment(SRuntimeDb::get()->getExperiment());
-    auto cont = mysqlcon->getContainer(name, runid);
+    dbcon->setExperiment(SRuntimeDb::get()->getExperiment());
+    auto cont = dbcon->getContainer(name, runid);
 
     // if database has no given container (or is not validated)
     if (!cont.has_value()) return nullptr;
@@ -144,8 +195,8 @@ bool SParDatabaseSource::doSetContainer(const std::string& name, SContainer&& co
 
     // DB call
     // DBOBJECT->getContainer(release, name, runid);
-    mysqlcon->setExperiment(SRuntimeDb::get()->getExperiment());
-    return mysqlcon->addContainer(std::move(name), std::move(cont));
+    dbcon->setExperiment(SRuntimeDb::get()->getExperiment());
+    return dbcon->addContainer(std::move(name), std::move(cont));
 }
 
 auto SParDatabaseSource::doInsertContainer(const std::string& name, SContainer* cont) -> bool {}
@@ -160,15 +211,15 @@ auto SParDatabaseSource::doInsertContainer(const std::string& name, std::vector<
 auto SParDatabaseSource::doGetRuns() -> std::vector<SRun>
 {
     // if not already fetched, get from database
-    mysqlcon->setExperiment(SRuntimeDb::get()->getExperiment());
-    return mysqlcon->getRunContainers(0, 0);
+    dbcon->setExperiment(SRuntimeDb::get()->getExperiment());
+    return dbcon->getRunContainers(0, 0);
 }
 
 auto SParDatabaseSource::doGetRun(ulong runid) -> SRun
 {
     // if not already fetched, get from database
-    mysqlcon->setExperiment(SRuntimeDb::get()->getExperiment());
-    return mysqlcon->getRunContainer(runid);
+    dbcon->setExperiment(SRuntimeDb::get()->getExperiment());
+    return dbcon->getRunContainer(runid);
 }
 
 auto SParDatabaseSource::insertRun(SRun run) -> bool { return false; }
@@ -176,27 +227,24 @@ auto SParDatabaseSource::insertRun(SRun run) -> bool { return false; }
 auto SParDatabaseSource::doGetExperiment() const -> std::optional<SExperiment>
 {
     // if not already fetched, get from database
-    return mysqlcon->getExperimentContainer(SRuntimeDb::get()->getExperiment());
+    return dbcon->getExperimentContainer(SRuntimeDb::get()->getExperiment());
 }
 
 auto SParDatabaseSource::openRunContainer(int run_type, std::time_t start_time,
                                           std::string file_name) -> std::optional<SRun>
 {
-    return mysqlcon->openRunContainer(run_type, start_time, file_name);
+    return dbcon->openRunContainer(run_type, start_time, file_name);
 }
 
 auto SParDatabaseSource::closeRunContainer(std::time_t stop_time) -> std::optional<SRun>
 {
-    return mysqlcon->closeRunContainer(stop_time);
+    return dbcon->closeRunContainer(stop_time);
 }
 
-#include "tabulate/table.hpp"
-using namespace tabulate;
-
-void SParDatabaseSource::doPrint() const
+auto SParDatabaseSource::print() const -> void
 {
     std::cout << "  * Database Source Info *\n";
-    std::cout << "    Database: " << dbapi << std::endl;
+    // std::cout << "    Database: " << dbapi << std::endl;
 
     //     for (auto& container : containers)
     //     {
@@ -246,3 +294,10 @@ void SParDatabaseSource::doPrint() const
     //         std::cout << cont_summary << std::endl;
     //     }
 }
+
+auto make_database_source() -> std::unique_ptr<SParDatabaseSource>
+{
+    return std::make_unique<SParDatabaseSource>();
+}
+
+} // namespace SIFI

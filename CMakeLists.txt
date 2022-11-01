@@ -2,7 +2,7 @@
 # Setup the project
 cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
 project(SiFi
-    VERSION 0.3.0
+    VERSION 0.3.1
     LANGUAGES CXX
 )
 
@@ -16,7 +16,7 @@ list(APPEND CMAKE_MODULE_PATH
 include(GNUInstallDirs)
 
 # options
-set(SIFI_BUILTIN_CPR AUTO CACHE STRING "Use built-in cpr")
+set(SIFI_BUILTIN_CPR ON CACHE STRING "Use built-in cpr")
 set_property(CACHE SIFI_BUILTIN_CPR PROPERTY STRINGS AUTO ON OFF)
 
 set(SIFI_BUILTIN_TABULATE AUTO CACHE STRING "Use built-in tabulate")
@@ -54,7 +54,7 @@ include(tools)
 # 3rd party software
 
 # cpr
-SET (REQUIRED_CPR_VERSION 1.7.2)
+SET (REQUIRED_CPR_VERSION master)
 include(cmake/check_3rdparty_cpr.cmake)
 
 # tabulate

@@ -35,7 +35,7 @@ public:
     auto closeRun(std::chrono::time_point<std::chrono::system_clock> ts) -> bool;
 
 private:
-    std::unique_ptr<SParDatabaseSource> target;
+    std::unique_ptr<SIFI::SParDatabaseSource> target;
 };
 
 #endif /* STASKMANAGER_H */

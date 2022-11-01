@@ -141,7 +141,7 @@ int main(int argc, char** argv)
     sifi()->getCategory(SCategory::CatGeantTrack, true);
 
     // initialize parameters
-    SRuntimeDb::get()->addSource(new SParAsciiSource(params_file));
+    SRuntimeDb::get()->addSource(SIFI::make_ascii_source(params_file));
 
     // initialize detectors
     SDetectorManager* detm = SDetectorManager::instance();

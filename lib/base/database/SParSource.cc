@@ -11,6 +11,10 @@
 
 #include "SParSource.h"
 
+#include "SParAsciiSource.h"
+#include "SParDatabaseSource.h"
+#include "SParRootSource.h"
+
 #include "SRun.h"
 
 #include <iostream>
@@ -31,8 +35,6 @@ the requested parameter containers exists.
 
 // for trim functions see
 // https://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
-
-auto SParSource::setOpenMode(SourceOpenMode mode) -> void { doSetOpenMode(mode); }
 
 auto SParSource::findContainer(const std::string& name) -> bool { return doFindContainer(name); }
 
@@ -57,5 +59,3 @@ auto SParSource::getRuns() -> std::vector<SRun> { return doGetRuns(); }
 auto SParSource::getRun(ulong runid) -> SRun { return doGetRun(runid); }
 
 auto SParSource::getExperiment() const -> std::optional<SExperiment> { return doGetExperiment(); }
-
-auto SParSource::print() const -> void { doPrint(); }

@@ -41,7 +41,7 @@
 #include <string>
 #include <vector>
 
-class SContainer;
+struct SContainer;
 struct SRun;
 struct SExperiment;
 
@@ -56,7 +56,7 @@ class SIFI_EXPORT SParSource
 public:
     virtual ~SParSource() = default;
 
-    auto setOpenMode(SourceOpenMode mode) -> void;
+    virtual auto setOpenMode(SourceOpenMode mode) -> void = 0;
 
     /**
      * Checke whether source provides given container name.
@@ -86,13 +86,13 @@ public:
     virtual auto insertRun(SRun run) -> bool = 0;
 
     auto getExperiment() const -> std::optional<SExperiment>;
-    /// Print containers stored in the source. Details about source must be print by subclass
-    /// method.
-    auto print() const -> void;
+
+    /**
+     * Print containers stored in the source. Details about source must be print by subclass method.
+     */
+    virtual auto print() const -> void = 0;
 
 private:
-    virtual auto doSetOpenMode(SourceOpenMode mode) -> void = 0;
-
     /**
      * Checke whether source provides given container name.
      *
@@ -122,9 +122,6 @@ private:
     virtual auto doGetRun(ulong runid) -> SRun = 0;
 
     virtual auto doGetExperiment() const -> std::optional<SExperiment> = 0;
-    /// Print containers stored in the source. Details about source must be print by subclass
-    /// method.
-    virtual auto doPrint() const -> void = 0;
 };
 
 #endif /* SPARSOURCE_H */

@@ -13,7 +13,7 @@
 
 SEventBuilderConnector::SEventBuilderConnector()
 {
-    target = std::make_unique<SParDatabaseSource>();
+    target = std::make_unique<SIFI::SParDatabaseSource>();
 }
 
 auto SEventBuilderConnector::openRun(int run_type, std::string file_name) -> bool

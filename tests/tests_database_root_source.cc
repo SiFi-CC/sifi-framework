@@ -37,10 +37,11 @@ protected:
 
         SRuntimeDb::init(&db);
 
-        root = std::make_unique<SParRootSource>("/tmp/params_root.root");
-        rdb()->addSource(root.get());
+        auto&& root_src = SIFI::make_root_source("/tmp/params_root.root");
+        root_source = root_src.get();
+        rdb()->addSource(std::move(root_src));
 
-        root->print();
+        // root_src->print();
     }
 
     void TearDown() override
@@ -50,7 +51,7 @@ protected:
     }
 
     SDatabase db;
-    std::unique_ptr<SParRootSource> root;
+    SIFI::SParRootSource* root_source{nullptr};
     const size_t N{10};
     std::unique_ptr<SContainer> c[10];
 };
@@ -58,6 +59,6 @@ protected:
 TEST_F(tests_database_root_source, root_source_test)
 {
     // Test parameter containers
-    ASSERT_NE(root->getContainer("TestContainer", 0), nullptr);
-    ASSERT_EQ(root->getContainer("TestContainer2", 0), nullptr);
+    ASSERT_NE(root_source->getContainer("TestContainer", 0), nullptr);
+    ASSERT_EQ(root_source->getContainer("TestContainer2", 0), nullptr);
 }

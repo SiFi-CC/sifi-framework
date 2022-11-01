@@ -28,15 +28,12 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#ifndef SRESTINTERFACE_H
-#define SRESTINTERFACE_H
+#ifndef SDBABSTRACTINTERFACE_H
+#define SDBABSTRACTINTERFACE_H
 
 #include "sifi_export.h"
 
-#include "SDbAbstractInterface.h"
-
 #include "SContainer.h"
-#include "SParDatabaseSource.h"
 #include "SRun.h"
 
 #include <algorithm> // for max
@@ -47,56 +44,36 @@
 #include <string_view>
 #include <vector>
 
-class SIFI_EXPORT SRESTInterface final : public SDbAbstractInterface
+class SIFI_EXPORT SDbAbstractInterface
 {
-
-    // auth_token might change on the server side.
 public:
-    // constructors
-    /**
-     * \param url REST api api_url
-     * \param token authentication token
-     */
-    SRESTInterface();
-    SRESTInterface(std::string url);
-    SRESTInterface(SRESTInterface const&) = delete;
-
-    SRESTInterface& operator=(SRESTInterface const&) = delete;
-
     // destructor
-    virtual ~SRESTInterface() = default;
+    virtual ~SDbAbstractInterface() = default;
 
-    void setUrl(std::string url) { api_url = url; }
-    void setAuth(SIFI::Auth::auth_variant_t auth) { auth_data = auth; }
-
-    auto connected() const -> bool override;
+    virtual auto connected() const -> bool = 0;
 
     /// Call this after conenction to select which param release we are about to work on
     /// Maych change between different calls to database
     void setExperiment(std::string exp) { experiment = exp; }
 
-    auto getExperimentContainer(std::string name) -> std::optional<SExperiment> override;
+    virtual auto getExperimentContainer(std::string name) -> std::optional<SExperiment> = 0;
 
     // Implement these
-    auto getRunContainer(long runid) -> SRun override;
-    auto getRunContainers(long runid_min, long runid_max) -> std::vector<SRun> override;
-    auto openRunContainer(int run_type, std::time_t start_time, std::string file_name)
-        -> std::optional<SRun> override;
-    auto closeRunContainer(std::time_t stop_time) -> std::optional<SRun> override;
+    virtual auto getRunContainer(long runid) -> SRun = 0;
+    virtual auto getRunContainers(long runid_min, long runid_max) -> std::vector<SRun> = 0;
+    virtual auto openRunContainer(int run_type, std::time_t start_time, std::string file_name = 0)
+        -> std::optional<SRun> = 0;
+    virtual auto closeRunContainer(std::time_t stop_time) -> std::optional<SRun> = 0;
 
-    auto findContainer(std::string name) -> bool override;
-    auto getContainer(std::string name, long runid) -> std::optional<SContainer> override;
-    auto getContainers(std::string name, long runid_min) -> std::vector<SContainer> override;
-    auto getContainers(std::string name, long runid_min, long runid_max)
-        -> std::vector<SContainer> override;
-    bool addContainer(std::string name, SContainer&& cont) override;
+    virtual auto findContainer(std::string name) -> bool = 0;
+    virtual auto getContainer(std::string name, long runid) -> std::optional<SContainer> = 0;
+    virtual auto getContainers(std::string name, long runid_min) -> std::vector<SContainer> = 0;
+    virtual auto getContainers(std::string name, long runid_min, long runid_max)
+        -> std::vector<SContainer> = 0;
+    virtual bool addContainer(std::string name, SContainer&& cont) = 0;
 
-private:
-    std::string api_url;
-    SIFI::Auth::auth_variant_t auth_data;
-
-    bool connection_ok;
+protected:
     std::string experiment;
 };
 
-#endif /* SRESTINTERFACE_H */
+#endif /* SDBABSTRACTINTERFACE_H */

@@ -8,8 +8,8 @@
 
 TEST(tests_database_rest_interface, connection_tests)
 {
-    const char* apiurl = getenv("SIFIDBAPI");
-    const char* token = getenv("SIFIAUTH");
+    const char* apiurl = getenv("SIFI_DB_API_URL");
+    const char* token = getenv("SIFI_DB_AUTH_TOKEN");
     ASSERT_STRNE(apiurl, nullptr);
     ASSERT_STRNE(token, nullptr);
 
@@ -18,15 +18,16 @@ TEST(tests_database_rest_interface, connection_tests)
 
     for (auto& i : inputs)
     {
-        SRESTInterface url(i.first, token);
-        EXPECT_TRUE(url.connected() == i.second) << " on input " << i.first;
+        SRESTInterface api(i.first);
+        api.setAuth(SIFI::Auth::TokenAuth{token});
+        EXPECT_TRUE(api.connected() == i.second) << " on input " << i.first;
     }
 }
 
 TEST(tests_database_rest_interface, auth_tests)
 {
-    const char* apiurl = getenv("SIFIDBAPI");
-    const char* token = getenv("SIFIAUTH");
+    const char* apiurl = getenv("SIFI_DB_API_URL");
+    const char* token = getenv("SIFI_DB_AUTH_TOKEN");
     ASSERT_STRNE(apiurl, nullptr);
     ASSERT_STRNE(token, nullptr);
 
@@ -35,19 +36,21 @@ TEST(tests_database_rest_interface, auth_tests)
 
     for (auto& i : inputs)
     {
-        SRESTInterface url(apiurl, i.first);
-        EXPECT_TRUE(url.connected() == i.second) << " on input " << i.first;
+        SRESTInterface api(apiurl);
+        api.setAuth(SIFI::Auth::TokenAuth{i.first});
+        EXPECT_TRUE(api.connected() == i.second) << " on input " << i.first;
     }
 }
 
 TEST(tests_database_rest_interface, experiment_request)
 {
-    const char* apiurl = getenv("SIFIDBAPI");
-    const char* token = getenv("SIFIAUTH");
+    const char* apiurl = getenv("SIFI_DB_API_URL");
+    const char* token = getenv("SIFI_DB_AUTH_TOKEN");
     ASSERT_STRNE(apiurl, nullptr);
     ASSERT_STRNE(token, nullptr);
 
-    SRESTInterface api(apiurl, token);
+    SRESTInterface api(apiurl);
+    api.setAuth(SIFI::Auth::TokenAuth{token});
 
     auto rel_cont = api.getExperimentContainer("TEST1");
     EXPECT_TRUE(rel_cont.has_value());
@@ -62,14 +65,16 @@ TEST(tests_database_rest_interface, experiment_request)
 
 TEST(tests_database_rest_interface, run_request)
 {
-    const char* apiurl = getenv("SIFIDBAPI");
-    const char* token = getenv("SIFIAUTH");
+    const char* apiurl = getenv("SIFI_DB_API_URL");
+    const char* token = getenv("SIFI_DB_AUTH_TOKEN");
     ASSERT_STRNE(apiurl, nullptr);
     ASSERT_STRNE(token, nullptr);
 
     std::vector<int> inputs = {1, 2, 3, 4};
 
-    SRESTInterface api(apiurl, token);
+    SRESTInterface api(apiurl);
+    api.setAuth(SIFI::Auth::TokenAuth{token});
+
     for (auto& i : inputs)
     {
         EXPECT_EQ(api.getRunContainer(i).id, i) << " for input " << i;
@@ -78,16 +83,18 @@ TEST(tests_database_rest_interface, run_request)
 
 TEST(tests_database_rest_interface, run_range_request)
 {
-    const char* apiurl = getenv("SIFIDBAPI");
-    const char* token = getenv("SIFIAUTH");
-    ASSERT_STRNE(apiurl, nullptr);
-    ASSERT_STRNE(token, nullptr);
-
-    SRESTInterface api(apiurl, token);
-    auto run_cont = api.getRunContainers(1, 2);
-    run_cont = api.getRunContainers(1, 3);
-    run_cont = api.getRunContainers(2, 3);
-    run_cont = api.getRunContainers(1, 0);
+    // const char* apiurl = getenv("SIFI_DB_API_URL");
+    // const char* token = getenv("SIFI_DB_AUTH_TOKEN");
+    // ASSERT_STRNE(apiurl, nullptr);
+    // ASSERT_STRNE(token, nullptr);
+    //
+    // SRESTInterface api(apiurl);
+    // api.setAuth(SIFI::Auth::TokenAuth{token});
+    //
+    // auto run_cont = api.getRunContainers(1, 2);
+    // run_cont = api.getRunContainers(1, 3);
+    // run_cont = api.getRunContainers(2, 3);
+    // run_cont = api.getRunContainers(1, 0);
 }
 
 TEST(tests_database_rest_interface, run_range_from_experiment)
@@ -95,12 +102,13 @@ TEST(tests_database_rest_interface, run_range_from_experiment)
     /* Test whether you can get runs by experiment name. The TEST experiment contains
      * runs 3-9 which is 7 entities.
      */
-    const char* apiurl = getenv("SIFIDBAPI");
-    const char* token = getenv("SIFIAUTH");
+    const char* apiurl = getenv("SIFI_DB_API_URL");
+    const char* token = getenv("SIFI_DB_AUTH_TOKEN");
     ASSERT_STRNE(apiurl, nullptr);
     ASSERT_STRNE(token, nullptr);
 
-    SRESTInterface api(apiurl, token);
+    SRESTInterface api(apiurl);
+    api.setAuth(SIFI::Auth::TokenAuth{token});
     api.setExperiment("TEST1");
 
     auto run_cont = api.getRunContainers(0, 0);
@@ -109,12 +117,13 @@ TEST(tests_database_rest_interface, run_range_from_experiment)
 
 TEST(tests_database_rest_interface, run_insert)
 {
-    const char* apiurl = getenv("SIFIDBAPI");
-    const char* token = getenv("SIFIAUTH");
+    const char* apiurl = getenv("SIFI_DB_API_URL");
+    const char* token = getenv("SIFI_DB_AUTH_TOKEN");
     ASSERT_STRNE(apiurl, nullptr);
     ASSERT_STRNE(token, nullptr);
 
-    SRESTInterface api(apiurl, token);
+    SRESTInterface api(apiurl);
+    api.setAuth(SIFI::Auth::TokenAuth{token});
 
     auto type = 13;
     auto start_time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -161,8 +170,8 @@ TEST(tests_database_rest_interface, run_insert)
 
 TEST(tests_database_rest_interface, container_find)
 {
-    const char* apiurl = getenv("SIFIDBAPI");
-    const char* token = getenv("SIFIAUTH");
+    const char* apiurl = getenv("SIFI_DB_API_URL");
+    const char* token = getenv("SIFI_DB_AUTH_TOKEN");
     ASSERT_STRNE(apiurl, nullptr);
     ASSERT_STRNE(token, nullptr);
 
@@ -173,7 +182,9 @@ TEST(tests_database_rest_interface, container_find)
         {"BAD_TEST", "Container10", false},
     };
 
-    SRESTInterface api(apiurl, token);
+    SRESTInterface api(apiurl);
+    api.setAuth(SIFI::Auth::TokenAuth{token});
+
     for (auto const& i : inputs)
     {
         api.setExperiment(std::get<0>(i));
@@ -185,8 +196,8 @@ TEST(tests_database_rest_interface, container_find)
 
 TEST(tests_database_rest_interface, container_request)
 {
-    const char* apiurl = getenv("SIFIDBAPI");
-    const char* token = getenv("SIFIAUTH");
+    const char* apiurl = getenv("SIFI_DB_API_URL");
+    const char* token = getenv("SIFI_DB_AUTH_TOKEN");
     ASSERT_STRNE(apiurl, nullptr);
     ASSERT_STRNE(token, nullptr);
 
@@ -206,7 +217,9 @@ TEST(tests_database_rest_interface, container_request)
         {"Container3", 9, false, 9}  // params for runs 9-10 are not validated
     };
 
-    SRESTInterface api(apiurl, token);
+    SRESTInterface api(apiurl);
+    api.setAuth(SIFI::Auth::TokenAuth{token});
+
     api.setExperiment("TEST1");
 
     for (auto const& i : inputs)
@@ -224,8 +237,8 @@ TEST(tests_database_rest_interface, container_request)
 
 TEST(tests_database_rest_interface, container_range_request)
 {
-    const char* apiurl = getenv("SIFIDBAPI");
-    const char* token = getenv("SIFIAUTH");
+    const char* apiurl = getenv("SIFI_DB_API_URL");
+    const char* token = getenv("SIFI_DB_AUTH_TOKEN");
     ASSERT_STRNE(apiurl, nullptr);
     ASSERT_STRNE(token, nullptr);
 
@@ -239,7 +252,9 @@ TEST(tests_database_rest_interface, container_range_request)
         {"Container3", 3, 1, 2}, // only one bot second set is not validated
     };
 
-    SRESTInterface api(apiurl, token);
+    SRESTInterface api(apiurl);
+    api.setAuth(SIFI::Auth::TokenAuth{token});
+
     api.setExperiment("TEST1");
 
     for (auto const& i : inputs)

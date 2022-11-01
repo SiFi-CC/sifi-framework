@@ -85,17 +85,79 @@ std::vector<std::string> split_lines(const std::string& s)
     return v;
 }
 
-SRESTInterface::SRESTInterface(std::string url, std::string token) : api_url(url), auth_token(token)
+// from cppreference about std::visitor
+// https://en.cppreference.com/w/cpp/utility/variant/visit
+// helper type for the visitor
+template <class... Ts> struct db_type_overloaded : Ts...
 {
-    cpr::Response r = cpr::Get(cpr::Url{api_url + "/api/connection"},
-                               cpr::Header{{"Authorization", "Token " + auth_token}});
-    connection_ok = (r.status_code == 204);
+    using Ts::operator()...;
+};
+// explicit deduction guide (not needed as of C++20)
+template <class... Ts> db_type_overloaded(Ts...) -> db_type_overloaded<Ts...>;
+
+cpr::Session initSession(SIFI::Auth::auth_variant_t auth_data)
+{
+    cpr::Session session = cpr::Session();
+
+    std::visit(
+        db_type_overloaded{
+            [&](const SIFI::Auth::BasicAuth& arg) {
+                session.SetAuth({arg.user, arg.password, cpr::AuthMode::BASIC});
+            },
+            [&](const SIFI::Auth::TokenAuth& arg) {
+                session.SetHeader(cpr::Header{{"Authorization", "Token " + arg.token}});
+            },
+            [](const SIFI::Auth::OnDemandAuth& arg) { printf("ONDEMAND AUTH\n"); }},
+        auth_data);
+
+    return session;
 }
+
+template <typename... Args>
+cpr::Response sessionGet(SIFI::Auth::auth_variant_t auth_data, cpr::Url url, Args const&... args)
+{
+    auto&& session = initSession(auth_data);
+    session.SetUrl(url);
+    ((session.SetOption(args)), ...);
+    return session.Get();
+}
+
+template <typename... Args>
+cpr::Response sessionPost(SIFI::Auth::auth_variant_t auth_data, cpr::Url url, Args const&... args)
+{
+    auto&& session = initSession(auth_data);
+    session.SetUrl(url);
+    ((session.SetOption(args)), ...);
+    return session.Post();
+}
+
+SRESTInterface::SRESTInterface(std::string url) : api_url(url) {}
+
+// SRESTInterface::SRESTInterface(std::string url, std::string token) : api_url(url),
+// auth_token(token)
+// {
+//     cpr::Response r = cpr::Get(cpr::Url{api_url + "/api/connection"},
+//                                cpr::Header{{"Authorization", "Token " + auth_token}});
+//     connection_ok = (r.status_code == 204);
+// }
+//
+// SRESTInterface::SRESTInterface(std::string url, std::string user, std::string password) :
+// api_url(url), auth_token(user)
+// {
+//     cpr::Response r = cpr::Get(cpr::Url{api_url + "/api/connection"},
+//                                cpr::Header{{"Authorization", "Token " + auth_token}});
+//     connection_ok = (r.status_code == 204);
+// }
+
+auto SRESTInterface::connected() const -> bool
+{
+    cpr::Response r = sessionGet(auth_data, {api_url + "/api/connection"});
+    return (r.status_code == 204);
+};
 
 auto SRESTInterface::getExperimentContainer(std::string name) -> std::optional<SExperiment>
 {
-    cpr::Response r = cpr::Get(cpr::Url{api_url + "/api/fetch/experiment/" + name},
-                               cpr::Header{{"Authorization", "Token " + auth_token}});
+    cpr::Response r = sessionGet(auth_data, {api_url + "/api/fetch/experiment/" + name});
 
     if (r.status_code == 200)
     {
@@ -118,8 +180,7 @@ auto SRESTInterface::getExperimentContainer(std::string name) -> std::optional<S
 
 auto SRESTInterface::getRunContainer(long runid) -> SRun
 {
-    cpr::Response r = cpr::Get(cpr::Url{api_url + "/api/fetch/run/" + std::to_string(runid)},
-                               cpr::Header{{"Authorization", "Token " + auth_token}});
+    cpr::Response r = sessionGet(auth_data, {api_url + "/api/fetch/run/" + std::to_string(runid)});
 
     if (r.status_code == 200)
     {
@@ -163,15 +224,15 @@ auto SRESTInterface::getRunContainer(long runid) -> SRun
  */
 auto SRESTInterface::getRunContainers(long runid_min, long runid_max) -> std::vector<SRun>
 {
-    cpr::Response r;
+    auto&& session = initSession(auth_data);
 
     if (runid_min == 0 and runid_max == 0)
-        r = cpr::Get(cpr::Url{api_url + "/api/fetch/run/" + experiment},
-                     cpr::Header{{"Authorization", "Token " + auth_token}});
+        session.SetUrl({api_url + "/api/fetch/run/" + experiment});
     else
-        r = cpr::Get(cpr::Url{api_url + "/api/fetch/run/" + std::to_string(runid_min) + "/" +
-                              std::to_string(runid_max)},
-                     cpr::Header{{"Authorization", "Token " + auth_token}});
+        session.SetUrl({api_url + "/api/fetch/run/" + std::to_string(runid_min) + "/" +
+                        std::to_string(runid_max)});
+
+    cpr::Response r = session.Get();
 
     std::vector<SRun> array;
     if (r.status_code == 200)
@@ -211,11 +272,10 @@ auto SRESTInterface::getRunContainers(long runid_min, long runid_max) -> std::ve
 auto SRESTInterface::openRunContainer(int run_type, std::time_t start_time, std::string file_name)
     -> std::optional<SRun>
 {
-    cpr::Response r = cpr::Post(cpr::Url{api_url + "/api/run/open"},
-                                cpr::Multipart{{"run_type", run_type},
-                                               {"start_time", date_to_string(start_time)},
-                                               {"file_name", file_name}},
-                                cpr::Authentication("sifiadmin", "pass4sifi"));
+    cpr::Response&& r = sessionPost(auth_data, {api_url + "/api/run/open"},
+                                    cpr::Multipart{{"run_type", run_type},
+                                                   {"start_time", date_to_string(start_time)},
+                                                   {"file_name", file_name}});
 
     if (r.status_code == 200)
     {
@@ -253,9 +313,8 @@ auto SRESTInterface::openRunContainer(int run_type, std::time_t start_time, std:
  */
 auto SRESTInterface::closeRunContainer(std::time_t stop_time) -> std::optional<SRun>
 {
-    cpr::Response r = cpr::Post(cpr::Url{api_url + "/api/run/close"},
-                                cpr::Multipart{{"stop_time", date_to_string(stop_time)}},
-                                cpr::Authentication("sifiadmin", "pass4sifi"));
+    cpr::Response&& r = sessionPost(auth_data, {api_url + "/api/run/close"},
+                                    cpr::Multipart{{"stop_time", date_to_string(stop_time)}});
 
     if (r.status_code == 200)
     {
@@ -290,17 +349,16 @@ auto SRESTInterface::closeRunContainer(std::time_t stop_time) -> std::optional<S
 
 auto SRESTInterface::findContainer(std::string name) -> bool
 {
-    cpr::Response r = cpr::Get(cpr::Url{api_url + "/api/fetch/cont/" + experiment + "/" + name},
-                               cpr::Header{{"Authorization", "Token " + auth_token}});
+    cpr::Response r =
+        sessionGet(auth_data, {api_url + "/api/fetch/cont/" + experiment + "/" + name});
 
     return r.status_code == 200;
 }
 
 std::optional<SContainer> SRESTInterface::getContainer(std::string name, long runid)
 {
-    cpr::Response r = cpr::Get(cpr::Url{api_url + "/api/fetch/cont/" + experiment + "/" + name +
-                                        "/" + std::to_string(runid) + "/"},
-                               cpr::Header{{"Authorization", "Token " + auth_token}});
+    cpr::Response r = sessionGet(auth_data, {api_url + "/api/fetch/cont/" + experiment + "/" +
+                                             name + "/" + std::to_string(runid) + "/"});
 
     if (r.status_code == 200)
     {
@@ -315,7 +373,7 @@ std::optional<SContainer> SRESTInterface::getContainer(std::string name, long ru
         assert(doc.IsArray() and doc.Size() == 1);
 
         auto& d = doc[0];
-        int run_id = d["id"].GetInt();
+        // int run_id = d["id"].GetInt();
 
         uint32_t valid_from = d["valid_from_id"].GetInt();
         uint32_t valid_to = d["valid_to_id"].GetInt();
@@ -352,9 +410,8 @@ auto SRESTInterface::getContainers(std::string name, long runid_min, long runid_
     -> std::vector<SContainer>
 {
     cpr::Response r =
-        cpr::Get(cpr::Url{api_url + "/api/fetch/cont/" + experiment + "/" + name + "/" +
-                          std::to_string(runid_min) + "/" + std::to_string(runid_max) + "/"},
-                 cpr::Header{{"Authorization", "Token " + auth_token}});
+        sessionGet(auth_data, {api_url + "/api/fetch/cont/" + experiment + "/" + name + "/" +
+                               std::to_string(runid_min) + "/" + std::to_string(runid_max) + "/"});
 
     std::vector<SContainer> array;
     if (r.status_code == 200)
@@ -390,4 +447,4 @@ auto SRESTInterface::getContainers(std::string name, long runid_min, long runid_
  * Add new container to the database, by name. It must be later validated via web interface.
  * \return success of the operation
  */
-bool SRESTInterface::addContainer(std::string name, SContainer&& cont) { return false; }
+bool SRESTInterface::addContainer(std::string /*name*/, SContainer&& /*cont*/) { return false; }

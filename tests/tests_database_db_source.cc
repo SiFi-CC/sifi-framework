@@ -28,19 +28,14 @@ protected:
         //         rdb()->addCalContainer("CalibratorParMissing",
         //                             std::make_unique<SFibersCalibratorPar>("CalibratorParMissing"));
 
-        mysql = new SParDatabaseSource();
+        auto mysql = SIFI::make_database_source();
         //         mysql->print();
 
-        rdb()->addSource(mysql);
+        rdb()->addSource(std::move(mysql));
     }
-    void TearDown() override
-    {
-        delete mysql;
-        sifi()->enableAssertations();
-    }
+    void TearDown() override { sifi()->enableAssertations(); }
 
     SDatabase db;
-    SParDatabaseSource* mysql{nullptr};
 };
 
 TEST_F(tests_database_db_source, get_run)
@@ -58,6 +53,8 @@ TEST_F(tests_database_db_source, get_run)
 
 TEST_F(tests_database_db_source, get_container)
 {
+    auto mysql = SIFI::make_database_source();
+
     ASSERT_EQ(mysql->getContainer("Cont1", 0), nullptr);
     ASSERT_EQ(mysql->getContainer("Cont2", 0), nullptr);
     ASSERT_NE(mysql->getContainer("FibersGeomPar", 4), nullptr);

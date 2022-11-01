@@ -62,17 +62,17 @@ SDatabase::~SDatabase() = default;
 // methods
 /// Set parameters source
 /// \param source source file name
-void SDatabase::addSource(SParSource* source)
+void SDatabase::addSource(std::unique_ptr<SParSource>&& source)
 {
     source->setOpenMode(SourceOpenMode::Input);
-    sources.push_back(source);
+    sources.push_back(std::move(source));
 }
 /// Set parameters destination
 /// \param target destination file name
-void SDatabase::setTarget(SParSource* target)
+void SDatabase::setTarget(std::unique_ptr<SParSource>&& target)
 {
     target->setOpenMode(SourceOpenMode::Output);
-    this->target = target;
+    this->target = std::move(target);
 }
 
 /**
@@ -496,10 +496,10 @@ auto SDatabase::getContainerSource(const std::string& name) -> SParSource*
 
 auto SDatabase::findContainerSource(const std::string& name) -> SParSource*
 {
-    for (auto s : sources)
+    for (auto& s : sources)
     {
         auto c = s->findContainer(name);
-        if (c) { return s; }
+        if (c) { return s.get(); }
     }
     return nullptr;
 }
@@ -601,7 +601,7 @@ auto SDatabase::getRun(ulong run_id) -> SRun
 
 auto SDatabase::getRunFromSources(ulong run_id) const -> SRun
 {
-    for (auto s : sources)
+    for (auto& s : sources)
     {
         auto c = s->getRun(run_id);
         if (c.id == run_id) { return c; }

@@ -33,33 +33,82 @@
 
 #include "sifi_export.h"
 
+#include "SDbAbstractInterface.h"
 #include "SParSource.h"
-#include "SRESTInterface.h"
 #include "SRun.h"
 
 #include <map>
 #include <memory>
 #include <string>
+#include <variant>
 
 struct SContainer;
+
+namespace SIFI
+{
+
+// struct DbInterfaceREST {
+//     std::string url;
+// };
+//
+// struct DbInterfaceConnector {
+// };
+
+// using db_interface_t = std::variant<DbInterfaceREST,DbInterfaceConnector>;
+
+namespace Auth
+{
+
+enum class AuthPermissions
+{
+    Read,
+    Write,
+};
+
+struct OnDemandAuth
+{
+    AuthPermissions perm = AuthPermissions::Write;
+};
+
+struct BasicAuth
+{
+    std::string user;
+    std::string password;
+    AuthPermissions perm = AuthPermissions::Write;
+};
+
+struct TokenAuth
+{
+    std::string token;
+    AuthPermissions perm = AuthPermissions::Read;
+};
+
+using auth_variant_t = std::variant<OnDemandAuth, BasicAuth, TokenAuth>;
+
+}; // namespace Auth
 
 class SIFI_EXPORT SParDatabaseSource final : public SParSource
 {
 public:
     SParDatabaseSource();
+    // SParDatabaseSource(db_interface_t db_type, std::string url, std::string user, std::string
+    // pass); SParDatabaseSource(db_interface_t db_type, std::string token);
     ~SParDatabaseSource() = default;
+
+    auto authorize() -> bool;
+    auto setOpenMode(SourceOpenMode /*mode*/) -> void override;
 
     auto openRunContainer(int run_type, std::time_t start_time, std::string file_name)
         -> std::optional<SRun>;
     auto closeRunContainer(std::time_t stop_time) -> std::optional<SRun>;
 
-private:
-    auto doSetOpenMode(SourceOpenMode /*mode*/) -> void override{};
+    auto print() const -> void override;
 
+private:
     auto doFindContainer(const std::string& name) -> bool override;
 
     auto doGetContainer(const std::string& name, ulong runid)
-        -> std::shared_ptr<SContainer> override;
+        -> std::shared_ptr<::SContainer> override;
     auto doSetContainer(const std::string& name, SContainer&& cont) -> bool;
 
     auto doInsertContainer(const std::string& name, SContainer* cont) -> bool override;
@@ -68,21 +117,22 @@ private:
 
     auto doGetRuns() -> std::vector<SRun> override;
     auto doGetRun(ulong runid) -> SRun override;
-    virtual auto insertRun(SRun run) -> bool override;
+    auto insertRun(SRun run) -> bool override;
 
     auto doGetExperiment() const -> std::optional<SExperiment> override;
-
-    void doPrint() const override;
 
     bool parseSource();
 
 private:
-    std::string dbapi;
-    std::string token;
-
-    std::unique_ptr<SRESTInterface> mysqlcon;
-
+    std::unique_ptr<SDbAbstractInterface> dbcon;
     std::optional<SExperiment> release;
+    // db_interface_t interface_type;
+
+    std::variant<Auth::OnDemandAuth, Auth::BasicAuth, Auth::TokenAuth> credentials;
 };
+
+SIFI_EXPORT auto make_database_source() -> std::unique_ptr<SParDatabaseSource>;
+
+}; // namespace SIFI
 
 #endif /* SParDatabaseSource_H */

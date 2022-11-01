@@ -43,16 +43,21 @@
 
 class TFile;
 
+namespace SIFI
+{
+
 class SIFI_EXPORT SParRootSource final : public SParSource
 {
 public:
     SParRootSource(const std::string& source);
     SParRootSource(std::string&& source);
-    virtual ~SParRootSource() = default;
+    ~SParRootSource() = default;
+
+    auto setOpenMode(SourceOpenMode mode) -> void override;
+
+    auto print() const -> void override;
 
 private:
-    auto doSetOpenMode(SourceOpenMode mode) -> void override;
-
     auto doFindContainer(const std::string& name) -> bool override;
 
     auto doGetContainer(const std::string& name, ulong runid)
@@ -63,11 +68,9 @@ private:
 
     auto doGetRuns() -> std::vector<SRun> override;
     auto doGetRun(ulong runid) -> SRun override;
-    virtual auto insertRun(SRun run) -> bool override;
+    auto insertRun(SRun run) -> bool override;
 
     auto doGetExperiment() const -> std::optional<SExperiment> override;
-
-    auto doPrint() const -> void override;
 
     auto parseSource() -> bool;
 
@@ -86,5 +89,9 @@ private:
 
     std::optional<SExperiment> experiment;
 };
+
+SIFI_EXPORT auto make_root_source(std::string fn) -> std::unique_ptr<SParRootSource>;
+
+}; // namespace SIFI
 
 #endif /* SPARROOTSOURCE_H */

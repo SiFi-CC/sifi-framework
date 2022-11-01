@@ -41,7 +41,10 @@
 #include <memory>
 #include <string>
 
-class SContainer;
+struct SContainer;
+
+namespace SIFI
+{
 
 class SIFI_EXPORT SParAsciiSource final : public SParSource
 {
@@ -50,9 +53,11 @@ public:
     SParAsciiSource(std::string&& source);
     ~SParAsciiSource() = default;
 
-private:
-    auto doSetOpenMode(SourceOpenMode /*mode*/) -> void override {}
+    auto setOpenMode(SourceOpenMode /*mode*/) -> void override;
 
+    auto print() const -> void override;
+
+private:
     auto doFindContainer(const std::string& name) -> bool override;
 
     auto doGetContainer(const std::string& name, ulong runid)
@@ -64,7 +69,7 @@ private:
 
     auto doGetRuns() -> std::vector<SRun> override { return std::vector{dummy_run}; };
     auto doGetRun(ulong /*runid*/) -> SRun override { return dummy_run; }
-    virtual auto insertRun(SRun run) -> bool override
+    auto insertRun(SRun run) -> bool override
     {
         dummy_run = run;
         return true;
@@ -75,8 +80,6 @@ private:
         return SExperiment(SRuntimeDb::get()->getExperiment(), {}, {});
     }
 
-    void doPrint() const override;
-
     bool parseSource();
 
 private:
@@ -84,5 +87,9 @@ private:
     std::map<std::string, std::shared_ptr<SContainer>> containers; ///< Containers mirrors
     SRun dummy_run;
 };
+
+SIFI_EXPORT auto make_ascii_source(std::string fn) -> std::unique_ptr<SParAsciiSource>;
+
+}; // namespace SIFI
 
 #endif /* SPARASCIISOURCE_H */

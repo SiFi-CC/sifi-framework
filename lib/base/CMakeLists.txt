@@ -28,6 +28,7 @@ SIFI_GENERATE_LIBRARY(
         database/SParAsciiSource.cc
         database/SParDatabaseSource.cc
         database/SParRootSource.cc
+        database/SDbAbstractInterface.cc
         database/SRESTInterface.cc
 
         event/SEvent.cc
@@ -73,6 +74,7 @@ SIFI_GENERATE_LIBRARY(
         database/SParAsciiSource.h
         database/SParDatabaseSource.h
         database/SParRootSource.h
+        database/SDbAbstractInterface.h
         database/SRESTInterface.h
 
         event/SEvent.h

@@ -16,34 +16,21 @@
 class tests_database : public ::testing::Test
 {
 protected:
-    void SetUp() override
-    {
-        sifi()->disableAssertations();
+    void SetUp() override { sifi()->disableAssertations(); }
 
-        src_ascii = std::make_unique<SParAsciiSource>(tests_path + "params_ascii.txt");
-        src_root = std::make_unique<SParRootSource>(tests_path + "params_root.root");
-        src_mysql = std::make_unique<SParDatabaseSource>();
-    }
-    void TearDown() override
-    {
-        src_ascii.release();
-        src_root.release();
-        src_mysql.release();
-    }
-
-    std::unique_ptr<SParAsciiSource> src_ascii;
-    std::unique_ptr<SParRootSource> src_root;
-    std::unique_ptr<SParDatabaseSource> src_mysql{nullptr};
+    void TearDown() override { sifi()->enableAssertations(); }
 };
 
 TEST_F(tests_database, ascii_source_test)
 {
-    ASSERT_NE(src_ascii->getContainer("FibersCalibratorPar", 0), nullptr);
 
     SDatabase db;
     SRuntimeDb::init(&db);
     rdb()->setExperiment("TEST");
-    rdb()->addSource(src_ascii.get());
+
+    auto source = SIFI::make_ascii_source(tests_path + "params_ascii.txt");
+    ASSERT_NE(source->getContainer("FibersCalibratorPar", 0), nullptr);
+    rdb()->addSource(std::move(source));
 
     // initialize detectors
     SDetectorManager* detm = SDetectorManager::instance();
@@ -51,7 +38,7 @@ TEST_F(tests_database, ascii_source_test)
     detm->addDetector(new SFibersDetector("Fibers"));
 
     SRuntimeDb::get()->initContainers(0);
-    SRuntimeDb::get()->print();
+    // SRuntimeDb::get()->print();
 
     //     auto rdb()->getContainer();
     auto ptr = SRuntimeDb::get()->getCalContainer("FibersCalibratorPar");
@@ -68,7 +55,31 @@ TEST_F(tests_database, root_source_test)
     SRuntimeDb::init(&db);
     sifi()->disableAssertations();
     rdb()->setExperiment("TEST");
-    rdb()->addSource(src_root.get());
+    auto source = SIFI::make_root_source(tests_path + "params_root.root");
+    rdb()->addSource(std::move(source));
+
+    // initialize detectors
+    SDetectorManager* detm = SDetectorManager::instance();
+
+    detm->addDetector(new SFibersDetector("Fibers"));
+
+    SRuntimeDb::get()->initContainers(0);
+
+    //     auto rdb()->getContainer();
+    auto pCalibratorPar =
+        dynamic_cast<SCalContainer<6>*>(SRuntimeDb::get()->getCalContainer("FibersCalibratorPar"));
+
+    ASSERT_NE(pCalibratorPar, nullptr);
+}
+
+TEST_F(tests_database, database_database_test)
+{
+    SDatabase db;
+    SRuntimeDb::init(&db);
+    sifi()->disableAssertations();
+    rdb()->setExperiment("TEST");
+    auto source = SIFI::make_database_source();
+    rdb()->addSource(std::move(source));
 
     // initialize detectors
     SDetectorManager* detm = SDetectorManager::instance();
