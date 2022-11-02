@@ -129,6 +129,7 @@ struct SIFI_EXPORT SContainer : public TNamed
     std::vector<std::string> lines; ///< lines read out from the container
     bool updated{false};            ///< flag -- was container updated?
     SRunsValidityRange validity;    ///< run validity start,end id
+    uint version;                   ///< container version
 
     void print(std::string_view name = {}) const;
 

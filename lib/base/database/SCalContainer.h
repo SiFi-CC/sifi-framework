@@ -23,7 +23,7 @@
 #include <sys/types.h>
 #include <vector>
 
-class SContainer;
+struct SContainer;
 
 /**
  * Template that contains basic calibration parameters. Consist of a N-parameters array:
@@ -89,15 +89,15 @@ protected:
 template <unsigned int N> class SIFI_EXPORT SCalContainer : public SVirtualCalContainer
 {
 protected:
-    std::string name;                      ///< container name
+    std::string name;                                      ///< container name
     std::map<size_t, std::unique_ptr<SCalPar<N>>> calpars; ///< individual calibration parameters
-    bool is_init;                          ///< is container init
+    bool is_init;                                          ///< is container init
     /// default channel value
     SCalPar<N>* def{nullptr}; //!
 public:
     // constructor
     explicit SCalContainer(const std::string& container);
-    virtual ~SCalContainer() {};
+    virtual ~SCalContainer(){};
 
     /// return empty object of Lookup channel
     /// \sa SLookupTable::createChannel()

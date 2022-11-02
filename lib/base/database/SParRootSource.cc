@@ -259,10 +259,10 @@ auto SParRootSource::createDirectory(const std::string& name) -> TDirectory*
     return file_source->mkdir(name.c_str());
 }
 
-auto SParRootSource::print() const -> void
+auto SParRootSource::print(std::ostream& os) const -> void
 {
-    std::cout << "=== ROOT Source Info ===" << std::endl;
-    std::cout << "    File name: " << source << std::endl;
+    os << "=== ROOT Source Info ===" << std::endl;
+    os << "    File name: " << source << std::endl;
 
     for (auto& container : containers)
     {
@@ -310,13 +310,13 @@ auto SParRootSource::print() const -> void
                 .font_style({tabulate::FontStyle::bold});
         }
 
-        std::cout << cont_summary << std::endl;
+        os << cont_summary << std::endl;
     }
 
     tabulate::Table runs_summary;
     runs_summary.add_row({"Run", "Validated", "Start", "Stop"});
 
-    std::cout << "Number of run containers: " << runs.size() << "\n";
+    os << "Number of run containers: " << runs.size() << "\n";
 
     for (auto& r : runs)
     {
@@ -331,7 +331,7 @@ auto SParRootSource::print() const -> void
                               s2.str()});
     }
 
-    std::cout << runs_summary << std::endl;
+    os << runs_summary << std::endl;
 }
 
 auto make_root_source(std::string fn) -> std::unique_ptr<SParRootSource>

@@ -96,19 +96,13 @@ template <unsigned int N> uint SCalPar<N>::write(char* buffer, size_t n) const
  * \param n component index
  * \return reference to paramater array component
  */
-template <unsigned int N> float& SCalPar<N>::operator[](std::size_t n)
-{
-    return par[n];
-}
+template <unsigned int N> float& SCalPar<N>::operator[](std::size_t n) { return par[n]; }
 
 /** Get value of the n-th component of the calibration set for a single channel.
  * \param n component index
  * \return value of the paramater array component
  */
-template <unsigned int N> float SCalPar<N>::operator[](std::size_t n) const
-{
-    return par[n];
-}
+template <unsigned int N> float SCalPar<N>::operator[](std::size_t n) const { return par[n]; }
 
 /** Get reference to the n-th component of the calibration set for a single channel.
  * \param n component index
@@ -119,7 +113,7 @@ template <unsigned int N> float& SCalPar<N>::at(std::size_t n)
     if (n > N - 1)
     {
         std::cerr << "SCalPar<N>::operator[]: Index n=" << n << " outside range(0;" << N - 1 << ")"
-        << std::endl;
+                  << std::endl;
         abort();
     }
     return operator[](n);
@@ -134,7 +128,7 @@ template <unsigned int N> float SCalPar<N>::at(std::size_t n) const
     if (n > N - 1)
     {
         std::cerr << "SCalPar<N>::operator[]: Index n=" << n << " outside range(0;" << N - 1 << ")"
-        << std::endl;
+                  << std::endl;
         abort();
     }
     return operator[](n);
@@ -205,7 +199,7 @@ template <unsigned int N> void SCalContainer<N>::toContainer(SContainer* sc) con
     const int len = 1024;
     char buff[len];
 
-    for (auto & calpar : calpars)
+    for (auto& calpar : calpars)
     {
         SLookupChannel* chan = dynamic_cast<SLookupChannel*>(createChannel());
         chan->fromHash(calpar.first);

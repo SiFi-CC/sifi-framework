@@ -21,7 +21,7 @@
 void SContainer::print(std::string_view name) const
 {
     std::cout << "# Container Table [" << name << "]\n";
-    std::cout << "# -----\n";
+    std::cout << "# ----- version: " << version << "\n";
     for (auto line : lines)
     {
         printf("%s\n", line.c_str());

@@ -147,10 +147,10 @@ bool SParAsciiSource::parseSource()
 
 auto SParAsciiSource::setOpenMode(SourceOpenMode /*mode*/) -> void {}
 
-auto SParAsciiSource::print() const -> void
+auto SParAsciiSource::print(std::ostream& os) const -> void
 {
-    std::cout << "=== Ascii Source Info ===" << std::endl;
-    std::cout << "    File name: " << source << std::endl;
+    os << "=== Ascii Source Info ===" << std::endl;
+    os << "    File name: " << source << std::endl;
 }
 
 auto SParAsciiSource::doGetContainer(const std::string& name, ulong runid)

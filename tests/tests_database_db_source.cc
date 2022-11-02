@@ -12,26 +12,8 @@ protected:
     void SetUp() override
     {
         SRuntimeDb::init(&db);
-        rdb()->setExperiment("TEST");
-
+        rdb()->setExperiment("TEST1");
         rdb()->addContainer("FibersGeomPar", []() { return new SFibersGeomPar; });
-        //         rdb()->addLookupContainer(
-        //             "FibersDDLookupTable",
-        //             std::make_unique<SFibersLookupTable>("FibersDDLookupTable", 0x1000, 0x1fff,
-        //             32));
-        //         rdb()->addLookupContainer("LookupTableMissing",
-        //         std::make_unique<SFibersLookupTable>(
-        //                                                          "LookupTableMissing", 0x2000,
-        //                                                          0x2fff, 32));
-        //         rdb()->addCalContainer("FibersCalibratorPar",
-        //                             std::make_unique<SFibersCalibratorPar>("FibersCalibratorPar"));
-        //         rdb()->addCalContainer("CalibratorParMissing",
-        //                             std::make_unique<SFibersCalibratorPar>("CalibratorParMissing"));
-
-        auto mysql = SIFI::make_database_source();
-        //         mysql->print();
-
-        rdb()->addSource(std::move(mysql));
     }
     void TearDown() override { sifi()->enableAssertations(); }
 
@@ -40,33 +22,36 @@ protected:
 
 TEST_F(tests_database_db_source, get_run)
 {
+    auto dbapi = SIFI::make_database_source();
+
     // only runs 1-10 exists
-    //     ASSERT_EQ(mysql->getRun(0), nullptr); FIXME
-    //     ASSERT_NE(mysql->getRun(1), nullptr);
-    //     ASSERT_NE(mysql->getRun(2), nullptr);
-    //     ASSERT_NE(mysql->getRun(3), nullptr);
-    //     ASSERT_NE(mysql->getRun(9), nullptr);
-    //     ASSERT_NE(mysql->getRun(10), nullptr);
-    //     ASSERT_EQ(mysql->getRun(11), nullptr);
-    //     ASSERT_EQ(mysql->getRun(15), nullptr);
+    // ASSERT_EQ(dbapi->getRun(0), nullptr);
+    // ASSERT_NE(dbapi->getRun(1), nullptr);
+    // ASSERT_NE(dbapi->getRun(2), nullptr);
+    // ASSERT_NE(dbapi->getRun(3), nullptr);
+    // ASSERT_NE(dbapi->getRun(9), nullptr);
+    // ASSERT_NE(dbapi->getRun(10), nullptr);
+    // ASSERT_EQ(dbapi->getRun(11), nullptr);
+    // ASSERT_EQ(dbapi->getRun(15), nullptr);
 }
 
 TEST_F(tests_database_db_source, get_container)
 {
-    auto mysql = SIFI::make_database_source();
+    auto dbapi = SIFI::make_database_source();
 
-    ASSERT_EQ(mysql->getContainer("Cont1", 0), nullptr);
-    ASSERT_EQ(mysql->getContainer("Cont2", 0), nullptr);
-    ASSERT_NE(mysql->getContainer("FibersGeomPar", 4), nullptr);
-    ASSERT_NE(mysql->getContainer("FibersGeomPar", 4), nullptr);
+    ASSERT_EQ(dbapi->getContainer("Container1", 0), nullptr);
+    ASSERT_NE(dbapi->getContainer("Container1", 3), nullptr);
+    ASSERT_EQ(dbapi->getContainer("Container2", 0), nullptr);
+    ASSERT_EQ(dbapi->getContainer("FibersGeomPar", 4), nullptr);
+    ASSERT_EQ(dbapi->getContainer("FibersGeomPar", 4), nullptr);
 }
 
-// TEST_F(tests_database_db_source, mysql_source_test)
+// TEST_F(tests_database_db_source, dbapi_source_test)
 // {
 //     // Test parameter containers
-//     ASSERT_EQ(mysql->getContainer("Cont1", 0), nullptr);
-//     ASSERT_EQ(mysql->getContainer("Cont2", 0), nullptr);
-//     ASSERT_NE(mysql->getContainer("FibersGeomPar", 0), nullptr);
+//     ASSERT_EQ(dbapi->getContainer("Cont1", 0), nullptr);
+//     ASSERT_EQ(dbapi->getContainer("Cont2", 0), nullptr);
+//     ASSERT_NE(dbapi->getContainer("FibersGeomPar", 0), nullptr);
 //
 //     ASSERT_EQ(rdb()->getParContainer("Cont1"), nullptr);
 //     ASSERT_EQ(rdb()->getParContainer("Cont2"), nullptr);
@@ -115,27 +100,4 @@ TEST_F(tests_database_db_source, get_container)
 //     lc.m = 10;
 //     lc.s = 0;
 //     ASSERT_EQ(pCalibPar->getPar(&lc), nullptr);
-// }
-//
-//
-// TEST(tests_cpr, basic_tests)
-// {
-//     cpr::Response r = cpr::Get(cpr::Url{"https://api.github.com/repos/whoshuu/cpr/contributors"},
-//                                cpr::Authentication{"user", "pass"},
-//                                cpr::Parameters{{"anon", "true"}, {"key", "value"}});
-//     ASSERT_EQ(r.status_code, 200); // 200
-//     ASSERT_EQ(r.header["content-type"], "application/json; charset=utf-8");
-//     // printf(r.text.c_str());
-//     SMysqlInterface api("http://127.0.0.1:9081/api/");
-//     auto run_cont = api.getRunContainer(1);
-//     run_cont->print();
-//     // api.addRunContainer(std::move(run_cont.value()));
-//     auto array = api.getRunContainers(1, 2);
-//     for (auto v : array)
-//     {
-//         auto x = (SRunContainer*)v;
-//         x->print();
-//     }
-//     auto s_cont = api.getContainer("SFibersStackGeomPar", 1);
-//     s_cont->print("SFibersStackGeomPar");
 // }

@@ -102,7 +102,7 @@ public:
         -> std::optional<SRun>;
     auto closeRunContainer(std::time_t stop_time) -> std::optional<SRun>;
 
-    auto print() const -> void override;
+    auto print(std::ostream& os) const -> void override;
 
 private:
     auto doFindContainer(const std::string& name) -> bool override;

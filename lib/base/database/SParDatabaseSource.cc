@@ -112,6 +112,8 @@ SParDatabaseSource::SParDatabaseSource() : SParSource() /*, interface_type(db_ty
     else { credentials = Auth::OnDemandAuth{}; }
 
     dbcon = std::make_unique<SRESTInterface>(dbapi);
+    reinterpret_cast<SRESTInterface*>(dbcon.get())->setAuth(credentials);
+
     parseSource();
 }
 
@@ -141,8 +143,7 @@ bool SParDatabaseSource::parseSource() { return true; }
 
 auto SParDatabaseSource::doFindContainer(const std::string& name) -> bool
 {
-    dbcon->setExperiment(SRuntimeDb::get()->getExperiment());
-    return dbcon->findContainer(name);
+    return dbcon->findContainer(SRuntimeDb::get()->getExperiment(), name);
 }
 
 /**
@@ -178,8 +179,7 @@ auto SParDatabaseSource::doGetContainer(const std::string& name, ulong runid)
     //     }
 
     // if not already fetched, get from database
-    dbcon->setExperiment(SRuntimeDb::get()->getExperiment());
-    auto cont = dbcon->getContainer(name, runid);
+    auto cont = dbcon->getContainer(SRuntimeDb::get()->getExperiment(), name, runid);
 
     // if database has no given container (or is not validated)
     if (!cont.has_value()) return nullptr;
@@ -193,10 +193,8 @@ bool SParDatabaseSource::doSetContainer(const std::string& name, SContainer&& co
     // TODO if release has name, then check whether it matches the one from file
     // if (!release.empty() and release != this_release_from_file) return 0;
 
-    // DB call
-    // DBOBJECT->getContainer(release, name, runid);
-    dbcon->setExperiment(SRuntimeDb::get()->getExperiment());
-    return dbcon->addContainer(std::move(name), std::move(cont));
+    return dbcon->addContainer(SRuntimeDb::get()->getExperiment(), std::move(name),
+                               std::move(cont));
 }
 
 auto SParDatabaseSource::doInsertContainer(const std::string& name, SContainer* cont) -> bool {}
@@ -211,15 +209,13 @@ auto SParDatabaseSource::doInsertContainer(const std::string& name, std::vector<
 auto SParDatabaseSource::doGetRuns() -> std::vector<SRun>
 {
     // if not already fetched, get from database
-    dbcon->setExperiment(SRuntimeDb::get()->getExperiment());
-    return dbcon->getRunContainers(0, 0);
+    return dbcon->getRunContainers(SRuntimeDb::get()->getExperiment());
 }
 
 auto SParDatabaseSource::doGetRun(ulong runid) -> SRun
 {
     // if not already fetched, get from database
-    dbcon->setExperiment(SRuntimeDb::get()->getExperiment());
-    return dbcon->getRunContainer(runid);
+    return dbcon->getRunContainer(SRuntimeDb::get()->getExperiment(), runid);
 }
 
 auto SParDatabaseSource::insertRun(SRun run) -> bool { return false; }
@@ -241,9 +237,26 @@ auto SParDatabaseSource::closeRunContainer(std::time_t stop_time) -> std::option
     return dbcon->closeRunContainer(stop_time);
 }
 
-auto SParDatabaseSource::print() const -> void
+// from cppreference about std::visitor
+// https://en.cppreference.com/w/cpp/utility/variant/visit
+// helper type for the visitor
+template <class... Ts> struct auth_type_overloaded : Ts...
 {
-    std::cout << "  * Database Source Info *\n";
+    using Ts::operator()...;
+};
+// explicit deduction guide (not needed as of C++20)
+template <class... Ts> auth_type_overloaded(Ts...) -> auth_type_overloaded<Ts...>;
+
+auto SParDatabaseSource::print(std::ostream& os) const -> void
+{
+    os << "  * Database Source Info *\n";
+    std::visit(
+        auth_type_overloaded{[&](const SIFI::Auth::BasicAuth& /*arg*/) { os << "BasicAuth\n"; },
+                             [&](const SIFI::Auth::TokenAuth& /*arg*/) { os << "TokenAuth\n"; },
+                             [&](const SIFI::Auth::OnDemandAuth& /*arg*/)
+                             { os << "OnDemandAuth\n"; }},
+        credentials);
+
     // std::cout << "    Database: " << dbapi << std::endl;
 
     //     for (auto& container : containers)

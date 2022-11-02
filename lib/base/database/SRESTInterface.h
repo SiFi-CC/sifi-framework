@@ -44,7 +44,6 @@
 #include <memory>
 #include <optional>
 #include <string>
-#include <string_view>
 #include <vector>
 
 class SIFI_EXPORT SRESTInterface final : public SDbAbstractInterface
@@ -71,32 +70,30 @@ public:
 
     auto connected() const -> bool override;
 
-    /// Call this after conenction to select which param release we are about to work on
-    /// Maych change between different calls to database
-    void setExperiment(std::string exp) { experiment = exp; }
-
-    auto getExperimentContainer(std::string name) -> std::optional<SExperiment> override;
+    auto getExperimentContainer(std::string exp) -> std::optional<SExperiment> override;
 
     // Implement these
-    auto getRunContainer(long runid) -> SRun override;
-    auto getRunContainers(long runid_min, long runid_max) -> std::vector<SRun> override;
+    auto getRunContainer(std::string exp, long runid) -> SRun override;
+    auto getRunContainers(std::string exp) -> std::vector<SRun> override;
+
     auto openRunContainer(int run_type, std::time_t start_time, std::string file_name)
         -> std::optional<SRun> override;
     auto closeRunContainer(std::time_t stop_time) -> std::optional<SRun> override;
 
-    auto findContainer(std::string name) -> bool override;
-    auto getContainer(std::string name, long runid) -> std::optional<SContainer> override;
-    auto getContainers(std::string name, long runid_min) -> std::vector<SContainer> override;
-    auto getContainers(std::string name, long runid_min, long runid_max)
-        -> std::vector<SContainer> override;
-    bool addContainer(std::string name, SContainer&& cont) override;
+    auto findContainer(std::string exp, std::string name) -> bool override;
+    auto getContainer(std::string exp, std::string name, long runid)
+        -> std::optional<SContainer> override;
+    auto getContainers(std::string exp, std::string name) -> std::vector<SContainer> override;
+    auto addContainer(std::string exp, std::string name, SContainer&& cont) -> bool override;
+
+    auto printPayload(bool print) { print_payload = print; }
 
 private:
     std::string api_url;
     SIFI::Auth::auth_variant_t auth_data;
 
     bool connection_ok;
-    std::string experiment;
+    bool print_payload{false};
 };
 
 #endif /* SRESTINTERFACE_H */

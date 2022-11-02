@@ -16,7 +16,7 @@ endif()
 
 if (USE_BUILTIN_CPR)
     set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Build shared CPR")
-    set(CPR_FORCE_USE_SYSTEM_CURL ON)
+    set(CPR_USE_SYSTEM_CURL ON)
     set(CPR_USE_SYSTEM_GTEST ON)
     # based on https://stackoverflow.com/questions/65527126/disable-install-for-fetchcontent
     #FetchContent_MakeAvailable(cpr EXCLUDE_FROM_ALL)

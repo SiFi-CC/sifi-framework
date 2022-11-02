@@ -90,7 +90,7 @@ public:
     /**
      * Print containers stored in the source. Details about source must be print by subclass method.
      */
-    virtual auto print() const -> void = 0;
+    virtual auto print(std::ostream& os) const -> void = 0;
 
 private:
     /**

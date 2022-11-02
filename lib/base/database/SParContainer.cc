@@ -472,10 +472,7 @@ void SParContainer::fromContainer(SContainer* sc)
                         std::cerr << "No values given in line:" << std::endl << line << std::endl;
                         abort();
                     }
-                    else
-                    {
-                        initParam(param_name, type_name, values);
-                    }
+                    else { initParam(param_name, type_name, values); }
                 }
             }
         }

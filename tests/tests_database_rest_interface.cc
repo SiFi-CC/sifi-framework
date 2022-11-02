@@ -77,27 +77,11 @@ TEST(tests_database_rest_interface, run_request)
 
     for (auto& i : inputs)
     {
-        EXPECT_EQ(api.getRunContainer(i).id, i) << " for input " << i;
+        EXPECT_EQ(api.getRunContainer("TEST1", i).id, i) << " for input " << i;
     }
 }
 
 TEST(tests_database_rest_interface, run_range_request)
-{
-    // const char* apiurl = getenv("SIFI_DB_API_URL");
-    // const char* token = getenv("SIFI_DB_AUTH_TOKEN");
-    // ASSERT_STRNE(apiurl, nullptr);
-    // ASSERT_STRNE(token, nullptr);
-    //
-    // SRESTInterface api(apiurl);
-    // api.setAuth(SIFI::Auth::TokenAuth{token});
-    //
-    // auto run_cont = api.getRunContainers(1, 2);
-    // run_cont = api.getRunContainers(1, 3);
-    // run_cont = api.getRunContainers(2, 3);
-    // run_cont = api.getRunContainers(1, 0);
-}
-
-TEST(tests_database_rest_interface, run_range_from_experiment)
 {
     /* Test whether you can get runs by experiment name. The TEST experiment contains
      * runs 3-9 which is 7 entities.
@@ -109,9 +93,8 @@ TEST(tests_database_rest_interface, run_range_from_experiment)
 
     SRESTInterface api(apiurl);
     api.setAuth(SIFI::Auth::TokenAuth{token});
-    api.setExperiment("TEST1");
 
-    auto run_cont = api.getRunContainers(0, 0);
+    auto run_cont = api.getRunContainers("TEST1");
     EXPECT_EQ(run_cont.size(), 10);
 }
 
@@ -187,8 +170,7 @@ TEST(tests_database_rest_interface, container_find)
 
     for (auto const& i : inputs)
     {
-        api.setExperiment(std::get<0>(i));
-        auto cont = api.findContainer(std::get<1>(i));
+        auto cont = api.findContainer(std::get<0>(i), std::get<1>(i));
         EXPECT_EQ(cont, std::get<2>(i))
             << " for EXP: " << std::get<0>(i) << " CONT: " << std::get<1>(i);
     }
@@ -201,40 +183,41 @@ TEST(tests_database_rest_interface, container_request)
     ASSERT_STRNE(apiurl, nullptr);
     ASSERT_STRNE(token, nullptr);
 
+    // name, run, exists, version or 0
     std::vector<std::tuple<std::string, int, bool, int>> inputs = {
         // Container1, params 3-7 are validated, 8-9 are not validated
-        {"Container1", 2, false, 4}, // params for runs 1 are not existing (utside test)
-        {"Container1", 3, false, 4}, // same as above
-        {"Container1", 4, true, 4},  // params exist and validated
-        {"Container1", 9, false, 9}, // params for runs 8-9 are not validated
-        {"Container2", 4, true, 4},  // params for runs 1 are not existing (utside test)
-        {"Container2", 5, true, 5},  // same as above
-        {"Container2", 8, true, 8},  // params exist and validated
-        {"Container2", 9, false, 9}, // params for runs 8-9 are not validated
-        {"Container3", 4, false, 4}, // params for runs 1 are not existing (utside test)
-        {"Container3", 5, true, 5},  // same as above
-        {"Container3", 8, false, 8}, // params do not exist
-        {"Container3", 9, false, 9}  // params for runs 9-10 are not validated
+        {"Container1", 2, false, 0}, // params for runs 1 are not existing (utside test)
+        {"Container1", 3, true, 1},  // same as above
+        {"Container1", 4, true, 1},  // params exist and validated
+        {"Container1", 9, false, 0}, // params for runs 8-9 are not validated
+
+        {"Container2", 4, false, 0}, // params for runs 1 are not existing (utside test)
+        {"Container2", 5, true, 1},  // same as above
+        {"Container2", 8, false, 0}, // params exist and validated
+        {"Container2", 9, true, 2},  // params for runs 8-9 are not validated
+
+        {"Container3", 4, true, 1}, // params for runs 1 are not existing (utside test)
+        {"Container3", 5, true, 1}, // same as above
+        {"Container3", 8, true, 1}, // params do not exist
+        {"Container3", 9, true, 2}  // params for runs 9-10 are not validated
     };
 
     SRESTInterface api(apiurl);
     api.setAuth(SIFI::Auth::TokenAuth{token});
 
-    api.setExperiment("TEST1");
-
     for (auto const& i : inputs)
     {
-
-        auto cont = api.getContainer(std::get<0>(i), std::get<1>(i));
+        auto cont = api.getContainer("TEST1", std::get<0>(i), std::get<1>(i));
         EXPECT_EQ(cont.has_value(), std::get<2>(i))
             << " for CONT: " << std::get<0>(i) << " RUN: " << std::get<1>(i);
         if (cont.has_value())
-            EXPECT_LE(cont->validity.from, std::get<3>(i))
-                << " for CONT: " << std::get<0>(i) << " RUN: " << std::get<1>(i) << " validity LE "
+            EXPECT_LE(cont->version, std::get<3>(i))
+                << " for CONT: " << std::get<0>(i) << " RUN: " << std::get<1>(i) << " version "
                 << std::get<3>(i);
     }
 }
-
+/*
+ * FIXME this should test fetching whole snapshot
 TEST(tests_database_rest_interface, container_range_request)
 {
     const char* apiurl = getenv("SIFI_DB_API_URL");
@@ -265,3 +248,4 @@ TEST(tests_database_rest_interface, container_range_request)
             << std::get<2>(i);
     }
 }
+*/

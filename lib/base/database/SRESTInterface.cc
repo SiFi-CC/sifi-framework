@@ -29,7 +29,6 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <string_view>
 #include <utility> // for pair, make_pair, move
 #include <vector>
 
@@ -107,14 +106,15 @@ cpr::Session initSession(SIFI::Auth::auth_variant_t auth_data)
             [&](const SIFI::Auth::TokenAuth& arg) {
                 session.SetHeader(cpr::Header{{"Authorization", "Token " + arg.token}});
             },
-            [](const SIFI::Auth::OnDemandAuth& arg) { printf("ONDEMAND AUTH\n"); }},
+            [](const SIFI::Auth::OnDemandAuth& /*arg*/) { printf("ONDEMAND AUTH\n"); }},
         auth_data);
 
     return session;
 }
 
 template <typename... Args>
-cpr::Response sessionGet(SIFI::Auth::auth_variant_t auth_data, cpr::Url url, Args const&... args)
+cpr::Response buildGetSession(SIFI::Auth::auth_variant_t auth_data, cpr::Url url,
+                              Args const&... args)
 {
     auto&& session = initSession(auth_data);
     session.SetUrl(url);
@@ -123,7 +123,8 @@ cpr::Response sessionGet(SIFI::Auth::auth_variant_t auth_data, cpr::Url url, Arg
 }
 
 template <typename... Args>
-cpr::Response sessionPost(SIFI::Auth::auth_variant_t auth_data, cpr::Url url, Args const&... args)
+cpr::Response buildPostSession(SIFI::Auth::auth_variant_t auth_data, cpr::Url url,
+                               Args const&... args)
 {
     auto&& session = initSession(auth_data);
     session.SetUrl(url);
@@ -136,7 +137,7 @@ SRESTInterface::SRESTInterface(std::string url) : api_url(url) {}
 // SRESTInterface::SRESTInterface(std::string url, std::string token) : api_url(url),
 // auth_token(token)
 // {
-//     cpr::Response r = cpr::Get(cpr::Url{api_url + "/api/connection"},
+//     cpr::Response r = cpr::Get(cpr::Url{api_url + "/connection"},
 //                                cpr::Header{{"Authorization", "Token " + auth_token}});
 //     connection_ok = (r.status_code == 204);
 // }
@@ -144,20 +145,27 @@ SRESTInterface::SRESTInterface(std::string url) : api_url(url) {}
 // SRESTInterface::SRESTInterface(std::string url, std::string user, std::string password) :
 // api_url(url), auth_token(user)
 // {
-//     cpr::Response r = cpr::Get(cpr::Url{api_url + "/api/connection"},
+//     cpr::Response r = cpr::Get(cpr::Url{api_url + "/connection"},
 //                                cpr::Header{{"Authorization", "Token " + auth_token}});
 //     connection_ok = (r.status_code == 204);
 // }
 
 auto SRESTInterface::connected() const -> bool
 {
-    cpr::Response r = sessionGet(auth_data, {api_url + "/api/connection"});
+    cpr::Response r = buildGetSession(auth_data, {api_url + "/connection"});
     return (r.status_code == 204);
 };
 
-auto SRESTInterface::getExperimentContainer(std::string name) -> std::optional<SExperiment>
+// auto SRESTInterface::getRequest(cpr::Session && session) -> cpr::Response {
+//
+// }
+//
+// auto SRESTInterface::postRequest(cpr::Session && session) -> cpr::Response {
+// }
+
+auto SRESTInterface::getExperimentContainer(std::string exp) -> std::optional<SExperiment>
 {
-    cpr::Response r = sessionGet(auth_data, {api_url + "/api/fetch/experiment/" + name});
+    cpr::Response r = buildGetSession(auth_data, {api_url + "/exp/" + exp + "/fetch"});
 
     if (r.status_code == 200)
     {
@@ -178,9 +186,10 @@ auto SRESTInterface::getExperimentContainer(std::string name) -> std::optional<S
     return std::nullopt;
 }
 
-auto SRESTInterface::getRunContainer(long runid) -> SRun
+auto SRESTInterface::getRunContainer(std::string exp, long runid) -> SRun
 {
-    cpr::Response r = sessionGet(auth_data, {api_url + "/api/fetch/run/" + std::to_string(runid)});
+    cpr::Response r = buildGetSession(
+        auth_data, {api_url + "/exp/" + exp + "/run/" + std::to_string(runid) + "/fetch"});
 
     if (r.status_code == 200)
     {
@@ -199,7 +208,6 @@ auto SRESTInterface::getRunContainer(long runid) -> SRun
 
         assert(runid == run_id);
 
-        // printf("READ = %s\n", d["start_time"].GetString());
         SRun run;
         run.id = run_id;
         run.start_time = date_from_string(
@@ -218,21 +226,11 @@ auto SRESTInterface::getRunContainer(long runid) -> SRun
 /**
  * Return run containers from given run id range. If both arguments are 0,
  * then take all runs from given release.
- * \param rinid_min minimal runid, weak ordering
- * \param runid_max maximal runid, strong ordering
  * \return array of objects, empty if no matches
  */
-auto SRESTInterface::getRunContainers(long runid_min, long runid_max) -> std::vector<SRun>
+auto SRESTInterface::getRunContainers(std::string exp) -> std::vector<SRun>
 {
-    auto&& session = initSession(auth_data);
-
-    if (runid_min == 0 and runid_max == 0)
-        session.SetUrl({api_url + "/api/fetch/run/" + experiment});
-    else
-        session.SetUrl({api_url + "/api/fetch/run/" + std::to_string(runid_min) + "/" +
-                        std::to_string(runid_max)});
-
-    cpr::Response r = session.Get();
+    cpr::Response r = buildGetSession(auth_data, {api_url + "/exp/" + exp + "/run/fetch"});
 
     std::vector<SRun> array;
     if (r.status_code == 200)
@@ -272,10 +270,10 @@ auto SRESTInterface::getRunContainers(long runid_min, long runid_max) -> std::ve
 auto SRESTInterface::openRunContainer(int run_type, std::time_t start_time, std::string file_name)
     -> std::optional<SRun>
 {
-    cpr::Response&& r = sessionPost(auth_data, {api_url + "/api/run/open"},
-                                    cpr::Multipart{{"run_type", run_type},
-                                                   {"start_time", date_to_string(start_time)},
-                                                   {"file_name", file_name}});
+    cpr::Response&& r = buildPostSession(auth_data, {api_url + "/run/open"},
+                                         cpr::Multipart{{"run_type", run_type},
+                                                        {"start_time", date_to_string(start_time)},
+                                                        {"file_name", file_name}});
 
     if (r.status_code == 200)
     {
@@ -313,8 +311,8 @@ auto SRESTInterface::openRunContainer(int run_type, std::time_t start_time, std:
  */
 auto SRESTInterface::closeRunContainer(std::time_t stop_time) -> std::optional<SRun>
 {
-    cpr::Response&& r = sessionPost(auth_data, {api_url + "/api/run/close"},
-                                    cpr::Multipart{{"stop_time", date_to_string(stop_time)}});
+    cpr::Response&& r = buildPostSession(auth_data, {api_url + "/run/close"},
+                                         cpr::Multipart{{"stop_time", date_to_string(stop_time)}});
 
     if (r.status_code == 200)
     {
@@ -347,18 +345,19 @@ auto SRESTInterface::closeRunContainer(std::time_t stop_time) -> std::optional<S
     return std::nullopt;
 }
 
-auto SRESTInterface::findContainer(std::string name) -> bool
+auto SRESTInterface::findContainer(std::string exp, std::string name) -> bool
 {
     cpr::Response r =
-        sessionGet(auth_data, {api_url + "/api/fetch/cont/" + experiment + "/" + name});
+        buildGetSession(auth_data, {api_url + "/exp/" + exp + "/cont/" + name + "/find"});
 
     return r.status_code == 200;
 }
 
-std::optional<SContainer> SRESTInterface::getContainer(std::string name, long runid)
+std::optional<SContainer> SRESTInterface::getContainer(std::string exp, std::string name,
+                                                       long runid)
 {
-    cpr::Response r = sessionGet(auth_data, {api_url + "/api/fetch/cont/" + experiment + "/" +
-                                             name + "/" + std::to_string(runid) + "/"});
+    cpr::Response r = buildGetSession(auth_data, {api_url + "/exp/" + exp + "/cont/" + name +
+                                                  "/run/" + std::to_string(runid) + "/fetch"});
 
     if (r.status_code == 200)
     {
@@ -383,35 +382,21 @@ std::optional<SContainer> SRESTInterface::getContainer(std::string name, long ru
         cont.lines = split_lines(d["content"].GetString());
         cont.updated = true;
         cont.validity = {valid_from, valid_to};
+        cont.version = d["version"].GetInt();
         return cont;
     }
     return std::nullopt;
 }
 
 /**
- * Return named containers from given run id range, from min until now/end.
- * \param name container name
- * \param rinid_min minimal runid, weak ordering
- * \return array of objects, empty if no matches
- */
-std::vector<SContainer> SRESTInterface::getContainers(std::string name, long runid_min)
-{
-    return getContainers(std::move(name), runid_min, 0);
-}
-
-/**
  * Return named containers from given run id range.
  * \param name container name
- * \param rinid_min minimal runid, weak ordering
- * \param runid_max maximal runid, strong ordering
  * \return array of objects, empty if no matches
  */
-auto SRESTInterface::getContainers(std::string name, long runid_min, long runid_max)
-    -> std::vector<SContainer>
+auto SRESTInterface::getContainers(std::string exp, std::string name) -> std::vector<SContainer>
 {
     cpr::Response r =
-        sessionGet(auth_data, {api_url + "/api/fetch/cont/" + experiment + "/" + name + "/" +
-                               std::to_string(runid_min) + "/" + std::to_string(runid_max) + "/"});
+        buildGetSession(auth_data, {api_url + "/exp/" + exp + "/cont/" + name + "/fetch"});
 
     std::vector<SContainer> array;
     if (r.status_code == 200)
@@ -447,4 +432,7 @@ auto SRESTInterface::getContainers(std::string name, long runid_min, long runid_
  * Add new container to the database, by name. It must be later validated via web interface.
  * \return success of the operation
  */
-bool SRESTInterface::addContainer(std::string /*name*/, SContainer&& /*cont*/) { return false; }
+bool SRESTInterface::addContainer(std::string exp, std::string /*name*/, SContainer&& /*cont*/)
+{
+    return false;
+}

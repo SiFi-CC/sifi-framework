@@ -41,7 +41,6 @@
 #include <memory>
 #include <optional>
 #include <string>
-#include <string_view>
 #include <vector>
 
 class SIFI_EXPORT SDbAbstractInterface
@@ -52,28 +51,21 @@ public:
 
     virtual auto connected() const -> bool = 0;
 
-    /// Call this after conenction to select which param release we are about to work on
-    /// Maych change between different calls to database
-    void setExperiment(std::string exp) { experiment = exp; }
-
-    virtual auto getExperimentContainer(std::string name) -> std::optional<SExperiment> = 0;
+    virtual auto getExperimentContainer(std::string exp) -> std::optional<SExperiment> = 0;
 
     // Implement these
-    virtual auto getRunContainer(long runid) -> SRun = 0;
-    virtual auto getRunContainers(long runid_min, long runid_max) -> std::vector<SRun> = 0;
-    virtual auto openRunContainer(int run_type, std::time_t start_time, std::string file_name = 0)
+    virtual auto getRunContainer(std::string exp, long runid) -> SRun = 0;
+    virtual auto getRunContainers(std::string exp) -> std::vector<SRun> = 0;
+
+    virtual auto openRunContainer(int run_type, std::time_t start_time, std::string file_name)
         -> std::optional<SRun> = 0;
     virtual auto closeRunContainer(std::time_t stop_time) -> std::optional<SRun> = 0;
 
-    virtual auto findContainer(std::string name) -> bool = 0;
-    virtual auto getContainer(std::string name, long runid) -> std::optional<SContainer> = 0;
-    virtual auto getContainers(std::string name, long runid_min) -> std::vector<SContainer> = 0;
-    virtual auto getContainers(std::string name, long runid_min, long runid_max)
-        -> std::vector<SContainer> = 0;
-    virtual bool addContainer(std::string name, SContainer&& cont) = 0;
-
-protected:
-    std::string experiment;
+    virtual auto findContainer(std::string exp, std::string name) -> bool = 0;
+    virtual auto getContainer(std::string exp, std::string name, long runid)
+        -> std::optional<SContainer> = 0;
+    virtual auto getContainers(std::string exp, std::string name) -> std::vector<SContainer> = 0;
+    virtual auto addContainer(std::string exp, std::string name, SContainer&& cont) -> bool = 0;
 };
 
 #endif /* SDBABSTRACTINTERFACE_H */

@@ -55,7 +55,7 @@ public:
 
     auto setOpenMode(SourceOpenMode mode) -> void override;
 
-    auto print() const -> void override;
+    auto print(std::ostream& os) const -> void override;
 
 private:
     auto doFindContainer(const std::string& name) -> bool override;
