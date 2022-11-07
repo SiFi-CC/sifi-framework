@@ -32,14 +32,22 @@ set_property(CACHE SIFI_BUILTIN_SPDLOG PROPERTY STRINGS AUTO ON OFF)
 # fetch external content
 include(FetchContent) # requires >= cmake-3.11
 
-#-------------------------------------------------------------------------------
-# cmake-scripts
-FetchContent_Declare(cmake-scripts
-    GIT_REPOSITORY https://github.com/StableCoder/cmake-scripts.git
-    GIT_TAG        774a07ece3945b4f72e3ddc11646ab7cc9a349e2 # from main after sanitizer updates
+FetchContent_Declare(cmake_tools
+    GIT_REPOSITORY https://github.com/rlalik/cmake_tools
+    GIT_TAG        master
 )
 
-FetchContent_MakeAvailable(cmake-scripts)
+FetchContent_MakeAvailable(cmake_tools)
+list(APPEND CMAKE_MODULE_PATH
+    ${CMAKE_SOURCE_DIR}/Modules
+    ${cmake_tools_SOURCE_DIR}
+)
+
+include(check_3rd_party_tool)
+
+#-------------------------------------------------------------------------------
+# cmake-scripts
+check_3rd_party_tool(cmake-scripts 22.01 https://github.com/rlalik/cmake-scripts TAG temp_branch ON)
 list(APPEND CMAKE_MODULE_PATH
     ${cmake-scripts_SOURCE_DIR}
 )
@@ -52,32 +60,32 @@ include(tools)
 
 #-------------------------------------------------------------------------------
 # 3rd party software
-
-# cpr
-SET (REQUIRED_CPR_VERSION master)
-include(cmake/check_3rdparty_cpr.cmake)
-
-# tabulate
-SET (REQUIRED_TABULATE_VERSION 1.4)
-include(cmake/check_3rdparty_tabulate.cmake)
-
-# magic-enum
-SET (REQUIRED_MAGICENUM_VERSION 0.7.3)
-include(cmake/check_3rdparty_magicenum.cmake)
-
-# spdlog
-SET (REQUIRED_SPDLOG_VERSION 1.9.2)
-include(cmake/check_3rdparty_spdlog.cmake)
-
 #-------------------------------------------------------------------------------
+# check_3rd_party_tool(gtest 22.01 https://github.com/google/googletest TAG release-1.11.0 AUTO)
+#-------------------------------------------------------------------------------
+set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Build shared CPR")
+set(CPR_USE_SYSTEM_CURL ON)
+set(CPR_BUILD_TESTS OFF)
+check_3rd_party_tool(cpr 9999 https://github.com/whoshuu/cpr TAG master AUTO)
+set_property(TARGET cpr PROPERTY POSITION_INDEPENDENT_CODE ON)
+#-------------------------------------------------------------------------------
+check_3rd_party_tool(tabulate 1.4 https://github.com/p-ranav/tabulate TAG v1.4 AUTO)
+#-------------------------------------------------------------------------------
+check_3rd_party_tool(spdlog 1.9.2 https://github.com/gabime/spdlog TAG v1.9.2 v AUTO)
+set_property(TARGET spdlog PROPERTY POSITION_INDEPENDENT_CODE ON)
+#-------------------------------------------------------------------------------
+check_3rd_party_tool(magic_enum 0.7.3 https://github.com/Neargye/magic_enum TAG v0.7.3 AUTO)
+#-------------------------------------------------------------------------------
+check_3rd_party_tool(dabc 9999 https://github.com/gsi-ee/dabc TAG master AUTO)
+#-------------------------------------------------------------------------------
+
 # dabc
-FetchContent_Declare(DABC
-    GIT_REPOSITORY https://github.com/linev/dabc
-    GIT_TAG        master
-)
-FetchContent_MakeAvailable(DABC)
-message(STATUS "Uses system-provided DABC")
-#-------------------------------------------------------------------------------
+# FetchContent_Declare(DABC
+#     GIT_REPOSITORY https://github.com/linev/dabc
+#     GIT_TAG        master
+# )
+# FetchContent_MakeAvailable(DABC)
+# message(STATUS "Uses system-provided DABC")
 
 ##### Symbols export control
 # Export the package for use from the build-tree

@@ -13,7 +13,7 @@
 
 #include "SDetectorManager.h"
 
-#include <spdlog/spdlog.h>
+#include "spdlog/spdlog.h"
 
 #include <cstdlib> // for exit, EXIT_FAILURE
 #include <iostream>

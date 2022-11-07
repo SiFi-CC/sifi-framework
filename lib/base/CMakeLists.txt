@@ -124,7 +124,7 @@ SIFI_GENERATE_LIBRARY(
         cpr::cpr
         tabulate::tabulate
         magic_enum::magic_enum
-        spdlog
+        spdlog::spdlog
         DabcBase
         DabcHadaq
         DabcMbs
