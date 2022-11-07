@@ -70,10 +70,15 @@ SET (REQUIRED_SPDLOG_VERSION 1.9.2)
 include(cmake/check_3rdparty_spdlog.cmake)
 
 #-------------------------------------------------------------------------------
-
-
-
+# dabc
+FetchContent_Declare(DABC
+    GIT_REPOSITORY https://github.com/linev/dabc
+    GIT_TAG        master
+)
+FetchContent_MakeAvailable(DABC)
+message(STATUS "Uses system-provided DABC")
 #-------------------------------------------------------------------------------
+
 ##### Symbols export control
 # Export the package for use from the build-tree
 # (this registers the build-tree with a global CMake-registry)
@@ -91,13 +96,15 @@ set(CMAKE_INSTALL_CMAKEDIR ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 # SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 
 # the RPATH to be used when installing
-SET(CMAKE_INSTALL_RPATH ${_RPATH})
+#SET(CMAKE_INSTALL_RPATH ${_RPATH})
+SET(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_LIBDIR})
 
 # don't add the automatically determined parts of the RPATH
 # which point to directories outside the build tree to the install RPATH
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 
-
+set(CMAKE_CXX_FLAGS -std=c++17)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
 
@@ -144,7 +151,11 @@ endif()
 
 # Root
 find_package(ROOT 6.20 CONFIG REQUIRED COMPONENTS Core Tree)
+if (NOT ${ROOT_FOUND})
+    message(FATAL_ERROR "ROOT not found.")
+endif()
 include(${ROOT_USE_FILE})
+
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -160,7 +171,7 @@ if (SIFI_BUILD_SIFIDETRES_SUPPORT)
 endif()
 
 #----------------------------------------------------------------------------
-include_directories(${CMAKE_BINARY_DIR})
+include_directories(${CMAKE_BINARY_DIR} ${dabc_BINARY_DIR}/include)
 
 add_subdirectory(lib)
 # add_subdirectory(geometry)
@@ -205,7 +216,7 @@ install(FILES
 )
 
 # Add all targets to the build-tree export set
-export(TARGETS ${PROJECT_TARGETS} cpr
+export(TARGETS ${PROJECT_TARGETS} cpr DabcBase DabcHadaq DabcMbs
     FILE ${CMAKE_PROJECT_NAME}Targets.cmake
     NAMESPACE SIFI::)
 
@@ -218,7 +229,6 @@ if(SIFI_ENABLE_TESTING)
     enable_testing()
     add_subdirectory(tests)
 endif()
-
 
 install(EXPORT ${CMAKE_PROJECT_NAME}Targets
     DESTINATION ${CMAKE_INSTALL_CMAKEDIR}

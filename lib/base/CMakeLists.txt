@@ -38,6 +38,12 @@ SIFI_GENERATE_LIBRARY(
         datasources/SDDSource.cc
         datasources/SKSSource.cc
         datasources/SPMISource.cc
+        datasources/SCBSource.cc
+        datasources/STPSource.cc
+        datasources/SPetirocSource.cc
+        datasources/STTreeSource.cc
+        datasources/SHLDSource.cc
+
         ${SDR_CC}
         datasources/SRootSource.cc
         datasources/SUnpacker.cc
@@ -84,6 +90,12 @@ SIFI_GENERATE_LIBRARY(
         datasources/SDDSource.h
         datasources/SKSSource.h
         datasources/SPMISource.h
+        datasources/SCBSource.h
+        datasources/STPSource.h
+        datasources/SPetirocSource.h
+        datasources/STTreeSource.h
+        datasources/SHLDSource.h
+
         ${SDR_H}
         datasources/SRootSource.h
         datasources/SUnpacker.h
@@ -101,6 +113,9 @@ SIFI_GENERATE_LIBRARY(
         util/SLoop.h
         util/SRootFileHeader.h
 
+        ${dabc_BINARY_DIR}/include/hadaq/api.h
+        ${dabc_BINARY_DIR}/include/dabc/Url.h
+        ${dabc_BINARY_DIR}/include/dabc/api.h
     PRIVATE_LIBRARIES
         ROOT::Core
         ROOT::Tree
@@ -110,6 +125,9 @@ SIFI_GENERATE_LIBRARY(
         tabulate::tabulate
         magic_enum::magic_enum
         spdlog
+        DabcBase
+        DabcHadaq
+        DabcMbs
     INCLUDE_DIRS
         core
         database

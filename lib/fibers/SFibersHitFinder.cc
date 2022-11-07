@@ -130,8 +130,8 @@ bool SFibersHitFinder::execute()
         // calc laboratory coordinates from digi data
         Float_t qdc_l = pCal->getQDCL();
         Float_t qdc_r = pCal->getQDCR();
-        Float_t time_l = pCal->getTimeL();
-        Float_t time_r = pCal->getTimeR();
+        Long64_t time_l = pCal->getTimeL();
+        Long64_t time_r = pCal->getTimeR();
 
         // if times are small, then sipm hit for given side was not recorded
         if (fabs(time_l) < 0.0001 or fabs(time_r) < 0.0001) continue;
@@ -164,6 +164,8 @@ bool SFibersHitFinder::execute()
         Float_t lambda = 0.0;
         Float_t alpha = 0.0;
 
+        Float_t a_elar = 0.0;
+        Float_t b_elar = 0.0;
         if (sifi()->isSimulation())
         {
             a0 = pHitFinderPar->getA0();
@@ -173,15 +175,16 @@ bool SFibersHitFinder::execute()
         else
         {
             auto* hfp = pHitFinderFiberPar->getPar(&chan);
-            a0 = (*hfp)[0];
-            lambda = (*hfp)[1];
+            a_elar = (*hfp)[0];
+            b_elar = (*hfp)[1];
             alpha = (*hfp)[2];
         }
 
         Float_t rot = pGeomPar->getLayerRotation(loc[0], loc[1]);
 
         // calculate position from MLR
-        Float_t u = (log(sqrt(qdc_r / qdc_l)) - a0) * lambda;
+//        Float_t u = (log(sqrt(qdc_r / qdc_l)) - a0) * lambda;
+        Float_t u = a_elar * log(sqrt(qdc_r / qdc_l)) + b_elar - pGeomPar->getFiberOffsetY(mod, lay); //calibration was done with fiber between 0 and 100mm
         Float_t s_u = 5.;
 
         // the fiber is taken from geometry
@@ -194,12 +197,17 @@ bool SFibersHitFinder::execute()
         Float_t s_x = s_v * cos(rot * M_PI / 180) + s_u * sin(rot * M_PI / 180);
         Float_t s_y = s_v * sin(rot * M_PI / 180) + s_u * cos(rot * M_PI / 180);
 
-        Float_t z = pGeomPar->getFiberOffsetY(mod, lay) + pGeomPar->getModuleZ(mod);
+        Float_t z = pGeomPar->getFiberOffsetZ(mod, lay) + pGeomPar->getModuleZ(mod);
         Float_t s_z = 0.65;
 
         pHit->getPoint().SetXYZ(x, y, z);
         pHit->getErrors().SetXYZ(s_x, s_y, s_z);
         pHit->setU(u, 10.);
+
+        // set time
+        Long64_t time = time_l;
+        if(time_r < time_l) time = time_r;
+        pHit->setTime(time, 1e-3);
 
         // calculate energy
         Float_t E = alpha * sqrt(qdc_r * qdc_l);

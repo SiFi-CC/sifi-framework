@@ -25,6 +25,7 @@
 #include <sys/types.h> // for uint
 #include <utility>     // for move
 #include <vector>      // for vector
+#include <iostream>
 
 class SContainer;
 
@@ -101,6 +102,7 @@ public:
      */
     SLookupChannel* getChannel(uint chan)
     {
+//         std::cout << "chan: " << chan << " nchan: " << nchan << std::endl;
         assert(chan < nchan);
         return channels[chan].get();
     }
@@ -174,6 +176,7 @@ public:
 
     SLookupChannel* getAddress(uint addr, uint chan);
 
+    const std::string GetName() { return container; }
     virtual void print();
 
 protected:

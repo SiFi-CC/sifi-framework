@@ -1,16 +1,26 @@
 // SiFi-Analysis framework includes
+#include "SCBSource.h"
 #include "SCategory.h" // for SCategory, SCategory::CatGeantTrack
 #include "SDDSource.h"
 #include "SDatabase.h"
 #include "SDetectorManager.h"
+#include "SFibersCBUnpacker.h"
 #include "SFibersDDUnpacker.h"
 #include "SFibersDetector.h"
+#include "SFibersHLDUnpacker.h"
 #include "SFibersLookup.h"
 #include "SFibersPMIUnpacker.h"
+#include "SFibersPetirocUnpacker.h"
+#include "SFibersTPUnpacker.h"
+#include "SFibersTTreeUnpacker.h"
+#include "SHLDSource.h"
 #include "SKSSource.h"
 #include "SLookup.h"
 #include "SPMISource.h"
 #include "SParAsciiSource.h"
+#include "SPetirocSource.h"
+#include "STPSource.h"
+#include "STTreeSource.h"
 #include "STaskManager.h"
 #include "SiFi.h"
 
@@ -82,10 +92,11 @@ int main(int argc, char** argv)
             std::string saddr = inpstr.substr(0, pos1);
             std::string type = inpstr.substr(pos1 + 1, pos2 - pos1 - 1);
             std::string name = inpstr.substr(pos2 + 1, inpstr.length() - pos2 - 1);
-            std::string ext = name.substr(name.size() - 4, name.size() - 1);
+            // std::string ext = name.substr(name.size() - 4, name.size() - 1);
+            std::string ext = name.substr(name.find_last_of(".") + 1);
             uint16_t addr = std::stoi(saddr, nullptr, 16);
 
-            if (ext == ".dat")
+            if (ext == "dat")
             {
                 SFibersDDUnpacker* unp = new SFibersDDUnpacker();
                 SFibersDDUnpacker::saveSamples(save_samples);
@@ -96,7 +107,7 @@ int main(int argc, char** argv)
                 source->setInput(name, 1024 * sizeof(float));
                 sifi()->addSource(source);
             }
-            else if (ext == ".csv")
+            else if (ext == "csv")
             {
                 SFibersDDUnpacker* unp = new SFibersDDUnpacker();
                 SFibersDDUnpacker::saveSamples(save_samples);
@@ -106,7 +117,22 @@ int main(int argc, char** argv)
                 source->setInput(name);
                 sifi()->addSource(source);
             }
-            else if (ext == ".pmi")
+            /*
+             * technically the output file from the Petiroc2A board is in the CSV format with a
+             * space delimiter but we use the .roc extension since the .csv extension has been used
+             * for the oscilloscope csv output
+             */
+            else if (ext == "roc")
+            {
+                //./sifi_dst 0x1000::data_44358_8859100231.roc -e 100000 -p params.txt -o
+                // sifi_results.root
+                SFibersPetirocUnpacker* unp = new SFibersPetirocUnpacker();
+                SPetirocSource* source = new SPetirocSource(addr);
+                source->addUnpacker(unp, {addr});
+                source->setInput(name);
+                sifi()->addSource(source);
+            }
+            else if (ext == "pmi")
             {
                 SFibersPMIUnpacker* unp = new SFibersPMIUnpacker();
 
@@ -115,10 +141,64 @@ int main(int argc, char** argv)
                 source->setInput(name);
                 sifi()->addSource(source);
             }
+            else if (ext == ".txt")
+            {
+                SFibersCBUnpacker* unp = new SFibersCBUnpacker();
+
+                SCBSource* source = new SCBSource(addr);
+                source->addUnpacker(unp, {addr});
+                source->setInput(name);
+                sifi()->addSource(source);
+            }
+            else if (ext == "hld")
+            {
+                SFibersHLDUnpacker* unp = new SFibersHLDUnpacker();
+
+                SHLDSource* source = new SHLDSource(addr);
+                source->addUnpacker(unp, {addr});
+                source->setInput(name);
+                sifi()->addSource(source);
+            }
+            else if (ext == "root")
+            {
+                TFile* input_file;
+                input_file = new TFile(name.c_str());
+                if (!input_file->IsOpen())
+                {
+                    std::cerr << "##### Error in dst.cc Could not open input .root file!"
+                              << std::endl;
+                    std::cerr << name << std::endl;
+                }
+
+                // file close
+                if ((TTree*)input_file->Get("data"))
+                {
+                    SFibersTPUnpacker* unp = new SFibersTPUnpacker();
+                    STPSource* source = new STPSource(addr);
+                    source->addUnpacker(unp, {addr});
+                    source->setInput(name);
+                    sifi()->addSource(source);
+                }
+                else if ((TTree*)input_file->Get("FiberCoincidences"))
+                {
+                    SFibersTTreeUnpacker* unp = new SFibersTTreeUnpacker();
+                    STTreeSource* source = new STTreeSource(addr);
+                    source->addUnpacker(unp, {addr});
+                    source->setInput(name);
+                    sifi()->addSource(source);
+                }
+                else
+                {
+                    std::cerr << "##### Error in dst: unknown tree name in the input .root file!"
+                              << std::endl;
+                    std::cerr << "Acceptable tree names: data, ..." << std::endl;
+                }
+            }
             else
             {
                 std::cerr << "##### Error in dst: unknown data file extension!" << std::endl;
-                std::cerr << "Acceptable extensions: *.dat, *.csv and *.pmi" << std::endl;
+                std::cerr << "Acceptable extensions: *.dat, *.csv, *.pmi, *.txt and .root"
+                          << std::endl;
                 std::cerr << "Given data file: " << name << std::endl;
                 std::exit(EXIT_FAILURE);
             }
@@ -151,17 +231,21 @@ int main(int argc, char** argv)
     SRuntimeDb::get()->addContainer(
         "FibersDDLookupTable",
         []() { return new SFibersLookupTable("FibersDDLookupTable", 0x1000, 0x1fff, 32); });
-
+    SRuntimeDb::get()->addContainer(
+        "FibersTPLookupTable",
+        []() { return new SFibersLookupTable("FibersTPLookupTable", 0x1000, 0x1fff, 5000); });
     SRuntimeDb::get()->addContainer(
         "FibersPMILookupTable",
         []() { return new SFibersLookupTable("FibersPMILookupTable", 0x1000, 0x1fff, 64); });
-
-    //     SRuntimeDb::get()->addLookupContainer(
-    //         "FibersDDLookupTable",
-    //         std::make_unique<SFibersLookupTable>("FibersDDLookupTable", 0x1000, 0x1fff, 32));
-    //     SRuntimeDb::get()->addLookupContainer(
-    //         "FibersPMILookupTable",
-    //         std::make_unique<SFibersLookupTable>("FibersPMILookupTable", 0x1000, 0x1fff, 64));
+    SRuntimeDb::get()->addContainer(
+        "FibersPETIROCLookupTable",
+        []() { return new SFibersLookupTable("FibersPETIROCLookupTable", 0x1000, 0x1fff, 64); });
+    SRuntimeDb::get()->addContainer(
+        "FibersTTreeLookupTable",
+        []() { return new SFibersLookupTable("FibersTTreeLookupTable", 0x1000, 0x1fff, 64); });
+    SRuntimeDb::get()->addContainer(
+        "FibersHLDLookupTable",
+        []() { return new SFibersLookupTable("FibersHLDLookupTable", 0x1000, 0x1fff, 64); });
 
     SRuntimeDb::get()->initContainers(0);
 

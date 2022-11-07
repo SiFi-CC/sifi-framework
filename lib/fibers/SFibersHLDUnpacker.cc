@@ -9,14 +9,14 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#include "SFibersPMIUnpacker.h"
+#include "SFibersHLDUnpacker.h"
 #include "SCategory.h"
-#include "SDatabase.h" // for pm, SDatabase
+#include "SFibersCal.h"
 #include "SFibersLookup.h"
 #include "SFibersRaw.h"
 #include "SLocator.h" // for SLocator
 #include "SLookup.h"  // for SLookupChannel, SLookupTable
-#include "SPMISource.h"
+#include "SHLDSource.h"
 #include "SiFi.h"
 
 #include <TObject.h> // for TObject
@@ -27,12 +27,12 @@
 /**
  * Constructor
  */
-SFibersPMIUnpacker::SFibersPMIUnpacker()
+SFibersHLDUnpacker::SFibersHLDUnpacker()
     : SUnpacker(), catFibersRaw(nullptr), catFibersCal(nullptr), pLookUp(nullptr)
 {
 }
 
-bool SFibersPMIUnpacker::init()
+bool SFibersHLDUnpacker::init()
 {
     SUnpacker::init();
 
@@ -52,20 +52,20 @@ bool SFibersPMIUnpacker::init()
         return false;
     }
 
-    pLookUp = dynamic_cast<SFibersLookupTable*>(rdb()->getLookupContainer("FibersPMILookupTable"));
+    pLookUp = dynamic_cast<SFibersLookupTable*>(rdb()->getLookupContainer("FibersHLDLookupTable"));
+    //     pLookUp->print();
 
     return true;
 }
 
-bool SFibersPMIUnpacker::execute(ulong /*event*/, ulong /*seq_number*/, uint16_t /*subevent*/,
+bool SFibersHLDUnpacker::execute(ulong /*event*/, ulong /*seq_number*/, uint16_t /*subevent*/,
                                  void* buffer, size_t /*length*/)
 {
     // getting buffer
-    PMIHit* hit = static_cast<PMIHit*>(buffer);
-
+    HLDHit* hit = static_cast<HLDHit*>(buffer);
     if (!hit) return false;
 
-    SFibersChannel* lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000, hit->fiberID));
+    SFibersChannel* lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000, hit->fiberID) );
     if (!lc) {
         std::cerr << "No associated channel<->fiber value in " << pLookUp->GetName() << std::endl;
         std::cerr << "The container(params.txt) might be empty or the channel, fiber information doesn't exist." << std::endl;

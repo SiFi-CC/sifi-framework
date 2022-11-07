@@ -212,6 +212,11 @@ bool SFibersDDUnpacker::decode(uint16_t subevtid, float* data, size_t length)
     Float_t veto_thr = pDDUnpackerPar->getVetoThreshold(channel);
 
     SFibersChannel* lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(fake_address, channel));
+    if (!lc) {
+        std::cerr << "No associated channel<->fiber value in " << pLookUp->GetName() << std::endl;
+        std::cerr << "The container(params.txt) might be empty or the channel, fiber information doesn't exist." << std::endl;
+        exit(0);
+    }
     SLocator loc(3);
     loc[0] = lc->m; // mod;
     loc[1] = lc->l; // lay;
