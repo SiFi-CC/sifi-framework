@@ -31,11 +31,11 @@ jobs:
             package: g++-9,
           }
         - {
-            name: "GCC-10",
+            name: "GCC-12",
             os: ubuntu-latest,
-            cc: "gcc-10",
-            cxx: "g++-10",
-            package: g++-10,
+            cc: "gcc-12",
+            cxx: "g++-12",
+            package: g++-12,
           }
         - {
             name: "Clang-11",
