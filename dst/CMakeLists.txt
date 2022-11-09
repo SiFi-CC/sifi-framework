@@ -7,7 +7,10 @@ target_link_libraries(sifi_simdst SiFi Fibers Geant SiFiTools ROOT::Tree)
 add_executable(sifi_dst dst.cc)
 target_link_libraries(sifi_dst SiFi Fibers Geant SiFiTools ROOT::Tree)
 
-install(TARGETS sifi_simdst sifi_dst DESTINATION ${CMAKE_INSTALL_BINDIR})
+add_executable(sifi_dst_4to1 dst_4to1.cc)
+target_link_libraries(sifi_dst_4to1 SiFi Fibers Geant SiFiTools ROOT::Tree)
+
+install(TARGETS sifi_simdst sifi_dst sifi_dst_4to1 DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 
 if(BUILD_SIFIDETRES_SUPPORT)

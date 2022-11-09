@@ -83,25 +83,11 @@ bool SFibersTPUnpacker::execute(ulong /*event*/, ulong /*seq_number*/, uint16_t 
     }
 
     pRaw->setAddress(loc[0], loc[1], loc[2]);
-    
-    if(side == 'l'){
-        pRaw->setQDCL(hit->energy);
-        pRaw->setTimeL(hit->time);
-        pRaw->setQDCR(-100);
-        pRaw->setTimeR(-100);
-    }
-    
-    else if(side == 'r'){
-        pRaw->setQDCL(-100);
-        pRaw->setTimeL(-100);
-        pRaw->setQDCR(hit->energy);
-        pRaw->setTimeR(hit->time);
-    }
-    
-    else{
-        std::cerr << "fiber side undefined!" << std::endl;
-    }
 
+    pRaw->setQDCL(hit->qdc_l);
+    pRaw->setTimeL(hit->time_l);
+    pRaw->setQDCR(hit->qdc_r);
+    pRaw->setTimeR(hit->time_r);
 
     return true;
 }

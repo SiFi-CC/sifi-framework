@@ -22,14 +22,15 @@
 #include <utility> // for pair
 #include <vector>  // for vector
 #include <sstream>
-
+#include <SFibersLookup.h>
+#include <SLocator.h>
 /**
  * Constructor. Requires subevent id for unpacked source.
  *
  * \param subevent subevent id
  */
 SCBSource::SCBSource(uint16_t subevent)
-    : SDataSource(), subevent(subevent), input(), istream(), state(INIT), hit_cache(nullptr)
+    : SDataSource(), subevent(subevent), input(), istream(), state(INIT), hit_cache(nullptr), address(nullptr)
 {
 }
 
@@ -103,10 +104,17 @@ bool SCBSource::close()
     return true;
 }
 
+
+bool operator==(const SCBSource::Address& a, const SCBSource::Address& b) 
+{ 
+    return a.mod==b.mod && a.lay==b.lay && a.fib==b.fib;
+} 
+
 bool SCBSource::readCurrentEvent()
 {
     if (unpackers.size() == 0) return false;
-
+    
+    const double us_to_ns = 1E-3;
     std::string csvLine;
     std::string tmp;
     std::string str_tstamp_us, str_trgID, str_brd, str_ch, str_q_lg, str_q_hg;
@@ -117,16 +125,21 @@ bool SCBSource::readCurrentEvent()
     int ch = 0;
     std::string q_hg;
     int not_spaces=0;
+    Address key;
     
-
+    std::vector<Address> addresses;
     std::vector<std::shared_ptr<CBHit>> hits;
-
+    std::vector<std::shared_ptr<Address>> shared_addresses;
+    SFibersLookupTable* pLookUp;
+    pLookUp = dynamic_cast<SFibersLookupTable*>(pm()->getLookupContainer("FibersPMILookupTable"));
+    SLocator loc(3);
+    
     if (state == DONE) { return false; }
 
     if (state == INIT)
     {
         hit_cache = std::make_shared<CBHit>();
-
+        address = std::make_shared<Address>();
         getline(istream, csvLine);
         not_spaces=0;
         for(int j=0; j<csvLine.length(); j++){
@@ -151,6 +164,28 @@ bool SCBSource::readCurrentEvent()
             hit_cache->ch = ch;
             hit_cache->q_lg = q_lg;
             hit_cache->q_hg = q_hg;
+            
+            SFibersChannel* lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000,hit_cache->ch));
+                loc[0] = lc->m; // mod;
+                loc[1] = lc->l; // lay;
+                loc[2] = lc->s; // fib;
+                char side = lc->side;
+                
+                std::cout << "INIT m, l, f, side; ch " << loc[0] << " "<< loc[1] << " "<< loc[2] << " "<< side << " " << hit_cache->ch << std::endl;
+                
+                if(side=='l'){
+                    hit_cache->time_l = tstamp_us / us_to_ns;
+                    hit_cache->qdc_l = q_lg;
+                }
+                if(side=='r'){
+                    hit_cache->time_r = tstamp_us / us_to_ns;
+                    hit_cache->qdc_r = q_lg;
+                }
+                
+                addresses.push_back({loc[0], loc[1], loc[2]});
+                address->mod = loc[0];
+                address->lay = loc[1];
+                address->fib = loc[2];            
         }
         
 
@@ -160,6 +195,9 @@ bool SCBSource::readCurrentEvent()
     if (state == READING)
     {
         hits.push_back(hit_cache);
+        shared_addresses.push_back(address);
+        addresses.push_back({address->mod, address->lay, address->fib});
+        
         while (true)
         {
             auto hit_current = std::make_shared<CBHit>();
@@ -191,10 +229,50 @@ bool SCBSource::readCurrentEvent()
                 hit_current->tstamp_us = hit_cache->tstamp_us;
                 hit_current->trgID = hit_cache->trgID;
                 
-                hits.push_back(hit_current);
+                SFibersChannel* lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000,hit_current->ch));
+
+                loc[0] = lc->m; // mod;
+                loc[1] = lc->l; // lay;
+                loc[2] = lc->s; // fib;
+                char side = lc->side;
+                key = {loc[0], loc[1], loc[2]};
+                if(std::find(addresses.begin(), addresses.end(), key) != addresses.end())
+                {
+                    int index = std::find(addresses.begin(), addresses.end(), key) - addresses.begin();
+                    if(side=='l'){
+                        hits[index]->time_l = hit_cache->tstamp_us / us_to_ns;
+                        hits[index]->qdc_l = q_lg;
+                    }
+                    if(side=='r'){
+                        hits[index]->time_r = hit_cache->tstamp_us / us_to_ns;
+                        hits[index]->qdc_r = q_lg;
+                    }
+                }
+                
+                else
+                {
+                    if(side=='l'){
+                        hit_current->time_l = hit_cache->tstamp_us / us_to_ns;
+                        hit_current->qdc_l = q_lg;
+                    }
+                    if(side=='r'){
+                        hit_current->time_r = hit_cache->tstamp_us / us_to_ns;
+                        hit_current->qdc_r = q_lg;
+                    }
+                    
+                    addresses.push_back({loc[0], loc[1], loc[2]});
+
+                    address->mod = loc[0];
+                    address->lay = loc[1];
+                    address->fib = loc[2]; 
+                    
+                    hits.push_back(hit_current);
+                    shared_addresses.push_back(address);
+                }
             }
-            else if(not_spaces > 10)// next event
+            else if(not_spaces > 10) // next event
             {
+                addresses.clear();
                 std::stringstream stream(csvLine);
                 stream >> str_tstamp_us >> str_trgID >> str_brd >> str_ch >> str_q_lg >> str_q_hg;
                 tstamp_us = std::stof(str_tstamp_us);
@@ -209,7 +287,25 @@ bool SCBSource::readCurrentEvent()
                 hit_current->ch = ch;
                 hit_current->q_lg = q_lg;
                 hit_current->q_hg = q_hg;
-
+                SFibersChannel* lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000,hit_current->ch));
+                loc[0] = lc->m; // mod;
+                loc[1] = lc->l; // lay;
+                loc[2] = lc->s; // fib;
+                char side = lc->side;
+                if(side=='l'){
+                    hit_current->time_l = tstamp_us / us_to_ns; //conversion to ns
+                    hit_current->qdc_l = q_lg;
+                }
+                if(side=='r'){
+                    hit_current->time_r = tstamp_us / us_to_ns; //conversion to ns
+                    hit_current->qdc_r = q_lg;
+                }
+                
+                addresses.push_back({loc[0], loc[1], loc[2]});
+                
+                address->mod = loc[0];
+                address->lay = loc[1];
+                address->fib = loc[2]; 
                 hit_cache = hit_current;
                 break;
             }
@@ -226,7 +322,11 @@ bool SCBSource::readCurrentEvent()
         unpackers[subevent]->setADCTomV(1.);
         for (int i = 0; i < n_hits; i++)
         {
-            // TODO must pass event number to the execute
+
+            
+            
+            
+            
             unpackers[subevent]->execute(0, 0, subevent, hits[i].get(), 0);
         }
     }

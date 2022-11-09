@@ -137,7 +137,7 @@ int main(int argc, char** argv)
                 source->setInput(name);
                 sifi()->addSource(source);
             }
-            else if (ext == ".txt")
+            else if (ext == "txt")
             {
                 SFibersCBUnpacker* unp = new SFibersCBUnpacker();
                 

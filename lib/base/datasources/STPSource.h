@@ -29,9 +29,14 @@
 
 struct TPHit
 {
-    Long64_t time;
-    Float_t energy;
-    UInt_t channelID;
+    Long64_t time=-100;
+    Float_t energy=-100;
+    UInt_t channelID=0;
+    
+    Double_t time_l = -100;
+    Double_t time_r = -100;
+    Double_t qdc_l = -100;
+    Double_t qdc_r = -100;
 
     void print() const
     {
@@ -51,6 +56,12 @@ public:
     virtual bool close() override;
     virtual bool readCurrentEvent() override;
     virtual void setInput(const std::string& filename, size_t length = 0);
+    struct Address
+        {
+            int mod =-100;
+            int lay =-100;
+            int fib =-100;
+        };
 
 private:
     uint16_t subevent;     ///< subevent id
@@ -62,8 +73,10 @@ private:
     Long64_t entries_counter;
     enum State
     {
+        INIT,
         READING,
         DONE
     } state;
+    std::shared_ptr<Address> address;
 };
 #endif /* STPSOURCE_H */

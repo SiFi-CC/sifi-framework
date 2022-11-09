@@ -66,19 +66,13 @@ bool SFibersCBUnpacker::execute(ulong /*event*/, ulong /*seq_number*/, uint16_t 
     CBHit* hit = static_cast<CBHit*>(buffer);
 
     if (!hit) return false;
-
-//     std::cout << "hit->fiberID: " << hit->fiberID << std::endl;
-//     std::cout << "hit->ch: " << hit->ch << std::endl;
-//     SFibersChannel* lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000, hit->fiberID));
     SFibersChannel* lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000, hit->ch));
     SLocator loc(3);
     loc[0] = lc->m; // mod;
     loc[1] = lc->l; // lay;
     loc[2] = lc->s; // fib;
     char side = lc->side;
-    
-//     std::cout << "side; ch " << side << " " << hit->ch << std::endl;
-    
+
     // setting category
     SFibersRaw* pRaw = dynamic_cast<SFibersRaw*>(catFibersRaw->getObject(loc));
     if (!pRaw)
@@ -88,25 +82,11 @@ bool SFibersCBUnpacker::execute(ulong /*event*/, ulong /*seq_number*/, uint16_t 
     }
 
     pRaw->setAddress(loc[0], loc[1], loc[2]);
-    
-    if(side == 'l'){
-        pRaw->setQDCL(hit->q_lg);
-        pRaw->setTimeL(hit->tstamp_us);
-        pRaw->setQDCR(-100);
-        pRaw->setTimeR(-100);
-    }
-    
-    else if(side == 'r'){
-        pRaw->setQDCL(-100);
-        pRaw->setTimeL(-100);
-        pRaw->setQDCR(hit->q_lg);
-        pRaw->setTimeR(hit->tstamp_us);
-    }
-    
-    else{
-        std::cerr << "fiber side undefined!" << std::endl;
-    }
 
+    pRaw->setQDCR(hit->qdc_r);
+    pRaw->setTimeR(hit->time_r);
+    pRaw->setQDCL(hit->qdc_l);
+    pRaw->setTimeL(hit->time_l);
 
     return true;
 }

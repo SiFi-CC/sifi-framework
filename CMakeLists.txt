@@ -233,6 +233,12 @@ include(${ROOT_USE_FILE})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
+
+
+#find_package(ROOT::RHTTP)
+#target_link_libraries(ROOT::RHTTP)
+
+
 #-------------------------------------------------------------------------------
 ##### HELPER file
 include(helpers)
