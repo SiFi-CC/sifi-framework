@@ -48,6 +48,8 @@ public:
         CatGeantFibersRaw, ///< fibers hit
                            // helpers
         CatDDSamples = 10,
+        
+//         CatSiPMHit = 20,        ///< SiPM hits raw data (4 to 1 coupling)
         // fibers
         CatFibersRaw = 20, ///< fibers stack raw data
         CatFibersCal,      ///< fibers cal data

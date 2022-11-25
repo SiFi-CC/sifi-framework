@@ -88,6 +88,7 @@ bool SFibersTPUnpacker::execute(ulong /*event*/, ulong /*seq_number*/, uint16_t 
     pRaw->setTimeL(hit->time_l);
     pRaw->setQDCR(hit->qdc_r);
     pRaw->setTimeR(hit->time_r);
+//     std::cout << hit->qdc_l << " " << hit->time_l << " " << hit->qdc_r << " " << hit->time_r << std::endl;
 
     return true;
 }

@@ -151,6 +151,8 @@ bool SFibersDetector::initCategories()
     {
         if (!dm->registerCategory(SCategory::CatFibersRaw, "SFibersRaw", 3, sizes, false))
             return false;
+//         if (!dm->registerCategory(SCategory::CatSiPMHit, "SSiPMHit", 3, sizes, false))
+//             return false;
         if (!dm->registerCategory(SCategory::CatFibersCal, "SFibersCal", 3, sizes, false))
             return false;
         if (!dm->registerCategory(SCategory::CatFibersHit, "SFibersHit", 3, sizes, false))

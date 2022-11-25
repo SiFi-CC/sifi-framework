@@ -10,6 +10,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersPMIUnpacker.cc
         SFibersCBUnpacker.cc
         SFibersTPUnpacker.cc
+        SFibersTP4to1Unpacker.cc
         SFibersPetirocUnpacker.cc
         SFibersTTreeUnpacker.cc
         SFibersHLDUnpacker.cc
@@ -30,6 +31,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersClusterFinder.cc
         SFibersClusterFinderPar.cc
         SFibersCluster.cc
+        SFibersIdentification.cc
     HEADERS
         SFibersDetector.h
         SFibersGeomPar.h
@@ -38,6 +40,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersPMIUnpacker.h
         SFibersCBUnpacker.h
         SFibersTPUnpacker.h
+        SFibersTP4to1Unpacker.h
         SFibersPetirocUnpacker.h
         SFibersTTreeUnpacker.h
         SFibersHLDUnpacker.h
@@ -58,6 +61,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersClusterFinder.h
         SFibersClusterFinderPar.h
         SFibersCluster.h
+        SFibersIdentification.h
 
     PRIVATE_LIBRARIES
         ROOT::Core

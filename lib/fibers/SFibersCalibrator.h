@@ -22,6 +22,7 @@ class SFibersCalibrator : public STask
 protected:
     // members
     SCategory* catFibersRaw;          ///< fibers raw category
+//     SCategory* catSiPMHit;          ///< fibers raw category
     SCategory* catFibersCal;          ///< fibers cal category
     SCalContainer<6>* pCalibratorPar; ///< calibrator parameters
 

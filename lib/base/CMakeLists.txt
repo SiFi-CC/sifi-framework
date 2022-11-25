@@ -38,6 +38,8 @@ SIFI_GENERATE_LIBRARY(
         datasources/SPMISource.cc
         datasources/SCBSource.cc
         datasources/STPSource.cc
+        datasources/STP4to1Source.cc
+        datasources/STP4to1Extractor.cc
         datasources/SPetirocSource.cc
         datasources/STTreeSource.cc
         datasources/SHLDSource.cc
@@ -88,6 +90,8 @@ SIFI_GENERATE_LIBRARY(
         datasources/SPMISource.h
         datasources/SCBSource.h
         datasources/STPSource.h
+        datasources/STP4to1Source.h
+        datasources/STP4to1Extractor.h
         datasources/SPetirocSource.h
         datasources/STTreeSource.h
         datasources/SHLDSource.h
