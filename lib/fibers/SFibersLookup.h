@@ -30,6 +30,9 @@ struct SIFI_EXPORT SFibersChannel : public SLookupChannel
 {
     char side; ///< side of a fiber, either 'l' or 'r'
 
+    SFibersChannel() {}
+    virtual ~SFibersChannel() {}
+
     virtual uint read(const char* buffer) override;
     virtual uint write(char* buffer, size_t n) const override;
     virtual void print(bool newline = true, const char* prefix = "") const override;

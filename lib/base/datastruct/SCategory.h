@@ -49,12 +49,12 @@ public:
                            // helpers
         CatDDSamples = 10,
         
-//         CatSiPMHit = 20,        ///< SiPM hits raw data (4 to 1 coupling)
         // fibers
         CatFibersRaw = 20, ///< fibers stack raw data
         CatFibersCal,      ///< fibers cal data
         CatFibersHit,      ///< fibers hit
         CatFibersClus,     ///< fibers cluster
+        CatSiPMHit,        ///< SiPM hits raw data (4 to 1 coupling)
                            // tracks
                            // Limit
         CatLimitDoNotUse,  ///< holds size of the category list

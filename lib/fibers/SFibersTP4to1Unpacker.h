@@ -9,32 +9,35 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#ifndef SFIBERSCALIBRATOR_H
-#define SFIBERSCALIBRATOR_H
+#ifndef SFIBERSTP4TO1UNPACKER_H
+#define SFIBERSTP4TO1UNPACKER_H
 
-#include "STask.h"
+#include "sifi_export.h"
+
+#include "SUnpacker.h"
+
+#include <cstddef>     // for size_t
+#include <cstdint>     // for uint16_t
+#include <sys/types.h> // for ulong
 
 class SCategory;
-template <int N> class SCalContainer;
+class SFibersLookupTable;
 
-class SFibersCalibrator : public STask
+class SIFI_EXPORT SFibersTP4to1Unpacker : public SUnpacker
 {
+
 protected:
-    // members
-    SCategory* catFibersRaw;          ///< fibers raw category
-    SCategory* catFibersCal;          ///< fibers cal category
-    SCalContainer<6>* pCalibratorPar; ///< calibrator parameters
+    SCategory* catFibersRaw;
+    SCategory* catFibersCal;
 
 public:
-    // constructor
-    SFibersCalibrator();
-    // destructor
-    virtual ~SFibersCalibrator() = default;
+    SFibersTP4to1Unpacker();
 
-    // methods
-    bool init() override;
-    bool execute() override;
-    bool finalize() override;
+    virtual bool init() override;
+
+    virtual bool execute(ulong event, ulong seq_number, uint16_t subevent, void* buffer,
+                         size_t length) override;
 };
 
-#endif /* SFIBERSCALIBRATOR_H */
+#endif
+

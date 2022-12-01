@@ -1,0 +1,71 @@
+// @(#)lib/base/datasources:$Id$
+// Author: Rafal Lalik  18/11/2017
+
+/*************************************************************************
+ * Copyright (C) 2017-2018, Rafał Lalik.                                 *
+ * All rights reserved.                                                  *
+ *                                                                       *
+ * For the licensing terms see $SiFiSYS/LICENSE.                         *
+ * For the list of contributors see $SiFiSYS/README/CREDITS.             *
+ *************************************************************************/
+
+#ifndef SFIBERSIDENTIFICATION_H
+#define SFIBERSIDENTIFICATION_H
+
+#include "sifi_export.h"
+
+#include "TTree.h"
+#include "SDataSource.h"
+#include "SUnpacker.h"
+#include "STP4to1Source.h"
+#include <RtypesCore.h> // for Double_t, Int_t
+
+#include <cstdint> // for uint16_t
+#include <cstdio>  // for printf
+#include <fstream>
+#include <memory> // for shared_ptr
+#include <string>
+
+#include "TFile.h"
+#include "TTree.h"
+
+class SFibersLookupTable;
+class SLocator;
+
+struct fullAddress
+{
+    UInt_t realSiPMID=0;
+    UInt_t fakeSiPMID=0;
+    int mod=-100;
+    UInt_t lay=-100;
+    UInt_t fi=-100;
+    char side;
+};
+struct identifiedFiberData
+{
+    UInt_t mod=-100;
+    UInt_t lay=-100;
+    UInt_t fi=-100;
+//     std::string side;
+    Long64_t timeL=-100;
+    Float_t energyL=-100;
+    Long64_t timeR=-100;
+    Float_t energyR=-100;
+    //add event or subevent ID?
+};
+
+/**
+ * \class SFibersIdentification
+ * This class identifies the fiberID given the SiPMID and QDC (4 to 1 coupling)
+ */
+class SIFI_EXPORT SFibersIdentification
+{
+public:
+    explicit SFibersIdentification();
+    std::vector<std::shared_ptr<identifiedFiberData>> identifyFibers(std::vector<std::shared_ptr<TP4to1Hit>> & hits);
+private:
+    std::shared_ptr<fullAddress> address;
+    std::shared_ptr<identifiedFiberData> fibData;
+};
+#endif /* SFIBERSIDENTIFICATION_H */
+

@@ -9,18 +9,37 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#ifdef __CLING__
+#include "SSiPMHit.h"
 
-// clang-format off
+#include <cstdio>
 
-#pragma link C++ class SFibersRaw+;
-#pragma link C++ class SSiPMHit+;
-#pragma link C++ class SFibersCal+;
-#pragma link C++ class SFibersCalSim+;
-#pragma link C++ class SFibersHit+;
-#pragma link C++ class SFibersHitSim+;
-#pragma link C++ class SFibersCluster+;
+/**
+ * \class SSiPMHit
+\ingroup lib_fibers
 
-// clang-format on
+A container for Fibers Stack Raw data
 
-#endif
+*/
+
+/**
+ * Clear object
+ * Parameter options are ignored, for ROOT compatibility.
+ *
+ * \param opt options
+ */
+void SSiPMHit::Clear(Option_t* /*opt*/)
+{
+    SiPMID = -1;
+
+    qdc = 0.0;
+    time = 0;
+}
+
+/**
+ * Print category
+ */
+void SSiPMHit::print() const
+{
+    printf("SiPM ID=%d  QDC=%f  Time=%lld\n", SiPMID,
+           qdc, time);
+}

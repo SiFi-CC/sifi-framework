@@ -138,6 +138,9 @@ bool SFibersDetector::initCategories()
     sizes_clus[0] = modules;
     sizes_clus[1] = 10;
 
+    size_t sizes_SiPM[1];
+    sizes_SiPM[0] = modules*layers*fibers;
+
     if (isSimulation())
     {
         if (!dm->registerCategory(SCategory::CatGeantFibersRaw, "SGeantFibersRaw", 250, true))
@@ -149,10 +152,12 @@ bool SFibersDetector::initCategories()
     }
     else
     {
+
+
         if (!dm->registerCategory(SCategory::CatFibersRaw, "SFibersRaw", 3, sizes, false))
             return false;
-//         if (!dm->registerCategory(SCategory::CatSiPMHit, "SSiPMHit", 3, sizes, false))
-//             return false;
+        if (!dm->registerCategory(SCategory::CatSiPMHit, "SSiPMHit", 1, sizes_SiPM, false))
+            return false;
         if (!dm->registerCategory(SCategory::CatFibersCal, "SFibersCal", 3, sizes, false))
             return false;
         if (!dm->registerCategory(SCategory::CatFibersHit, "SFibersHit", 3, sizes, false))

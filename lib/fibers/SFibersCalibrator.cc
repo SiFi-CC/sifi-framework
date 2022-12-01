@@ -43,7 +43,7 @@ interface description.
  * Default constructor
  */
 SFibersCalibrator::SFibersCalibrator()
-    : STask(), catFibersRaw(nullptr), /*catSiPMHit(nullptr), */catFibersCal(nullptr), pCalibratorPar(nullptr)
+    : STask(), catFibersRaw(nullptr), catFibersCal(nullptr), pCalibratorPar(nullptr)
 {
 }
 
@@ -62,14 +62,6 @@ bool SFibersCalibrator::init()
         std::cerr << "No CatFibersRaw category" << std::endl;
         return false;
     }
-    
-//     // get Raw category
-//     catSiPMHit = sifi()->getCategory(SCategory::CatSiPMHit);
-//     if (!catSiPMHit)
-//     {
-//         std::cerr << "No CatSiPMHit category" << std::endl;
-//         return false;
-//     }
 
     // create Cal category
     catFibersCal = sifi()->buildCategory(SCategory::CatFibersCal);

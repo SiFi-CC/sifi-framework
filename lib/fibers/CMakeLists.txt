@@ -18,6 +18,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersDDUnpackerPar.cc
         SFibersDDCalibratorPar.cc
         SFibersRaw.cc
+        SSiPMHit.cc
         SFibersCalibrator.cc
         SFibersCalibratorPar.cc
         SFibersCal.cc
@@ -48,6 +49,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersDDUnpackerPar.h
         SFibersDDCalibratorPar.h
         SFibersRaw.h
+        SSiPMHit.h
         SFibersCalibrator.h
         SFibersCalibratorPar.h
         SFibersCal.h
