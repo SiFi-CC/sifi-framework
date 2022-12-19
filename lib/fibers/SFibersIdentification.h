@@ -32,6 +32,14 @@
 class SFibersLookupTable;
 class SLocator;
 
+struct fibAddress
+{
+    int mod=-100;
+    UInt_t lay=-100;
+    UInt_t fi=-100;
+    char side;
+};
+
 struct fullAddress
 {
     UInt_t realSiPMID=0;
@@ -62,10 +70,14 @@ class SIFI_EXPORT SFibersIdentification
 {
 public:
     explicit SFibersIdentification();
+    std::vector<std::shared_ptr<fibAddress>> get4to1FiberFromSiPM(UInt_t SiPMID);
+//     UInt_t get4to1SiPMFromFiber(std::vector<std::shared_ptr<fibAddress>> & fiber);
     std::vector<std::shared_ptr<identifiedFiberData>> identifyFibers(std::vector<std::shared_ptr<TP4to1Hit>> & hits);
 private:
+    std::shared_ptr<fibAddress> fibOnlyAddress;
     std::shared_ptr<fullAddress> address;
     std::shared_ptr<identifiedFiberData> fibData;
+    const int n_fibers_per_SiPM = 4;
 };
 #endif /* SFIBERSIDENTIFICATION_H */
 
