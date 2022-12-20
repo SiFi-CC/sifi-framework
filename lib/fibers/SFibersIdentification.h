@@ -29,6 +29,8 @@
 #include "TFile.h"
 #include "TTree.h"
 
+#include "STask.h"
+
 class SFibersLookupTable;
 class SLocator;
 
@@ -40,15 +42,6 @@ struct fibAddress
     char side;
 };
 
-struct fullAddress
-{
-    UInt_t realSiPMID=0;
-    UInt_t fakeSiPMID=0;
-    int mod=-100;
-    UInt_t lay=-100;
-    UInt_t fi=-100;
-    char side;
-};
 struct identifiedFiberData
 {
     UInt_t mod=-100;
@@ -66,16 +59,20 @@ struct identifiedFiberData
  * \class SFibersIdentification
  * This class identifies the fiberID given the SiPMID and QDC (4 to 1 coupling)
  */
-class SIFI_EXPORT SFibersIdentification
+class SIFI_EXPORT SFibersIdentification : public STask
 {
 public:
     explicit SFibersIdentification();
+    
+    bool init() override;
+    bool execute() override;
+    bool finalize() override;
+    
     std::vector<std::shared_ptr<fibAddress>> get4to1FiberFromSiPM(UInt_t SiPMID);
-//     UInt_t get4to1SiPMFromFiber(std::vector<std::shared_ptr<fibAddress>> & fiber);
+    UInt_t get4to1SiPMFromFiber(std::vector<std::shared_ptr<fibAddress>> & fiber);
     std::vector<std::shared_ptr<identifiedFiberData>> identifyFibers(std::vector<std::shared_ptr<TP4to1Hit>> & hits);
 private:
     std::shared_ptr<fibAddress> fibOnlyAddress;
-    std::shared_ptr<fullAddress> address;
     std::shared_ptr<identifiedFiberData> fibData;
     const int n_fibers_per_SiPM = 4;
 };
