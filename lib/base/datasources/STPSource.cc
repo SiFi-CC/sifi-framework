@@ -53,7 +53,16 @@ bool STPSource::open()
         return false;
     }
     entries_counter = 0;
-    t = (TTree*)input_file->Get("data");
+    try{
+        std::cout << "trying to read tree \"events\"" << std::endl;
+        t = (TTree*)input_file->Get("events");
+        if(t) std::cout << "tree name: events" << std::endl;
+        else throw 505;
+    }
+    catch(int errorNo) {
+        std::cout << "tree name: not \"events\". trying to read in tree named \"data\" " << std::endl;
+        t = (TTree*)input_file->Get("data");
+    }
     nentries=t->GetEntries();
     std::cout << "nentries " << nentries << std::endl;
     if (unpackers.size() == 0) return false;

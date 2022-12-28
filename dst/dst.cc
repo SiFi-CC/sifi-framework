@@ -163,39 +163,39 @@ int main(int argc, char** argv)
                 {
                      std::cerr << "##### Error in dst.cc Could not open input .root file!" << std::endl;
                      std::cerr << name << std::endl;
-                 }
+                }
                  
                   //file close
-                  if((TTree*)input_file->Get("data"))
-                  {
-                     SFibersTPUnpacker* unp = new SFibersTPUnpacker();
-                     STPSource* source = new STPSource(addr);
-                     source->addUnpacker(unp, {addr});
-                     source->setInput(name);
-                     sifi()->addSource(source);
-                   }
-                    else if((TTree*)input_file->Get("FiberCoincidences"))
-                    {
-                       SFibersTTreeUnpacker* unp = new SFibersTTreeUnpacker();
-                       STTreeSource* source = new STTreeSource(addr);
-                       source->addUnpacker(unp, {addr});
-                       source->setInput(name);
-                       sifi()->addSource(source);
-                    }
-                    else
-                    {
-                        std::cerr << "##### Error in dst: unknown tree name in the input .root file!" << std::endl;
-                        std::cerr << "Acceptable tree names: data, ..." << std::endl;
-                    }
-
+                if((TTree*)input_file->Get("data") || (TTree*)input_file->Get("events"))
+                {
+                    SFibersTPUnpacker* unp = new SFibersTPUnpacker();
+                    STPSource* source = new STPSource(addr);
+                    source->addUnpacker(unp, {addr});
+                    source->setInput(name);
+                    sifi()->addSource(source);
+                }
+                else if((TTree*)input_file->Get("FiberCoincidences"))
+                {
+                    SFibersTTreeUnpacker* unp = new SFibersTTreeUnpacker();
+                    STTreeSource* source = new STTreeSource(addr);
+                    source->addUnpacker(unp, {addr});
+                    source->setInput(name);
+                    sifi()->addSource(source);
                 }
                 else
                 {
-                    std::cerr << "##### Error in dst: unknown data file extension!" << std::endl;
-                    std::cerr << "Acceptable extensions: *.dat, *.csv, *.pmi, *.txt and .root" << std::endl;
-                    std::cerr << "Given data file: " << name << std::endl;
-                    std::exit(EXIT_FAILURE);
+                    std::cerr << "##### Error in dst: unknown tree name in the input .root file!" << std::endl;
+                    std::cerr << "Acceptable tree names: data, events" << std::endl;
                 }
+
+            }
+            else
+            {
+                std::cerr << "##### Error in dst: unknown data file extension!" << std::endl;
+                std::cerr << "Acceptable extensions: *.dat, *.csv, *.pmi, *.txt and .root" << std::endl;
+                std::cerr << "Given data file: " << name << std::endl;
+                std::exit(EXIT_FAILURE);
+            }
         }
 
         ++optind;
