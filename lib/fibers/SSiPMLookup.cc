@@ -9,19 +9,35 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#ifdef __CLING__
+#include "SSiPMLookup.h"
 
-// clang-format off
+/** 
+ * \class SSiPMLookup
+ * \ingroup lib_fibers
+ * 
+ * Lookup table for SiPMs.
+ * 
+ **/
 
-#pragma link C++ class SFibersRaw+;
-#pragma link C++ class SSiPMHit+;
-#pragma link C++ class SFibersCal+;
-#pragma link C++ class SFibersCalSim+;
-#pragma link C++ class SFibersHit+;
-#pragma link C++ class SFibersHitSim+;
-#pragma link C++ class SFibersCluster+;
-#pragma link C++ class SSiPMCluster+;
+int SSiPMLookupTable::getModules()
+{
+   int n_modules = 0;
+   
+   return n_modules;
+}
 
-// clang-format on
 
-#endif
+int SSiPMLookupTable::getLayers(int m)
+{
+    int n_layers = 0;
+    
+    return n_layers;
+}
+
+
+int SSiPMLookupTable::getSiPMsPerLayer(int m, int l)
+{
+    int n_sipms = 0;
+    
+    return n_sipms;
+}

@@ -33,6 +33,9 @@ SIFI_GENERATE_LIBRARY(
         SFibersClusterFinderPar.cc
         SFibersCluster.cc
         SFibersIdentification.cc
+        SSiPMCluster.cc
+        SSiPMLookup.cc
+        SSiPMClusterFinder.cc
     HEADERS
         SFibersDetector.h
         SFibersGeomPar.h
@@ -64,6 +67,9 @@ SIFI_GENERATE_LIBRARY(
         SFibersClusterFinderPar.h
         SFibersCluster.h
         SFibersIdentification.h
+        SSiPMCluster.h
+        SSiPMLookup.h
+        SSiPMClusterFinder.h
 
     PRIVATE_LIBRARIES
         ROOT::Core

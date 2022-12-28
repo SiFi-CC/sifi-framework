@@ -17,6 +17,7 @@
 #include "SFibersCalibrator.h"
 #include "SFibersCalibratorPar.h"
 #include "SFibersClusterFinder.h"
+#include "SSiPMClusterFinder.h"
 #include "SFibersClusterFinderPar.h"
 #include "SFibersDDCalibratorPar.h"
 #include "SFibersDDUnpackerPar.h"
@@ -79,9 +80,10 @@ bool SFibersDetector::initTasks()
     else
     {
         addTask(new SFibersUnpacker(), 0);
-        addTask(new SFibersCalibrator(), 1);
-        addTask(new SFibersHitFinder(), 2);
-        addTask(new SFibersClusterFinder(), 3);
+        addTask(new SSiPMClusterFinder(), 1);
+        addTask(new SFibersCalibrator(), 2);
+        addTask(new SFibersHitFinder(), 3);
+        addTask(new SFibersClusterFinder(), 4);
     }
 
     return true;
@@ -140,6 +142,9 @@ bool SFibersDetector::initCategories()
 
     size_t sizes_SiPM[1];
     sizes_SiPM[0] = modules*layers*fibers;
+    
+    size_t size_SiPM_cluster[1];
+    size_SiPM_cluster[0] = 20;
 
     if (isSimulation())
     {
@@ -157,6 +162,8 @@ bool SFibersDetector::initCategories()
         if (!dm->registerCategory(SCategory::CatFibersRaw, "SFibersRaw", 3, sizes, false))
             return false;
         if (!dm->registerCategory(SCategory::CatSiPMHit, "SSiPMHit", 1, sizes_SiPM, false))
+            return false;
+        if (!dm->registerCategory(SCategory::CatSiPMClus, "SSiPMCluster", 1, size_SiPM_cluster, false))
             return false;
         if (!dm->registerCategory(SCategory::CatFibersCal, "SFibersCal", 3, sizes, false))
             return false;
