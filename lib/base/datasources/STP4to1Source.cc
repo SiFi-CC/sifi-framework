@@ -89,9 +89,9 @@ bool STP4to1Source::readCurrentEvent()
     const double ps_to_ns = 1E3;
     std::vector<std::shared_ptr<TP4to1Hit>> hits;
     
-    SFibersLookupTable* pLookUp;
-    pLookUp = dynamic_cast<SFibersLookupTable*>(pm()->getLookupContainer("TPLookupTable"));
-    SLocator loc(3);
+//    SFibersLookupTable* pLookUp;
+//    pLookUp = dynamic_cast<SFibersLookupTable*>(pm()->getLookupContainer("TPLookupTable"));
+//    SLocator loc(3);
 
     if (state == DONE) { return false; }
 
