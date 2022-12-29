@@ -60,7 +60,7 @@ bool STP4to1Source::open()
         return false;
     }
     entries_counter = 0;
-    t = (TTree*)input_file->Get("data");
+    t = (TTree*)input_file->Get("events");
     nentries=t->GetEntries();
     std::cout << "nentries " << nentries << std::endl;
 
@@ -90,7 +90,7 @@ bool STP4to1Source::readCurrentEvent()
     std::vector<std::shared_ptr<TP4to1Hit>> hits;
     
     SFibersLookupTable* pLookUp;
-    pLookUp = dynamic_cast<SFibersLookupTable*>(pm()->getLookupContainer("FibersPMILookupTable")); //TODO CHANGE THE CONTAINER NAME AFTER MERGE TO FibersTPLookupTable (ALSO IN OTHER PLACES)
+    pLookUp = dynamic_cast<SFibersLookupTable*>(pm()->getLookupContainer("TPLookupTable"));
     SLocator loc(3);
 
     if (state == DONE) { return false; }

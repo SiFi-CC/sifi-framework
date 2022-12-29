@@ -54,7 +54,7 @@ bool SFibersIdentification::finalize()
         std::vector<std::shared_ptr<fibAddress>> fibOnlyAddresses;
         SFibersChannel* lc;
         SFibersLookupTable* pLookUp;
-        pLookUp = dynamic_cast<SFibersLookupTable*>(pm()->getLookupContainer("FibersPMILookupTable"));
+        pLookUp = dynamic_cast<SFibersLookupTable*>(pm()->getLookupContainer("TPLookupTable") );
         UInt_t fakeSiPMID = -1;
         
         for(int j = 0; j < n_fibers_per_SiPM; j++)

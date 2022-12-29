@@ -130,7 +130,7 @@ int main(int argc, char** argv)
     detm->initParameterContainers();
     detm->initCategories();
 
-    pm()->addLookupContainer("FibersPMILookupTable", std::make_unique<SFibersLookupTable>("FibersPMILookupTable", 0x1000, 0x1fff, 20000));
+    pm()->addLookupContainer("TPLookupTable", std::make_unique<SFibersLookupTable>("TPLookupTable", 0x1000, 0x1fff, 20000));
     
     // initialize tasks
     STaskManager* tm = STaskManager::instance();
