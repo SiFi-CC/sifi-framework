@@ -26,6 +26,10 @@ class SIFI_EXPORT SSiPMHit : public TObject
 {
 protected:
     // members
+    Int_t module{-1}; ///< address - module
+    Int_t layer{-1};  ///< address - layer
+    Int_t sipm{-1};  ///< address - sipm
+
     Int_t SiPMID{-1}; ///< SIPM ID
 
     Float_t qdc{0.};  ///< SiPM qdc value

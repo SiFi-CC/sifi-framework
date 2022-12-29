@@ -60,12 +60,16 @@ bool SFibersIdentification::finalize()
         for(int j = 0; j < n_fibers_per_SiPM; j++)
         {
             fakeSiPMID=SiPMID*n_fibers_per_SiPM+j;
-            lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000, fakeSiPMID));
-            fibOnlyAddress->mod=lc->m;
-            fibOnlyAddress->lay=lc->l;
-            fibOnlyAddress->fi=lc->s;
-            fibOnlyAddress->side=lc->side;
-            fibOnlyAddresses.push_back(fibOnlyAddress);
+            lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000, SiPMID));
+            if(!lc) {
+                printf("TOFPET2 Ch%d missing. Check params.txt.\n", SiPMID);
+            } else {
+                fibOnlyAddress->mod=lc->m;
+                fibOnlyAddress->lay=lc->l;
+                fibOnlyAddress->fi=lc->s;
+                fibOnlyAddress->side=lc->side;
+                fibOnlyAddresses.push_back(fibOnlyAddress);
+            }
         }        
         return fibOnlyAddresses;
 }

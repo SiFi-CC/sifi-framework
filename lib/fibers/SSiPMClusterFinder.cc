@@ -52,12 +52,12 @@ bool SSiPMClusterFinder::init()
         return false;
     }
     
-    catSiPMsCluster = sifi()->getCategory(SCategory::CatSiPMClus);
-    
-    if(!catSiPMsCluster)
-    {
-        std::cerr << "No CatSiPMClus category!" << std::endl;
-    }
+//    catSiPMsCluster = sifi()->getCategory(SCategory::CatSiPMClus);
+//    
+//    if(!catSiPMsCluster)
+//    {
+//        std::cerr << "No CatSiPMClus category!" << std::endl;
+//    }
     
     pLookup = dynamic_cast<SSiPMLookupTable*>(pm()->getLookupContainer("SiPMLookupTable")); // TODO transfer this to STP4to1source?
     
