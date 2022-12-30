@@ -6,6 +6,7 @@
 #include "SFibersDDUnpacker.h"
 #include "SFibersDetector.h"
 #include "SFibersLookup.h"
+#include "SMultiFibersLookup.h"
 #include "SFibersTP4to1Unpacker.h"
 #include "SLookup.h"
 #include "STP4to1Source.h"
@@ -131,6 +132,7 @@ int main(int argc, char** argv)
     detm->initCategories();
 
     pm()->addLookupContainer("TPLookupTable", std::make_unique<SFibersLookupTable>("TPLookupTable", 0x1000, 0x1fff, 20000));
+    pm()->addLookupContainer("4to1SiPMtoFibersLookupTable", std::make_unique<SMultiFibersLookupTable>("4to1SiPMtoFibersLookupTable", 0x1000, 0x1fff, 20000));
     
     // initialize tasks
     STaskManager* tm = STaskManager::instance();

@@ -150,7 +150,7 @@ bool STP4to1Extractor::write_to_tree(std::vector<std::shared_ptr<TP4to1Hit>> & h
         }
         SFibersChannel* lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000,hits[i]->channelID) );
         if(!lc) {
-            printf("TOFPET2 Ch%d missing. Check params.txt.\n", hits[i]->channelID);
+//            fprintf(stderr, "STP4to1Extractor TOFPET2 Ch%d missing. Check params.txt.\n", hits[i]->channelID);
         } else {
             pHit->setChannel(hits[i]->channelID);
             pHit->setAddress(lc->m, lc->l, lc->s, lc->side);

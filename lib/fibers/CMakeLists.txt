@@ -7,6 +7,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersGeomPar.cc
         SFibersUnpacker.cc
         SFibersLookup.cc
+        SMultiFibersLookup.cc
         SFibersPMIUnpacker.cc
         SFibersCBUnpacker.cc
         SFibersTPUnpacker.cc
@@ -41,6 +42,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersGeomPar.h
         SFibersUnpacker.h
         SFibersLookup.h
+        SMultiFibersLookup.h
         SFibersPMIUnpacker.h
         SFibersCBUnpacker.h
         SFibersTPUnpacker.h

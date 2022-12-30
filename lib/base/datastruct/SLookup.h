@@ -102,7 +102,9 @@ public:
      */
     SLookupChannel* getChannel(uint chan)
     {
-//         std::cout << "chan: " << chan << " nchan: " << nchan << std::endl;
+        if(chan > nchan) {
+            fprintf(stderr, "SLooupChannel finds %d > %d. Check channel mapping. Will abort.\n", chan, nchan);
+        }
         assert(chan < nchan);
         return channels[chan].get();
     }
@@ -120,7 +122,7 @@ public:
  * The default implementation provides three mapping addreses: module, layer,
  * channel. The respective entry in the lookup table looks following:
  *
- *     addres channel        module layer channel
+ *     address channel        module layer channel
  *
  * where:
  *  * `address` - a hex value of board address (in te unpacker it is equivalent
