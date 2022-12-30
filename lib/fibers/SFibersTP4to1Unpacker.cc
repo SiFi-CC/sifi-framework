@@ -16,7 +16,7 @@
 #include "SFibersRaw.h"
 #include "SLocator.h" // for SLocator
 #include "SLookup.h"  // for SLookupChannel, SLookupTable
-#include "SPMISource.h"
+//#include "SPMISource.h"
 #include "STPSource.h"
 #include "SFibersIdentification.h" //for identifiedFiberData structure. careful! is it a cross reference?
 #include "SiFi.h"

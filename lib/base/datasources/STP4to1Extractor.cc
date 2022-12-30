@@ -2,6 +2,7 @@
 #include "STP4to1Extractor.h"
 #include "SFibersIdentification.h"
 #include "SUnpacker.h"
+#include "SFibersLookup.h"
 #include "SLookup.h"
 #include "SSiPMHit.h"
 #include "SCategory.h"
@@ -129,6 +130,9 @@ bool STP4to1Extractor::write_to_tree(std::vector<std::shared_ptr<TP4to1Hit>> & h
         return false;
     }
 
+    SFibersLookupTable* pLookUp;
+    pLookUp = dynamic_cast<SFibersLookupTable*>(pm()->getLookupContainer("TPLookupTable"));
+    SLocator loc(3);
     int n_hits = hits.size();
     for (int i = 0; i < n_hits; i++)
     {
@@ -144,9 +148,15 @@ bool STP4to1Extractor::write_to_tree(std::vector<std::shared_ptr<TP4to1Hit>> & h
                 std::cerr << "Error in STP4to1Extractor.cc: no pHit category!" << std::endl;
             }
         }
-        pHit->setAddress(loc[0]);
-        pHit->setQDC(hits[i]->energy);
-        pHit->setTime(hits[i]->time);
+        SFibersChannel* lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000,hits[i]->channelID) );
+        if(!lc) {
+//            fprintf(stderr, "STP4to1Extractor TOFPET2 Ch%d missing. Check params.txt.\n", hits[i]->channelID);
+        } else {
+            pHit->setChannel(hits[i]->channelID);
+            pHit->setAddress(lc->m, lc->l, lc->s, lc->side);
+            pHit->setQDC(hits[i]->energy);
+            pHit->setTime(hits[i]->time);
+        }
     }
  
 return 0;    

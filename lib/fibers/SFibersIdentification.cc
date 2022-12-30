@@ -19,7 +19,7 @@
 
 #include"TFile.h"
 #include"TTree.h"
-#include "SFibersLookup.h"
+#include "SMultiFibersLookup.h"
 
 /**
  * Constructor. Requires ...
@@ -49,24 +49,34 @@ bool SFibersIdentification::finalize()
     return true;
 }
 
- std::vector<std::shared_ptr<fibAddress>> SFibersIdentification::get4to1FiberFromSiPM(UInt_t SiPMID){
+std::vector<std::shared_ptr<fibAddress>> SFibersIdentification::get4to1FiberFromSiPM(UInt_t SiPMID){
     
         std::vector<std::shared_ptr<fibAddress>> fibOnlyAddresses;
-        SFibersChannel* lc;
-        SFibersLookupTable* pLookUp;
-        pLookUp = dynamic_cast<SFibersLookupTable*>(pm()->getLookupContainer("FibersPMILookupTable"));
-        UInt_t fakeSiPMID = -1;
-        
-        for(int j = 0; j < n_fibers_per_SiPM; j++)
-        {
-            fakeSiPMID=SiPMID*n_fibers_per_SiPM+j;
-            lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000, fakeSiPMID));
-            fibOnlyAddress->mod=lc->m;
-            fibOnlyAddress->lay=lc->l;
-            fibOnlyAddress->fi=lc->s;
-            fibOnlyAddress->side=lc->side;
-            fibOnlyAddresses.push_back(fibOnlyAddress);
-        }        
+        SMultiFibersChannel* lc;
+        SMultiFibersLookupTable* pLookUp;
+        pLookUp = dynamic_cast<SMultiFibersLookupTable*>(pm()->getLookupContainer("4to1SiPMtoFibersLookupTable") );
+//        lc = dynamic_cast<SMultiFibersChannel*>(pLookUp->getAddress(0x1000, SiPMID) );
+//seg faults when the SiPMID does not exist, check params.txt
+        lc = dynamic_cast<SMultiFibersChannel*>(pLookUp->getAddress(0x1000, 55) );
+        std::vector<std::vector<std::string> > vec = lc->vecFiberAssociations;
+        lc->print();
+//        std::cout << lc->m << " " << lc->l << " " << lc->s << std::endl;
+//        UInt_t fakeSiPMID = -1;
+//        
+//        for(int j = 0; j < n_fibers_per_SiPM; j++)
+//        {
+//            fakeSiPMID=SiPMID*n_fibers_per_SiPM+j;
+//            lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000, SiPMID));
+//            if(!lc) {
+//                printf("TOFPET2 Ch%d missing. Check params.txt.\n", SiPMID);
+//            } else {
+//                fibOnlyAddress->mod=lc->m;
+//                fibOnlyAddress->lay=lc->l;
+//                fibOnlyAddress->fi=lc->s;
+//                fibOnlyAddress->side=lc->side;
+//                fibOnlyAddresses.push_back(fibOnlyAddress);
+//            }
+//        }        
         return fibOnlyAddresses;
 }
 
@@ -84,30 +94,30 @@ std::vector<std::shared_ptr<identifiedFiberData>> SFibersIdentification::identif
     std::vector<std::shared_ptr<fibAddress>> fibOnlyAddresses;
     for (int i = 0; i < n_hits; i++) //
     {
-       //get a vector of fiber IDs from SiPM ID, write it to fibOnlyAddresses vector:
+//       //get a vector of fiber IDs from SiPM ID, write it to fibOnlyAddresses vector:
         fibOnlyAddresses=get4to1FiberFromSiPM(hits[i]->channelID);
-       //access the contents of the fibOnlyAddresses vector:
-//              for (int j = 0; j < fibOnlyAddresses.size(); j++){
-//              std::cout << fibOnlyAddresses[j]->mod << " " << fibOnlyAddresses[j]->lay << " " << fibOnlyAddresses[j]->fi << " " << fibOnlyAddresses[j]->side << " " << std::endl;
-//         }
-        
-     //   //do something with the obtained fibOnlyAddresses vector
+//       //access the contents of the fibOnlyAddresses vector:
+////              for (int j = 0; j < fibOnlyAddresses.size(); j++){
+////              std::cout << fibOnlyAddresses[j]->mod << " " << fibOnlyAddresses[j]->lay << " " << fibOnlyAddresses[j]->fi << " " << fibOnlyAddresses[j]->side << " " << std::endl;
+////         }
+//        
+//     //   //do something with the obtained fibOnlyAddresses vector
         fibOnlyAddresses.clear();
     }
-    
-    //change the code below by inserting the fiber identification algorithm and based on the algorithm, fill the allFibData structure for all subevents
-    int n_subevents = 5; //number of subevents
-    for (int i = 0; i < n_subevents; i++)
-    {
-        fibData->energyL=0.0;
-        fibData->timeL=0.0;
-        fibData->energyR=0.0;
-        fibData->timeR=0.0;
-        fibData->mod=0;
-        fibData->lay=0;
-        fibData->fi=0;
-        allFibData.push_back(fibData);
-    }
+//    
+//    //change the code below by inserting the fiber identification algorithm and based on the algorithm, fill the allFibData structure for all subevents
+//    int n_subevents = 5; //number of subevents
+//    for (int i = 0; i < n_subevents; i++)
+//    {
+//        fibData->energyL=0.0;
+//        fibData->timeL=0.0;
+//        fibData->energyR=0.0;
+//        fibData->timeR=0.0;
+//        fibData->mod=0;
+//        fibData->lay=0;
+//        fibData->fi=0;
+//        allFibData.push_back(fibData);
+//    }
     
 return allFibData;    
 }

@@ -26,6 +26,11 @@ class SIFI_EXPORT SSiPMHit : public TObject
 {
 protected:
     // members
+    Int_t module{-1}; ///< address - module
+    Int_t layer{-1};  ///< address - layer
+    Int_t sipm{-1};  ///< address - sipm
+    char side;  ///< address - side
+
     Int_t SiPMID{-1}; ///< SIPM ID
 
     Float_t qdc{0.};  ///< SiPM qdc value
@@ -42,15 +47,38 @@ public:
     // methods
     /// Set SiPM ID
     /// \param sID SiPM ID
-    void setAddress(Int_t sID)
+    void setChannel(Int_t sID)
     {
         SiPMID = sID;
     }
     /// Get SiPM ID
     /// \param sID SiPM ID
-    void getAddress(Int_t& sID) const
+    void getChannel(Int_t& sID) const
     {
         sID = SiPMID;
+    }
+    // methods
+    /// Set address
+    /// \param m module
+    /// \param l layer
+    /// \param f fiber
+    void setAddress(Int_t m, Int_t l, Int_t f, char s)
+    {
+        module = m;
+        layer = l;
+        sipm = f;
+        side = s;
+    }
+    /// Get address
+    /// \param m module
+    /// \param l layer
+    /// \param f fiber
+    void getAddress(Int_t& m, Int_t& l, Int_t& f, char& s) const
+    {
+        m = module;
+        l = layer;
+        f = sipm;
+        s = side;
     }
 
     /// Set QDC value
