@@ -59,7 +59,6 @@ std::vector<std::shared_ptr<fibAddress>> SFibersIdentification::get4to1FiberFrom
 //seg faults when the SiPMID does not exist, check params.txt
         lc = dynamic_cast<SMultiFibersChannel*>(pLookUp->getAddress(0x1000, 55) );
         std::vector<std::vector<std::string> > vec = lc->vecFiberAssociations;
-        lc->print();
 //        std::cout << lc->m << " " << lc->l << " " << lc->s << std::endl;
 //        UInt_t fakeSiPMID = -1;
 //        

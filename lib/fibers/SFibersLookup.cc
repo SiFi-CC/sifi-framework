@@ -26,7 +26,7 @@ A unpacker task.
 uint SFibersChannel::read(const char* buffer)
 {
     uint n;
-    int cnt = sscanf(buffer, "%2" SCNu8 "%2" SCNu8 "%2" SCNu8 "%*[ ]%c %n", &m, &l, &s, &side, &n);
+    int cnt = sscanf(buffer, "%3" SCNu8 "%3" SCNu8 "%3" SCNu8 "%*[ ]%c %n", &m, &l, &s, &side, &n);
     assert(cnt == 4);
     return n;
 }
