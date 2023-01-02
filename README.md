@@ -57,8 +57,6 @@ Get the source from the project git page:
 
     git clone https://github.com/SiFi-CC/sifi-framework.git
     cd sifi-framework
-    git submodule init
-    git submodule update
 
 ### Compilation and installation
 

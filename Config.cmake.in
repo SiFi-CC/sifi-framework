@@ -1,19 +1,19 @@
-# - Config file for the @CMAKE_PROJECT_NAME@ package
+# - Config file for the SIFI package
 # It defines the following variables
-#  @CAPS_PROJECT_NAME@_INCLUDE_DIR  - include directories for @CMAKE_PROJECT_NAME@
-#  @CAPS_PROJECT_NAME@_LIBRARY_DIR  - library directories for @CMAKE_PROJECT_NAME@
-#  @CAPS_PROJECT_NAME@_LIBRARIES    - libraries to link against
-#  @CAPS_PROJECT_NAME@_EXECUTABLE   - the bar executable
+#  SIFI_INCLUDE_DIR  - include directories for SIFI
+#  SIFI_LIBRARY_DIR  - library directories for SIFI
+#  SIFI_LIBRARIES    - libraries to link against
+#  SIFI_EXECUTABLE   - the bar executable
 
-set(@CAPS_PROJECT_NAME@_VERSION @PROJECT_VERSION@)
+set(SIFI_VERSION 0.3.0)
 
 @PACKAGE_INIT@
 
-set_and_check(@CAPS_PROJECT_NAME@_INCLUDE_DIR "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@")
-set_and_check(@CAPS_PROJECT_NAME@_LIBRARY_DIR "@PACKAGE_CMAKE_INSTALL_LIBDIR@")
+set_and_check(SIFI_INCLUDE_DIR "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@")
+set_and_check(SIFI_LIBRARY_DIR "@PACKAGE_CMAKE_INSTALL_LIBDIR@")
 
-# These are IMPORTED targets created by @CMAKE_PROJECT_NAME@Targets.cmake
-set(@CAPS_PROJECT_NAME@_LIBRARIES SiFi SiFiTools Geant FibersStack)
-set(@CAPS_PROJECT_NAME@_EXECUTABLE "")
+# These are IMPORTED targets created by SIFITargets.cmake
+set(SIFI_LIBRARIES SiFi SiFiTools Geant FibersStack)
+set(SIFI_EXECUTABLE "")
 
-check_required_components(@PROJECT_VERSION@)
+check_required_components(0.3.0)

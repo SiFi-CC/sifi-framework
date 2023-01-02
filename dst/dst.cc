@@ -226,11 +226,12 @@ int main(int argc, char** argv)
     detm->initParameterContainers();
     detm->initCategories();
 
+    pm()->addLookupContainer("FibersTPLookupTable", std::make_unique<SFibersLookupTable>("FibersTPLookupTable", 0x1000, 0x1fff, 5000));
     pm()->addLookupContainer("FibersDDLookupTable", std::make_unique<SFibersLookupTable>(
                                                         "FibersDDLookupTable", 0x1000, 0x1fff, 32));
     pm()->addLookupContainer(
         "FibersPMILookupTable",
-        std::make_unique<SFibersLookupTable>("FibersPMILookupTable", 0x1000, 0x1fff, 5000)); //arbitrary size. TODO make the size dynamic (if needed)
+        std::make_unique<SFibersLookupTable>("FibersPMILookupTable", 0x1000, 0x1fff, 64)); //arbitrary size. TODO make the size dynamic (if needed)
     //pm()->addLookupContainer("FibersPMILookupTable", std::make_unique<SFibersLookupTable>("FibersPMILookupTable", 0x1000, 0x1fff, 64)); // TODO change name of the container or other fix
     pm()->addLookupContainer("FibersPETIROCLookupTable", std::make_unique<SFibersLookupTable>("FibersPETIROCLookupTable", 0x1000, 0x1fff, 64));
     pm()->addLookupContainer("FibersTTreeLookupTable", std::make_unique<SFibersLookupTable>("FibersTTreeLookupTable", 0x1000, 0x1fff, 64));

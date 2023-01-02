@@ -178,6 +178,7 @@ public:
 
     SLookupChannel* getAddress(uint addr, uint chan);
 
+    const std::string GetName() { return container; }
     virtual void print();
 
 protected:
