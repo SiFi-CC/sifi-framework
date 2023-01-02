@@ -29,7 +29,7 @@ A container for Fibers Stack Raw data
  */
 void SSiPMHit::Clear(Option_t* /*opt*/)
 {
-    SiPMID = -1;
+    swSiPMID = -1;
 
     qdc = 0.0;
     time = 0;
@@ -40,6 +40,6 @@ void SSiPMHit::Clear(Option_t* /*opt*/)
  */
 void SSiPMHit::print() const
 {
-    printf("SiPM ID=%d  QDC=%f  Time=%lld\n", SiPMID,
+    printf("swSiPMID=%d  QDC=%f  Time=%lld\n", swSiPMID,
            qdc, time);
 }
