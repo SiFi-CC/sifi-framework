@@ -152,7 +152,7 @@ bool STP4to1Extractor::write_to_tree(std::vector<std::shared_ptr<TP4to1Hit>> & h
             fprintf(stderr, "STP4to1Extractor TOFPET2 absolute Ch%d missing. Check params.txt.\n", hits[i]->channelID);
         } else {
             pHit->setChannel(lc->s);
-            pHit->setAddress(lc->m, lc->l, lc->s, lc->side);
+            pHit->setAddress(lc->m, lc->l, lc->element, lc->side);
             pHit->setQDC(hits[i]->energy);
             pHit->setTime(hits[i]->time);
         }

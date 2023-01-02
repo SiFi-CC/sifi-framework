@@ -49,7 +49,7 @@ struct SIFI_EXPORT SLookupChannel
     virtual ~SLookupChannel() = default;
 
     ///@{
-    uint16_t m, l, s; ///< component of virtual address
+    uint8_t m, l, s; ///< component of virtual address
     ///}@
 
     virtual uint read(const char* buffer);
