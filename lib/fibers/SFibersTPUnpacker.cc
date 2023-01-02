@@ -19,76 +19,58 @@
 #include "SPMISource.h"
 #include "STPSource.h"
 #include "SiFi.h"
-
 #include <TObject.h> // for TObject
-
 #include <iostream>
 #include <string> // for allocator
-
 /**
  * Constructor
  */
 SFibersTPUnpacker::SFibersTPUnpacker()
     : SUnpacker(), catFibersRaw(nullptr), catFibersCal(nullptr), pLookUp(nullptr)
-{
-}
-
+{ }
 bool SFibersTPUnpacker::init()
 {
     SUnpacker::init();
-
     catFibersRaw = sifi()->buildCategory(SCategory::CatFibersRaw);
-
-    if (!catFibersRaw)
-    {
+    if (!catFibersRaw) {
         std::cerr << "No CatFibersRaw category" << std::endl;
         return false;
     }
-
     catFibersCal = sifi()->buildCategory(SCategory::CatFibersCal);
-
-    if (!catFibersCal)
-    {
+    if (!catFibersCal) {
         std::cerr << "No CatFibersCal category" << std::endl;
         return false;
     }
-
-    pLookUp = dynamic_cast<SFibersLookupTable*>(pm()->getLookupContainer("FibersPMILookupTable"));
-    //     pLookUp->print();
-
+    pLookUp = dynamic_cast<SFibersLookupTable*>(pm()->getLookupContainer("FibersTPLookupTable"));
     return true;
 }
-
 bool SFibersTPUnpacker::execute(ulong /*event*/, ulong /*seq_number*/, uint16_t /*subevent*/,
                                  void* buffer, size_t /*length*/)
 {
     // getting buffer
     TPHit* hit = static_cast<TPHit*>(buffer);
-
     if (!hit) return false;
-
     SFibersChannel* lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000, hit->channelID));
-    SLocator loc(3);
-    loc[0] = lc->m; // mod;
-    loc[1] = lc->l; // lay;
-    loc[2] = lc->s; // fib;
-    char side = lc->side;
-    
-    // setting category
-    SFibersRaw* pRaw = dynamic_cast<SFibersRaw*>(catFibersRaw->getObject(loc));
-    if (!pRaw)
-    {
-        pRaw = reinterpret_cast<SFibersRaw*>(catFibersRaw->getSlot(loc));
-        new (pRaw) SFibersRaw;
+    if (!lc) {
+        std::cerr << "channel " << hit->channelID << " information does not exist in " << pLookUp->GetName() << std::endl;
+    } else {
+        SLocator loc(3);
+        loc[0] = lc->m; // mod;
+        loc[1] = lc->l; // lay;
+        loc[2] = lc->s; // fib;
+        char side = lc->side;
+        // setting category
+        SFibersRaw* pRaw = dynamic_cast<SFibersRaw*>(catFibersRaw->getObject(loc));
+        if (!pRaw)
+        {
+            pRaw = reinterpret_cast<SFibersRaw*>(catFibersRaw->getSlot(loc));
+            new (pRaw) SFibersRaw;
+        }
+        pRaw->setAddress(loc[0], loc[1], loc[2]);
+        pRaw->setQDCL(hit->qdc_l);
+        pRaw->setTimeL(hit->time_l);
+        pRaw->setQDCR(hit->qdc_r);
+        pRaw->setTimeR(hit->time_r);
     }
-
-    pRaw->setAddress(loc[0], loc[1], loc[2]);
-
-    pRaw->setQDCL(hit->qdc_l);
-    pRaw->setTimeL(hit->time_l);
-    pRaw->setQDCR(hit->qdc_r);
-    pRaw->setTimeR(hit->time_r);
-//     std::cout << hit->qdc_l << " " << hit->time_l << " " << hit->qdc_r << " " << hit->time_r << std::endl;
-
     return true;
 }
