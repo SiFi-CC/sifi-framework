@@ -20,7 +20,7 @@
 #pragma link C++ class SFibersHit+;
 #pragma link C++ class SFibersHitSim+;
 #pragma link C++ class SFibersCluster+;
-//#pragma link C++ class SSiPMCluster+;
+#pragma link C++ class SSiPMCluster+;
 
 // clang-format on
 
