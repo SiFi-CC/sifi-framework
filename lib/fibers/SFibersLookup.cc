@@ -26,14 +26,14 @@ A unpacker task.
 uint SFibersChannel::read(const char* buffer)
 {
     uint n;
-    int cnt = sscanf(buffer, "%3" SCNu8 "%3" SCNu8 "%3" SCNu8 "%*[ ]%c %n", &m, &l, &s, &side, &n);
-    assert(cnt == 4);
+    int cnt = sscanf(buffer, "%hu" "%hu" "%hu" "%hu" "%*[ ]%c %n", &m, &l, &element, &s, &side, &n);
+    assert(cnt == 5);
     return n;
 }
 
 uint SFibersChannel::write(char* buffer, size_t n) const
 {
-    uint cnt = snprintf(buffer, n, "%3d  %3d  %3d   %c", m, l, s, side);
+    uint cnt = snprintf(buffer, n, "%3d  %3d  %3d  %3d  %c", m, l, element, s, side);
     if (cnt < 0) return cnt;
     if (cnt < n) return 0;
     return cnt;
@@ -41,7 +41,7 @@ uint SFibersChannel::write(char* buffer, size_t n) const
 
 void SFibersChannel::print(bool newline, const char* prefix) const
 {
-    printf("%s %d  %d  %d  %c", prefix, m, l, s, side);
+    printf("%s %d  %d  %d %d  %c", prefix, m, l, element, s, side);
     if (newline) putchar('\n');
 }
 

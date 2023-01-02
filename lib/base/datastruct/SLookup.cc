@@ -56,7 +56,7 @@ parameters in the container and write to param file.
 uint SLookupChannel::read(const char* buffer)
 {
     uint n;
-    int cnt = sscanf(buffer, "%2" SCNu8 "%2" SCNu8 "%2" SCNu8 "%n", &m, &l, &s, &n);
+    int cnt = sscanf(buffer, "%hu" "%hu" "%hu" "%n", &m, &l, &s, &n);
     assert(cnt == 3);
     return n;
 }

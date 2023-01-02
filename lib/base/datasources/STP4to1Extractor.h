@@ -37,11 +37,11 @@ struct SiPMHit
 {
     Long64_t time=-100;
     Float_t energy=-100;
-    UInt_t channelID=0;
+    Int_t channelID=0;
 
     void print() const
     {
-        printf("TOFPET 4to1: time = %lld, energy = %f, channelID = %i\n", time, energy, channelID);
+        printf("TOFPET 4to1: time = %lld, energy = %f, swSiPMID = %i\n", time, energy, channelID);
     }
 };
 

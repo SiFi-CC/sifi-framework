@@ -132,7 +132,6 @@ bool STP4to1Extractor::write_to_tree(std::vector<std::shared_ptr<TP4to1Hit>> & h
 
     SFibersLookupTable* pLookUp;
     pLookUp = dynamic_cast<SFibersLookupTable*>(pm()->getLookupContainer("TPLookupTable"));
-    SLocator loc(3);
     int n_hits = hits.size();
     for (int i = 0; i < n_hits; i++)
     {
@@ -150,10 +149,10 @@ bool STP4to1Extractor::write_to_tree(std::vector<std::shared_ptr<TP4to1Hit>> & h
         }
         SFibersChannel* lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000,hits[i]->channelID) );
         if(!lc) {
-//            fprintf(stderr, "STP4to1Extractor TOFPET2 Ch%d missing. Check params.txt.\n", hits[i]->channelID);
+            fprintf(stderr, "STP4to1Extractor TOFPET2 absolute Ch%d missing. Check params.txt.\n", hits[i]->channelID);
         } else {
-            pHit->setChannel(hits[i]->channelID);
-            pHit->setAddress(lc->m, lc->l, lc->s, lc->side);
+            pHit->setChannel(lc->s);
+            pHit->setAddress(lc->m, lc->l, lc->element, lc->side);
             pHit->setQDC(hits[i]->energy);
             pHit->setTime(hits[i]->time);
         }
