@@ -10,7 +10,6 @@
 #include "SFibersTP4to1Unpacker.h"
 #include "SLookup.h"
 #include "STP4to1Source.h"
-// #include "STPSource.h"
 #include "STP4to1Extractor.h"
 #include "SParAsciiSource.h"
 #include "STaskManager.h"
@@ -32,6 +31,7 @@
 
 int main(int argc, char** argv)
 {
+    int events_offset = 0;
     int events = 1000000;
     int save_samples = 0;
 
@@ -41,6 +41,7 @@ int main(int argc, char** argv)
     while (1)
     {
         static struct option long_options[] = {{"ss", no_argument, &save_samples, 1},
+                                               {"events_offset", required_argument, 0, 'i'},
                                                {"events", required_argument, 0, 'e'},
                                                {"output", required_argument, 0, 'o'},
                                                {"params_file", required_argument, 0, 'p'},
@@ -48,12 +49,15 @@ int main(int argc, char** argv)
 
         int option_index = 0;
 
-        int c = getopt_long(argc, argv, "e:o:p:", long_options, &option_index);
+        int c = getopt_long(argc, argv, "i:e:o:p:", long_options, &option_index);
 
         if (c == -1) { break; }
 
         switch (c)
         {
+            case 'i':
+                events_offset = atoi(optarg);
+                break;
             case 'e':
                 events = atoi(optarg);
                 break;
@@ -84,19 +88,19 @@ int main(int argc, char** argv)
             std::string name = inpstr.substr(pos2 + 1, inpstr.length() - pos2 - 1);
             std::string ext = name.substr(name.find_last_of(".") + 1);
             uint16_t addr = std::stoi(saddr, nullptr, 16);
-            std::cout << "addr" << addr << std::endl;
             if(ext == "root")
             {
                 SFibersTP4to1Unpacker* unp = new SFibersTP4to1Unpacker();
                 STP4to1Source* source= new STP4to1Source(addr);
-                source->addUnpacker(unp, {addr});
+                source->addUnpacker(unp, {addr});                
                 source->setInput(name);
+                source->setEntriesOffset(events_offset);
                 sifi()->addSource(source);
             }
             else
             {
-                std::cerr << "##### Error in dst: unknown data file extension!" << std::endl;
-                std::cerr << "Acceptable extensions: *.root" << std::endl;
+                std::cerr << "##### Error in dst_4to1: unknown data file extension!" << std::endl;
+                std::cerr << "Acceptable extensions: *.root (TOFPET2 DAQ singles ROOT TTree)" << std::endl;
                 std::cerr << "Given data file: " << name << std::endl;
                 std::exit(EXIT_FAILURE);
             }

@@ -89,10 +89,6 @@ bool STP4to1Source::readCurrentEvent()
     const double ps_to_ns = 1E3;
     std::vector<std::shared_ptr<TP4to1Hit>> hits;
     
-//    SFibersLookupTable* pLookUp;
-//    pLookUp = dynamic_cast<SFibersLookupTable*>(pm()->getLookupContainer("TPLookupTable"));
-//    SLocator loc(3);
-
     if (state == DONE) { return false; }
 
     if (state == INIT)
@@ -102,7 +98,7 @@ bool STP4to1Source::readCurrentEvent()
         t->SetBranchAddress("time",&(hit_cache->time));
         t->SetBranchAddress("channelID",&(hit_cache->channelID));
         t->SetBranchAddress("energy",&(hit_cache->energy));
-        t->GetEntry(entries_counter);
+        t->GetEntry(entries_offset + entries_counter);
         entries_counter++;
         if(entries_counter == nentries) state = DONE;
         hit_cache->time /= ps_to_ns;
@@ -127,7 +123,7 @@ bool STP4to1Source::readCurrentEvent()
                 state = DONE;
                 break;
             }
-            t->GetEntry(entries_counter);
+            t->GetEntry(entries_offset + entries_counter);
             hit_current->time /= ps_to_ns;
             double current_time = hit_current->time;
 
@@ -139,7 +135,6 @@ bool STP4to1Source::readCurrentEvent()
             else // next event
             {
                 hit_cache = hit_current;
-//                 std::cout << std::endl;
                 break;
             }
         }
