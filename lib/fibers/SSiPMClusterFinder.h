@@ -15,7 +15,6 @@
 #include "STask.h"
 
 class SCategory;
-class SSiPMLookupTable;
 
 class SSiPMClusterFinder : public STask
 {
@@ -23,7 +22,6 @@ class SSiPMClusterFinder : public STask
 protected:
     SCategory* catSiPMsHit{nullptr};      ///< category containing SiPMs hits
     SCategory* catSiPMsCluster{nullptr};  ///< category containing SiPMs clusters
-    SSiPMLookupTable* pLookup;            ///< Lookup table for SiPMs
     
 public:
     /// Default constructor

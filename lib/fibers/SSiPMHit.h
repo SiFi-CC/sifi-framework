@@ -35,6 +35,8 @@ protected:
 
     Float_t qdc{0.};  ///< SiPM qdc value
     Long64_t time{0}; ///< SiPM time value
+    
+    Int_t hitID{-1}; ///< hit ID
 
 public:
     // constructor
