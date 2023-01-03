@@ -38,7 +38,7 @@ struct TP4to1Hit
 
     void print() const
     {
-        printf("TOFPET 4to1: time = %lld, energy = %f, channelID = %i\n", time, energy, channelID);
+        printf("TOFPET 4to1: time = %lld, energy = %f, hwSiPMID = %i\n", time, energy, channelID);
     }
 };
 
@@ -55,15 +55,16 @@ public:
     virtual bool close() override;
     virtual bool readCurrentEvent() override;
     virtual void setInput(const std::string& filename, size_t length = 0);
+    void setEntriesOffset(Long64_t i) { entries_offset = i; };
 
 private:
     uint16_t subevent;     ///< subevent id
     std::string input;     ///< source file name
     TFile * input_file;    ///< data input file
-    TTree *t;
+    TTree *t;              ///< TOFPET2 DAQ generated singles TTree
     Long64_t nentries;
     std::shared_ptr<TP4to1Hit> hit_cache;
-    Long64_t entries_counter;
+    Long64_t entries_offset, entries_counter;
     SCategory* catSiPMHit;
     STP4to1Extractor * extractor;
     enum State

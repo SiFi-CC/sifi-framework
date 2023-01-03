@@ -54,12 +54,9 @@ uint SMultiFibersChannel::read(const char* buffer)
     for(int i=0; i < segment.size(); ++i) {
             std::vector<std::string> token;
             tokenize(segment[i], token, ',');
-            if(token.size() == 4) {
-                if(token[0]!="" && token[1]!="" && token[2]!="" && token[3]!="") {
-                    vecFiberAssociations.push_back(token);
-                }
-            } else {
-                fprintf(stderr, "SMultiFibersChannel: There is a problem with your addressing. Check params.txt.\n");
+            if(segment[i].find(",,,") == std::string::npos) continue;
+            if(token[0]!="" && token[1]!="" && token[2]!="" && token[3]!="") {
+                vecFiberAssociations.push_back(token);
             }
     }
     return 0; //unused, just for backwards compatibility
