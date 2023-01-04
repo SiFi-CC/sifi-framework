@@ -24,14 +24,14 @@
 void SSiPMCluster::Clear(Option_t* opt)
 {
     point.Clear();
-    errors.Clear();
+//    errors.Clear();
     hits.clear();
 }
 
 void SSiPMCluster::print() const
 {
-    printf("SiPM CLUSTER:  module = %d  cluster = %d  x,y,z = (%f, %f, %f) +/- (%f, %f, %f)\n",
-           module, cluster, point.x(), point.y(), point.z(), errors.x(), errors.y(), errors.z());
+//    printf("SiPM CLUSTER:  module = %d  cluster = %d  x,y,z = (%f, %f, %f) +/- (%f, %f, %f)\n",
+//           module, cluster, point.x(), point.y(), point.z(), errors.x(), errors.y(), errors.z());
     
     printf("SiPM HITS:");
     

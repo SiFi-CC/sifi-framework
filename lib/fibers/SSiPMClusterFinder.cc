@@ -42,7 +42,7 @@
 
 bool SSiPMClusterFinder::init()
 {
-    catSiPMsHit = sifi()->getCategory(SCategory::CatSiPMHit);
+    catSiPMsHit = sifi()->buildCategory(SCategory::CatSiPMHit);
     
     if(!catSiPMsHit)
     {
@@ -50,7 +50,7 @@ bool SSiPMClusterFinder::init()
         return false;
     }
     
-   catSiPMsCluster = sifi()->getCategory(SCategory::CatSiPMClus);
+   catSiPMsCluster = sifi()->buildCategory(SCategory::CatSiPMClus);
    
    if(!catSiPMsCluster)
    {
@@ -70,8 +70,26 @@ bool checkIfNeighbours(SSiPMHit* hit_1, SSiPMHit* hit_2)
 bool SSiPMClusterFinder::execute()
 {
     
-    /// TODO creating clusters
-    
+    int size = catSiPMsHit->getEntries();
+    for (int i = 0; i < size; ++i)
+    {
+        SSiPMHit* pHit = dynamic_cast<SSiPMHit*>(catSiPMsHit->getObject(i));
+        if (!pHit)
+        {
+            printf("SiPMHit doesn't exists!\n");
+            continue;
+        }
+        Int_t mod = 0;
+        Int_t lay = 0;
+        Int_t element = 0;
+        char side = '\0';
+        pHit->getAddress(mod, lay, element, side);
+
+        Float_t qdc = pHit->getQDC();
+        Long64_t time = pHit->getTime();
+        // checkIfNeighbours() somehow?
+        // then construct SSiPMCluster and addHit() and point(0, 0, 0)
+    }    
     return true;
 }
 

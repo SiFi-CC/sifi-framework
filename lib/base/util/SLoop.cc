@@ -102,6 +102,7 @@ bool SLoop::addFiles(const std::vector<std::string>& files)
  */
 void SLoop::setInput(std::initializer_list<SCategory::Cat> categories)
 {
+    std::cout << "MARK <<<<<<<<<<<<<<" << std::endl;
     if (chain->GetListOfFiles()->GetEntries() == 0) abort();
 
     current_event = 0;
