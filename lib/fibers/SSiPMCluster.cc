@@ -10,7 +10,7 @@
  *************************************************************************/
  
 #include "SSiPMCluster.h"
-
+#include "SSiPMHit.h"
 #include <cstdio>
 
 /**
@@ -33,10 +33,21 @@ void SSiPMCluster::print() const
 //    printf("SiPM CLUSTER:  module = %d  cluster = %d  x,y,z = (%f, %f, %f) +/- (%f, %f, %f)\n",
 //           module, cluster, point.x(), point.y(), point.z(), errors.x(), errors.y(), errors.z());
     
-    printf("SiPM HITS:");
+    printf("SiPM CLUSTER: cluster = %d num of hits = %d x,y,z = (%f, %f, %f)\n", cluster, hits.size(), point.x(), point.y(), point.z());
+    printf("SiPM HITS:\n");
     
-    for(auto & h : hits)
-        printf(" %d", h);
+    for(auto & h : hits) {
+//        printf(" %d", h);
+        SSiPMHit* pHit = dynamic_cast<SSiPMHit*>(catSiPMsHit->getObject(h));
+        if (!pHit)
+        {
+            printf("SiPMHit %d doesn't exists!\n", h);
+            continue;
+        }
+        pHit->print();
+    }
     
     printf("\n");
+
+
 }
