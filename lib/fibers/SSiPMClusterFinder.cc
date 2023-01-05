@@ -238,7 +238,7 @@ bool SSiPMClusterFinder::execute()
                 pClus->getPoint().SetXYZ(0, 0, 0);
                 pClus->catSiPMsHit = catSiPMsHit;
             }
-            pClus->print();
+            //pClus->print();
         }
 
     return true;

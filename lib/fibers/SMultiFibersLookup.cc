@@ -29,7 +29,26 @@ A unpacker task.
  *
  *
  */
+// trim from start
+std::string &ltrim(std::string &s) {
+	s.erase(s.begin(), std::find_if(s.begin(), s.end(),
+	std::not1(std::ptr_fun<int, int>(std::isspace))));
+	return s;
+}
+
+// trim from end
+std::string &rtrim(std::string &s) {
+	s.erase(std::find_if(s.rbegin(), s.rend(),
+	std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+	return s;
+}
+
+// trim from both ends
+std::string &trim(std::string &s) {
+	return ltrim(rtrim(s));
+}
 void tokenize(std::string str, std::vector<std::string> &token_v, char delimiter = '/'){
+    str = trim(str);
     size_t start = str.find_first_not_of(delimiter), end=start;
     while (start != std::string::npos) {
         // Find next occurence of delimiter
@@ -54,11 +73,12 @@ uint SMultiFibersChannel::read(const char* buffer)
     for(int i=0; i < segment.size(); ++i) {
             std::vector<std::string> token;
             tokenize(segment[i], token, ',');
-            if(segment[i].find(",,,") == std::string::npos) continue;
+            if(segment[i].find(",,,") != std::string::npos) continue;
             if(token[0]!="" && token[1]!="" && token[2]!="" && token[3]!="") {
                 vecFiberAssociations.push_back(token);
             }
     }
+    //print();
     return 0; //unused, just for backwards compatibility
 }
 
@@ -74,9 +94,11 @@ uint SMultiFibersChannel::write(char* buffer, size_t n) const
 void SMultiFibersChannel::print(bool newline, const char* prefix) const
 {
     for(int i=0; i < vecFiberAssociations.size(); ++i) {
+	printf(" (");
         for(int j=0; j < vecFiberAssociations[i].size(); ++j) {
             printf("%s ", vecFiberAssociations[i][j].c_str() );
         }
+	printf(") ");
     }
     printf("\n");
 }

@@ -21,6 +21,10 @@
 #include <memory> // for make_unique, unique_ptr
 #include <stdint.h>
 #include <sys/types.h> // for uint
+#include <algorithm>
+#include <functional>
+#include <cctype>
+#include <locale>
 /**
  * 
  * 
@@ -50,6 +54,9 @@ public:
 
     // methods
     void tokenize(std::string str, std::vector<std::string> &token_v, char delimiter);
+    std::string &ltrim(std::string &s);
+    std::string &rtrim(std::string &s);
+    std::string &trim(std::string &s);
     virtual std::unique_ptr<SLookupChannel> createChannel() const override
     {
         return std::make_unique<SMultiFibersChannel>();

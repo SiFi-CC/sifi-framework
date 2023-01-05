@@ -196,10 +196,123 @@ std::vector<std::shared_ptr<identifiedFiberData>> SFibersIdentification::identif
         clusters_final.push_back(cl_f);
         }
         
+        std::vector<std::vector<UInt_t>> scat_bottom;
+        std::vector<std::vector<UInt_t>> ab_bottom;
+        std::vector<std::vector<UInt_t>> scat_top;
+        std::vector<std::vector<UInt_t>> ab_top;
+        
+        for(int i=0; i<clusters_final.size(); i++){
+            lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000,hits[clusters_final[i][0]]->channelID ));
+            if(lc->m==0 and lc->side=='l'){
+                scat_bottom.push_back(clusters_final[i]);
+            }
+            if(lc->m==1 and lc->side=='l'){
+                ab_bottom.push_back(clusters_final[i]);
+            }
+            if(lc->m==0 and lc->side=='r'){
+                scat_top.push_back(clusters_final[i]);
+            }
+            if(lc->m==1 and lc->side=='r'){
+                ab_top.push_back(clusters_final[i]);
+            }
+        }
+        
+        
+        SMultiFibersChannel* lc2;
+        SMultiFibersLookupTable* pLookUp2;
+        pLookUp2 = dynamic_cast<SMultiFibersLookupTable*>(pm()->getLookupContainer("4to1SiPMtoFibersLookupTable") );
+        std::vector<std::vector<std::string> > vec ;
+        std::vector<std::vector<std::vector<std::string>>> cluster_fibers_sb;
+        std::vector<std::vector<std::vector<std::string>>> cluster_fibers_st;
+        std::vector<std::vector<std::string>> SiPMfibers;
+        
+        if (scat_bottom.size()){
+        for(int i=0; i<scat_bottom.size(); i++){
+            for(int j : scat_bottom[i]){
+                lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000,hits[j]->channelID));    
+                //lc2= dynamic_cast<SMultiFibersChannel*>(pLookUp->getAddress(0x1000,lc->s));
+                lc2= dynamic_cast<SMultiFibersChannel*>(pLookUp2->getAddress(0x1000, lc->s));
+                vec = lc2->vecFiberAssociations;
+                //std::cout<<"SiPMId: "<<lc->s<<std::endl;
+                //std::cout<<"vec size: "<<vec.size()<<std::endl;
+                for(std::vector<std::string> k : vec){
+                    SiPMfibers.push_back(k);
+                }
+            }
+            cluster_fibers_sb.push_back(SiPMfibers);
+            SiPMfibers.clear();
+        }
+        }
+        
+        for(int i=0; i<scat_top.size(); i++){
+            for(int j : scat_top[i]){
+                lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000,hits[j]->channelID));    
+                lc2= dynamic_cast<SMultiFibersChannel*>(pLookUp2->getAddress(0x1000, lc->s));
+                vec = lc2->vecFiberAssociations;
+                for(std::vector<std::string> k:vec){
+                    SiPMfibers.push_back(k);
+                }
+            }
+            cluster_fibers_st.push_back(SiPMfibers);
+            SiPMfibers.clear();
+        }
 
+        std::vector<std::vector<std::string>> in_fiber;
+        std::vector<std::vector<std::vector<std::string>>> cluster_in_fibers;
+        std::cout<<"New event"<<std::endl;
+        if(cluster_fibers_sb.size() and cluster_fibers_st.size()){
+        for(int i=0;i<cluster_fibers_sb.size();i++)
+        {
+            for(int j=0; j<cluster_fibers_st.size();j++)
+            {
+                //std::cout<<"New pair"<<std::endl;
+                for(std::vector<std::string> fibers_bottom : cluster_fibers_sb[i])
+                {
+                    for(std::vector<std::string> fibers_top : cluster_fibers_st[j])
+                    {
+                        if(fibers_bottom[0]==fibers_top[0] and fibers_bottom[1]==fibers_top[1] and fibers_bottom[2]==fibers_top[2])
+                        {
+                            fibers_bottom.push_back(std::to_string(i));
+                            fibers_bottom.push_back(std::to_string(j));
+                            in_fiber.push_back(fibers_bottom);
+                            //std::cout<<fibers_bottom[0]<<" "<<fibers_bottom[1]<<" "<<fibers_bottom[2]<<" "<<fibers_bottom[3]<<" "<<fibers_bottom[4]<<" "<<fibers_bottom[5]<<std::endl;
+                        }
+                    }
+                }
+                cluster_in_fibers.push_back(in_fiber);
+                in_fiber.clear();
+            }
+        }
+        }
         
+        int qdc_l=0;
+        int time_l=0;
+        int qdc_r=0;
+        int time_r=0;
         
-        
+        for(std::vector<std::vector<std::string>> k :cluster_in_fibers)
+        {
+            if(k.size()==1){
+               //std::cout<<"tak"<<std::endl;
+               for(int i : scat_bottom[std::stoi(k[0][4])]){
+                qdc_l=qdc_l+hits[i]->energy;
+                time_l=hits[i]->time;
+               }
+               for(int i: scat_top[std::stoi(k[0][5])]){
+                qdc_r=qdc_l+hits[i]->energy;
+                time_r=hits[i]->time;
+               }
+                fibData->energyL=qdc_l;
+                fibData->timeL=time_l;
+                fibData->energyR=qdc_r;
+                fibData->timeR=time_r;
+                fibData->mod=std::stoi(k[0][0]);
+                fibData->lay=std::stoi(k[0][1]);
+                fibData->fi=std::stoi(k[0][1]);
+                allFibData.push_back(fibData);
+            }
+        }
+
 //    
 //    //change the code below by inserting the fiber identification algorithm and based on the algorithm, fill the allFibData structure for all subevents
 //    int n_subevents = 5; //number of subevents
