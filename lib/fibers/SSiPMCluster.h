@@ -22,19 +22,21 @@
 #include <algorithm>
 #include <vector>
 
+#include <SCategory.h>
 class SIFI_EXPORT SSiPMCluster : public TObject
 {
-    
 protected: 
-    Int_t module{-1};  ///< address - module
+//    Int_t module{-1};  ///< address - module
     Int_t cluster{-1}; ///< address - cluster ID
     
     TVector3 point;  ///< cluster position
-    TVector3 errors; ///< cluster position errors
+//    TVector3 errors; ///< cluster position errors
     
     std::vector<Int_t> hits; ///< list of hits belonging to the cluster
     
 public:
+
+    SCategory * catSiPMsHit;
     
     /// Default constructor
     SSiPMCluster() = default;
@@ -48,16 +50,16 @@ public:
     /// Setting the cluster address
     /// \param m - module
     /// \param c - cluster
-    void setAddress(Int_t m, Int_t c)
+    void setAddress(Int_t c)
     {
-        module = m;
+//        module = m;
         cluster = c;
     }
     
     /// Getting the cluster address
-    void getAddress(Int_t &m, Int_t &c) const
+    void getAddress(Int_t &c) const
     {
-        m = module;
+//        m = module;
         c = cluster;
     }
     
@@ -92,13 +94,13 @@ public:
     /// \return errors of the cluster position
     TVector3 & getErrors()
     {
-        return errors;
+//        return errors;
     }
     
     /// \copydoc getErrors()
     const TVector3 & getErrors() const
     {
-        return errors;
+//        return errors;
     }
     
     /// Printing details of the object.
