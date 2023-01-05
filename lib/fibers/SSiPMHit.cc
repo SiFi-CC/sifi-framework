@@ -40,5 +40,6 @@ void SSiPMHit::Clear(Option_t* /*opt*/)
  */
 void SSiPMHit::print() const
 {
-    printf("module=%d layer=%d element=%d swSiPMID=%d  side=%c QDC=%f  Time=%lld\n", module, layer, element, swSiPMID, side, qdc, time);
+    printf("swSiPMID=%d  QDC=%f  Time=%lld\n", swSiPMID,
+           qdc, time);
 }

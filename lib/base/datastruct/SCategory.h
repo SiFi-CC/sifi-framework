@@ -57,7 +57,7 @@ public:
         CatSiPMHit,        ///< SiPM hits raw data (4 to 1 coupling)
                            // tracks
                            // Limit
-        CatSiPMClus,       ///< SiPM clusters
+//        CatSiPMClus,       ///< SiPM clusters
         CatLimitDoNotUse,  ///< holds size of the category list
         CatNone,           ///< Clear category list in SLoop
     };
