@@ -64,6 +64,7 @@ UInt_t SFibersIdentification::get4to1SiPMFromFiber(std::vector<std::shared_ptr<f
 
 std::vector<std::shared_ptr<identifiedFiberData>> SFibersIdentification::identifyFibers(std::vector<std::shared_ptr<TP4to1Hit>> & hits)
 {
+
     std::vector<std::shared_ptr<identifiedFiberData>> allFibData;
     int n_hits = hits.size();
 
@@ -98,7 +99,7 @@ std::vector<std::shared_ptr<identifiedFiberData>> SFibersIdentification::identif
                 ja.clear();
             
         }
-//std::cout<<"new event"<<std::endl;
+
  // algorithm for clustering- ugly version          
            std::vector<std::vector<UInt_t>> cluster;
            std::vector<UInt_t> cl;
@@ -108,10 +109,7 @@ std::vector<std::shared_ptr<identifiedFiberData>> SFibersIdentification::identif
            std::vector<int> couter;
            int cluster_size;
            int a=0;
-           /*for(int i=0; i<SiPMadresses.size();i++)
-                {
-                    candidates.push_back(SiPMadresses[i]);
-                }*/
+
             while(not_cluster){
                 candidates.clear();
                 couter.clear();
@@ -198,15 +196,7 @@ std::vector<std::shared_ptr<identifiedFiberData>> SFibersIdentification::identif
         clusters_final.push_back(cl_f);
         }
         
-        for(int i=0; i<clusters_final.size(); i++)
-        {
-            //std::cout<<"new cluster"<<std::endl;
-            for(int j=0;j<clusters_final[i].size();j++){
-                //std::cout<<"cluster_finals "<<clusters_final[i][j]<<std::endl;
-                
-            }
-        }
-       
+
         
         
         

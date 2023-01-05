@@ -116,14 +116,16 @@ bool SSiPMClusterFinder::execute()
            int not_cluster=1;
            std::vector<std::vector<std::vector<UInt_t>>> clusters;
            std::vector<std::vector<UInt_t>> candidates;
+           std::vector<int> couter;
            int cluster_size;
-           for(int i=0; i<SiPMadresses.size();i++)
-                {
-                    candidates.push_back(SiPMadresses[i]);
-                }
+           int a=0;
+
             while(not_cluster){
+                candidates.clear();
+                couter.clear();
                 not_cluster=0;
                 cluster.clear();
+                cl.clear();
                 if(!SiPMadresses.empty()){
                     cl.push_back(SiPMadresses[0][0]);
                     cl.push_back(SiPMadresses[0][1]);
@@ -132,7 +134,7 @@ bool SSiPMClusterFinder::execute()
                     cl.push_back(SiPMadresses[0][4]);
                     cluster.push_back(cl);
                     SiPMadresses.erase(SiPMadresses.begin());
-                    candidates.erase(candidates.begin());
+                    //candidates.erase(candidates.begin());
                 
                 for(int i=0; i<SiPMadresses.size();i++)
                 {
@@ -140,15 +142,19 @@ bool SSiPMClusterFinder::execute()
                     for(std::vector<UInt_t> j : cluster)
                     {
                         cl.clear();
-                        if (j[1]==SiPMadresses[i][1] and j[4]==SiPMadresses[i][4] and abs((int)(j[2]-SiPMadresses[i][2]) )<=1 and abs((int)(j[3]-SiPMadresses[i][3]) )<=1)
+                        //std::cout<<"B "<<SiPMadresses[i][0]<<" "<<i<<std::endl;
+                        if (j[1]==SiPMadresses[i][1] and j[4]==SiPMadresses[i][4] and abs((int)(j[2]-SiPMadresses[i][2]))<=1 and abs((int)(j[3]-SiPMadresses[i][3]))<=1)
                         {
+                            //std::cout<<"F "<<SiPMadresses[i][0]<<" "<<i<<std::endl;
                             cl.push_back(SiPMadresses[i][0]);
                             cl.push_back(SiPMadresses[i][1]);
                             cl.push_back(SiPMadresses[i][2]);
                             cl.push_back(SiPMadresses[i][3]);
                             cl.push_back(SiPMadresses[i][4]);
                             cluster.push_back(cl);
-                            candidates.erase(candidates.begin()+i);
+                            couter.push_back(i);
+                            //candidates.erase(candidates.begin()+i);
+                            //std::cout<<"L "<<candidates.size()<<std::endl;
                             break;
                         }
                     }
@@ -156,14 +162,41 @@ bool SSiPMClusterFinder::execute()
                         {
                             not_cluster=not_cluster+1;
                         }
-                    }    
+                    } 
+                for(int i=0;i<SiPMadresses.size();i++){
+                    a=0;
+                    for(int j=0; j<couter.size(); j++){
+                        //std::cout<<"bla "<<couter[j]<<" "<<i<<std::endl;
+                        if(i==couter[j]){
+                            a++;
+                        }
+                        //std::cout<<"a "<<a<<std::endl;
+                    }
+                    if(a==0){
+                        //std::cout<<"C "<<SiPMadresses[i][0]<<" "<<i<<std::endl;
+                        candidates.push_back(SiPMadresses[i]);
+                    }
                 }
+                }
+                
+
+                
+                
                 clusters.push_back(cluster); 
                 SiPMadresses=candidates;
             }
+            
 // clusters_final is vector of vector of event's idx 
-        std::vector<std::vector<Int_t>> clusters_final;
-        std::vector<Int_t> cl_f;
+
+        for(int i=0; i<clusters.size(); i++)
+        {
+            //std::cout<<"new cluster"<<std::endl;
+            for(int j=0;j<clusters[i].size();j++){
+            //std::cout<<clusters[i][j][2]<<" "<<clusters[i][j][3]<<" "<<i<<" "<<clusters[i][j][4]<<std::endl;
+            }
+        }
+        std::vector<std::vector<UInt_t>> clusters_final;
+        std::vector<UInt_t> cl_f;
         for(int i=0; i<clusters.size(); i++)
         {
             cl_f.clear();
