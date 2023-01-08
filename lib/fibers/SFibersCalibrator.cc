@@ -121,10 +121,10 @@ bool SFibersCalibrator::execute()
         if (!_cp_l or !_cp_r)
         {
             if (!_cp_l)
-                printf("Calibration parametes for ml,f,s = %d,%d,%d,%c does not exists\n", mod, lay,
+                printf("Calibration parameters for m,l,f,s = %d,%d,%d,%c does not exists\n", mod, lay,
                        fib, 'l');
             if (!_cp_r)
-                printf("Calibration parametes for ml,f,s = %d,%d,%d,%c does not exists\n", mod, lay,
+                printf("Calibration parameters for m,l,f,s = %d,%d,%d,%c does not exists\n", mod, lay,
                        fib, 'r');
             abort();
         }
@@ -152,10 +152,6 @@ bool SFibersCalibrator::execute()
                            (cp_l[3] * (pow(e, 2) - (cp_l[1] * cp_l[2])));
         Float_t energy_r = -(e * (-e * qdc_r + (cp_r[3] * qdc_l * cp_r[2]))) /
                            (cp_r[3] * (pow(e, 2) - (cp_r[1] * cp_r[2])));
-
-//TODO MARK: temporarily not using this so the timestamp can be propagated from raw to hit
-//        time_l += cp_l[5];
-//        time_r += cp_r[5];
 
         SLocator loc(3);
         loc[0] = mod;

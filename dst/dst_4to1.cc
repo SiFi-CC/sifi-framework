@@ -129,11 +129,11 @@ int main(int argc, char** argv)
     // initialize detectors
     SDetectorManager* detm = SDetectorManager::instance();
 
-    // As of 08.01.2023 the detector has 8 fiber layers, 56 fibers per layer.
+    // As of 08.01.2023 the detector has 7 fiber layers, 55 fibers per layer.
     // The size of the SCategory must exceed module*layer*fibers. If not it will produce
     // a segmentation fault when running registerCategory.
     // The numbers here are also not read from the params.txt file.
-    detm->addDetector(new SFibersDetector("Fibers", 1, 8, 56));
+    detm->addDetector(new SFibersDetector("Fibers", 1, 7, 55));
 
     detm->initTasks();
     detm->initParameterContainers();
