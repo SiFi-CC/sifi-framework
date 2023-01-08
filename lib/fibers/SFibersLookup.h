@@ -28,7 +28,6 @@
  */
 struct SIFI_EXPORT SFibersChannel : public SLookupChannel
 {
-    uint16_t m, l, f, element, s;
     char side; ///< side of a fiber, either 'l' or 'r'
 
     SFibersChannel() {}

@@ -129,7 +129,7 @@ int main(int argc, char** argv)
     // initialize detectors
     SDetectorManager* detm = SDetectorManager::instance();
 
-    detm->addDetector(new SFibersDetector("Fibers", 4, 4, 16));
+    detm->addDetector(new SFibersDetector("Fibers", 2, 8, 28));
 
     detm->initTasks();
     detm->initParameterContainers();
