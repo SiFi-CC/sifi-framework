@@ -147,6 +147,7 @@ bool STP4to1Extractor::write_to_tree(std::vector<std::shared_ptr<TP4to1Hit>> & h
                 std::cerr << "Error in STP4to1Extractor.cc: no pHit category!" << std::endl;
             }
         }
+        
         SFibersChannel* lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000,hits[i]->channelID) );
         if(!lc) {
             fprintf(stderr, "STP4to1Extractor TOFPET2 absolute Ch%d missing. Check params.txt.\n", hits[i]->channelID);
@@ -155,6 +156,42 @@ bool STP4to1Extractor::write_to_tree(std::vector<std::shared_ptr<TP4to1Hit>> & h
             pHit->setAddress(lc->m, lc->l, lc->element, lc->side);
             pHit->setQDC(hits[i]->energy);
             pHit->setTime(hits[i]->time);
+            
+//             Float_t x{-100.}, y{-100.}, z{-100.};
+//             if(lc->side=="l"){ //l means bottom
+//                 //x = tab_of_x_coordinates_in_one_layer[lc->element] //check if it starts from 0
+//                 //y = y_position_of_bottom_SIPM //to be changed for absorber!
+//                 //z = z_offset[layer]
+//             }
+//             if(lc->side=="r"){ //r means top
+//                 //x = tab_of_x_coordinates_in_one_layer[lc->element] +/- 1/2 SiPM Pitch shift!! //check if it starts from 0
+//                 //y = y_position_of_top_SIPM //to be changed for absorber!
+//                 //z = z_offset[layer]+/-1/2 SiPM Pitch shift!!
+//             }
+// //         Float_t rot = pGeomPar->getLayerRotation(loc[0], loc[1]);
+// // 
+// //         // calculate position from MLR
+// // //        Float_t u = (log(sqrt(qdc_r / qdc_l)) - a0) * lambda;
+// //         Float_t u = a_elar * log(sqrt(qdc_r / qdc_l)) + b_elar - pGeomPar->getFiberOffsetY(mod, lay); //calibration was done with fiber between 0 and 100mm
+// //         Float_t s_u = 5.;
+// // 
+// //         // the fiber is taken from geometry
+// //         Float_t v = pGeomPar->getFiberOffsetX(mod, lay) + fib * pGeomPar->getFibersPitch(mod, lay);
+// //         Float_t s_v = 0.65;
+// // 
+// //         Float_t x = v * cos(rot * M_PI / 180) + u * sin(rot * M_PI / 180);
+// //         Float_t y = v * sin(rot * M_PI / 180) + u * cos(rot * M_PI / 180);
+// // 
+// //         Float_t s_x = s_v * cos(rot * M_PI / 180) + s_u * sin(rot * M_PI / 180);
+// //         Float_t s_y = s_v * sin(rot * M_PI / 180) + s_u * cos(rot * M_PI / 180);
+// // 
+// //         Float_t z = pGeomPar->getFiberOffsetZ(mod, lay) + pGeomPar->getModuleZ(mod);
+// //         Float_t s_z = 0.65;
+// 
+// 
+//             
+//             
+//             pHit->setXYZ(x, y, z);
         }
     }
  

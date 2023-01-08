@@ -23,6 +23,7 @@
 #include "SFibersDDUnpackerPar.h"
 #include "SFibersDigitizerPar.h"
 #include "SFibersGeomPar.h"
+#include "SSiPMsGeomPar.h"
 #include "SFibersHitFinder.h"
 #include "SFibersHitFinderPar.h"
 #include "SFibersUnpacker.h"
@@ -98,6 +99,7 @@ bool SFibersDetector::initTasks()
 bool SFibersDetector::initContainers()
 {
     pm()->addParContainer("FibersGeomPar", std::make_unique<SFibersGeomPar>());
+    pm()->addParContainer("SiPMsGeomPar", std::make_unique<SSiPMsGeomPar>());
 
     if (isSimulation())
     {

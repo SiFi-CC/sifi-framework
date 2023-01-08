@@ -37,6 +37,10 @@ protected:
     Long64_t time{0}; ///< SiPM time value
     
     Int_t hitID{-1}; ///< hit ID
+    
+    Float_t fX{-1000.};
+    Float_t fY{-1000.};
+    Float_t fZ{-1000.};
 
 public:
     // constructor
@@ -97,6 +101,29 @@ public:
     /// \return time
     Long64_t getTime() const { return time; }
 
+    
+    /// Set XYZ SIPM position
+    /// \param fx X SiPM position
+    /// \param fy Y SiPM position
+    /// \param fz Z SiPM position
+    void setXYZ(Float_t fx, Float_t fy, Float_t fz)
+    {
+        fX=fx;
+        fY=fy;
+        fZ=fz;
+    }
+    /// Get XYZ SIPM position
+    /// \param fx X SiPM position
+    /// \param fy Y SiPM position
+    /// \param fz Z SiPM position
+    void getXYZ(Float_t& fx, Float_t& fy, Float_t& fz) const
+    {
+        fx=fX;
+        fy=fY;
+        fz=fZ;
+    }
+
+    
 
     virtual void print() const;
 

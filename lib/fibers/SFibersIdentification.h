@@ -18,6 +18,7 @@
 #include "SDataSource.h"
 #include "SUnpacker.h"
 #include "STP4to1Source.h"
+#include "SSiPMsGeomPar.h"
 #include <RtypesCore.h> // for Double_t, Int_t
 
 #include <cstdint> // for uint16_t
@@ -33,6 +34,7 @@
 
 class SFibersLookupTable;
 class SLocator;
+class SSiPMsGeomPar;
 
 struct fibAddress
 {
@@ -71,6 +73,8 @@ public:
     std::vector<std::shared_ptr<fibAddress>> get4to1FiberFromSiPM(UInt_t SiPMID);
     UInt_t get4to1SiPMFromFiber(std::vector<std::shared_ptr<fibAddress>> & fiber);
     std::vector<std::shared_ptr<identifiedFiberData>> identifyFibers(std::vector<std::shared_ptr<TP4to1Hit>> & hits);
+    SSiPMsGeomPar* pSiPMGeomPar{nullptr};     ///< SiPMs geometry
+    
 private:
     std::shared_ptr<fibAddress> fibOnlyAddress;
     std::shared_ptr<identifiedFiberData> fibData;

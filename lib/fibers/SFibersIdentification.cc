@@ -1,4 +1,5 @@
 #include "STP4to1Source.h"
+#include "SSiPMsGeomPar.h"
 #include "SFibersIdentification.h"
 #include "SUnpacker.h"
 #include "SLookup.h"
@@ -207,10 +208,21 @@ std::vector<std::shared_ptr<identifiedFiberData>> SFibersIdentification::identif
             }
         }
        
+        pSiPMGeomPar = dynamic_cast<SSiPMsGeomPar*>(pm()->getParContainer("SiPMsGeomPar"));
+        if (!pSiPMGeomPar)
+        {
+            std::cerr << "Parameter container 'SiPMsGeomPar' was not obtained! Check if it exists in params.txt" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        
+
         
         
         
-//    
+        
+        
+        
+        
 //    //change the code below by inserting the fiber identification algorithm and based on the algorithm, fill the allFibData structure for all subevents
 //    int n_subevents = 5; //number of subevents
 //    for (int i = 0; i < n_subevents; i++)

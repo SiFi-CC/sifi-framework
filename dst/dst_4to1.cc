@@ -31,6 +31,7 @@
 
 int main(int argc, char** argv)
 {
+    auto start = std::chrono::system_clock::now();  
     int events_offset = 0;
     int events = 1000000;
     int save_samples = 0;
@@ -129,7 +130,7 @@ int main(int argc, char** argv)
     // initialize detectors
     SDetectorManager* detm = SDetectorManager::instance();
 
-    detm->addDetector(new SFibersDetector("Fibers", 4, 4, 16));
+    detm->addDetector(new SFibersDetector("Fibers", 4, 4, 16)); //TODO what does it actually do? 
 
     detm->initTasks();
     detm->initParameterContainers();
@@ -152,5 +153,10 @@ int main(int argc, char** argv)
     //     pm()->setParamDest("p.txt");
     //     pm()->writeDestination();
 
+    auto end = std::chrono::system_clock::now();   
+    std::chrono::duration<double> time = end-start;
+    std::cout << "Time: " << time.count() << " s\n";
+    std::cout << "Processing time per event: " << time.count()/events << " s/event"<< std::endl;
+    std::cout << "Processed events per second: " << events/time.count() << " event/s"<< std::endl;
     return 0;
 }

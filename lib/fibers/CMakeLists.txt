@@ -5,6 +5,7 @@ SIFI_GENERATE_LIBRARY(
     SOURCES
         SFibersDetector.cc
         SFibersGeomPar.cc
+        SSiPMsGeomPar.cc
         SFibersUnpacker.cc
         SFibersLookup.cc
         SMultiFibersLookup.cc
@@ -40,6 +41,7 @@ SIFI_GENERATE_LIBRARY(
     HEADERS
         SFibersDetector.h
         SFibersGeomPar.h
+        SSiPMsGeomPar.h
         SFibersUnpacker.h
         SFibersLookup.h
         SMultiFibersLookup.h

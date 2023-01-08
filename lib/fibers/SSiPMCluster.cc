@@ -33,8 +33,8 @@ void SSiPMCluster::print() const
 //    printf("SiPM CLUSTER:  module = %d  cluster = %d  x,y,z = (%f, %f, %f) +/- (%f, %f, %f)\n",
 //           module, cluster, point.x(), point.y(), point.z(), errors.x(), errors.y(), errors.z());
     
-    printf("SiPM CLUSTER: cluster = %d num of hits = %d x,y,z = (%f, %f, %f)\n", cluster, hits.size(), point.x(), point.y(), point.z());
-    printf("SiPM HITS:\n");
+//     printf("SiPM CLUSTER: cluster = %d num of hits = %d x,y,z = (%f, %f, %f)\n", cluster, hits.size(), point.x(), point.y(), point.z());
+//     printf("SiPM HITS:\n");
     
     for(auto & h : hits) {
 //        printf(" %d", h);
@@ -44,10 +44,10 @@ void SSiPMCluster::print() const
             printf("SiPMHit %d doesn't exists!\n", h);
             continue;
         }
-        pHit->print();
+//         pHit->print();
     }
     
-    printf("\n");
+//     printf("\n");
 
 
 }

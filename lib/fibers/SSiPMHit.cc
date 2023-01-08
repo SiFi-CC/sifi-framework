@@ -29,10 +29,19 @@ A container for Fibers Stack Raw data
  */
 void SSiPMHit::Clear(Option_t* /*opt*/)
 {
+    module=-1;
+    layer=-1;
+    element=-1;
+    
     swSiPMID = -1;
-
-    qdc = 0.0;
+     
+    qdc = 0.;
     time = 0;
+    
+    hitID=-1;
+    fX=-1000.;
+    fY=-1000.;
+    fZ=-1000.;
 }
 
 /**
@@ -40,5 +49,5 @@ void SSiPMHit::Clear(Option_t* /*opt*/)
  */
 void SSiPMHit::print() const
 {
-    printf("module=%d layer=%d element=%d swSiPMID=%d  side=%c QDC=%f  Time=%lld\n", module, layer, element, swSiPMID, side, qdc, time);
+    printf("module=%d layer=%d element=%d swSiPMID=%d  side=%c QDC=%f  Time=%lld fX=%f fY=%f fZ=%f\n", module, layer, element, swSiPMID, side, qdc, time, fX, fY, fZ);
 }
