@@ -135,7 +135,7 @@ int main(int argc, char** argv)
     detm->initParameterContainers();
     detm->initCategories();
 
-    pm()->addLookupContainer("TPLookupTable", std::make_unique<SFibersLookupTable>("TPLookupTable", 0x1000, 0x1fff, 20000));
+    pm()->addLookupContainer("TPLookupTable", std::make_unique<SSiPMsLookupTable>("TPLookupTable", 0x1000, 0x1fff, 20000));
     pm()->addLookupContainer("4to1SiPMtoFibersLookupTable", std::make_unique<SMultiFibersLookupTable>("4to1SiPMtoFibersLookupTable", 0x1000, 0x1fff, 20000));
     
     // initialize tasks

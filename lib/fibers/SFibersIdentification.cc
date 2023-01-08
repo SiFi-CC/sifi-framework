@@ -71,14 +71,13 @@ std::vector<std::shared_ptr<identifiedFiberData>> SFibersIdentification::identif
        std::vector<std::vector<UInt_t>> SiPMadresses;
        std::vector<UInt_t> ja;
  
-        SFibersChannel* lc;
-        SFibersLookupTable* pLookUp;
-        pLookUp = dynamic_cast<SFibersLookupTable*>(pm()->getLookupContainer("TPLookupTable"));
+        SSiPMsChannel* lc;
+        SSiPMsLookupTable* pLookUp = dynamic_cast<SSiPMsLookupTable*>(pm()->getLookupContainer("TPLookupTable"));
 
         for(int j = 0; j <n_hits; j++)
         {
 
-                lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000,hits[j]->channelID ));
+                lc = dynamic_cast<SSiPMsChannel*>(pLookUp->getAddress(0x1000,hits[j]->channelID ));
 
                 
                 ja.push_back(j);
@@ -202,7 +201,7 @@ std::vector<std::shared_ptr<identifiedFiberData>> SFibersIdentification::identif
         std::vector<std::vector<UInt_t>> ab_top;
         
         for(int i=0; i<clusters_final.size(); i++){
-            lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000,hits[clusters_final[i][0]]->channelID ));
+            lc = dynamic_cast<SSiPMsChannel*>(pLookUp->getAddress(0x1000,hits[clusters_final[i][0]]->channelID ));
             if(lc->m==0 and lc->side=='l'){
                 scat_bottom.push_back(clusters_final[i]);
             }
@@ -229,7 +228,7 @@ std::vector<std::shared_ptr<identifiedFiberData>> SFibersIdentification::identif
         if (scat_bottom.size()){
         for(int i=0; i<scat_bottom.size(); i++){
             for(int j : scat_bottom[i]){
-                lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000,hits[j]->channelID));    
+                lc = dynamic_cast<SSiPMsChannel*>(pLookUp->getAddress(0x1000,hits[j]->channelID));    
                 //lc2= dynamic_cast<SMultiFibersChannel*>(pLookUp->getAddress(0x1000,lc->s));
                 lc2= dynamic_cast<SMultiFibersChannel*>(pLookUp2->getAddress(0x1000, lc->s));
                 vec = lc2->vecFiberAssociations;
@@ -246,7 +245,7 @@ std::vector<std::shared_ptr<identifiedFiberData>> SFibersIdentification::identif
         
         for(int i=0; i<scat_top.size(); i++){
             for(int j : scat_top[i]){
-                lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000,hits[j]->channelID));    
+                lc = dynamic_cast<SSiPMsChannel*>(pLookUp->getAddress(0x1000,hits[j]->channelID));    
                 lc2= dynamic_cast<SMultiFibersChannel*>(pLookUp2->getAddress(0x1000, lc->s));
                 vec = lc2->vecFiberAssociations;
                 for(std::vector<std::string> k:vec){

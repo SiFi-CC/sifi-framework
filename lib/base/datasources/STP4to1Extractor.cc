@@ -130,8 +130,8 @@ bool STP4to1Extractor::write_to_tree(std::vector<std::shared_ptr<TP4to1Hit>> & h
         return false;
     }
 
-    SFibersLookupTable* pLookUp;
-    pLookUp = dynamic_cast<SFibersLookupTable*>(pm()->getLookupContainer("TPLookupTable"));
+    SSiPMsLookupTable* pLookUp;
+    pLookUp = dynamic_cast<SSiPMsLookupTable*>(pm()->getLookupContainer("TPLookupTable"));
     int n_hits = hits.size();
     for (int i = 0; i < n_hits; i++)
     {
@@ -147,7 +147,7 @@ bool STP4to1Extractor::write_to_tree(std::vector<std::shared_ptr<TP4to1Hit>> & h
                 std::cerr << "Error in STP4to1Extractor.cc: no pHit category!" << std::endl;
             }
         }
-        SFibersChannel* lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000,hits[i]->channelID) );
+        SSiPMsChannel* lc = dynamic_cast<SSiPMsChannel*>(pLookUp->getAddress(0x1000,hits[i]->channelID) );
         if(!lc) {
             fprintf(stderr, "STP4to1Extractor TOFPET2 absolute Ch%d missing. Check params.txt.\n", hits[i]->channelID);
         } else {

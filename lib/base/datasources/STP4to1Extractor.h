@@ -31,7 +31,7 @@
 
 class SUnpacker;
 class SCategory;
-class SFibersLookupTable;
+class SSiPMsLookupTable;
 class SFibersIdentification;
 struct SiPMHit
 {

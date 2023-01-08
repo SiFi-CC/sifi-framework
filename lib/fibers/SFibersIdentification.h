@@ -31,7 +31,7 @@
 
 #include "STask.h"
 
-class SFibersLookupTable;
+class SSiPMsLookupTable;
 class SLocator;
 
 struct fibAddress

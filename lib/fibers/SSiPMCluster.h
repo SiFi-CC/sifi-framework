@@ -30,13 +30,13 @@ protected:
     Int_t cluster{-1}; ///< address - cluster ID
     
     TVector3 point;  ///< cluster position
-//    TVector3 errors; ///< cluster position errors
+    TVector3 errors; ///< cluster position errors
     
     std::vector<Int_t> hits; ///< list of hits belonging to the cluster
     
 public:
 
-    SCategory * catSiPMsHit;
+    SCategory * catSiPMsHit; //!
     
     /// Default constructor
     SSiPMCluster() = default;
@@ -94,13 +94,13 @@ public:
     /// \return errors of the cluster position
     TVector3 & getErrors()
     {
-//        return errors;
+        return errors;
     }
     
     /// \copydoc getErrors()
     const TVector3 & getErrors() const
     {
-//        return errors;
+        return errors;
     }
     
     /// Printing details of the object.
