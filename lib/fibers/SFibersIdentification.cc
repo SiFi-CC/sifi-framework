@@ -258,7 +258,6 @@ std::vector<std::shared_ptr<identifiedFiberData>> SFibersIdentification::identif
 
         std::vector<std::vector<std::string>> in_fiber;
         std::vector<std::vector<std::vector<std::string>>> cluster_in_fibers;
-        std::cout<<"New event"<<std::endl;
         if(cluster_fibers_sb.size() and cluster_fibers_st.size()){
         for(int i=0;i<cluster_fibers_sb.size();i++)
         {
