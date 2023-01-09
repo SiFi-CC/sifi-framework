@@ -129,13 +129,17 @@ int main(int argc, char** argv)
     // initialize detectors
     SDetectorManager* detm = SDetectorManager::instance();
 
-    detm->addDetector(new SFibersDetector("Fibers", 4, 4, 16));
+    // As of 08.01.2023 the detector has 7 fiber layers, 55 fibers per layer.
+    // The size of the SCategory must exceed module*layer*fibers. If not it will produce
+    // a segmentation fault when running registerCategory.
+    // The numbers here are also not read from the params.txt file.
+    detm->addDetector(new SFibersDetector("Fibers", 1, 7, 55));
 
     detm->initTasks();
     detm->initParameterContainers();
     detm->initCategories();
 
-    pm()->addLookupContainer("TPLookupTable", std::make_unique<SFibersLookupTable>("TPLookupTable", 0x1000, 0x1fff, 20000));
+    pm()->addLookupContainer("TPLookupTable", std::make_unique<SSiPMsLookupTable>("TPLookupTable", 0x1000, 0x1fff, 20000));
     pm()->addLookupContainer("4to1SiPMtoFibersLookupTable", std::make_unique<SMultiFibersLookupTable>("4to1SiPMtoFibersLookupTable", 0x1000, 0x1fff, 20000));
     
     // initialize tasks

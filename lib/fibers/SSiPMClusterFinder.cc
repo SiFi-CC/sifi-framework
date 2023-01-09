@@ -64,7 +64,7 @@ bool checkIfNeighbours(SSiPMHit* hit_1, SSiPMHit* hit_2)
 {
  
     /// TODO checking if two given sipms are neighbours
-    
+    return true;    
 }
 
 bool SSiPMClusterFinder::execute()
