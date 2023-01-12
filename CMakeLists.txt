@@ -146,12 +146,12 @@ endif()
 
 #-------------------------------------------------------------------------------
 # dabc
+set(DABC_LEGACY_INSTALL ON)
 FetchContent_Declare(DABC
-    GIT_REPOSITORY https://github.com/linev/dabc
-    GIT_TAG        master
+    GIT_REPOSITORY https://github.com/rlalik/dabc
+    GIT_TAG        modern_cmake
 )
 FetchContent_MakeAvailable(DABC)
-message(STATUS "Uses system-provided DABC")
 
 # =================================================================================================
 

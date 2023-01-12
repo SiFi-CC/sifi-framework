@@ -109,9 +109,6 @@ SIFI_GENERATE_LIBRARY(
         util/SLoop.h
         util/SRootFileHeader.h
  
-        ${dabc_BINARY_DIR}/include/hadaq/api.h
-        ${dabc_BINARY_DIR}/include/dabc/Url.h
-        ${dabc_BINARY_DIR}/include/dabc/api.h
     PRIVATE_LIBRARIES
         ROOT::Core
         ROOT::Tree
@@ -119,9 +116,9 @@ SIFI_GENERATE_LIBRARY(
         Geant
         cpr::cpr
         tabulate::tabulate
-        DabcBase
-        DabcHadaq
-        DabcMbs
+        dabc::DabcBase
+        dabc::DabcHadaq
+        dabc::DabcMbs
     INCLUDE_DIRS
         core
         database
