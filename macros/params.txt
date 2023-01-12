@@ -291,6 +291,8 @@ fBLMode: Int_t \
 0x1000     1024 0	5   0	800     r
 0x1000     4096 0	5   0	800     r
 0x1000     4097 0	5   0	800     l
+0x1000     4128 0	5   0	800     r
+0x1000     4129 0	5   0	800     l
 [FibersPETIROCLookupTable]
 [FibersTTreeLookupTable]
 [FibersDDCalibratorPar]
