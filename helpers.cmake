@@ -3,22 +3,41 @@ macro(SIFI_GENERATE_LIBRARY)
     cmake_parse_arguments(ARG "" "TARGET" "SOURCES;HEADERS;PRIVATE_HEADERS;LIBRARIES;PRIVATE_LIBRARIES;INCLUDE_DIRS" ${ARGN})
 
 set(BI_INCLUDE_DIRS "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>")
-foreach(incdir ${ARG_INCLUDE_DIRS})
-    list(APPEND BI_INCLUDE_DIRS "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${incdir}>")
+
+# split headers from directories, later add headers directly to rootcling and pass include dirs
+foreach(_hdr ${ARG_HEADERS})
+    if (IS_ABSOLUTE ${_hdr})
+       list(APPEND _headers_files ${_hdr})
+    else()
+        get_filename_component(_comp_dir ${_hdr} DIRECTORY)
+        if ("${_comp_dir}" STREQUAL "")
+            set(_comp_dir ".")
+        endif()
+        list(APPEND _component_includes ${_comp_dir})
+
+        get_filename_component(_comp_name ${_hdr} NAME)
+        list(APPEND _headers_files ${_comp_name})
+    endif()
 endforeach()
+
+list(REMOVE_DUPLICATES _component_includes)
+
+foreach(_hdr ${_component_includes})
+    get_filename_component(_comp_dir ${_hdr} ABSOLUTE)
+    list(APPEND BI_INCLUDE_DIRS "$<BUILD_INTERFACE:${_comp_dir}>")
+endforeach()
+
+foreach(incdir ${ARG_INCLUDE_DIRS})
+    get_filename_component(fincdir ${incdir} ABSOLUTE)
+    list(APPEND BI_INCLUDE_DIRS "$<BUILD_INTERFACE:${fincdir}>")
+endforeach()
+
+list(REMOVE_DUPLICATES BI_INCLUDE_DIRS)
+
 
 # ROOT_GENERATE_ROOTMAP(${ARG_TARGET} LINKDEF ${CMAKE_CURRENT_SOURCE_DIR}/Linkdef.h)
 
-add_library(${ARG_TARGET} SHARED
-    ${ARG_SOURCES}
-)
-set(DABC_FOR_ROOT ${dabc_BINARY_DIR}/include)
-ROOT_GENERATE_DICTIONARY(G__${ARG_TARGET}_cc
-    ${ARG_HEADERS} ${DABC_FOR_ROOT}/dabc/defines.h ${DABC_FOR_ROOT}/hadaq/api.h ${DABC_FOR_ROOT}/dabc/api.h ${DABC_FOR_ROOT}/dabc/Url.h ${DABC_FOR_ROOT}/mbs/api.h
-    MODULE ${ARG_TARGET}
-    LINKDEF Linkdef.h
-)
-
+add_library(${ARG_TARGET} SHARED ${ARG_SOURCES})
 add_library(SiFi::${ARG_TARGET} ALIAS ${ARG_TARGET})
 
 get_property(ALL_SOURCES GLOBAL PROPERTY ALL_SOURCES)
@@ -31,6 +50,12 @@ target_include_directories(${ARG_TARGET}
         ${BI_INCLUDE_DIRS}
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/inc
+)
+
+ROOT_GENERATE_DICTIONARY(G__${ARG_TARGET}_cc
+    ${_headers_files}
+    MODULE ${ARG_TARGET}
+    LINKDEF Linkdef.h
 )
 
 target_link_libraries(${ARG_TARGET}
@@ -99,6 +124,5 @@ if(NOT TARGET uninstall)
         COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
     )
 endif()
-
 
 endmacro(uninstall_target)
