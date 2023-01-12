@@ -198,6 +198,7 @@ std::vector<std::shared_ptr<identifiedFiberData>> SFibersIdentification::identif
         std::vector<std::vector<UInt_t>> ab_bottom;
         std::vector<std::vector<UInt_t>> scat_top;
         std::vector<std::vector<UInt_t>> ab_top;
+if(clusters_final.size()){
         
         for(int i=0; i<clusters_final.size(); i++){
             lc = dynamic_cast<SSiPMsChannel*>(pLookUp->getAddress(0x1000,hits[clusters_final[i][0]]->channelID ));
@@ -308,6 +309,7 @@ std::vector<std::shared_ptr<identifiedFiberData>> SFibersIdentification::identif
             }
         }
 
+
 //    
 //    //change the code below by inserting the fiber identification algorithm and based on the algorithm, fill the allFibData structure for all subevents
 //    int n_subevents = 5; //number of subevents
@@ -326,6 +328,19 @@ std::vector<std::shared_ptr<identifiedFiberData>> SFibersIdentification::identif
              candidates.clear();
              clusters.clear();
              clusters_final.clear();
+}
+else{
+               fibData->energyL=-100.0;
+                fibData->timeL=-100.0;
+                fibData->energyR=-100.0;
+                fibData->timeR=-100.0;
+                fibData->mod=-100;
+                fibData->lay=-100;
+                fibData->fi=-100;
+                allFibData.push_back(fibData);
+                
+}
+    
              
 return allFibData;    
 }
