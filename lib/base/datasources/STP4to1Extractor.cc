@@ -34,7 +34,7 @@ STP4to1Extractor::STP4to1Extractor(uint16_t subevent, std::map<uint16_t, SUnpack
 
 STP4to1Extractor::~STP4to1Extractor()
 {
-    delete identification;
+    //delete identification;
 }
 
 
@@ -89,9 +89,10 @@ bool STP4to1Extractor::extract_close()
 
 bool STP4to1Extractor::extract_readCurrentEvent(std::vector<std::shared_ptr<TP4to1Hit>> & hits)
 {
-    identification = new SFibersIdentification();
+    
+    SFibersIdentification identification;
 
-    std::vector fiberHits = identification->identifyFibers(hits);
+    std::vector fiberHits = identification.identifyFibers(hits);
     int n_fiber_hits = fiberHits.size();
     
     if (unpackers.size() == 0) return false;

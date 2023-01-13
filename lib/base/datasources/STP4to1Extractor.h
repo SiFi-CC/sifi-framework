@@ -62,6 +62,5 @@ public:
 private:
     uint16_t subevent;     ///< subevent id
     std::map<uint16_t, SUnpacker*> unpackers;
-    SFibersIdentification * identification;
 };
 #endif /* STP4TO1EXTRACTOR_H */
