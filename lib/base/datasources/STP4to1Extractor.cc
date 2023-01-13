@@ -90,8 +90,9 @@ bool STP4to1Extractor::extract_close()
 bool STP4to1Extractor::extract_readCurrentEvent(std::vector<std::shared_ptr<TP4to1Hit>> & hits)
 {
     identification = new SFibersIdentification();
+
     std::vector fiberHits = identification->identifyFibers(hits);
-   int n_fiber_hits = fiberHits.size();
+    int n_fiber_hits = fiberHits.size();
     
     if (unpackers.size() == 0) return false;
     if (subevent != 0x0000)
@@ -117,6 +118,7 @@ bool STP4to1Extractor::extract_readCurrentEvent(std::vector<std::shared_ptr<TP4t
             }
         }
     }
+
 return true;     
 }
 
