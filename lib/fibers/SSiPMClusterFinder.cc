@@ -239,9 +239,9 @@ if(clusters.size())
        
         
    //Wziąć z params
-    Float_t x_offset=-1;
-    Float_t y_offset=-1;
-    Float_t z_offset=-1;
+    Float_t x_offset=0;
+    Float_t y_offset=0;
+    Float_t z_offset=0;
     
     Float_t fiber_pitch=1;
     
@@ -258,6 +258,10 @@ if(clusters.size())
     Float_t x_cluster=0;
     Float_t y_cluster=0;
     Float_t z_cluster=0;
+    Int_t mod = 0;
+    Int_t lay = 0;
+    Int_t element = 0;
+    char side = '\0';
         
     //if(clusters_final.size()!=0){
         for(int i=0; i<clusters_final.size(); i++){
@@ -274,11 +278,21 @@ if(clusters.size())
              x_cluster=0;
              y_cluster=0;
              z_cluster=0;
+            SLocator loc(1);
+            loc[0] = i;
+            SSiPMCluster* pClus = dynamic_cast<SSiPMCluster*>(catSiPMsCluster->getObject(loc));
+            if (!pClus)
+            {
+                pClus = reinterpret_cast<SSiPMCluster*>(catSiPMsCluster->getSlot(loc));
+                pClus = new (pClus) SSiPMCluster;
+                pClus->Clear();
+            }
+            pClus->setAddress(i);
             for(int j=0; j<clusters_final[i].size(); j++){
-                    Int_t mod = 0;
-                    Int_t lay = 0;
-                    Int_t element = 0;
-                    char side = '\0';
+                     mod = 0;
+                     lay = 0;
+                     element = 0;
+                     side = '\0';
                     SSiPMHit* pHit = dynamic_cast<SSiPMHit*>(catSiPMsHit->getObject(clusters_final[i][j]));
                     if (!pHit)
                    {
@@ -286,26 +300,33 @@ if(clusters.size())
                      continue;
                    }
                    pHit->getAddress(mod, lay, element, side);
-                   x_position=x_offset+fiber_pitch*lay;
-                   y_position=y_offset+fiber_pitch*mod; //DOPYTAĆ!!!!
-                   x_position=z_offset+fiber_pitch*element;
+                  
+                   x_position=(Float_t)lay;
+                   y_position=(Float_t)mod; //DOPYTAĆ!!!!
+                   z_position=(Float_t)element;
                    
                    x_COG=x_COG+pHit->getQDC()*x_position;
-                   y_COG=x_COG+pHit->getQDC()*y_position;
-                   z_COG=x_COG+pHit->getQDC()*z_position;
+                   y_COG=y_COG+pHit->getQDC()*y_position;
+                   z_COG=z_COG+pHit->getQDC()*z_position;
                    
                    weights=weights+pHit->getQDC();
+                //std::cout<<"cluster mod, lay, elemnt, x_pos, y_pos, z_pos: "<<mod<<" "<<lay<<" "<<element<<" "<<x_position<<" "<<y_position<<" "<<z_position<<std::endl;
+                pClus->addHit(clusters_final[i][j]);
+                pClus->catSiPMsHit = catSiPMsHit;
                    
             }
             x_cluster=x_COG/weights;
             y_cluster=y_COG/weights;
             z_cluster=z_COG/weights;
-            std::cout<<"cluster X,Y,Z: "<<x_cluster<<" "<<y_cluster<<" "<<z_cluster<<" "<<std::endl;
+            pClus->getPoint().SetXYZ(x_cluster, y_cluster, z_cluster);
+            //pClus->print();
+            //std::cout<<"cluster X,Y,Z: "<<x_cluster<<" "<<y_cluster<<" "<<z_cluster<<" "<<std::endl;
         }
     //}
     
              SiPMadresses.clear();
 /////
+             /*
         for(Int_t i=0; i < clusters_final.size(); ++i) {
             SLocator loc(1);
             loc[0] = i;
@@ -324,6 +345,7 @@ if(clusters.size())
             }
             pClus->print();
         }
+        */
 
     return true;
 }
