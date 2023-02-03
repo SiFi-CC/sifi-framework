@@ -67,6 +67,7 @@ bool checkIfNeighbours(SSiPMHit* hit_1, SSiPMHit* hit_2)
     return true;    
 }
 
+
 bool SSiPMClusterFinder::execute()
 {
 /////
@@ -126,7 +127,7 @@ bool SSiPMClusterFinder::execute()
                 not_cluster=0;
                 cluster.clear();
                 cl.clear();
-                if(!SiPMadresses.empty()){
+                if(SiPMadresses.size()>1){
                     cl.push_back(SiPMadresses[0][0]);
                     cl.push_back(SiPMadresses[0][1]);
                     cl.push_back(SiPMadresses[0][2]);
@@ -143,7 +144,7 @@ bool SSiPMClusterFinder::execute()
                     {
                         cl.clear();
                         //std::cout<<"B "<<SiPMadresses[i][0]<<" "<<i<<std::endl;
-                        if (j[1]==SiPMadresses[i][1] and j[4]==SiPMadresses[i][4] and abs((int)(j[2]-SiPMadresses[i][2]))<=1 and abs((int)(j[3]-SiPMadresses[i][3]))<=1)
+                        if (j[1]==SiPMadresses[i][1] and j[4]==SiPMadresses[i][4] and abs((int)j[2]-(int)SiPMadresses[i][2])<=1 and abs((int)j[3]-(int)SiPMadresses[i][3])<=1)
                         {
                             //std::cout<<"F "<<SiPMadresses[i][0]<<" "<<i<<std::endl;
                             cl.push_back(SiPMadresses[i][0]);
@@ -178,13 +179,42 @@ bool SSiPMClusterFinder::execute()
                     }
                 }
                 }
-                
+                else{
+                    if(SiPMadresses.size()==1){
+                    cl.push_back(SiPMadresses[0][0]);
+                    cl.push_back(SiPMadresses[0][1]);
+                    cl.push_back(SiPMadresses[0][2]);
+                    cl.push_back(SiPMadresses[0][3]);
+                    cl.push_back(SiPMadresses[0][4]);
+                    cluster.push_back(cl);
+                    SiPMadresses.erase(SiPMadresses.begin());
+                    }
+                }
 
-                
-                
                 clusters.push_back(cluster); 
                 SiPMadresses=candidates;
             }
+            
+// clusters_final is vector of vector of event's idx 
+if(clusters.size())
+{
+        for(int i=0; i<clusters.size(); i++)
+        {
+            for(int j=0;j<clusters[i].size();j++){
+            //std::cout<<clusters[i][j][2]<<" "<<clusters[i][j][3]<<" "<<i<<" "<<clusters[i][j][4]<<std::endl;
+            }
+        }
+        std::vector<std::vector<UInt_t>> clusters_final;
+        std::vector<UInt_t> cl_f;
+        for(int i=0; i<clusters.size(); i++)
+        {
+            cl_f.clear();
+            for(int j=0;j<clusters[i].size();j++){
+                cl_f.push_back(clusters[i][j][0]);
+            }
+        clusters_final.push_back(cl_f);
+        }
+}
             
 // clusters_final is vector of vector of event's idx 
 
@@ -206,20 +236,74 @@ bool SSiPMClusterFinder::execute()
         clusters_final.push_back(cl_f);
         }
         
-//    
-//    //change the code below by inserting the fiber identification algorithm and based on the algorithm, fill the allFibData structure for all subevents
-//    int n_subevents = 5; //number of subevents
-//    for (int i = 0; i < n_subevents; i++)
-//    {
-//        fibData->energyL=0.0;
-//        fibData->timeL=0.0;
-//        fibData->energyR=0.0;
-//        fibData->timeR=0.0;
-//        fibData->mod=0;
-//        fibData->lay=0;
-//        fibData->fi=0;
-//        allFibData.push_back(fibData);
-//    }
+       
+        
+   //Wziąć z params
+    Float_t x_offset=-1;
+    Float_t y_offset=-1;
+    Float_t z_offset=-1;
+    
+    Float_t fiber_pitch=1;
+    
+    Float_t x_position=0;
+    Float_t y_position=0;
+    Float_t z_position=0;
+    
+    Float_t x_COG=0;
+    Float_t y_COG=0;
+    Float_t z_COG=0;
+    
+    Float_t weights=0;
+    
+    Float_t x_cluster=0;
+    Float_t y_cluster=0;
+    Float_t z_cluster=0;
+        
+    //if(clusters_final.size()!=0){
+        for(int i=0; i<clusters_final.size(); i++){
+             x_position=0;
+             y_position=0;
+             z_position=0;
+            
+             x_COG=0;
+             y_COG=0;
+             z_COG=0;
+            
+             weights=0;
+            
+             x_cluster=0;
+             y_cluster=0;
+             z_cluster=0;
+            for(int j=0; j<clusters_final[i].size(); j++){
+                    Int_t mod = 0;
+                    Int_t lay = 0;
+                    Int_t element = 0;
+                    char side = '\0';
+                    SSiPMHit* pHit = dynamic_cast<SSiPMHit*>(catSiPMsHit->getObject(clusters_final[i][j]));
+                    if (!pHit)
+                   {
+                     printf("SiPMHit doesn't exists!\n");
+                     continue;
+                   }
+                   pHit->getAddress(mod, lay, element, side);
+                   x_position=x_offset+fiber_pitch*lay;
+                   y_position=y_offset+fiber_pitch*mod; //DOPYTAĆ!!!!
+                   x_position=z_offset+fiber_pitch*element;
+                   
+                   x_COG=x_COG+pHit->getQDC()*x_position;
+                   y_COG=x_COG+pHit->getQDC()*y_position;
+                   z_COG=x_COG+pHit->getQDC()*z_position;
+                   
+                   weights=weights+pHit->getQDC();
+                   
+            }
+            x_cluster=x_COG/weights;
+            y_cluster=y_COG/weights;
+            z_cluster=z_COG/weights;
+            std::cout<<"cluster X,Y,Z: "<<x_cluster<<" "<<y_cluster<<" "<<z_cluster<<" "<<std::endl;
+        }
+    //}
+    
              SiPMadresses.clear();
 /////
         for(Int_t i=0; i < clusters_final.size(); ++i) {
@@ -238,7 +322,7 @@ bool SSiPMClusterFinder::execute()
                 pClus->getPoint().SetXYZ(0, 0, 0);
                 pClus->catSiPMsHit = catSiPMsHit;
             }
-            //pClus->print();
+            pClus->print();
         }
 
     return true;
