@@ -62,6 +62,8 @@ bool SFibersTP4to1Unpacker::execute(ulong /*event*/, ulong /*seq_number*/, uint1
 {
     // getting buffer
     identifiedFiberData* fiber_hit = static_cast<identifiedFiberData*>(buffer);
+    
+    fiber_hit->print();
 
     if (!fiber_hit) return false;
 
@@ -75,10 +77,14 @@ bool SFibersTP4to1Unpacker::execute(ulong /*event*/, ulong /*seq_number*/, uint1
     if (!pRaw)
     {
         pRaw = reinterpret_cast<SFibersRaw*>(catFibersRaw->getSlot(loc));
+        std::cout << "locator: " << loc[0] << " " << loc[1] << " " << loc[2] << std::endl;
         new (pRaw) SFibersRaw;
     }
 
     pRaw->setAddress(loc[0], loc[1], loc[2]);
+    
+    std::cout << "QDC: " <<  fiber_hit->energyL << " " << fiber_hit->energyR << std::endl;
+    
     pRaw->setQDCL(fiber_hit->energyL);
     pRaw->setTimeL(fiber_hit->timeL);
     pRaw->setQDCR(fiber_hit->energyR);

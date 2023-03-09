@@ -37,12 +37,12 @@ class TBranch;
 */
 
 SLoop::SLoop()
-    : current_file(nullptr), current_tree(nullptr), current_event(0), event(nullptr),
+    : chain(nullptr), current_file(nullptr), current_tree(nullptr), current_event(0), event(nullptr),
       file_header(nullptr), tree_cache_size(8000)
 {
     chain = new TChain("S");
     event = new SEvent;
-
+    
     sifi()->setTree(chain);
     sifi()->setEvent(event);
 
@@ -53,6 +53,8 @@ SLoop::~SLoop()
 {
     delete chain;
     delete event;
+    sifi()->setTree(nullptr);
+    sifi()->setEvent(nullptr);
 }
 
 /**
@@ -88,7 +90,7 @@ bool SLoop::addFiles(const std::vector<std::string>& files)
     for (const auto& file : files)
     {
         bool rc = addFile(file);
-        if (rc) return false;
+        if (!rc) return false;
     }
 
     return true;

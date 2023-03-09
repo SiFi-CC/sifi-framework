@@ -15,6 +15,7 @@
 
 #include <TObjArray.h>
 
+#include <iostream>
 #include <cstddef>     // for size_t
 #include <sys/types.h> // for uint
 
@@ -22,7 +23,9 @@
  * Constructor. Initializes array of objects, The array has doubel size of the
  * number of available categories to handle data and sim objects.
  */
-SEvent::SEvent() : TObject() { categories = new TObjArray(SCategory::CatLimitDoNotUse * 2); }
+SEvent::SEvent() : TObject() { 
+    categories = new TObjArray(SCategory::CatLimitDoNotUse * 2); 
+}
 
 SEvent::~SEvent()
 {
@@ -62,6 +65,9 @@ void SEvent::clearCategories()
     size_t n = categories->GetEntries();
     for (uint i = 0; i < n; ++i)
     {
-        if (categories->At(i)) dynamic_cast<SCategory*>(categories->At(i))->clear();
+        if (categories->At(i)) {
+            auto ptr = dynamic_cast<SCategory*>(categories->At(i));
+            if (ptr) ptr->clear();
+        }
     }
 }

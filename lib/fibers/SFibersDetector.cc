@@ -145,7 +145,7 @@ bool SFibersDetector::initCategories()
     
     size_t size_SiPM_cluster[1];
     size_SiPM_cluster[0] = 20;
-
+    
     if (isSimulation())
     {
         if (!dm->registerCategory(SCategory::CatGeantFibersRaw, "SGeantFibersRaw", 250, true))
@@ -157,8 +157,6 @@ bool SFibersDetector::initCategories()
     }
     else
     {
-
-
         if (!dm->registerCategory(SCategory::CatFibersRaw, "SFibersRaw", 3, sizes, false))
             return false;
         if (!dm->registerCategory(SCategory::CatSiPMHit, "SSiPMHit", 1, sizes_SiPM, false))
