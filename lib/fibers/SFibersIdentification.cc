@@ -76,6 +76,8 @@ std::vector<std::shared_ptr<identifiedFiberData>> SFibersIdentification::identif
     if(hits.size() > 0){
         
         int n_hits = hits.size();
+        
+        
   
 
         for(int j = 0; j <n_hits; j++)
@@ -119,7 +121,7 @@ std::vector<std::shared_ptr<identifiedFiberData>> SFibersIdentification::identif
                 not_cluster=0;
                 cluster.clear();
                 cl.clear();
-                if(!SiPMadresses.empty()){
+                if(SiPMadresses.size()>1){
                     cl.push_back(SiPMadresses[0][0]);
                     cl.push_back(SiPMadresses[0][1]);
                     cl.push_back(SiPMadresses[0][2]);
@@ -171,23 +173,32 @@ std::vector<std::shared_ptr<identifiedFiberData>> SFibersIdentification::identif
                     }
                 }
                 }
-                
+                else{
+                    if(SiPMadresses.size()==1){
+                    cl.push_back(SiPMadresses[0][0]);
+                    cl.push_back(SiPMadresses[0][1]);
+                    cl.push_back(SiPMadresses[0][2]);
+                    cl.push_back(SiPMadresses[0][3]);
+                    cl.push_back(SiPMadresses[0][4]);
+                    cluster.push_back(cl);
+                    SiPMadresses.erase(SiPMadresses.begin());
+                    }
+                }
 
-                
-                
                 clusters.push_back(cluster); 
                 SiPMadresses=candidates;
             }
             
 // clusters_final is vector of vector of event's idx 
-
+std::vector<std::vector<UInt_t>> clusters_final;
+if(clusters.size())
+{
         for(int i=0; i<clusters.size(); i++)
         {
             for(int j=0;j<clusters[i].size();j++){
             //std::cout<<clusters[i][j][2]<<" "<<clusters[i][j][3]<<" "<<i<<" "<<clusters[i][j][4]<<std::endl;
             }
         }
-        std::vector<std::vector<UInt_t>> clusters_final;
         std::vector<UInt_t> cl_f;
         for(int i=0; i<clusters.size(); i++)
         {
@@ -197,6 +208,7 @@ std::vector<std::shared_ptr<identifiedFiberData>> SFibersIdentification::identif
             }
         clusters_final.push_back(cl_f);
         }
+}
         
         std::vector<std::vector<UInt_t>> scat_bottom;
         std::vector<std::vector<UInt_t>> ab_bottom;
@@ -303,12 +315,12 @@ if(clusters_final.size()){
         {
             if(k.size()==1){
                for(int i : scat_bottom[std::stoi(k[0][4])]){
-                   std::cout<<i<<" "<<hits.size()<<std::endl;
+ 
                 qdc_l=qdc_l+hits[i]->energy;
                 time_l=hits[i]->time;
                }
                for(int i: scat_top[std::stoi(k[0][5])]){
-                    std::cout<<i<<" "<<hits.size()<<std::endl;
+ 
                 qdc_r=qdc_l+hits[i]->energy;
                 time_r=hits[i]->time;
                }
