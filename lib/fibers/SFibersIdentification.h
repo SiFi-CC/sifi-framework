@@ -53,6 +53,11 @@ struct identifiedFiberData
     Long64_t timeR=-100;
     Float_t energyR=-100;
     //add event or subevent ID?
+    
+    void print()
+    {
+        printf("identifiedFiberData: address: %i, %i, %i, left: %lld, %f, right: %lld, %f \n", mod, lay, fi, timeL, energyL, timeR, energyR);
+    }
 };
 
 /**
