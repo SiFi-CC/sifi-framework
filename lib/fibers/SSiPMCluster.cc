@@ -44,7 +44,7 @@ void SSiPMCluster::print() const
             printf("SiPMHit %d doesn't exists!\n", h);
             continue;
         }
-        pHit->print();
+//         pHit->print();
     }
     
     printf("\n");

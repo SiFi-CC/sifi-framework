@@ -102,7 +102,7 @@ bool STP4to1Source::readCurrentEvent()
         entries_counter++;
         if(entries_counter == nentries) state = DONE;
         hit_cache->time /= ps_to_ns;
-//         hit_cache->channelID -= 131072*2; //offset related to port on TOFPET PCI card
+        hit_cache->channelID -= 131072*2; //offset related to port on TOFPET PCI card
 
         state = READING;
     }
@@ -126,7 +126,7 @@ bool STP4to1Source::readCurrentEvent()
             }
             t->GetEntry(entries_offset + entries_counter);
             hit_current->time /= ps_to_ns;
-//             hit_current->channelID -= 131072*2; //offset related to port on TOFPET PCI card
+            hit_current->channelID -= 131072*2; //offset related to port on TOFPET PCI card
             double current_time = hit_current->time;
 
             if (fabs(cache_time - current_time) < deltaT) // same event?
@@ -143,7 +143,7 @@ bool STP4to1Source::readCurrentEvent()
     }
 
     for(auto i : hits)
-        i->print();
+//         i->print();
     
     extractor->extract_readCurrentEvent(hits);
     extractor->write_to_tree(hits);

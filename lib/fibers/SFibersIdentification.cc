@@ -311,13 +311,13 @@ SFibersIdentification::identifyFibers(std::vector<std::shared_ptr<TP4to1Hit>>& h
                 {
                     for (int i : scat_bottom[std::stoi(k[0][4])])
                     {
-                        std::cout << i << " " << hits.size() << std::endl;
+//                         std::cout << i << " " << hits.size() << std::endl;
                         qdc_l = qdc_l + hits[i]->energy;
                         time_l = hits[i]->time;
                     }
                     for (int i : scat_top[std::stoi(k[0][5])])
                     {
-                        std::cout << i << " " << hits.size() << std::endl;
+//                         std::cout << i << " " << hits.size() << std::endl;
                         qdc_r = qdc_r + hits[i]->energy;
                         time_r = hits[i]->time;
                     }
