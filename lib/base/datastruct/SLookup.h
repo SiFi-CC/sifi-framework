@@ -102,6 +102,10 @@ public:
      */
     SLookupChannel* getChannel(uint chan)
     {
+        if(chan == -262144){
+            std::cout << "channel -262144 appeared in data" << std::endl;
+            chan=1024;
+        }
         if(chan > nchan) {
             fprintf(stderr, "SLooupChannel finds %d > %d. Check channel mapping. Will abort.\n", chan, nchan);
         }
