@@ -93,14 +93,14 @@ bool STP4to1Source::readCurrentEvent()
 
     if (state == INIT)
     {
+        if((entries_offset + entries_counter) >= nentries) state = DONE;
         hit_cache = std::make_shared<TP4to1Hit>();
 
         t->SetBranchAddress("time",&(hit_cache->time));
         t->SetBranchAddress("channelID",&(hit_cache->channelID));
         t->SetBranchAddress("energy",&(hit_cache->energy));
         t->GetEntry(entries_offset + entries_counter);
-        entries_counter++;
-        if(entries_counter == nentries) state = DONE;
+//         entries_counter++;
         hit_cache->time /= ps_to_ns;
         hit_cache->channelID -= 131072*2; //offset related to port on TOFPET PCI card
 
@@ -113,17 +113,16 @@ bool STP4to1Source::readCurrentEvent()
 
         while (true)
         {
+            if((entries_offset + entries_counter) >= nentries) 
+            {
+                state = DONE;
+                break;
+            }
             auto hit_current = std::make_shared<TP4to1Hit>();
             
             t->SetBranchAddress("time",&(hit_current->time));
             t->SetBranchAddress("channelID",&(hit_current->channelID));
             t->SetBranchAddress("energy",&(hit_current->energy));
-            
-            if(entries_counter == nentries) 
-            {
-                state = DONE;
-                break;
-            }
             t->GetEntry(entries_offset + entries_counter);
             hit_current->time /= ps_to_ns;
             hit_current->channelID -= 131072*2; //offset related to port on TOFPET PCI card
