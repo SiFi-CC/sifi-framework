@@ -120,9 +120,9 @@ SIFI_GENERATE_LIBRARY(
         Geant
         cpr::cpr
         tabulate::tabulate
-        DabcBase
-        DabcHadaq
-        DabcMbs
+        dabc::DabcBase
+        dabc::DabcHadaq
+        dabc::DabcMbs
     INCLUDE_DIRS
         core
         database

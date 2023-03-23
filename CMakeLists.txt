@@ -148,8 +148,8 @@ endif()
 # dabc
 set(DABC_LEGACY_INSTALL ON)
 FetchContent_Declare(DABC
-    GIT_REPOSITORY https://github.com/linev/dabc
-    GIT_TAG        14ceba3aae0e0a6611f1fb71a12fa81a78c35261
+    GIT_REPOSITORY https://github.com/gsi-ee/dabc
+    GIT_TAG        master
 )
 FetchContent_MakeAvailable(DABC)
 
