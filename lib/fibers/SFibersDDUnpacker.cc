@@ -319,9 +319,18 @@ bool SFibersDDUnpacker::decode(uint16_t subevtid, float* data, size_t length)
     pRaw->setAddress(loc[0], loc[1], loc[2]);
     if (side == 'l')
     {
+        float tmp_ampl = ampl / ADC_to_mV;
         float tmp_charge = charge / ADC_to_mV;
+        float tmp_pe = tmp_charge / cp[0] + cp[1];
+        
+        if(tmp_ampl > 760) // signals with amplitude larger than 760 mV are saturated in DD
+        {
+            tmp_charge = -500;
+            tmp_pe = -500;
+        }
+        
         if (save_samples) pSamples->fillSamplesL(data, length);
-        pSamples->getSignalL()->SetAmplitude(ampl / ADC_to_mV);
+        pSamples->getSignalL()->SetAmplitude(tmp_ampl);
         pSamples->getSignalL()->SetT0(t0 * sample_to_ns);
         pSamples->getSignalL()->SetTOT(tot * sample_to_ns);
         pSamples->getSignalL()->SetCharge(tmp_charge);
@@ -329,16 +338,25 @@ bool SFibersDDUnpacker::decode(uint16_t subevtid, float* data, size_t length)
         pSamples->getSignalL()->SetBLSigma(bl_sigma);
         pSamples->getSignalL()->SetPileUp(pileup);
         pSamples->getSignalL()->SetVeto(veto);
-        pSamples->getSignalL()->SetPE(tmp_charge / cp[0] + cp[1]);
+        pSamples->getSignalL()->SetPE(tmp_pe);
 
-        pRaw->setQDCL(tmp_charge);
+        pRaw->setQDCL(tmp_pe); // charge calibrated to PE
         pRaw->setTimeL(t0);
     }
     if (side == 'r')
     {
+        float tmp_ampl = ampl / ADC_to_mV;
         float tmp_charge = charge / ADC_to_mV;
+        float tmp_pe = tmp_charge / cp[0] + cp[1];
+        
+        if(tmp_ampl > 760) // signals with amplitude larger than 760 mV are saturated in DD
+        {
+            tmp_charge = -500;
+            tmp_pe = -500;
+        }
+        
         if (save_samples) pSamples->fillSamplesR(data, length);
-        pSamples->getSignalR()->SetAmplitude(ampl / ADC_to_mV);
+        pSamples->getSignalR()->SetAmplitude(tmp_ampl);
         pSamples->getSignalR()->SetT0(t0 * sample_to_ns);
         pSamples->getSignalR()->SetTOT(tot * sample_to_ns);
         pSamples->getSignalR()->SetCharge(tmp_charge);
@@ -346,9 +364,9 @@ bool SFibersDDUnpacker::decode(uint16_t subevtid, float* data, size_t length)
         pSamples->getSignalR()->SetBLSigma(bl_sigma);
         pSamples->getSignalR()->SetPileUp(pileup);
         pSamples->getSignalR()->SetVeto(veto);
-        pSamples->getSignalR()->SetPE(tmp_charge / cp[0] + cp[1]);
+        pSamples->getSignalR()->SetPE(tmp_pe);
 
-        pRaw->setQDCR(tmp_charge);
+        pRaw->setQDCR(tmp_pe); // charge calibrated to PE
         pRaw->setTimeR(t0);
     }
 
