@@ -61,6 +61,9 @@ struct identifiedFiberData
  */
 class SIFI_EXPORT SFibersIdentification : public STask
 {
+protected:
+   // SCategory* catSiPMsCluster{nullptr};  ///< category containing SiPMs clusters
+
 public:
     explicit SFibersIdentification();
     

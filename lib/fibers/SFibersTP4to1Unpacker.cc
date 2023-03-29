@@ -53,6 +53,7 @@ bool SFibersTP4to1Unpacker::init()
         std::cerr << "No CatFibersCal category" << std::endl;
         return false;
     }
+    
 
     return true;
 }

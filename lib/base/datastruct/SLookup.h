@@ -102,6 +102,10 @@ public:
      */
     SLookupChannel* getChannel(uint chan)
     {
+        if(chan>nchan){
+                std::cout<<"dupa"<<std::endl;
+                chan=0;
+        }
         if(chan > nchan) {
             fprintf(stderr, "SLooupChannel finds %d > %d. Check channel mapping. Will abort.\n", chan, nchan);
         }

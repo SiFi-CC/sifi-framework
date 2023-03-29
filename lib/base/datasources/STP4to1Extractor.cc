@@ -5,6 +5,7 @@
 #include "SFibersLookup.h"
 #include "SLookup.h"
 #include "SSiPMHit.h"
+#include"SSiPMCluster.h"
 #include "SCategory.h"
 #include "SiFi.h"
 #include "SLocator.h"
@@ -91,6 +92,7 @@ bool STP4to1Extractor::extract_readCurrentEvent(std::vector<std::shared_ptr<TP4t
 {
     
     SFibersIdentification identification;
+    
 
     std::vector fiberHits = identification.identifyFibers(hits);
     int n_fiber_hits = fiberHits.size();

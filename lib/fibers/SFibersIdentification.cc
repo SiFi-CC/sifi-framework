@@ -5,6 +5,9 @@
 #include "SSiPMHit.h"
 #include "SCategory.h"
 #include "SiFi.h"
+
+
+#include "SPar.h"
 #include "SLocator.h"
 #include <algorithm>          // for max, min
 #include <cmath>              // for fabs
@@ -19,7 +22,9 @@
 #include<SFibersLookup.h>
 #include"TFile.h"
 #include"TTree.h"
+#include"SSiPMCluster.h"
 #include "SMultiFibersLookup.h"
+#include "SSiPMClusterFinder.h"
 
 /**
  * Constructor. Requires ...
@@ -34,7 +39,10 @@ SFibersIdentification::SFibersIdentification()
 }
 
 bool SFibersIdentification::init()
+
 {
+
+
     return true;
 }
 
@@ -64,6 +72,16 @@ UInt_t SFibersIdentification::get4to1SiPMFromFiber(std::vector<std::shared_ptr<f
 
 std::vector<std::shared_ptr<identifiedFiberData>> SFibersIdentification::identifyFibers(std::vector<std::shared_ptr<TP4to1Hit>> & hits)
 {
+    //catSiPMsCluster = sifi()->getCategory(SCategory::CatSiPMClus);
+   
+    SCategory * catSiPMsCluster = sifi()->getCategory(SCategory::CatSiPMClus);
+    Int_t num_clas=catSiPMsCluster->getEntries();
+    //std::cout<<"Clus: "<<num_clas<<std::endl;
+    
+    SCategory * catSiPMHit = sifi()->getCategory(SCategory::CatSiPMHit);
+    
+    Int_t num_hit=catSiPMHit->getEntries();
+    //std::cout<<num_hit<<std::endl;
 
     std::vector<std::shared_ptr<identifiedFiberData>> allFibData;
         
@@ -78,12 +96,12 @@ std::vector<std::shared_ptr<identifiedFiberData>> SFibersIdentification::identif
         int n_hits = hits.size();
         
         
-  
+  //ja vector: hit number, module, layer, element, side (0- right, 1- left)
 
         for(int j = 0; j <n_hits; j++)
         {
 
-                lc = dynamic_cast<SSiPMsChannel*>(pLookUp->getAddress(0x1000,hits[j]->channelID ));
+                lc = dynamic_cast<SSiPMsChannel*>(pLookUp->getAddress(0x1000,hits[j]->channelID));
 
                 
                 ja.push_back(j);
@@ -138,7 +156,7 @@ std::vector<std::shared_ptr<identifiedFiberData>> SFibersIdentification::identif
                     {
                         cl.clear();
                         //std::cout<<"B "<<SiPMadresses[i][0]<<" "<<i<<std::endl;
-                        if (j[1]==SiPMadresses[i][1] and j[4]==SiPMadresses[i][4] and abs(j[2]-SiPMadresses[i][2])<=1 and abs(j[3]-SiPMadresses[i][3])<=1)
+                        if (j[1]==SiPMadresses[i][1] and j[4]==SiPMadresses[i][4] and abs((int)j[2]-(int)SiPMadresses[i][2])<=1 and abs((int)j[3]-(int)SiPMadresses[i][3])<=1)
                         {
                             //std::cout<<"F "<<SiPMadresses[i][0]<<" "<<i<<std::endl;
                             cl.push_back(SiPMadresses[i][0]);
@@ -190,6 +208,7 @@ std::vector<std::shared_ptr<identifiedFiberData>> SFibersIdentification::identif
             }
             
 // clusters_final is vector of vector of event's idx 
+
 std::vector<std::vector<UInt_t>> clusters_final;
 if(clusters.size())
 {
@@ -200,6 +219,7 @@ if(clusters.size())
             }
         }
         std::vector<UInt_t> cl_f;
+
         for(int i=0; i<clusters.size(); i++)
         {
             cl_f.clear();
@@ -214,6 +234,9 @@ if(clusters.size())
         std::vector<std::vector<UInt_t>> ab_bottom;
         std::vector<std::vector<UInt_t>> scat_top;
         std::vector<std::vector<UInt_t>> ab_top;
+       // }
+        
+
 if(clusters_final.size()){
         
         for(int i=0; i<clusters_final.size(); i++){
@@ -231,6 +254,87 @@ if(clusters_final.size()){
                 ab_top.push_back(clusters_final[i]);
             }
         }
+ //------------------------------------------------------------------------------------------------------------      
+    Float_t x_offset=0;
+    Float_t y_offset=0;
+    Float_t z_offset=0;
+    
+    Float_t fiber_pitch=1;
+    
+    Float_t x_position=0;
+    Float_t y_position=0;
+    Float_t z_position=0;
+    
+    Float_t x_COG=0;
+    Float_t y_COG=0;
+    Float_t z_COG=0;
+    
+    Float_t weights=0;
+    
+    Float_t x_cluster=0;
+    Float_t y_cluster=0;
+    Float_t z_cluster=0;
+    Int_t mod = 0;
+    Int_t lay = 0;
+    Int_t element = 0;
+    char side = '\0';
+    Int_t swID=0;
+    std::vector<Int_t> swIDs_bottom;
+    std::vector<Int_t> swIDs_top;
+        
+    //if(clusters_final.size()!=0){
+    
+        for(int i=0; i<clusters_final.size(); i++){
+            
+             x_position=0;
+             y_position=0;
+             z_position=0;
+            
+             x_COG=0;
+             y_COG=0;
+             z_COG=0;
+            
+             weights=0;
+            
+             x_cluster=0;
+             y_cluster=0;
+             z_cluster=0;
+            for(int j=0; j<clusters_final[i].size(); j++){
+
+                lc = dynamic_cast<SSiPMsChannel*>(pLookUp->getAddress(0x1000,hits[clusters_final[i][j]]->channelID ));
+                  
+                   x_position=(Float_t)lc->l;
+                   y_position=(Float_t)lc->m; 
+                   z_position=(Float_t)lc->element;
+                   side=lc->side;
+                   
+                   x_COG=x_COG+hits[clusters_final[i][j]]->energy*x_position;
+                   y_COG=y_COG+hits[clusters_final[i][j]]->energy*y_position;
+                   z_COG=z_COG+hits[clusters_final[i][j]]->energy*z_position;
+                   
+                   weights=weights+hits[clusters_final[i][j]]->energy;
+                //std::cout<<"cluster mod, lay, elemnt, x_pos, y_pos, z_pos: "<<mod<<" "<<lay<<" "<<element<<" "<<x_position<<" "<<y_position<<" "<<z_position<<" "<<weights<<" "<<x_COG<<" "<<y_COG<<" "<<z_COG<<std::endl;
+                   
+            }
+            x_cluster=x_COG/weights;
+            y_cluster=y_COG/weights;
+            z_cluster=z_COG/weights;
+
+            
+        if(side=='l'){
+            swID=floor(x_cluster)*28+floor(z_cluster);
+            swIDs_bottom.push_back(swID);
+            //std::cout<<side<<" "<<x_cluster<<" "<<y_cluster<<" "<<z_cluster<<" "<<swID<<std::endl;
+        }
+        if(side=='r'){
+            swID=368+floor(x_cluster)*28+floor(z_cluster);
+            swIDs_top.push_back(swID);
+            //std::cout<<side<<" "<<x_cluster<<" "<<y_cluster<<" "<<z_cluster<<" "<<swID<<std::endl;
+        }
+        
+        
+        }
+ //------------------------------------------------------------------------------------------------------------      
         
         
         SMultiFibersChannel* lc2;
@@ -240,12 +344,12 @@ if(clusters_final.size()){
         std::vector<std::vector<std::vector<std::string>>> cluster_fibers_sb;
         std::vector<std::vector<std::vector<std::string>>> cluster_fibers_st;
         std::vector<std::vector<std::string>> SiPMfibers;
-        
-        if (scat_bottom.size()){
+ 
+//normal
+      /* if (scat_bottom.size()){
         for(int i=0; i<scat_bottom.size(); i++){
             for(int j : scat_bottom[i]){
                 lc = dynamic_cast<SSiPMsChannel*>(pLookUp->getAddress(0x1000,hits[j]->channelID));    
-                //lc2= dynamic_cast<SMultiFibersChannel*>(pLookUp->getAddress(0x1000,lc->s));
                 lc2= dynamic_cast<SMultiFibersChannel*>(pLookUp2->getAddress(0x1000, lc->s));
                 if(lc->s == 800)
                     continue;
@@ -275,7 +379,49 @@ if(clusters_final.size()){
             }
             cluster_fibers_st.push_back(SiPMfibers);
             SiPMfibers.clear();
+        }*/
+    
+//-------------------------------------------------------------------------------------
+       if (swIDs_bottom.size()){
+        for(int i=0; i<swIDs_bottom.size(); i++){
+                //lc = dynamic_cast<SSiPMsChannel*>(pLookUp->getAddress(0x1000,hits[j]->channelID));    
+                lc2= dynamic_cast<SMultiFibersChannel*>(pLookUp2->getAddress(0x1000, swIDs_bottom[i]));
+                //if(lc->s == 800)
+                    //continue;
+                //std::cout<<swIDs_bottom[i]<<std::endl;
+                if(swIDs_bottom[i]<0 or swIDs_bottom[i]>112)
+                    continue;
+                vec = lc2->vecFiberAssociations;
+                //std::cout<<swIDs_bottom[i]<<std::endl;
+                //std::cout<<"SiPMId: "<<lc->s<<std::endl;
+                //std::cout<<"vec size: "<<vec.size()<<std::endl;
+                for(std::vector<std::string> k : vec){
+                    SiPMfibers.push_back(k);
+                }
+            //}
+            cluster_fibers_sb.push_back(SiPMfibers);
+            SiPMfibers.clear();
         }
+        }
+        if (swIDs_top.size()){
+        for(int i=0; i<swIDs_top.size(); i++){
+            //for(int j : scat_top[i]){
+                
+                lc2= dynamic_cast<SMultiFibersChannel*>(pLookUp2->getAddress(0x1000, swIDs_top[i]));
+                //std::cout<<swIDs_top[i]<<std::endl;
+                //std::cout<<swIDs_top[i]<<std::endl;
+                if(swIDs_top[i]<368 or swIDs_top[i]>479)
+                    continue;
+                vec = lc2->vecFiberAssociations;
+                for(std::vector<std::string> k:vec){
+                    SiPMfibers.push_back(k);
+                }
+            //}
+            cluster_fibers_st.push_back(SiPMfibers);
+            SiPMfibers.clear();
+        }
+        }
+//------------------------------------------------------------
         
 
 
@@ -335,21 +481,6 @@ if(clusters_final.size()){
             }
         }
 
-
-//    
-//    //change the code below by inserting the fiber identification algorithm and based on the algorithm, fill the allFibData structure for all subevents
-//    int n_subevents = 5; //number of subevents
-//    for (int i = 0; i < n_subevents; i++)
-//    {
-//        fibData->energyL=0.0;
-//        fibData->timeL=0.0;
-//        fibData->energyR=0.0;
-//        fibData->timeR=0.0;
-//        fibData->mod=0;
-//        fibData->lay=0;
-//        fibData->fi=0;
-//        allFibData.push_back(fibData);
-//    }
              SiPMadresses.clear();
              candidates.clear();
              clusters.clear();

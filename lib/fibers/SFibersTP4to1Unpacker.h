@@ -29,6 +29,7 @@ class SIFI_EXPORT SFibersTP4to1Unpacker : public SUnpacker
 protected:
     SCategory* catFibersRaw;
     SCategory* catFibersCal;
+    SCategory* catSiPMsCluster;
 
 public:
     SFibersTP4to1Unpacker();

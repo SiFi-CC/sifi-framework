@@ -196,6 +196,7 @@ bool SSiPMClusterFinder::execute()
             }
             
 // clusters_final is vector of vector of event's idx 
+        std::vector<std::vector<UInt_t>> clusters_final;
 if(clusters.size())
 {
         for(int i=0; i<clusters.size(); i++)
@@ -204,7 +205,7 @@ if(clusters.size())
             //std::cout<<clusters[i][j][2]<<" "<<clusters[i][j][3]<<" "<<i<<" "<<clusters[i][j][4]<<std::endl;
             }
         }
-        std::vector<std::vector<UInt_t>> clusters_final;
+
         std::vector<UInt_t> cl_f;
         for(int i=0; i<clusters.size(); i++)
         {
@@ -216,25 +217,7 @@ if(clusters.size())
         }
 }
             
-// clusters_final is vector of vector of event's idx 
 
-        for(int i=0; i<clusters.size(); i++)
-        {
-            //std::cout<<"new cluster"<<std::endl;
-            for(int j=0;j<clusters[i].size();j++){
-            //std::cout<<clusters[i][j][2]<<" "<<clusters[i][j][3]<<" "<<i<<" "<<clusters[i][j][4]<<std::endl;
-            }
-        }
-        std::vector<std::vector<UInt_t>> clusters_final;
-        std::vector<UInt_t> cl_f;
-        for(int i=0; i<clusters.size(); i++)
-        {
-            cl_f.clear();
-            for(int j=0;j<clusters[i].size();j++){
-                cl_f.push_back(clusters[i][j][0]);
-            }
-        clusters_final.push_back(cl_f);
-        }
         
        
         
@@ -262,6 +245,7 @@ if(clusters.size())
     Int_t lay = 0;
     Int_t element = 0;
     char side = '\0';
+    Int_t aa=0;
         
     //if(clusters_final.size()!=0){
         for(int i=0; i<clusters_final.size(); i++){
@@ -313,11 +297,29 @@ if(clusters.size())
                 //std::cout<<"cluster mod, lay, elemnt, x_pos, y_pos, z_pos: "<<mod<<" "<<lay<<" "<<element<<" "<<x_position<<" "<<y_position<<" "<<z_position<<std::endl;
                 pClus->addHit(clusters_final[i][j]);
                 pClus->catSiPMsHit = catSiPMsHit;
+                
+                if(j==0){
+                    aa=0;
+                }
+                else{
+                    aa=1;
+                }
                    
             }
             x_cluster=x_COG/weights;
             y_cluster=y_COG/weights;
             z_cluster=z_COG/weights;
+            if(aa==0){
+                x_cluster=-1;
+                y_cluster=-1;
+                z_cluster=-1;
+            }
+            if(side=='r'){
+                x_cluster=-1;
+                y_cluster=-1;
+                z_cluster=-1;
+            }
+                
             pClus->getPoint().SetXYZ(x_cluster, y_cluster, z_cluster);
             //pClus->print();
             //std::cout<<"cluster X,Y,Z: "<<x_cluster<<" "<<y_cluster<<" "<<z_cluster<<" "<<std::endl;
