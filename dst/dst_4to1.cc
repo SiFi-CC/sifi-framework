@@ -91,7 +91,7 @@ int main(int argc, char** argv)
             if(ext == "root")
             {
                 SFibersTP4to1Unpacker* unp = new SFibersTP4to1Unpacker();
-                STP4to1Source* source= new STP4to1Source(addr);
+                STP4to1Source* source = new STP4to1Source(addr);
                 source->addUnpacker(unp, {addr});                
                 source->setInput(name);
                 source->setEntriesOffset(events_offset);

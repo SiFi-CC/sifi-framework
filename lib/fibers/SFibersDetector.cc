@@ -20,6 +20,7 @@
 #include "SSiPMClusterFinder.h"
 #include "SFibersClusterFinderPar.h"
 #include "SFibersDDCalibratorPar.h"
+#include "SFibersTOFPETCalibratorPar.h"
 #include "SFibersDDUnpackerPar.h"
 #include "SFibersDigitizerPar.h"
 #include "SFibersGeomPar.h"
@@ -108,6 +109,8 @@ bool SFibersDetector::initContainers()
         pm()->addParContainer("FibersDDUnpackerPar", std::make_unique<SFibersDDUnpackerPar>());
         pm()->addCalContainer("FibersDDCalibratorPar",
                               std::make_unique<SFibersDDCalibratorPar>("FibersDDCalibratorPar"));
+        pm()->addCalContainer("FibersTOFPETCalibratorPar",
+                              std::make_unique<SFibersTOFPETCalibratorPar>("FibersTOFPETCalibratorPar"));
         pm()->addCalContainer("FibersCalibratorPar",
                               std::make_unique<SFibersCalibratorPar>("FibersCalibratorPar"));
     }
