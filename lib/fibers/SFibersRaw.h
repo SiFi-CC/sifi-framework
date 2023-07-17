@@ -31,10 +31,12 @@ protected:
     Int_t fiber{-1};  ///< address - fiber
 
     Float_t qdc_l{0.};  ///< qdc value
-    Long64_t time_l{0}; ///< time value
+//     Long64_t time_l{0}; ///< time value
+    Float_t time_l{0}; ///< time value
 
     Float_t qdc_r{0.};  ///< qdc value
-    Long64_t time_r{0}; ///< time value
+//     Long64_t time_r{0}; ///< time value
+    Float_t time_r{0}; ///< time value
 
 public:
     // constructor
@@ -87,26 +89,30 @@ public:
     void setQDCL(Float_t q) { qdc_l = q; }
     /// Set Time value
     /// \param t time
-    void setTimeL(Long64_t t) { time_l = t; }
+//     void setTimeL(Long64_t t) { time_l = t; }
+    void setTimeL(Float_t t) { time_l = t; }
     /// Set QDC value
     /// \param q qdc
     void setQDCR(Float_t q) { qdc_r = q; }
     /// Set Time value
     /// \param t time
-    void setTimeR(Long64_t t) { time_r = t; }
+//     void setTimeR(Long64_t t) { time_r = t; }
+    void setTimeR(Float_t t) { time_r = t; }
 
     /// Get QDC value
     /// \return qdc
     Float_t getQDCL() const { return qdc_l; }
     /// Get Time value
     /// \return time
-    Long64_t getTimeL() const { return time_l; }
+//     Long64_t getTimeL() const { return time_l; }
+    Float_t getTimeL() const { return time_l; }
     /// Get QDC value
     /// \return qdc
     Float_t getQDCR() const { return qdc_r; }
     /// Get Time value
     /// \return time
-    Long64_t getTimeR() const { return time_r; }
+//     Long64_t getTimeR() const { return time_r; }
+    Float_t getTimeR() const { return time_r; }
 
     virtual void print() const;
 

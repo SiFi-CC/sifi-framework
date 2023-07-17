@@ -12,7 +12,8 @@
 #include "SFibersLookup.h"
 #include "SFibersRaw.h"
 #include "SLoop.h"
-#include "SParManager.h"
+#include "SParAsciiSource.h"
+// #include "SParManager.h"
 
 #include <DDSignal.hh>
 
@@ -881,16 +882,18 @@ Bool_t CutAndView(TString path, Int_t ch, Int_t thr, CutType cut, std::vector<Fl
     std::string params_file(path + "/params.txt");
     Int_t fake_FTAB_address = 0x1000;
 
-    pm()->setParamSource(params_file);
-    pm()->parseSource();
+//     pm()->setParamSource(params_file);
+    pm()->addSource(new SParAsciiSource(params_file));
+//     pm()->parseSource();
 
     SDetectorManager* detm = SDetectorManager::instance();
     detm->addDetector(new SFibersDetector("Fibers"));
     detm->initParameterContainers();
     
-    pm()->addLookupContainer("FibersDDLookupTable",
-                             new SFibersLookupTable("FibersDDLookupTable", 0x1000, 0x1fff, 32));
-
+//     pm()->addLookupContainer("FibersDDLookupTable",
+//                              new SFibersLookupTable("FibersDDLookupTable", 0x1000, 0x1fff, 32));
+    pm()->addLookupContainer("FibersDDLookupTable", std::make_unique<SFibersLookupTable>(
+                                "FibersDDLookupTable", 0x1000, 0x1fff, 32));
     SFibersLookupTable *lookUp = dynamic_cast<SFibersLookupTable*>
                                  (pm()->getLookupContainer("FibersDDLookupTable"));
 
