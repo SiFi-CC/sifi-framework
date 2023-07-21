@@ -50,7 +50,7 @@ bool SFibersTP4to1Unpacker::init()
         return false;
     }
 
-    catFibersCal = sifi()->buildCategory(SCategory::CatFibersCal);
+    catFibersCal = sifi()->buildCategory(SCategory::CatFibersCal); //TODO ?
 
     if (!catFibersCal)
     {

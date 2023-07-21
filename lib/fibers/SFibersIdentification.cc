@@ -38,25 +38,28 @@ bool SFibersIdentification::execute() { return true; }
 
 bool SFibersIdentification::finalize() { return true; }
 
-std::vector<std::shared_ptr<fibAddress>> SFibersIdentification::get4to1FiberFromSiPM(UInt_t SiPMID)
-{
-
-    std::vector<std::shared_ptr<fibAddress>> fibOnlyAddresses;
-
-    return fibOnlyAddresses;
-}
-
-UInt_t SFibersIdentification::get4to1SiPMFromFiber(std::vector<std::shared_ptr<fibAddress>>& fiber)
-{
-
-    return true;
-}
+// std::vector<std::shared_ptr<fibAddress>> SFibersIdentification::get4to1FiberFromSiPM(UInt_t SiPMID)
+// {
+// 
+//     std::vector<std::shared_ptr<fibAddress>> fibOnlyAddresses;
+// 
+//     return fibOnlyAddresses;
+// }
+// 
+// UInt_t SFibersIdentification::get4to1SiPMFromFiber(std::vector<std::shared_ptr<fibAddress>>& fiber)
+// {
+// 
+//     return true;
+// }
 
 std::vector<std::shared_ptr<identifiedFiberData>>
 SFibersIdentification::identifyFibers(std::vector<std::shared_ptr<TP4to1Hit>>& hits)
 {
 
+    
+    
     std::vector<std::shared_ptr<identifiedFiberData>> allFibData;
+    return allFibData;
 
     std::vector<std::vector<UInt_t>> SiPMadresses;
     std::vector<UInt_t> ja;

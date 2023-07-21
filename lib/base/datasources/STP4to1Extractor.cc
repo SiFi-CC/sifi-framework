@@ -139,7 +139,8 @@ bool STP4to1Extractor::write_to_tree(std::vector<std::shared_ptr<TP4to1Hit>> & h
     for (int i = 0; i < n_hits; i++)
     {
         SLocator loc(1);
-        loc[0] = hits[i]->channelID;
+//        loc[0] = hits[i]->channelID; // changed for SiPM clustering!
+        loc[0] = i; // new locator is hit ID
         SSiPMHit* pHit = dynamic_cast<SSiPMHit*>(catSiPMHit->getObject(loc));
         if (!pHit)
         {
@@ -150,7 +151,7 @@ bool STP4to1Extractor::write_to_tree(std::vector<std::shared_ptr<TP4to1Hit>> & h
                 std::cerr << "Error in STP4to1Extractor.cc: no pHit category!" << std::endl;
             }
         }
-        SSiPMsChannel* lc = dynamic_cast<SSiPMsChannel*>(pLookUp->getAddress(0x1000,hits[i]->channelID) );
+        SSiPMsChannel* lc = dynamic_cast<SSiPMsChannel*>(pLookUp->getAddress(0x1000,hits[i]->channelID));
         if(!lc) {
             fprintf(stderr, "STP4to1Extractor TOFPET2 absolute Ch%d missing. Check params.txt.\n", hits[i]->channelID);
         } else {
@@ -158,6 +159,7 @@ bool STP4to1Extractor::write_to_tree(std::vector<std::shared_ptr<TP4to1Hit>> & h
             pHit->setAddress(lc->m, lc->l, lc->element, lc->side);
             pHit->setQDC(hits[i]->energy);
             pHit->setTime(hits[i]->time);
+            pHit->setID(i);
         }
     }
  

@@ -35,6 +35,7 @@ protected:
 
     Float_t qdc{0.};  ///< SiPM qdc value
     Long64_t time{0}; ///< SiPM time value
+//     Float_t time{0.};
     
     Int_t hitID{-1}; ///< hit ID
 
@@ -58,6 +59,17 @@ public:
     void getChannel(Int_t& sID) const
     {
         sID = swSiPMID;
+    }
+    /// Set SiPM hit ID
+    /// \param id SiPM hit ID
+    void setID(Int_t id)
+    {
+        hitID = id;
+    }
+    /// Get SiPM hit ID
+    Int_t getID()
+    {
+        return hitID;
     }
     // methods
     /// Set address
@@ -96,6 +108,7 @@ public:
     /// Get Time value
     /// \return time
     Long64_t getTime() const { return time; }
+//     Float_t getTime() const { return time; }
 
 
     virtual void print() const;

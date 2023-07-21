@@ -160,11 +160,11 @@ bool SFibersDetector::initCategories()
     }
     else
     {
-        if (!dm->registerCategory(SCategory::CatFibersRaw, "SFibersRaw", 3, sizes, false))
-            return false;
         if (!dm->registerCategory(SCategory::CatSiPMHit, "SSiPMHit", 1, sizes_SiPM, false))
             return false;
         if (!dm->registerCategory(SCategory::CatSiPMClus, "SSiPMCluster", 1, size_SiPM_cluster, false))
+            return false;
+        if (!dm->registerCategory(SCategory::CatFibersRaw, "SFibersRaw", 3, sizes, false))
             return false;
         if (!dm->registerCategory(SCategory::CatFibersCal, "SFibersCal", 3, sizes, false))
             return false;

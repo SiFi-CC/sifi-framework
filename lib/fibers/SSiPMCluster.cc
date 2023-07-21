@@ -8,7 +8,7 @@
  * For the licensing terms see $SiFiSYS/LICENSE.                         *
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
- 
+
 #include "SSiPMCluster.h"
 #include "SSiPMHit.h"
 #include <cstdio>
@@ -30,24 +30,15 @@ void SSiPMCluster::Clear(Option_t* opt)
 
 void SSiPMCluster::print() const
 {
-//    printf("SiPM CLUSTER:  module = %d  cluster = %d  x,y,z = (%f, %f, %f) +/- (%f, %f, %f)\n",
-//           module, cluster, point.x(), point.y(), point.z(), errors.x(), errors.y(), errors.z());
     
-    printf("SiPM CLUSTER: cluster = %d num of hits = %ld x,y,z = (%f, %f, %f)\n", cluster, hits.size(), point.x(), point.y(), point.z());
-    printf("SiPM HITS:\n");
+    printf("SiPM CLUSTER: clusterID = %d, num of hits = %ld, time = %lld, QDC = %f, x,y,z = (%f, %f, %f)\n", clusterID, hits.size(), time, qdc, point.x(), point.y(), point.z());
+    printf("SiPM HITS: ");
     
-    for(auto & h : hits) {
-//        printf(" %d", h);
-        SSiPMHit* pHit = dynamic_cast<SSiPMHit*>(catSiPMsHit->getObject(h));
-        if (!pHit)
-        {
-            printf("SiPMHit %d doesn't exists!\n", h);
-            continue;
-        }
-//         pHit->print();
+    for(auto & h : hits)
+    {
+        printf("%i ", h);
     }
     
     printf("\n");
-
 
 }

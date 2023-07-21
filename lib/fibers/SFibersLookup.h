@@ -55,7 +55,7 @@ public:
 
 struct SIFI_EXPORT SSiPMsChannel : public SLookupChannel
 {
-    uint16_t m, l, f, element, s;
+    uint16_t m, l, s, f, element; // m, l, s must be overwritten because of uint8_t/uint16_t precision!
     char side; ///< side of a fiber, either 'l' or 'r'
 
     SSiPMsChannel() {}

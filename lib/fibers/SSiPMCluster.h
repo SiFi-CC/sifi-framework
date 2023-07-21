@@ -23,23 +23,29 @@
 #include <vector>
 
 #include <SCategory.h>
+
 class SIFI_EXPORT SSiPMCluster : public TObject
 {
 protected: 
-//    Int_t module{-1};  ///< address - module
-    Int_t cluster{-1}; ///< address - cluster ID
+    Int_t clusterID{-1}; ///< address - cluster ID
+    Int_t module{-1};    ///< module number
+    char side{' '};      ///< side
     
     TVector3 point;  ///< cluster position
     TVector3 errors; ///< cluster position errors
+    Long64_t time{-1};    ///< first hit time within cluster
+    Float_t qdc{-1};
     
     std::vector<Int_t> hits; ///< list of hits belonging to the cluster
     
 public:
-
-    SCategory * catSiPMsHit; //!
     
     /// Default constructor
-    SSiPMCluster() = default;
+    SSiPMCluster() 
+    {
+        point.SetXYZ(-1, -1, -1);
+        errors.SetXYZ(-1, -1, -1);
+    };
     /// Default destructor
     virtual ~SSiPMCluster() = default;
     
@@ -47,20 +53,36 @@ public:
     /// \param opt - clearing options (only for compatibility with ROOT)
     virtual void Clear(Option_t *opt = "") override;
     
-    /// Setting the cluster address
+    /// Setting the cluster ID
     /// \param m - module
     /// \param c - cluster
-    void setAddress(Int_t c)
+    void setID(Int_t c)
     {
-//        module = m;
-        cluster = c;
+        clusterID = c;
     }
     
-    /// Getting the cluster address
-    void getAddress(Int_t &c) const
+    /// Getting the cluster ID
+    void getID(Int_t &c) const
     {
-//        m = module;
-        c = cluster;
+        c = clusterID;
+    }
+    
+    /// Set address
+    /// \param m module
+    /// \param c cluster
+    void setAddress(Int_t m, char s)
+    {
+        module = m;
+        side = s;
+    }
+    
+    /// Get address
+    /// \param m module
+    /// \param c cluster
+    void getAddress(Int_t& m, char& c) const
+    {
+        m = module;
+        c = side;
     }
     
     /// Add SiPM hit to the cluster
@@ -77,6 +99,8 @@ public:
         return hits;
     }
     
+    void setPoint(TVector3 &p) { point = p; };
+    
     /// Get cluster position
     /// \return position of the cluster
     TVector3 & getPoint() 
@@ -90,6 +114,8 @@ public:
         return point;
     }
     
+    void setErrors(TVector3 &e) {errors = e; };
+    
     /// Get position errors
     /// \return errors of the cluster position
     TVector3 & getErrors()
@@ -102,6 +128,14 @@ public:
     {
         return errors;
     }
+    
+    void setTime(Long64_t t) { time = t; };
+    
+    Long64_t getTime() { return time; };
+    
+    void setQDC(float c) { qdc = c; };
+    
+    float getQDC() { return qdc; };
     
     /// Printing details of the object.
     void print() const;

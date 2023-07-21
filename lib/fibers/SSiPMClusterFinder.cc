@@ -23,7 +23,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <cstdio>
 #include <cstdlib>
 #include <iostream>
 #include <map>
@@ -63,291 +62,174 @@ bool SSiPMClusterFinder::init()
 bool checkIfNeighbours(SSiPMHit* hit_1, SSiPMHit* hit_2)
 {
  
-    /// TODO checking if two given sipms are neighbours
-    return true;    
+    int mod_1, lay_1, ele_1;
+    char side_1;
+    
+    int mod_2, lay_2, ele_2;
+    char side_2;
+    
+    hit_1->getAddress(mod_1, lay_1, ele_1, side_1);
+    hit_2->getAddress(mod_2, lay_2, ele_2, side_2);
+    
+    if(mod_1 != mod_2) // if two hits were in different modules they are not neighbours
+        return false;
+    
+    if(side_1 != side_2) // if two hits were on different sides they are not neighbours
+    {
+        return false;
+    }
+    
+    if(abs(lay_1 - lay_2) < 2 &&    // if two hits have neighbouring element and layer numbers they are neighbours
+       abs(ele_1 - ele_2) < 2)
+    {
+        return true;
+    }
+    else
+        return false;
 }
 
 
 bool SSiPMClusterFinder::execute()
 {
-/////
-        std::vector<std::vector<UInt_t>> SiPMadresses;
-        std::vector<UInt_t> ja;
-/////
+    int nhits = catSiPMsHit->getEntries(); // number of hits in current event
+    bool hit_assigned = false; // flag indivating whether hit was already assigned to cluster
+    int nclus = 0;
     
-    int size = catSiPMsHit->getEntries();
-    for (int i = 0; i < size; ++i)
+//     for (int i = 0; i < nhits; ++i) // loop over all hits in current event
+//     {
+//         SSiPMHit* pHit = dynamic_cast<SSiPMHit*>(catSiPMsHit->getObject(i)); // getting a hit 
+//         pHit->print();
+//     }
+        
+    std::vector<SSiPMCluster*> clusters; // auxiliary array for created clusters
+    
+    SLocator loc(1);
+    
+    for (int i = 0; i < nhits; ++i) // loop over all hits in current event
     {
-        SSiPMHit* pHit = dynamic_cast<SSiPMHit*>(catSiPMsHit->getObject(i));
-        if (!pHit)
+        hit_assigned = false;
+        SSiPMHit* pHit = dynamic_cast<SSiPMHit*>(catSiPMsHit->getObject(i)); // getting a hit 
+        
+        int sid = 0;
+        pHit->getChannel(sid);
+        if(sid == 800)
         {
-            printf("SiPMHit doesn't exists!\n");
+            hit_assigned = true;
             continue;
         }
-        Int_t mod = 0;
-        Int_t lay = 0;
-        Int_t element = 0;
-        char side = '\0';
-        pHit->getAddress(mod, lay, element, side);
-
-/////
-        ja.push_back(i);
-        ja.push_back(mod);
-        ja.push_back(lay);
-        ja.push_back(element);
-
-
-        if(side=='r'){
-            ja.push_back(0);
-
+        
+        if(clusters.size() == 0) // if there are no clusters yet, create the first one
+        {
+            SSiPMCluster *pClus = new SSiPMCluster(); 
+            pClus->addHit(pHit->getID()); // adding first hit to the first cluster
+            clusters.push_back(pClus);
+    
+            hit_assigned = true;
         }
-        if(side=='l'){
-            ja.push_back(1);
-
-        }
-        SiPMadresses.push_back(ja);
-        ja.clear();
-/////
-    }    
-/////
-
- // algorithm for clustering- ugly version          
-           std::vector<std::vector<UInt_t>> cluster;
-           std::vector<UInt_t> cl;
-           int not_cluster=1;
-           std::vector<std::vector<std::vector<UInt_t>>> clusters;
-           std::vector<std::vector<UInt_t>> candidates;
-           std::vector<int> couter;
-           int cluster_size;
-           int a=0;
-
-            while(not_cluster){
-                candidates.clear();
-                couter.clear();
-                not_cluster=0;
-                cluster.clear();
-                cl.clear();
-                if(SiPMadresses.size()>1){
-                    cl.push_back(SiPMadresses[0][0]);
-                    cl.push_back(SiPMadresses[0][1]);
-                    cl.push_back(SiPMadresses[0][2]);
-                    cl.push_back(SiPMadresses[0][3]);
-                    cl.push_back(SiPMadresses[0][4]);
-                    cluster.push_back(cl);
-                    SiPMadresses.erase(SiPMadresses.begin());
-                    //candidates.erase(candidates.begin());
+        else // if there are some clusters already 
+        {
+            nclus = clusters.size();
+            for(int c = 0; c < nclus; ++c) // iterate over clusters
+            {
+                if(hit_assigned)
+                    break;
                 
-                for(int i=0; i<SiPMadresses.size();i++)
+                std::vector<Int_t> hits = clusters[c]->getHitsArray(); // get list of hits within a cluster
+                int nhit_in_clus = hits.size();
+                
+                for(int h = 0; h < nhit_in_clus; ++h) // iterate over hits
                 {
-                    cluster_size=cluster.size();
-                    for(std::vector<UInt_t> j : cluster)
+                    if(hit_assigned)
+                        break;
+                    
+                    SSiPMHit* pHit_in_clus = dynamic_cast<SSiPMHit*>(catSiPMsHit->getObject(h));
+                    
+                    if(checkIfNeighbours(pHit, pHit_in_clus)) // check if current hit is a neighbour of any of the hits in the cluster 
                     {
-                        cl.clear();
-                        //std::cout<<"B "<<SiPMadresses[i][0]<<" "<<i<<std::endl;
-                        if (j[1]==SiPMadresses[i][1] and j[4]==SiPMadresses[i][4] and abs((int)j[2]-(int)SiPMadresses[i][2])<=1 and abs((int)j[3]-(int)SiPMadresses[i][3])<=1)
-                        {
-                            //std::cout<<"F "<<SiPMadresses[i][0]<<" "<<i<<std::endl;
-                            cl.push_back(SiPMadresses[i][0]);
-                            cl.push_back(SiPMadresses[i][1]);
-                            cl.push_back(SiPMadresses[i][2]);
-                            cl.push_back(SiPMadresses[i][3]);
-                            cl.push_back(SiPMadresses[i][4]);
-                            cluster.push_back(cl);
-                            couter.push_back(i);
-                            //candidates.erase(candidates.begin()+i);
-                            //std::cout<<"L "<<candidates.size()<<std::endl;
-                            break;
-                        }
-                    }
-                    if(cluster_size==cluster.size())
-                        {
-                            not_cluster=not_cluster+1;
-                        }
-                    } 
-                for(int i=0;i<SiPMadresses.size();i++){
-                    a=0;
-                    for(int j=0; j<couter.size(); j++){
-                        //std::cout<<"bla "<<couter[j]<<" "<<i<<std::endl;
-                        if(i==couter[j]){
-                            a++;
-                        }
-                        //std::cout<<"a "<<a<<std::endl;
-                    }
-                    if(a==0){
-                        //std::cout<<"C "<<SiPMadresses[i][0]<<" "<<i<<std::endl;
-                        candidates.push_back(SiPMadresses[i]);
+                        clusters[c]->addHit(pHit->getID()); // if yes, then this hit should belong to that cluster
+                        hit_assigned = true;
                     }
                 }
-                }
-                else{
-                    if(SiPMadresses.size()==1){
-                    cl.push_back(SiPMadresses[0][0]);
-                    cl.push_back(SiPMadresses[0][1]);
-                    cl.push_back(SiPMadresses[0][2]);
-                    cl.push_back(SiPMadresses[0][3]);
-                    cl.push_back(SiPMadresses[0][4]);
-                    cluster.push_back(cl);
-                    SiPMadresses.erase(SiPMadresses.begin());
-                    }
-                }
-
-                clusters.push_back(cluster); 
-                SiPMadresses=candidates;
-            }
-            
-// clusters_final is vector of vector of event's idx 
-if(clusters.size())
-{
-        for(int i=0; i<clusters.size(); i++)
-        {
-            for(int j=0;j<clusters[i].size();j++){
-            //std::cout<<clusters[i][j][2]<<" "<<clusters[i][j][3]<<" "<<i<<" "<<clusters[i][j][4]<<std::endl;
             }
         }
-        std::vector<std::vector<UInt_t>> clusters_final;
-        std::vector<UInt_t> cl_f;
-        for(int i=0; i<clusters.size(); i++)
+        if(!hit_assigned)
         {
-            cl_f.clear();
-            for(int j=0;j<clusters[i].size();j++){
-                cl_f.push_back(clusters[i][j][0]);
-            }
-        clusters_final.push_back(cl_f);
-        }
-}
-            
-// clusters_final is vector of vector of event's idx 
-
-        for(int i=0; i<clusters.size(); i++)
-        {
-            //std::cout<<"new cluster"<<std::endl;
-            for(int j=0;j<clusters[i].size();j++){
-            //std::cout<<clusters[i][j][2]<<" "<<clusters[i][j][3]<<" "<<i<<" "<<clusters[i][j][4]<<std::endl;
-            }
-        }
-        std::vector<std::vector<UInt_t>> clusters_final;
-        std::vector<UInt_t> cl_f;
-        for(int i=0; i<clusters.size(); i++)
-        {
-            cl_f.clear();
-            for(int j=0;j<clusters[i].size();j++){
-                cl_f.push_back(clusters[i][j][0]);
-            }
-        clusters_final.push_back(cl_f);
-        }
+           SSiPMCluster *pClus = new SSiPMCluster(); 
+           pClus->addHit(pHit->getID());
+           clusters.push_back(pClus);
+    
+          hit_assigned = true;
+          }
+    }
+    
+    // at this point clusters only contain lists of SiPM hits
+    // below other cluster characteristics are determined and assigned
+    
+    nclus = clusters.size();; 
+    
+    for(int c=0; c < nclus; ++c) // iterating over clusters
+    {
+        std::vector<Int_t> hits = clusters[c]->getHitsArray(); // getting hits in clusters
+        int nhit_in_clus = hits.size();
         
-       
+        clusters[c]->setID(c); // setting cluster ID
         
-   //Wziąć z params
-    Float_t x_offset=0;
-    Float_t y_offset=0;
-    Float_t z_offset=0;
-    
-    Float_t fiber_pitch=1;
-    
-    Float_t x_position=0;
-    Float_t y_position=0;
-    Float_t z_position=0;
-    
-    Float_t x_COG=0;
-    Float_t y_COG=0;
-    Float_t z_COG=0;
-    
-    Float_t weights=0;
-    
-    Float_t x_cluster=0;
-    Float_t y_cluster=0;
-    Float_t z_cluster=0;
-    Int_t mod = 0;
-    Int_t lay = 0;
-    Int_t element = 0;
-    char side = '\0';
+        SSiPMHit* pHit_in_clus = dynamic_cast<SSiPMHit*>(catSiPMsHit->getObject(hits[0]));
+        int m, l, e;
+        char s;
+        pHit_in_clus->getAddress(m, l, e, s);
+        clusters[c]->setAddress(m, s); // setting cluster address (location)
         
-    //if(clusters_final.size()!=0){
-        for(int i=0; i<clusters_final.size(); i++){
-             x_position=0;
-             y_position=0;
-             z_position=0;
+        Long64_t time = pHit_in_clus->getTime();
+        float charge = 0;
+        TVector3 position(0, 0, 0);
+        TVector3 errors(0, 0, 0);
+        
+        for(int h = 0; h < nhit_in_clus; ++h)
+        {
+            SSiPMHit* pHit_in_clus = dynamic_cast<SSiPMHit*>(catSiPMsHit->getObject(hits[h]));
             
-             x_COG=0;
-             y_COG=0;
-             z_COG=0;
-            
-             weights=0;
-            
-             x_cluster=0;
-             y_cluster=0;
-             z_cluster=0;
-            SLocator loc(1);
-            loc[0] = i;
-            SSiPMCluster* pClus = dynamic_cast<SSiPMCluster*>(catSiPMsCluster->getObject(loc));
-            if (!pClus)
+            if(pHit_in_clus->getTime() < time) // cluster time is determined as the time of the earliest hit
             {
-                pClus = reinterpret_cast<SSiPMCluster*>(catSiPMsCluster->getSlot(loc));
-                pClus = new (pClus) SSiPMCluster;
-                pClus->Clear();
+                time = pHit_in_clus->getTime();
             }
-            pClus->setAddress(i);
-            for(int j=0; j<clusters_final[i].size(); j++){
-                     mod = 0;
-                     lay = 0;
-                     element = 0;
-                     side = '\0';
-                    SSiPMHit* pHit = dynamic_cast<SSiPMHit*>(catSiPMsHit->getObject(clusters_final[i][j]));
-                    if (!pHit)
-                   {
-                     printf("SiPMHit doesn't exists!\n");
-                     continue;
-                   }
-                   pHit->getAddress(mod, lay, element, side);
-                  
-                   x_position=(Float_t)lay;
-                   y_position=(Float_t)mod; //DOPYTAĆ!!!!
-                   z_position=(Float_t)element;
-                   
-                   x_COG=x_COG+pHit->getQDC()*x_position;
-                   y_COG=y_COG+pHit->getQDC()*y_position;
-                   z_COG=z_COG+pHit->getQDC()*z_position;
-                   
-                   weights=weights+pHit->getQDC();
-                //std::cout<<"cluster mod, lay, elemnt, x_pos, y_pos, z_pos: "<<mod<<" "<<lay<<" "<<element<<" "<<x_position<<" "<<y_position<<" "<<z_position<<std::endl;
-                pClus->addHit(clusters_final[i][j]);
-                pClus->catSiPMsHit = catSiPMsHit;
-                   
-            }
-            x_cluster=x_COG/weights;
-            y_cluster=y_COG/weights;
-            z_cluster=z_COG/weights;
-            pClus->getPoint().SetXYZ(x_cluster, y_cluster, z_cluster);
-            //pClus->print();
-            //std::cout<<"cluster X,Y,Z: "<<x_cluster<<" "<<y_cluster<<" "<<z_cluster<<" "<<std::endl;
+            
+            charge += pHit_in_clus->getQDC(); // charge is determined as sum of all hits charges
+            
+            position = position + pHit_in_clus->getQDC() * TVector3(e, 0, l); // position calculated with COG
         }
-    //}
+        
+        position = 1./charge * position;
+        
+        clusters[c]->setTime(time);
+        clusters[c]->setQDC(charge);
+        clusters[c]->setPoint(position);
+        clusters[c]->setErrors(errors); // at the moment position uncertainty is not calculated so we set it to 0,0,0
+        
+        // adding clusters to category
+        
+        loc[0] = c;
+        SSiPMCluster *pClus = reinterpret_cast<SSiPMCluster*>(catSiPMsCluster->getSlot(loc));
+        pClus = new (pClus) SSiPMCluster(*clusters[c]);
+    }
     
-             SiPMadresses.clear();
-/////
-             /*
-        for(Int_t i=0; i < clusters_final.size(); ++i) {
-            SLocator loc(1);
-            loc[0] = i;
-            SSiPMCluster* pClus = dynamic_cast<SSiPMCluster*>(catSiPMsCluster->getObject(loc));
-            if (!pClus)
-            {
-                pClus = reinterpret_cast<SSiPMCluster*>(catSiPMsCluster->getSlot(loc));
-                pClus = new (pClus) SSiPMCluster;
-                pClus->Clear();
-            }
-            pClus->setAddress(i);
-            for(Int_t j=0; j < clusters_final[i].size(); ++j) {
-                pClus->addHit(clusters_final[i][j]);
-                pClus->getPoint().SetXYZ(0, 0, 0);
-                pClus->catSiPMsHit = catSiPMsHit;
-            }
-            pClus->print();
-        }
-        */
+//     print();
 
     return true;
+}
+
+void SSiPMClusterFinder::print()
+{
+    int nclus = catSiPMsCluster->getEntries(); 
+    
+    std::cout << "\n" << "In SSiPMClusterFinder::" << __func__ << " " << std::endl;
+    std::cout << "Found " << nclus << " clusters: " << std::endl;
+    
+    for(int c=0; c < nclus; ++c) // iterating over clusters
+    {
+       SSiPMCluster* pClus = dynamic_cast<SSiPMCluster*>(catSiPMsCluster->getObject(c));
+       pClus->print();
+    }
 }
 
 bool SSiPMClusterFinder::finalize()

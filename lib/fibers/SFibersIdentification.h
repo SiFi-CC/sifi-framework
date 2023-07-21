@@ -36,10 +36,10 @@ class SLocator;
 
 struct fibAddress
 {
-    int mod=-100;
+    int    mod=-100;
     UInt_t lay=-100;
     UInt_t fi=-100;
-    char side;
+    char   side;
 };
 
 struct identifiedFiberData
@@ -47,10 +47,11 @@ struct identifiedFiberData
     UInt_t mod=-100;
     UInt_t lay=-100;
     UInt_t fi=-100;
-//     std::string side;
     Long64_t timeL=-100;
+//     Float_t timeL=-100;
     Float_t energyL=-100;
     Long64_t timeR=-100;
+//     Float_t timeR=-100;
     Float_t energyR=-100;
     //add event or subevent ID?
     
@@ -73,9 +74,10 @@ public:
     bool execute() override;
     bool finalize() override;
     
-    std::vector<std::shared_ptr<fibAddress>> get4to1FiberFromSiPM(UInt_t SiPMID);
-    UInt_t get4to1SiPMFromFiber(std::vector<std::shared_ptr<fibAddress>> & fiber);
+//     std::vector<std::shared_ptr<fibAddress>> get4to1FiberFromSiPM(UInt_t SiPMID);
+//     UInt_t get4to1SiPMFromFiber(std::vector<std::shared_ptr<fibAddress>> & fiber);
     std::vector<std::shared_ptr<identifiedFiberData>> identifyFibers(std::vector<std::shared_ptr<TP4to1Hit>> & hits);
+    
 private:
     std::shared_ptr<fibAddress> fibOnlyAddress;
     std::shared_ptr<identifiedFiberData> fibData;

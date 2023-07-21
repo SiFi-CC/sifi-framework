@@ -14,6 +14,8 @@
 
 #include "STask.h"
 
+#include <cstdio>
+
 class SCategory;
 
 class SSiPMClusterFinder : public STask
@@ -43,6 +45,8 @@ public:
     /// \sa STask::finalize()
     /// \return success
     bool finalize() override;
+    
+    void print();
     
 };
 
