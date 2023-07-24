@@ -141,9 +141,9 @@ bool SSiPMClusterFinder::execute()
                 {
                     if(hit_assigned)
                         break;
-                    
-                    SSiPMHit* pHit_in_clus = dynamic_cast<SSiPMHit*>(catSiPMsHit->getObject(h));
-                    
+
+                    SSiPMHit* pHit_in_clus = dynamic_cast<SSiPMHit*>(catSiPMsHit->getObject(hits[h]));
+
                     if(checkIfNeighbours(pHit, pHit_in_clus)) // check if current hit is a neighbour of any of the hits in the cluster 
                     {
                         clusters[c]->addHit(pHit->getID()); // if yes, then this hit should belong to that cluster
@@ -188,7 +188,7 @@ bool SSiPMClusterFinder::execute()
         for(int h = 0; h < nhit_in_clus; ++h)
         {
             SSiPMHit* pHit_in_clus = dynamic_cast<SSiPMHit*>(catSiPMsHit->getObject(hits[h]));
-            
+            pHit_in_clus->getAddress(m, l, e, s);
             if(pHit_in_clus->getTime() < time) // cluster time is determined as the time of the earliest hit
             {
                 time = pHit_in_clus->getTime();
@@ -200,7 +200,7 @@ bool SSiPMClusterFinder::execute()
         }
         
         position = 1./charge * position;
-        
+
         clusters[c]->setTime(time);
         clusters[c]->setQDC(charge);
         clusters[c]->setPoint(position);
