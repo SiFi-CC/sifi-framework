@@ -41,7 +41,7 @@
 
 bool SSiPMClusterFinder::init()
 {
-    catSiPMsHit = sifi()->buildCategory(SCategory::CatSiPMHit);
+    catSiPMsHit = sifi()->getCategory(SCategory::CatSiPMHit);
     
     if(!catSiPMsHit)
     {
@@ -61,7 +61,6 @@ bool SSiPMClusterFinder::init()
 
 bool checkIfNeighbours(SSiPMHit* hit_1, SSiPMHit* hit_2)
 {
- 
     int mod_1, lay_1, ele_1;
     char side_1;
     

@@ -2,14 +2,14 @@
 #include "SCategory.h"
 #include "SLocator.h"
 #include "SLookup.h"
-#include "SMultiFibersLookup.h"
 #include "SSiPMHit.h"
 #include "STP4to1Source.h"
 #include "SUnpacker.h"
+#include "STask.h"
 #include "SiFi.h"
-#include "TFile.h"
-#include "TTree.h"
-#include <SFibersLookup.h>
+#include "SFibersLookup.h"
+#include <TFile.h>
+#include <TTree.h>
 #include <algorithm>          // for max, min
 #include <cmath>              // for fabs
 #include <cstdint>            // for uint16_t
@@ -26,15 +26,65 @@
  *
  * \param subevent subevent id
  */
-SFibersIdentification::SFibersIdentification() : STask(), fibOnlyAddress(nullptr), fibData(nullptr)
-{
-    fibOnlyAddress = std::make_shared<fibAddress>();
-    fibData = std::make_shared<identifiedFiberData>();
+
+SFibersIdentification::SFibersIdentification() : STask(), catSiPMsHit(nullptr), catSiPMsCluster(nullptr), catFibersRaw(nullptr), fibLookup(nullptr)
+{}
+
+bool SFibersIdentification::init()
+{ 
+    
+    catSiPMsHit = sifi()->getCategory(SCategory::CatSiPMHit);
+    
+    if(!catSiPMsHit)
+    {
+        std::cerr << "No CatSiPMHit category!" << std::endl;
+        return false;
+    }
+    
+    catSiPMsHit->print(); // BUG dlaczego print pokazuje pustą kategorię?
+    
+    catSiPMsCluster = sifi()->getCategory(SCategory::CatSiPMClus);
+   
+    if(!catSiPMsCluster)
+    {
+       std::cerr << "No CatSiPMClus category!" << std::endl;
+    }
+    catSiPMsCluster->print(); // BUG dlaczego print pokazuje pustą kategorię?
+    
+    catFibersRaw = sifi()->buildCategory(SCategory::CatFibersRaw);
+    
+    if(!catFibersRaw)
+    {
+        std::cerr << "No CatFibersRaw category!" << std::endl;
+        return false;
+    }
+    
+    fibLookup = dynamic_cast<SMultiFibersLookupTable*>(pm()->getLookupContainer("4to1SiPMtoFibersLookupTable"));
+    
+    return true;
 }
 
-bool SFibersIdentification::init() { return true; }
-
-bool SFibersIdentification::execute() { return true; }
+bool SFibersIdentification::execute()
+{ 
+    
+    SSiPMHit* pHit = dynamic_cast<SSiPMHit*>(catSiPMsHit->getObject(0));
+    pHit->print();
+    
+    std::cout << __func__ << " entries in hit: " << catSiPMsHit->getEntries() << std::endl;
+    
+    if(catSiPMsCluster->getEntries() > 0)
+    {
+        SSiPMCluster* pClus = dynamic_cast<SSiPMCluster*>(catSiPMsCluster->getObject(0));
+        std::cout << __func__ << " entries in clus: " << catSiPMsCluster->getEntries() << std::endl;
+    
+        std::vector<fibAddress> f = getFibersFromCluster(pClus);
+        
+        for(auto i : f)
+            i.print();
+    }
+    
+    return true;
+}
 
 bool SFibersIdentification::finalize() { return true; }
 
@@ -52,155 +102,74 @@ bool SFibersIdentification::finalize() { return true; }
 //     return true;
 // }
 
-std::vector<std::shared_ptr<identifiedFiberData>>
-SFibersIdentification::identifyFibers(std::vector<std::shared_ptr<TP4to1Hit>>& hits)
+fibAddress convertAddress(std::vector<std::string> v)
 {
-
-    
-    
-    std::vector<std::shared_ptr<identifiedFiberData>> allFibData;
-    return allFibData;
-
-    std::vector<std::vector<UInt_t>> SiPMadresses;
-    std::vector<UInt_t> ja;
-
-    SSiPMsChannel* lc;
-    SSiPMsLookupTable* pLookUp =
-        dynamic_cast<SSiPMsLookupTable*>(pm()->getLookupContainer("TPLookupTable"));
-
-    if (hits.size() > 0)
+    if(v.size() != 4)
     {
+        std::cout << "In " << __func__ << std::endl;
+        std::cout << "Vector length should be 4!" << std::endl;
+        std::abort();
+    }
+    
+    fibAddress f;
+    f.mod = stoi(v[0]);
+    f.lay = stoi(v[1]);
+    f.fi = stoi(v[2]);
+    f.side = v[3][0];
+    
+    return f;
+}
 
-        int n_hits = hits.size();
-
-        for (int j = 0; j < n_hits; j++)
+std::vector <fibAddress> SFibersIdentification::getFibersFromCluster(SSiPMCluster *cluster)
+{
+    
+//     std::cout << __func__ << std::endl;
+    
+    std::vector <Int_t> hits = cluster->getHitsArray();
+    int nhits = hits.size();
+    
+    SMultiFibersChannel* fibLookupChannel;
+    
+    SSiPMHit* pHit = nullptr;
+    int chan = 0;
+    
+    std::vector <fibAddress> addresses;
+    std::vector<std::vector<std::string>> vec;
+    std::vector<std::string> tmp_str_addr;
+    
+    for(int i=0; i<nhits; ++i)
+    {
+        pHit = dynamic_cast<SSiPMHit*>(catSiPMsHit->getObject(hits[i]));
+        pHit->getChannel(chan);
+        fibLookupChannel = dynamic_cast<SMultiFibersChannel*>(fibLookup->getAddress(0x1000, chan));
+        vec = fibLookupChannel->vecFiberAssociations;
+        
+//         std::cout << "Printing from SMulitFibersLookupTable:" << std::endl;
+        
+        for(int j=0; j<vec.size(); ++j)
         {
-            lc = dynamic_cast<SSiPMsChannel*>(pLookUp->getAddress(0x1000, hits[j]->channelID));
-
-            ja.push_back(j);
-            ja.push_back(lc->m);
-            ja.push_back(lc->l);
-            ja.push_back(lc->element);
-
-            if (lc->side == 'r') { ja.push_back(0); }
-            if (lc->side == 'l') { ja.push_back(1); }
-            SiPMadresses.push_back(ja);
-            ja.clear();
+            for(int k=0; k<vec[j].size(); ++k)
+            {
+//                 std::cout << vec[j][k] << std::endl;
+                tmp_str_addr.push_back(vec[j][k]);
+            }
+            
+            fibAddress tmp_fib_addr = convertAddress(tmp_str_addr);
+            addresses.push_back(tmp_fib_addr);
+//             tmp_fib_addr.print();
+            tmp_str_addr.clear();
         }
+        
+    }
+    
+    return addresses;
+}
 
-        // algorithm for clustering- ugly version
-        std::vector<std::vector<UInt_t>> cluster;
-        std::vector<UInt_t> cl;
-        int not_cluster = 1;
-        std::vector<std::vector<std::vector<UInt_t>>> clusters;
-        std::vector<std::vector<UInt_t>> candidates;
-        std::vector<int> couter;
-        int cluster_size;
-        int a = 0;
+// std::vector<std::shared_ptr<identifiedFiberData>>
+// SFibersIdentification::identifyFibers(std::vector<std::shared_ptr<TP4to1Hit>>& hits)
+// {
 
-        while (not_cluster)
-        {
-            candidates.clear();
-            couter.clear();
-            not_cluster = 0;
-            cluster.clear();
-            cl.clear();
-            if (SiPMadresses.size() > 1)
-            {
-                cl.push_back(SiPMadresses[0][0]);
-                cl.push_back(SiPMadresses[0][1]);
-                cl.push_back(SiPMadresses[0][2]);
-                cl.push_back(SiPMadresses[0][3]);
-                cl.push_back(SiPMadresses[0][4]);
-                cluster.push_back(cl);
-                SiPMadresses.erase(SiPMadresses.begin());
-                // candidates.erase(candidates.begin());
-
-                for (int i = 0; i < SiPMadresses.size(); i++)
-                {
-                    cluster_size = cluster.size();
-                    for (std::vector<UInt_t> j : cluster)
-                    {
-                        cl.clear();
-                        // std::cout<<"B "<<SiPMadresses[i][0]<<" "<<i<<std::endl;
-                        if (j[1] == SiPMadresses[i][1] and j[4] == SiPMadresses[i][4] and
-                            abs(j[2] - SiPMadresses[i][2]) <= 1 and
-                            abs(j[3] - SiPMadresses[i][3]) <= 1)
-                        {
-                            // std::cout<<"F "<<SiPMadresses[i][0]<<" "<<i<<std::endl;
-                            cl.push_back(SiPMadresses[i][0]);
-                            cl.push_back(SiPMadresses[i][1]);
-                            cl.push_back(SiPMadresses[i][2]);
-                            cl.push_back(SiPMadresses[i][3]);
-                            cl.push_back(SiPMadresses[i][4]);
-                            cluster.push_back(cl);
-                            couter.push_back(i);
-                            // candidates.erase(candidates.begin()+i);
-                            // std::cout<<"L "<<candidates.size()<<std::endl;
-                            break;
-                        }
-                    }
-                    if (cluster_size == cluster.size()) { not_cluster = not_cluster + 1; }
-                }
-                for (int i = 0; i < SiPMadresses.size(); i++)
-                {
-                    a = 0;
-                    for (int j = 0; j < couter.size(); j++)
-                    {
-                        // std::cout<<"bla "<<couter[j]<<" "<<i<<std::endl;
-                        if (i == couter[j]) { a++; }
-                        // std::cout<<"a "<<a<<std::endl;
-                    }
-                    if (a == 0)
-                    {
-                        // std::cout<<"C "<<SiPMadresses[i][0]<<" "<<i<<std::endl;
-                        candidates.push_back(SiPMadresses[i]);
-                    }
-                }
-            }
-            else
-            {
-                if (SiPMadresses.size() == 1)
-                {
-                    cl.push_back(SiPMadresses[0][0]);
-                    cl.push_back(SiPMadresses[0][1]);
-                    cl.push_back(SiPMadresses[0][2]);
-                    cl.push_back(SiPMadresses[0][3]);
-                    cl.push_back(SiPMadresses[0][4]);
-                    cluster.push_back(cl);
-                    SiPMadresses.erase(SiPMadresses.begin());
-                }
-            }
-
-            clusters.push_back(cluster);
-            SiPMadresses = candidates;
-        }
-
-        // clusters_final is vector of vector of event's idx
-        std::vector<std::vector<UInt_t>> clusters_final;
-        if (clusters.size())
-        {
-            for (int i = 0; i < clusters.size(); i++)
-
-            {
-                for (int j = 0; j < clusters[i].size(); j++)
-                {
-                    // std::cout<<clusters[i][j][2]<<" "<<clusters[i][j][3]<<" "<<i<<"
-                    // "<<clusters[i][j][4]<<std::endl;
-                }
-            }
-            std::vector<UInt_t> cl_f;
-            for (int i = 0; i < clusters.size(); i++)
-            {
-                cl_f.clear();
-                for (int j = 0; j < clusters[i].size(); j++)
-                {
-                    cl_f.push_back(clusters[i][j][0]);
-                }
-                clusters_final.push_back(cl_f);
-            }
-        }
-
+/*
         std::vector<std::vector<UInt_t>> scat_bottom;
         std::vector<std::vector<UInt_t>> ab_bottom;
         std::vector<std::vector<UInt_t>> scat_top;
@@ -361,5 +330,5 @@ SFibersIdentification::identifyFibers(std::vector<std::shared_ptr<TP4to1Hit>>& h
     //         a->print();
     //     }
 
-    return allFibData;
-}
+    return allFibData;*/
+// }

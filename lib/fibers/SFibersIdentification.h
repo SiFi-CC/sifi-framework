@@ -14,10 +14,12 @@
 
 #include "sifi_export.h"
 
-#include "TTree.h"
 #include "SDataSource.h"
 #include "SUnpacker.h"
 #include "STP4to1Source.h"
+#include "SCategory.h"
+#include "SSiPMCluster.h"
+#include "SMultiFibersLookup.h"
 #include <RtypesCore.h> // for Double_t, Int_t
 
 #include <cstdint> // for uint16_t
@@ -25,9 +27,6 @@
 #include <fstream>
 #include <memory> // for shared_ptr
 #include <string>
-
-#include "TFile.h"
-#include "TTree.h"
 
 #include "STask.h"
 
@@ -40,6 +39,11 @@ struct fibAddress
     UInt_t lay=-100;
     UInt_t fi=-100;
     char   side;
+    
+    void print()
+    {
+        printf("fibAddress: mod = %i, lay = %i, fib = %i, side = %c \n", mod, lay, fi, side);
+    };
 };
 
 struct identifiedFiberData
@@ -47,11 +51,9 @@ struct identifiedFiberData
     UInt_t mod=-100;
     UInt_t lay=-100;
     UInt_t fi=-100;
-    Long64_t timeL=-100;
-//     Float_t timeL=-100;
+    Long64_t timeL=-100;    //for TOFPET time must be Long64_t!
     Float_t energyL=-100;
     Long64_t timeR=-100;
-//     Float_t timeR=-100;
     Float_t energyR=-100;
     //add event or subevent ID?
     
@@ -76,12 +78,20 @@ public:
     
 //     std::vector<std::shared_ptr<fibAddress>> get4to1FiberFromSiPM(UInt_t SiPMID);
 //     UInt_t get4to1SiPMFromFiber(std::vector<std::shared_ptr<fibAddress>> & fiber);
-    std::vector<std::shared_ptr<identifiedFiberData>> identifyFibers(std::vector<std::shared_ptr<TP4to1Hit>> & hits);
+//     std::vector<std::shared_ptr<identifiedFiberData>> identifyFibers(std::vector<std::shared_ptr<TP4to1Hit>> & hits);
     
 private:
-    std::shared_ptr<fibAddress> fibOnlyAddress;
-    std::shared_ptr<identifiedFiberData> fibData;
+//     std::shared_ptr<fibAddress> fibOnlyAddress;
+//     std::shared_ptr<identifiedFiberData> fibData;
     const int n_fibers_per_SiPM = 4;
+//     std::vector <fibAddress> getFibersFromCluster(SSiPMCluster *cluster);
+    std::vector <fibAddress> getFibersFromCluster(SSiPMCluster *cluster);
+    
+protected:
+    SCategory* catSiPMsHit{nullptr};      ///< category containing SiPMs hits
+    SCategory* catSiPMsCluster{nullptr};  ///< category containing SiPMs clusters
+    SCategory* catFibersRaw{nullptr};     ///< category containing raw fibers data
+    SMultiFibersLookupTable* fibLookup{nullptr};
 };
 #endif /* SFIBERSIDENTIFICATION_H */
 

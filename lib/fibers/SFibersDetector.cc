@@ -27,6 +27,9 @@
 #include "SFibersHitFinder.h"
 #include "SFibersHitFinderPar.h"
 #include "SFibersUnpacker.h"
+#include "SFibersIdentification.h"
+#include "SFibersTP4to1Unpacker.h"
+// #include "STP4to1Extractor.h"
 #include "SPar.h" // for SPar
 #include "SiFi.h"
 
@@ -80,11 +83,18 @@ bool SFibersDetector::initTasks()
     }
     else
     {
+//         addTask(new SFibersUnpacker(), 0);
+//         addTask(new SSiPMClusterFinder(), 1);
+//         addTask(new SFibersCalibrator(), 1);
+//         addTask(new SFibersHitFinder(), 2);
+//         addTask(new SFibersClusterFinder(), 3);
+        
         addTask(new SFibersUnpacker(), 0);
         addTask(new SSiPMClusterFinder(), 1);
-        addTask(new SFibersCalibrator(), 1);
-        addTask(new SFibersHitFinder(), 2);
-        addTask(new SFibersClusterFinder(), 3);
+        addTask(new SFibersIdentification(), 2);
+        addTask(new SFibersCalibrator(), 3);
+        addTask(new SFibersHitFinder(), 4);
+        addTask(new SFibersClusterFinder(), 5);
     }
 
     return true;

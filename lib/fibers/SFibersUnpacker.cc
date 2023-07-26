@@ -12,6 +12,7 @@
 #include "SFibersUnpacker.h"
 #include "SCategory.h"
 #include "SFibersRaw.h"
+#include "SSiPMHit.h"
 #include "SLocator.h" // for SLocator
 #include "SiFi.h"
 
@@ -32,7 +33,8 @@ A unpacker task.
 /**
  * Constructor
  */
-SFibersUnpacker::SFibersUnpacker() : STask(), catFibersRaw(nullptr) {}
+SFibersUnpacker::SFibersUnpacker() : STask()//, catFibersRaw(nullptr) 
+{}
 
 /**
  * Init task
@@ -41,10 +43,17 @@ SFibersUnpacker::SFibersUnpacker() : STask(), catFibersRaw(nullptr) {}
  */
 bool SFibersUnpacker::init()
 {
-    catFibersRaw = sifi()->buildCategory(SCategory::CatFibersRaw);
-    if (!catFibersRaw)
+//     catFibersRaw = sifi()->buildCategory(SCategory::CatFibersRaw);
+//     if (!catFibersRaw)
+//     {
+//         std::cerr << "No CatFibersRaw category" << std::endl;
+//         return false;
+//     }
+    
+    catSiPMHit = sifi()->buildCategory(SCategory::CatSiPMHit);
+    if (!catSiPMHit)
     {
-        std::cerr << "No CatFibersRaw category" << std::endl;
+        std::cerr << "No CatSiPMHit category" << std::endl;
         return false;
     }
 
@@ -61,39 +70,39 @@ bool SFibersUnpacker::execute()
     // get input here
 
     // determine data size
-    int size = 0;
-
-    for (int i = 0; i < size; ++i)
-    {
-        // do something with the data
-
-        // calculate address
-        Int_t mod = 0;
-        Int_t lay = 0;
-        Int_t fib = 0;
-
-        // take this from data
-        Float_t qdc = 0;
-
-        SLocator loc(3);
-        loc[0] = mod;
-        loc[1] = lay;
-        loc[2] = fib;
-
-        SFibersRaw* pRaw = dynamic_cast<SFibersRaw*>(catFibersRaw->getObject(loc));
-        if (!pRaw)
-        {
-            pRaw = dynamic_cast<SFibersRaw*>(catFibersRaw->getSlot(loc));
-            new (pRaw) SFibersRaw;
-            pRaw->Clear();
-        }
-
-        pRaw->setAddress(mod, lay, fib);
-        pRaw->setQDCL(qdc);
-        pRaw->setQDCR(qdc);
-        pRaw->setTimeL(0);
-        pRaw->setTimeR(0);
-    }
+//     int size = 0;
+// 
+//     for (int i = 0; i < size; ++i)
+//     {
+//         // do something with the data
+// 
+//         // calculate address
+//         Int_t mod = 0;
+//         Int_t lay = 0;
+//         Int_t fib = 0;
+// 
+//         // take this from data
+//         Float_t qdc = 0;
+// 
+//         SLocator loc(3);
+//         loc[0] = mod;
+//         loc[1] = lay;
+//         loc[2] = fib;
+// 
+//         SFibersRaw* pRaw = dynamic_cast<SFibersRaw*>(catFibersRaw->getObject(loc));
+//         if (!pRaw)
+//         {
+//             pRaw = dynamic_cast<SFibersRaw*>(catFibersRaw->getSlot(loc));
+//             new (pRaw) SFibersRaw;
+//             pRaw->Clear();
+//         }
+// 
+//         pRaw->setAddress(mod, lay, fib);
+//         pRaw->setQDCL(qdc);
+//         pRaw->setQDCR(qdc);
+//         pRaw->setTimeL(0);
+//         pRaw->setTimeR(0);
+//     }
 
     return true;
 }

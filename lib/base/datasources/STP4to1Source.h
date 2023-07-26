@@ -28,7 +28,7 @@
 #include "TTree.h"
 
 class SCategory;
-class STP4to1Extractor;
+// class STP4to1Extractor;
 
 struct TP4to1Hit
 {
@@ -65,8 +65,8 @@ private:
     Long64_t nentries;
     std::shared_ptr<TP4to1Hit> hit_cache;
     Long64_t entries_offset, entries_counter;
-    SCategory* catSiPMHit;
-    STP4to1Extractor * extractor;
+//     SCategory* catSiPMHit; // BUG po co?
+//     STP4to1Extractor * extractor; // BUG już niepotrzebne
     enum State
     {
         INIT,

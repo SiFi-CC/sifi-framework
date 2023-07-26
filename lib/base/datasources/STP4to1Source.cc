@@ -10,7 +10,7 @@
  *************************************************************************/
 
 #include "STP4to1Source.h"
-#include "STP4to1Extractor.h"
+// #include "STP4to1Extractor.h"
 #include "SUnpacker.h"
 #include "SLookup.h"
 #include "TFile.h"
@@ -43,7 +43,7 @@ STP4to1Source::STP4to1Source(uint16_t subevent)
 
 STP4to1Source::~STP4to1Source()
 {
-    delete extractor;
+//     delete extractor;
 }
 
 /**
@@ -63,22 +63,63 @@ bool STP4to1Source::open()
     t = (TTree*)input_file->Get("events");
     nentries=t->GetEntries();
     std::cout << "nentries " << nentries << std::endl;
-
-    catSiPMHit = sifi()->buildCategory(SCategory::CatSiPMHit);
+/*
+    catSiPMHit = sifi()->buildCategory(SCategory::CatSiPMHit); // BUG po co?
     if (!catSiPMHit)
     {
         std::cerr << "Error in STP4to1Extractor.cc: No CatSiPMHit category" << std::endl;
         abort();
-    }
-    extractor = new STP4to1Extractor(subevent, unpackers);
-    extractor->extract_open();
+    }*/
+//     extractor = new STP4to1Extractor(subevent, unpackers);
+//     extractor->extract_open();
 
+    if (unpackers.size() == 0) return false;
+    
+    if (subevent != 0x0000)
+    {
+        if (!unpackers[subevent]) abort();
+
+        bool res = unpackers[subevent]->init();
+        if (!res)
+        {
+            printf("Forced unpacker %#x not initalized\n", subevent);
+            abort();
+        }
+    }
+    else
+    {
+        std::map<uint16_t, SUnpacker*>::iterator iter = unpackers.begin();
+        for (; iter != unpackers.end(); ++iter)
+        {
+            bool res = iter->second->init();
+            if (!res)
+            {
+                printf("Unpacker %#x not initalized\n", iter->first);
+                abort();
+            }
+        }
+    }
+    
     return true;
 }
 
 bool STP4to1Source::close()
 {
-    extractor->extract_close();
+//     extractor->extract_close();
+    
+    if (subevent != 0x0000)
+    {
+        if (unpackers[subevent])
+            unpackers[subevent]->finalize();
+        else
+            abort();
+    }
+    else
+    {
+        std::map<uint16_t, SUnpacker*>::iterator iter = unpackers.begin();
+        for (; iter != unpackers.end(); ++iter)
+            iter->second->finalize();
+    }
 
     return true;
 }
@@ -141,11 +182,40 @@ bool STP4to1Source::readCurrentEvent()
         }
     }
 
-    for(auto i : hits)
+//     for(auto i : hits)
 //         i->print();
     
-    extractor->extract_readCurrentEvent(hits);
-    extractor->write_to_tree(hits);
+//     extractor->extract_readCurrentEvent(hits);
+//     extractor->write_to_tree(hits);
+
+    int nhits = hits.size();
+
+    if (unpackers.size() == 0) return false;
+    
+    if (subevent != 0x0000)
+    {
+        if (!unpackers[subevent]) abort();
+        unpackers[subevent]->setSampleTimeBin(1.);
+        unpackers[subevent]->setADCTomV(1.);
+        for (int i = 0; i < nhits; i++)
+        {
+            // TODO must pass event number to the execute
+            unpackers[subevent]->execute(0, i, subevent, hits[i].get(), 0);
+        }
+    }
+    else
+    {
+        for (const auto& u : unpackers)
+        {
+            u.second->setSampleTimeBin(1.);
+            u.second->setADCTomV(1.);
+            for (int i = 0; i < nhits; i++)
+            {
+                u.second->execute(0, i, u.first, hits[i].get(), 0);
+            }
+        }
+    }
+
 
     return true;
 }

@@ -91,6 +91,7 @@ bool STP4to1Extractor::extract_readCurrentEvent(std::vector<std::shared_ptr<TP4t
 {
     
     SFibersIdentification identification;
+    identification.init();
 
     std::vector fiberHits = identification.identifyFibers(hits);
     int n_fiber_hits = fiberHits.size();
@@ -126,7 +127,7 @@ return true;
 bool STP4to1Extractor::write_to_tree(std::vector<std::shared_ptr<TP4to1Hit>> & hits)
 {
     // get SiPMHit category
-    SCategory * catSiPMHit = sifi()->getCategory(SCategory::CatSiPMHit);
+    SCategory * catSiPMHit = sifi()->buildCategory(SCategory::CatSiPMHit);
     if (!catSiPMHit)
     {
         std::cerr << "No CatSiPMHit category" << std::endl;

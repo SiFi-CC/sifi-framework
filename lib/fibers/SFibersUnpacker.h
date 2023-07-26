@@ -20,7 +20,8 @@ class SFibersUnpacker : public STask
 {
 protected:
     // members
-    SCategory* catFibersRaw; ///< fibers raw category
+//     SCategory* catFibersRaw; ///< fibers raw category
+    SCategory* catSiPMHit;
 
 public:
     // constructor

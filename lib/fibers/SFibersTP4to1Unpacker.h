@@ -15,22 +15,20 @@
 #include "sifi_export.h"
 
 #include "SUnpacker.h"
-#include "SCalContainer.h"
+#include "SFibersLookup.h"
 #include <cstddef>     // for size_t
 #include <cstdint>     // for uint16_t
 #include <sys/types.h> // for ulong
 
 class SCategory;
-class SFibersLookupTable;
-class SFibersTOFPETCalibratorPar;
+// class SFibersLookupTable;
 
 class SIFI_EXPORT SFibersTP4to1Unpacker : public SUnpacker
 {
 
 protected:
-    SCategory* catFibersRaw;
-    SCategory* catFibersCal;
-    SCalContainer<6>* pTOFPETCalPar; ///< calibrator parameters
+    SCategory* catSiPMHit;
+    SSiPMsLookupTable* pLookUp;
 public:
     SFibersTP4to1Unpacker();
 
