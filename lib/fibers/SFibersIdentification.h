@@ -20,6 +20,8 @@
 #include "SCategory.h"
 #include "SSiPMCluster.h"
 #include "SMultiFibersLookup.h"
+#include "SCalContainer.h"
+#include "SFibersRaw.h"
 #include <RtypesCore.h> // for Double_t, Int_t
 
 #include <cstdint> // for uint16_t
@@ -76,22 +78,21 @@ public:
     bool execute() override;
     bool finalize() override;
     
-//     std::vector<std::shared_ptr<fibAddress>> get4to1FiberFromSiPM(UInt_t SiPMID);
-//     UInt_t get4to1SiPMFromFiber(std::vector<std::shared_ptr<fibAddress>> & fiber);
-//     std::vector<std::shared_ptr<identifiedFiberData>> identifyFibers(std::vector<std::shared_ptr<TP4to1Hit>> & hits);
-    
 private:
-//     std::shared_ptr<fibAddress> fibOnlyAddress;
-//     std::shared_ptr<identifiedFiberData> fibData;
+
     const int n_fibers_per_SiPM = 4;
-//     std::vector <fibAddress> getFibersFromCluster(SSiPMCluster *cluster);
     std::vector <fibAddress> getFibersFromCluster(SSiPMCluster *cluster);
+    std::vector <fibAddress> CommonFibers(SSiPMCluster* TopCluster, SSiPMCluster* BottomCluster);
+    float correctNLC(float qdc);
+    float alignQDC(fibAddress address, float qdc);
+    
     
 protected:
     SCategory* catSiPMsHit{nullptr};      ///< category containing SiPMs hits
     SCategory* catSiPMsCluster{nullptr};  ///< category containing SiPMs clusters
     SCategory* catFibersRaw{nullptr};     ///< category containing raw fibers data
     SMultiFibersLookupTable* fibLookup{nullptr};
+    SCalContainer<6>* pTOFPETCalPar;
 };
 #endif /* SFIBERSIDENTIFICATION_H */
 
