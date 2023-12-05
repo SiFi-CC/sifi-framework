@@ -21,6 +21,7 @@
 #pragma link C++ class SFibersHitSim+;
 #pragma link C++ class SFibersCluster+;
 #pragma link C++ class SSiPMCluster+;
+#pragma link C++ class SDetectorGeomPar+;
 
 // clang-format on
 

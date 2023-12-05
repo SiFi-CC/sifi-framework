@@ -32,6 +32,7 @@
 // #include "STP4to1Extractor.h"
 #include "SPar.h" // for SPar
 #include "SiFi.h"
+#include "SDetectorGeomPar.h"
 
 #include <memory> // for make_unique, allocator
 
@@ -109,6 +110,8 @@ bool SFibersDetector::initTasks()
 bool SFibersDetector::initContainers()
 {
     pm()->addParContainer("FibersGeomPar", std::make_unique<SFibersGeomPar>());
+
+    pm()->addParContainer("DetectorGeomPar", std::make_unique<SDetectorGeomPar>());
 
     if (isSimulation())
     {

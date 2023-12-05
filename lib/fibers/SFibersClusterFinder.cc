@@ -141,7 +141,7 @@ bool SFibersClusterFinder::execute()
         SFibersHit* pHit = dynamic_cast<SFibersHit*>(catFibersHit->getObject(i));
         if (!pHit)
         {
-            printf("FibersHit doesn't exists!\n");
+            printf("FibersHit doesn't exist!\n");
             continue;
         }
         Int_t mod = 0;

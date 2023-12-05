@@ -118,7 +118,7 @@ bool SFibersHitFinder::execute()
         SFibersCal* pCal = dynamic_cast<SFibersCal*>(catFibersCal->getObject(i));
         if (!pCal)
         {
-            printf("FibersCal doesn't exists!\n");
+            printf("FibersCal doesn't exist!\n");
             continue;
         }
         Int_t mod = 0;

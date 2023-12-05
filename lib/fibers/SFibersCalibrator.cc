@@ -98,7 +98,7 @@ bool SFibersCalibrator::execute()
         SFibersRaw* pRaw = dynamic_cast<SFibersRaw*>(catFibersRaw->getObject(i));
         if (!pRaw)
         {
-            printf("FibersRaw doesn't exists!\n");
+            printf("FibersRaw doesn't exist!\n");
             continue;
         }
 

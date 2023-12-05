@@ -207,7 +207,7 @@ bool SParContainer::fill(const std::string& name, Int_t& val)
 
     if (it == parameters.end())
     {
-        std::cerr << "Parameter name " << name << " doesn't exists in " << container << "!"
+        std::cerr << "Parameter name " << name << " doesn't exist in " << container << "!"
                   << std::endl;
         return false;
     }
@@ -236,7 +236,7 @@ bool SParContainer::fill(const std::string& name, Float_t& val)
 
     if (it == parameters.end())
     {
-        std::cerr << "Parameter name " << name << " doesn't exists in " << container << "!"
+        std::cerr << "Parameter name " << name << " doesn't exist in " << container << "!"
                   << std::endl;
         return false;
     }
@@ -265,7 +265,7 @@ bool SParContainer::fill(const std::string& name, Double_t& val)
 
     if (it == parameters.end())
     {
-        std::cerr << "Parameter name " << name << " doesn't exists in " << container << "!"
+        std::cerr << "Parameter name " << name << " doesn't exist in " << container << "!"
                   << std::endl;
         return false;
     }
@@ -294,7 +294,7 @@ bool SParContainer::fill(const std::string& name, TArrayI& val)
 
     if (it == parameters.end())
     {
-        std::cerr << "Parameter name " << name << " doesn't exists in " << container << "!"
+        std::cerr << "Parameter name " << name << " doesn't exist in " << container << "!"
                   << std::endl;
         return false;
     }
@@ -324,7 +324,7 @@ bool SParContainer::fill(const std::string& name, TArrayF& val)
 
     if (it == parameters.end())
     {
-        std::cerr << "Parameter name " << name << " doesn't exists in " << container << "!"
+        std::cerr << "Parameter name " << name << " doesn't exist in " << container << "!"
                   << std::endl;
         return false;
     }
@@ -354,7 +354,7 @@ bool SParContainer::fill(const std::string& name, TArrayD& val)
 
     if (it == parameters.end())
     {
-        std::cerr << "Parameter name " << name << " doesn't exists in " << container << "!"
+        std::cerr << "Parameter name " << name << " doesn't exist in " << container << "!"
                   << std::endl;
         return false;
     }

@@ -240,7 +240,7 @@ void SLookupTable::toContainer(SContainer* sc) const
  *
  * \param addr board address
  * \param chan channel number
- * \return channel object or nullptr if boad or channel doesn't exists.
+ * \return channel object or nullptr if boad or channel doesn't exist.
  */
 SLookupChannel* SLookupTable::getAddress(uint addr, uint chan)
 {
