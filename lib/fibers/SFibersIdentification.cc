@@ -10,8 +10,11 @@
 #include "SFibersRaw.h"
 #include "SFibersLookup.h"
 #include <TFile.h>
+#include <TH1F.h>
+#include <TCanvas.h>
 #include <TTree.h>
 #include <algorithm>          // for max, min
+#include <iterator>
 #include <cmath>              // for fabs
 #include <cstdint>            // for uint16_t
 #include <cstdlib>            // for abort
@@ -74,6 +77,31 @@ bool SFibersIdentification::init()
     return true;
 }
 
+bool checkIfNeighbours(std::vector<int> fiber_1, std::vector<int> fiber_2)
+{
+    int mod_1, lay_1, fib_1;
+    int mod_2, lay_2, fib_2;
+
+    mod_1 = fiber_1[0];
+    lay_1 = fiber_1[1];
+    fib_1 = fiber_1[2];
+    
+    mod_2 = fiber_2[0];
+    lay_2 = fiber_2[1];
+    fib_2 = fiber_2[2];
+
+    
+    if(mod_1 != mod_2) // if two hits were in different modules they are not neighbours
+        return false;
+    
+    if(abs(lay_1 - lay_2) < 2 &&    // if two fibers have neighbouring fiber and layer numbers they are neighbours
+       abs(fib_1 - fib_2) < 2)
+    {
+        return true;
+    }
+    else
+        return false;
+}
 bool SFibersIdentification::execute()
 { 
     const int N_MODULES = 1;
@@ -84,9 +112,9 @@ bool SFibersIdentification::execute()
     std::vector<SSiPMCluster*> ClustersBottom[N_MODULES];
 //     std::vector<fibAddress> FiberAddresses;
     std::vector<SFibersRaw*> fibersRaw;
+
     
     size_t nClus = catSiPMsCluster->getEntries();
-    
     if(nClus < 2) return true;
     
     Int_t mod;
@@ -146,41 +174,140 @@ bool SFibersIdentification::execute()
                 }
                 
                 fib.clear();
-                
-//                 if(FiberAddresses.size()==2)
-//                 {
-//                     int distLay = FiberAddresses[0].iLay-FiberAddresses[1].iLay;
-//                     int distFib = FiberAddresses[0].iFib-FiberAddresses[1].iFib;
-//                     dist->Fill(distFib,distLay);
-//                 }
-                
-//                 FiberBottom[k]=FiberBottom[k]+FiberAddresses.size();
-//                 FiberTop[l]=FiberTop[l]+FiberAddresses.size();
-                
-//                 FiberAddresses.clear();
+            }
+        }
+    }
+    //TODO add selection of valid events below!
+    
+    std::vector<int> topClusters; 
+    std::vector<int> botClusters;
+    std::vector<std::vector<int>> clusterPairs; //vectors of length 3: topClusterID, botClusterID, multiplicity
+    std::vector<std::vector<std::vector<int>>> fibersInClusterPairs; //for each clusterPair (in clusterPairs), store a vector of adressess=3-vectors=m,l,f of all involved fibers; TODO change the innermost vector to fibAdress.
+    
+    int topClusID, botClusID;
+    int prevTopClusID, prevBotClusID;
+    topClusID=-1;
+    botClusID=-1;
+    prevTopClusID=-1;
+    prevBotClusID=-1;
+    int clusterFiberMult = 1;
+
+    if(!fibersRaw.empty()) {
+        fibersRaw[0]->getClusters(topClusID, botClusID);
+        prevTopClusID = topClusID;
+        prevBotClusID = botClusID;
+        clusterFiberMult = 1;
+        for(int f=0; f<fibersRaw.size(); f++){
+            int mod, lay, fi;
+            char side;
+            prevTopClusID = topClusID;
+            prevBotClusID = botClusID;
+            fibersRaw[f]->getClusters(topClusID, botClusID);
+            fibersRaw[f]->getAddress(mod,lay,fi);
+            std::cout << " topClusID | botClusID: " <<  topClusID << " " << botClusID << " fibAdress: " << mod << " " << lay << " " << fi << std::endl;
+            
+            if (prevTopClusID != topClusID || prevBotClusID != botClusID){
+                clusterPairs.push_back({prevTopClusID, prevBotClusID, clusterFiberMult-1});
+                clusterFiberMult = 1;
+                prevTopClusID = topClusID;
+                prevBotClusID = botClusID;
+            }
+            if(f == fibersRaw.size()-1){
+                clusterPairs.push_back({topClusID, botClusID, clusterFiberMult});
+            }
+            clusterFiberMult++;
+        }
+        for(int i=0;i<clusterPairs.size(); i++){
+            int mod, lay, fi;
+            int topClusID, botClusID;
+            fibersInClusterPairs.push_back({});
+            std::cout << "cluster pair: " <<clusterPairs[i][0] << " " << clusterPairs[i][1] << " f mult: " << clusterPairs[i][2] <<  std::endl;
+            for(int j=0; j<fibersRaw.size(); j++){
+                fibersRaw[j]->getClusters(topClusID, botClusID);
+                if(topClusID == clusterPairs[i][0] && botClusID == clusterPairs[i][1]){
+                    fibersRaw[j]->getAddress(mod,lay,fi);
+                    fibersInClusterPairs[i].push_back({mod,lay,fi});
+                }
             }
         }
     }
 
-    //TODO add selection of valid events below!
+    fiberClusterHitType fibClusType; 
+    int topIter = 0;
+    int botIter = 0;
+    std::vector<std::vector<int>> neighbours;
+    if(clusterPairs.size()==1){
+        if(clusterPairs[0][2]==1){ // check if multiplicity of the cluster = 1
+            fibClusType=uniqueClusterUniqueFiber;
+            std::cout << "label: unique, single fiber" << std::endl;
+        }
+        else{
+            std::cout << "label: unique, mult: " << clusterPairs[0][2] << std::endl;
+            fibClusType=uniqueClusterMultipleFiber;
+            fibersRaw[0]->setFiberMultInCluster(clusterPairs[0][2]);
+//             //here add checking if neighbours
+//             neighbours.push_back(fibersInClusterPairs[0][0]);
+//             for(int k=0;k<neighbours.size(); k++){
+//                 if(checkIfNeighbours(fibersInClusterPairs[0][0],fibersInClusterPairs[0][k])){
+//                     neighbours.push_back(fibersInClusterPairs[0][k]); //do it so that each new fiber is checked against all that are already in the neighbour vector. Then, plot summarise how many of not-neighbours do we have.
+//                 }
+//             }
+            //std::cout << "checkIfNeighbours" << checkIfNeighbours(fibersInClusterPairs[0][0],fibersInClusterPairs[0][1]) << std::endl;
+        }
+    fibersRaw[0]->setFiberClusterLabel(fibClusType);
+    } 
+    else if (clusterPairs.size()>1){
+        for(int i=0;i<clusterPairs.size(); i++){
+            for(int j=0;j<clusterPairs.size(); j++){
+                if(clusterPairs[i][0] == clusterPairs[j][0]) topIter++;
+                if(clusterPairs[i][1] == clusterPairs[j][1]) botIter++;
+            }
+            if(topIter == 1 && botIter == 1) {
+                std::cout << "label: unique cluster pair(topITER, botITER) = " << topIter << " " << botIter << std::endl;
+                fibClusType=uniqueClusterMultipleFiber;
+                fibersRaw[i]->setFiberMultInCluster(clusterPairs[i][2]);
+                //here also add checking if neighbours
+            }
+            else if(topIter == 2 && botIter == 1)  {
+                std::cout << "label: semi-unique BOT cluster pair(topITER, botITER) = " << topIter << " " << botIter << std::endl;
+                fibClusType=bottomUniqueCluster;
+            }
+            else if(topIter == 1 && botIter == 2)  {
+                std::cout << "label: semi-unique TOP cluster pair(topITER, botITER) = "     << topIter << " " << botIter << std::endl;
+                fibClusType=topUniqueCluster;
+            }
+            else {
+                std::cout << "label: ambiguous cluster pair: (topITER, botITER) = " << topIter << " " << botIter << std::endl;
+                fibClusType=ambiguousCluster;
+            }
+            fibersRaw[i]->setFiberClusterLabel(fibClusType); 
+            topIter = 0;
+            botIter = 0;
+        }
+    }
+    else std::cerr << "clusterPairs.size() <= 0. Incorrect." << std::endl;
+    for(int i=0;i<clusterPairs.size(); i++){
+       
+    }
+    
     
     for(int f=0; f<fibersRaw.size(); ++f)
     {
-        if(fibersRaw.size() != 1)   // only events in which single fiber is uniquely identified are valid TEMPORARY
-            continue;
-        
+//         if(fibersRaw.size() != 1)   // only events in which single fiber is uniquely identified are valid TEMPORARY
+//             continue;
+
         int mod, lay, fib;
         fibersRaw[f]->getAddress(mod, lay, fib);
         loc[0] = mod;
         loc[1] = lay;
         loc[2] = fib;
-        
         SFibersRaw *pRaw = reinterpret_cast<SFibersRaw*>(catFibersRaw->getSlot(loc));
         pRaw = new (pRaw) SFibersRaw(*fibersRaw[f]);
     }
-    
+
     return true;
 }
+
 
 
 float SFibersIdentification::alignQDC(fibAddress address, float qdc)
@@ -224,7 +351,7 @@ float SFibersIdentification::correctNLC(float qdc){
         return (p0*pow(p1, pow(qdc, p2))+p3*qdc-p0); 
 }
 
-bool SFibersIdentification::finalize() { return true; }
+
 
 fibAddress convertAddress(std::vector<std::string> v)
 {
@@ -243,7 +370,7 @@ fibAddress convertAddress(std::vector<std::string> v)
     
     return f;
 }
-
+bool SFibersIdentification::finalize() { return true; }
 
 std::vector<fibAddress> SFibersIdentification::CommonFibers(SSiPMCluster* TopCluster, SSiPMCluster* BottomCluster)
 {
@@ -261,6 +388,7 @@ std::vector<fibAddress> SFibersIdentification::CommonFibers(SSiPMCluster* TopClu
     {
         pHit=(SSiPMHit *)catSiPMsHit->getObject(hits[k]);
         pHit->getChannel(ChannelID);
+        std::cout << "chanID" << ChannelID << std::endl;
         SMultiFibersChannel* lc = dynamic_cast<SMultiFibersChannel*>(fibLookup->getAddress(0x1000, ChannelID));
         vec = lc->vecFiberAssociations;
         AddressesTop.insert(AddressesTop.end(),vec.begin(),vec.end());
@@ -271,18 +399,19 @@ std::vector<fibAddress> SFibersIdentification::CommonFibers(SSiPMCluster* TopClu
     {
         pHit=(SSiPMHit *)catSiPMsHit->getObject(hits[k]);
         pHit->getChannel(ChannelID);
+        std::cout << "chanID" << ChannelID << std::endl;
         SMultiFibersChannel* lc = dynamic_cast<SMultiFibersChannel*>(fibLookup->getAddress(0x1000, ChannelID));
         vec = lc->vecFiberAssociations;
         AddressesBottom.insert(AddressesBottom.end(),vec.begin(),vec.end());
     }
-
+    
     for(int l=0; l<AddressesBottom.size(); ++l)
     {
        for(int n=0; n<AddressesTop.size(); ++n)
        {
-            if(AddressesTop[n][0]==AddressesBottom[l][0] and 
-               AddressesTop[n][1]==AddressesBottom[l][1] and 
-               AddressesTop[n][2]==AddressesBottom[l][2])
+            if(AddressesTop[n][0]==AddressesBottom[l][0] and //module, 
+               AddressesTop[n][1]==AddressesBottom[l][1] and //layer,
+               AddressesTop[n][2]==AddressesBottom[l][2]) //fiber
             {
                 fibAddress fib = convertAddress(AddressesTop[n]);
                 FiberAddresses.push_back(fib);

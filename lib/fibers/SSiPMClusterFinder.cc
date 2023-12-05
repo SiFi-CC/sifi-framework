@@ -91,9 +91,9 @@ bool checkIfNeighbours(SSiPMHit* hit_1, SSiPMHit* hit_2)
 bool SSiPMClusterFinder::execute()
 {
     int nhits = catSiPMsHit->getEntries(); // number of hits in current event
-    bool hit_assigned = false; // flag indivating whether hit was already assigned to cluster
+    bool hit_assigned = false; // flag indicating whether hit was already assigned to cluster
     int nclus = 0;
-    
+
 //     for (int i = 0; i < nhits; ++i) // loop over all hits in current event
 //     {
 //         SSiPMHit* pHit = dynamic_cast<SSiPMHit*>(catSiPMsHit->getObject(i)); // getting a hit 
@@ -164,7 +164,7 @@ bool SSiPMClusterFinder::execute()
     // at this point clusters only contain lists of SiPM hits
     // below other cluster characteristics are determined and assigned
     
-    nclus = clusters.size();; 
+     nclus = clusters.size();
     
     for(int c=0; c < nclus; ++c) // iterating over clusters
     {

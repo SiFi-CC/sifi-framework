@@ -42,6 +42,8 @@ protected:
     Long64_t time_r{0}; ///< time value
 
     std::vector<Int_t> sipm_clusters; ///< clusters: 0 - top, 1 - bottom
+    Int_t fiberClusterLabel; ///< label of fiber cluster: 
+    Int_t fiberMultInCluster; ///< multiplicity of fibers in a cluster
     
 public:
     // constructor
@@ -128,7 +130,12 @@ public:
     /// \param t time
 //     void setTimeR(Float_t t) { time_r = t; }
     void setTimeR(Long64_t t) { time_r = t; }
-
+    /// Set fiber label value
+    /// \param lab label
+    void setFiberClusterLabel(Int_t lab) { fiberClusterLabel = lab; }
+    /// Set fiber multiplicity value
+    /// \param mult multiplicity
+    void setFiberMultInCluster(Int_t mult) { fiberMultInCluster = mult; }
     /// Get QDC value
     /// \return qdc
     Float_t getQDCL() const { return qdc_l; }
@@ -143,7 +150,12 @@ public:
     /// \return time
 //     Float_t getTimeR() const { return time_r; }
     Long64_t getTimeR() const { return time_r; }
-
+    /// Get fiber label value
+    /// \return label
+    Int_t getFiberClusterLabel() const { return fiberClusterLabel; }
+    /// Get fiber multiplicity value
+    /// \return multiplicity
+    Int_t getFiberMultInCluster() const { return fiberMultInCluster; }
     virtual void print() const;
 
     ClassDef(SFibersRaw, 1); // container for fibers stack raw data

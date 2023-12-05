@@ -37,6 +37,11 @@ void SFibersRaw::Clear(Option_t* /*opt*/)
     time_l = 0.0;
     qdc_r = 0.0;
     time_r = 0.0;
+    
+    fiberClusterLabel = -1;
+    fiberMultInCluster = -1;
+//     topClusterLabel = -1;
+//     bottomClusterLabel = -1;
 }
 
 /**
@@ -44,6 +49,6 @@ void SFibersRaw::Clear(Option_t* /*opt*/)
  */
 void SFibersRaw::print() const
 {
-    printf("fiber m,l,f=%d,%d,%d  L: QDC=%f  Time=%lld   R: QDC=%f  Time=%lld\n", module, layer, fiber,
-           qdc_l, time_l, qdc_r, time_r);
+    printf("fiber m,l,f=%d,%d,%d  L: QDC=%f  Time=%lld   R: QDC=%f  Time=%lld  Label=%d  Mult=%d\n", module, layer, fiber,
+           qdc_l, time_l, qdc_r, time_r, fiberClusterLabel, fiberMultInCluster);
 }

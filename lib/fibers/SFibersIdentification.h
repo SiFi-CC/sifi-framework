@@ -65,6 +65,15 @@ struct identifiedFiberData
     }
 };
 
+enum fiberClusterHitType
+{
+    uniqueClusterUniqueFiber = 1, 
+    uniqueClusterMultipleFiber = 2, 
+    topUniqueCluster = 3, //unique only on the top side
+    bottomUniqueCluster = 4, // unique only on the bottom side
+    ambiguousCluster = 5
+};
+
 /**
  * \class SFibersIdentification
  * This class identifies the fiberID given the SiPMID and QDC (4 to 1 coupling)
