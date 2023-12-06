@@ -1,10 +1,14 @@
 #----------------------------------------------------------------------------
 
 if(BUILD_SIFIDETRES_SUPPORT)
-    set(SDR_CC "datasources/SDRSource.cc")
-    set(SDR_H "datasources/SDRSource.h")
-    set(IMPORTER_SIFIDETRES_CC "importers/SSiFiCCDetResImporter.cc")
-    set(IMPORTER_SIFIDETRES_H "importers/SSiFiCCDetResImporter.h")
+    #set(SDR_CC "datasources/SDRSource.cc")
+    #set(SDR_H "datasources/SDRSource.h")
+    set(SSIM_CC "datasources/SSimSource.cc")
+    set(SSIM_H "datasources/SSimSource.h")
+    #set(IMPORTER_SIFIDETRES_CC "importers/SSiFiCCDetResImporter.cc")
+    #set(IMPORTER_SIFIDETRES_H "importers/SSiFiCCDetResImporter.h")
+    set(IMPORTER_SIFISIM_CC "importers/SSimImporter.cc")
+    set(IMPORTER_SIFISIM_H "importers/SSimImporter.h")
 endif()
 
 SIFI_GENERATE_LIBRARY(
@@ -44,12 +48,14 @@ SIFI_GENERATE_LIBRARY(
         datasources/STTreeSource.cc
         datasources/SHLDSource.cc
 
-        ${SDR_CC}
+        #${SSDR_CC}
+        ${SSIM_CC}
         datasources/SRootSource.cc
         datasources/SUnpacker.cc
         datasources/SDDUnpacker.cc
 
-        ${IMPORTER_SIFIDETRES_CC}
+        #${IMPORTER_SIFIDETRES_CC}
+        ${IMPORTER_SIFISIM_CC}
 
         datastruct/SCategory.cc
         datastruct/SCategoryHeader.cc
@@ -96,12 +102,14 @@ SIFI_GENERATE_LIBRARY(
         datasources/STTreeSource.h
         datasources/SHLDSource.h
 
-        ${SDR_H}
+        #${SDR_H}
+        ${SSIM_H}
         datasources/SRootSource.h
         datasources/SUnpacker.h
         datasources/SDDUnpacker.h
 
-        ${IMPORTER_SIFIDETRES_H}
+        #${IMPORTER_SIFIDETRES_H}
+        ${IMPORTER_SIFISIM_H}
 
         datastruct/SCategory.h
         datastruct/SCategoryHeader.h
@@ -133,8 +141,11 @@ SIFI_GENERATE_LIBRARY(
         ../fibers
 )
 
+#if (BUILD_SIFIDETRES_SUPPORT)
+    #find_package(CCDetectorResponse REQUIRED)
+    
 if (BUILD_SIFIDETRES_SUPPORT)
-    find_package(CCDetectorResponse REQUIRED)
+    find_package(SiPMResponse REQUIRED)
 
     target_include_directories(SiFi PUBLIC
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/lib/base/importers>
@@ -145,7 +156,10 @@ if (BUILD_SIFIDETRES_SUPPORT)
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/lib/fibers>
     )
 
+    #target_link_libraries(SiFi PRIVATE
+        #CCDR::CCDetRes
+        
     target_link_libraries(SiFi PRIVATE
-        CCDR::CCDetRes
+        SiPMRLib
     )
 endif()

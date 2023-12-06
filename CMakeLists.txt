@@ -251,9 +251,10 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 include(helpers)
 
 
-option(BUILD_SIFIDETRES_SUPPORT "Build SiFi Detector Response" OFF)
+option(BUILD_SIFIDETRES_SUPPORT "Build SiFi Detector Response" ON)
 if (BUILD_SIFIDETRES_SUPPORT)
-    find_package(CCDetectorResponse)
+    #find_package(CCDetectorResponse)
+    find_package(SiPMResponse)
 endif()
 
 
