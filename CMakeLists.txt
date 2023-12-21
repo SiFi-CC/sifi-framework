@@ -234,7 +234,7 @@ find_package(ROOT 6.20 CONFIG REQUIRED COMPONENTS Core Tree)
 if (NOT ${ROOT_FOUND})
     message(FATAL_ERROR "ROOT not found.")
 endif()
-include(${ROOT_USE_FILE})
+#include(${ROOT_USE_FILE})
 
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -259,7 +259,6 @@ endif()
 
 
 #----------------------------------------------------------------------------
-include_directories(${CMAKE_BINARY_DIR} ${dabc_BINARY_DIR}/include)
 
 add_subdirectory(lib)
 # add_subdirectory(geometry)
@@ -268,6 +267,8 @@ add_subdirectory(lib)
 # add_subdirectory(analysis)
 add_subdirectory(dst)
 #add_subdirectory(particle_filter)
+
+#include_directories(AFTER ${dabc_BINARY_DIR}/include)
 
 configure_file(SiFiConfig.h.in SiFiConfig.h)
 

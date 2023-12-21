@@ -81,4 +81,5 @@ SIFI_GENERATE_LIBRARY(
         ROOT::Core
         SiFi
         Geant
+        dabc::DabcHadaq
 )

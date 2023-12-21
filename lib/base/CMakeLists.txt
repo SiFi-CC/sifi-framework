@@ -121,6 +121,9 @@ SIFI_GENERATE_LIBRARY(
         util/SLoop.h
         util/SRootFileHeader.h
  
+    LIBRARIES
+        dabc::DabcHadaq
+
     PRIVATE_LIBRARIES
         ROOT::Core
         ROOT::Tree
@@ -128,9 +131,6 @@ SIFI_GENERATE_LIBRARY(
         Geant
         cpr::cpr
         tabulate::tabulate
-        DabcBase
-        DabcHadaq
-        DabcMbs
     INCLUDE_DIRS
         core
         database
@@ -139,6 +139,7 @@ SIFI_GENERATE_LIBRARY(
         event
         util
         ../fibers
+        ${PROJECT_BINARY_DIR}
 )
 
 #if (BUILD_SIFIDETRES_SUPPORT)
@@ -160,6 +161,6 @@ if (BUILD_SIFIDETRES_SUPPORT)
         #CCDR::CCDetRes
         
     target_link_libraries(SiFi PRIVATE
-        SiPMRLib
+        SiPMR::SiPMRLib
     )
 endif()

@@ -50,6 +50,7 @@ target_include_directories(${ARG_TARGET}
         ${BI_INCLUDE_DIRS}
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/inc
+        ${CMAKE_BINARY_DIR}
 )
 
 ROOT_GENERATE_DICTIONARY(G__${ARG_TARGET}_cc
