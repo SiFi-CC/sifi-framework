@@ -7,7 +7,7 @@
  *                                                                       *
  * For the licensing terms see $SiFiSYS/LICENSE.                         *
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
- *************************************************************************/ //TODO keep this? modify?
+ *************************************************************************/
 
 #ifndef SDETECTORGEOMPAR_H
 #define SDETECTORGEOMPAR_H
@@ -58,25 +58,25 @@ public:
     /// Get number of modules
     /// \return number of modules
     Int_t getModules() const { return modules; }
-    TVector3 getModulePosition(Int_t m) const;
-    TVector3 getBottomBoardPosition(Int_t m) const;
-    TVector3 getTopBoardPosition(Int_t m) const;
-    Float_t getBottomBoardZRotationAngle(Int_t m) const;
-    Float_t getTopBoardZRotationAngle(Int_t m) const;
-    Int_t getNumSiPMLayers(Int_t m) const;
-    Int_t getNumFiberLayers(Int_t m) const;
-    Int_t getNumSiPMsPerLayer(Int_t m, Int_t l) const;
-    Int_t getNumFibersPerLayer(Int_t m, Int_t l) const;
-    void getswSiPMIDFromAddress(Int_t& id, Int_t m, Int_t l, Int_t f, char s) const;
-    void getswFiberIDFromAddress(Int_t& id, Int_t m, Int_t l, Int_t f) const;
-    void getAddressFromswSiPMID(Int_t id, Int_t& m, Int_t& l, Int_t& f, char& s) const;
-    void getAddressFromswFiberID(Int_t id, Int_t& m, Int_t& l, Int_t& f) const;
+    TVector3 getModulePosition(Int_t module) const;
+    TVector3 getBottomBoardPosition(Int_t module) const;
+    TVector3 getTopBoardPosition(Int_t module) const;
+    Float_t getBottomBoardZRotationAngle(Int_t module) const;
+    Float_t getTopBoardZRotationAngle(Int_t module) const;
+    Int_t getNumSiPMLayers(Int_t module) const;
+    Int_t getNumFiberLayers(Int_t module) const;
+    Int_t getNumSiPMsPerLayer(Int_t module, Int_t layer) const;
+    Int_t getNumFibersPerLayer(Int_t module, Int_t layer) const;
+    void getswSiPMIDFromAddress(Int_t& id, Int_t module, Int_t layer, Int_t element, char side) const;
+    void getswFiberIDFromAddress(Int_t& id, Int_t module, Int_t layer, Int_t fiber) const;
+    bool getAddressFromswSiPMID(Int_t id, Int_t& module, Int_t& layer, Int_t& element, char& side) const;
+    bool getAddressFromswFiberID(Int_t id, Int_t& module, Int_t& layer, Int_t& fiber) const;
     TVector3 getLocalSiPMPosition (Int_t id) const;
     TVector3 getLocalFiberPosition(Int_t id) const;
     TVector3 getGlobalSiPMPosition(Int_t id) const;
-    TVector3 getGlobalSiPMPosition(Int_t m, Int_t l, Int_t f, char s) const;
+    TVector3 getGlobalSiPMPosition(Int_t module, Int_t layer, Int_t element, char side) const;
     TVector3 getGlobalFiberPosition(Int_t id) const;
-    TVector3 getGlobalFiberPosition(Int_t m, Int_t l, Int_t f) const;
+    TVector3 getGlobalFiberPosition(Int_t module, Int_t layer, Int_t fiber) const;
 };
 
 #endif /* SDETECTORGEOMPAR_H */
