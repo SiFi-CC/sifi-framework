@@ -10,9 +10,12 @@ target_link_libraries(sifi_dst SiFi Fibers Geant SiFiTools ROOT::Tree)
 add_executable(sifi_dst_4to1 dst_4to1.cc)
 target_link_libraries(sifi_dst_4to1 SiFi Fibers Geant SiFiTools ROOT::Tree)
 
+#add_executable(sifi_dst_4to1_sim dst_4to1_sim.cc)
+#target_link_libraries(sifi_dst_4to1_sim SiFi Fibers Geant SiFiTools ROOT::Tree)
+
 install(TARGETS #sifi_simdst 
                 sifi_dst 
-                sifi_dst_4to1 
+                sifi_dst_4to1
         DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 
@@ -33,7 +36,7 @@ target_link_directories(SiPMRLib
 )
 
 if(BUILD_SIFIDETRES_SUPPORT)
-    add_executable(sifi_sim_importer dst_4to1_sim.cc)
-    target_link_libraries(sifi_sim_importer SiFi Fibers Geant SiFiTools ROOT::Tree SiPMRLib)
-    install(TARGETS sifi_sim_importer DESTINATION ${CMAKE_INSTALL_BINDIR})
+    add_executable(sifi_dst_4to1_sim dst_4to1_sim.cc)
+    target_link_libraries(sifi_dst_4to1_sim SiFi Fibers Geant SiFiTools ROOT::Tree SiPMR::SiPMRLib)
+    install(TARGETS sifi_dst_4to1_sim DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()

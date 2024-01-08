@@ -82,4 +82,5 @@ SIFI_GENERATE_LIBRARY(
         SiFi
         Geant
         dabc::DabcHadaq
+        SiPMR::SiPMRLib
 )

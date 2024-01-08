@@ -170,6 +170,8 @@ bool SFibersDetector::initCategories()
             return false;
         if (!dm->registerCategory(SCategory::CatFibersHit, "SFibersHitSim", 3, sizes, true))
             return false;
+        if (!dm->registerCategory(SCategory::CatSiPMHit, "SSiPMHit", 1, sizes_SiPM, true))
+            return false;
     }
     else
     {
