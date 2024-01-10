@@ -1,6 +1,7 @@
 #include "STP4to1Source.h"
 #include "STP4to1Extractor.h"
-#include "SFibersIdentification.h"
+// #include "SFibersIdentification.h"
+#include "SFibersRawClusterFinder.h"
 #include "SUnpacker.h"
 #include "SFibersLookup.h"
 #include "SLookup.h"
@@ -90,7 +91,8 @@ bool STP4to1Extractor::extract_close()
 bool STP4to1Extractor::extract_readCurrentEvent(std::vector<std::shared_ptr<TP4to1Hit>> & hits)
 {
     
-    SFibersIdentification identification;
+//     SFibersIdentification identification;
+    SFibersRawClusterFinder identification;
     identification.init();
 
     std::vector fiberHits = identification.identifyFibers(hits);

@@ -20,6 +20,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersDDCalibratorPar.cc
         SFibersTOFPETCalibratorPar.cc
         SFibersRaw.cc
+        SFibersRawCluster.cc
         SSiPMHit.cc
         SFibersCalibrator.cc
         SFibersCalibratorPar.cc
@@ -35,6 +36,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersClusterFinderPar.cc
         SFibersCluster.cc
         SFibersIdentification.cc
+        SFibersRawClusterFinder.cc
         SSiPMCluster.cc
         #        SSiPMLookup.cc
         SSiPMClusterFinder.cc
@@ -57,6 +59,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersDDCalibratorPar.h
         SFibersTOFPETCalibratorPar.h
         SFibersRaw.h
+        SFibersRawCluster.h
         SSiPMHit.h
         SFibersCalibrator.h
         SFibersCalibratorPar.h
@@ -72,6 +75,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersClusterFinderPar.h
         SFibersCluster.h
         SFibersIdentification.h
+        SFibersRawClusterFinder.h
         SSiPMCluster.h
         #        SSiPMLookup.h
         SSiPMClusterFinder.h
