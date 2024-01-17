@@ -22,7 +22,7 @@
  * \class SDetectorGeomPar
 \ingroup lib_fibers
 
-A container for Fibers Stack geometry parameters //TODO rename
+A container for detector geometry parameters
 
 \sa SPar
 
@@ -264,13 +264,12 @@ void SDetectorGeomPar::print() const
 /**
  * Get module position
  *
- * \param m module
  * \return position (TVector3)
  */
-TVector3 SDetectorGeomPar::getModulePosition(Int_t m) const
+TVector3 SDetectorGeomPar::getModulePosition(Int_t module) const
 {
-    if (mods and m < modules)
-        return mods[m].modulePosition;
+    if (mods and module < modules)
+        return mods[module].modulePosition;
     else
     {
         std::cerr << "Could not obtain module position!" << std::endl;
@@ -281,13 +280,12 @@ TVector3 SDetectorGeomPar::getModulePosition(Int_t m) const
 /**
  * Get bottom board position
  *
- * \param m module
- * \return position
+ * \return position (TVector3)
  */
-TVector3 SDetectorGeomPar::getBottomBoardPosition(Int_t m) const
+TVector3 SDetectorGeomPar::getBottomBoardPosition(Int_t module) const
 {
-    if (mods and m < modules)
-        return mods[m].bottomBoardPosition;
+    if (mods and module < modules)
+        return mods[module].bottomBoardPosition;
     else
     {
         std::cerr << "Could not obtain bottom board position!" << std::endl;
@@ -298,13 +296,12 @@ TVector3 SDetectorGeomPar::getBottomBoardPosition(Int_t m) const
 /**
  * Get top board position
  *
- * \param m module
- * \return position
+ * \return position (TVector3)
  */
-TVector3 SDetectorGeomPar::getTopBoardPosition(Int_t m) const
+TVector3 SDetectorGeomPar::getTopBoardPosition(Int_t module) const
 {
-    if (mods and m < modules)
-        return mods[m].topBoardPosition;
+    if (mods and module < modules)
+        return mods[module].topBoardPosition;
     else
     {
         std::cerr << "Could not obtain top board position!" << std::endl;
@@ -315,13 +312,12 @@ TVector3 SDetectorGeomPar::getTopBoardPosition(Int_t m) const
 /**
  * Get rotation angle around the Z axis for the bottom board
  *
- * \param m module
  * \return rotation angle
  */
-Float_t SDetectorGeomPar::getBottomBoardZRotationAngle(Int_t m) const
+Float_t SDetectorGeomPar::getBottomBoardZRotationAngle(Int_t module) const
 {
-    if (mods and m < modules)
-        return mods[m].bottomBoardZRotationAngle;
+    if (mods and module < modules)
+        return mods[module].bottomBoardZRotationAngle;
     else
     {
         std::cerr << "Could not obtain bottom board rotation angle!" << std::endl;
@@ -332,13 +328,12 @@ Float_t SDetectorGeomPar::getBottomBoardZRotationAngle(Int_t m) const
 /**
  * Get rotation angle around the Z axis for the top board
  *
- * \param m module
  * \return rotation angle
  */
-Float_t SDetectorGeomPar::getTopBoardZRotationAngle(Int_t m) const
+Float_t SDetectorGeomPar::getTopBoardZRotationAngle(Int_t module) const
 {
-    if (mods and m < modules)
-        return mods[m].topBoardZRotationAngle;
+    if (mods and module < modules)
+        return mods[module].topBoardZRotationAngle;
     else
     {
         std::cerr << "Could not obtain top board rotation angle!" << std::endl;
@@ -349,13 +344,12 @@ Float_t SDetectorGeomPar::getTopBoardZRotationAngle(Int_t m) const
 /**
  * Get number of SiPM layers in the module
  *
- * \param m module
  * \return number of layers
  */
-Int_t SDetectorGeomPar::getNumSiPMLayers(Int_t m) const
+Int_t SDetectorGeomPar::getNumSiPMLayers(Int_t module) const
 {
-    if (mods and m < modules)
-        return mods[m].numSiPMLayers;
+    if (mods and module < modules)
+        return mods[module].numSiPMLayers;
     else
     {
         std::cerr << "Could not obtain top board rotation angle!" << std::endl;
@@ -366,13 +360,12 @@ Int_t SDetectorGeomPar::getNumSiPMLayers(Int_t m) const
 /**
  * Get number of fiber layers in the module
  *
- * \param m module
  * \return number of layers
  */
-Int_t SDetectorGeomPar::getNumFiberLayers(Int_t m) const
+Int_t SDetectorGeomPar::getNumFiberLayers(Int_t module) const
 {
-    if (mods and m < modules)
-        return mods[m].numFiberLayers;
+    if (mods and module < modules)
+        return mods[module].numFiberLayers;
     else
     {
         std::cerr << "Could not obtain top board rotation angle!" << std::endl;
@@ -383,14 +376,12 @@ Int_t SDetectorGeomPar::getNumFiberLayers(Int_t m) const
 /**
  * Get number of SiPMs in each layer
  *
- * \param m module
- * \param l layer
  * \return number of fibers
  */
-Int_t SDetectorGeomPar::getNumSiPMsPerLayer(Int_t m, Int_t l) const
+Int_t SDetectorGeomPar::getNumSiPMsPerLayer(Int_t module, Int_t layer) const
 {
-    if (mods and m < modules and l < mods[m].numSiPMLayers)
-        return mods[m].numSiPMsPerLayer[l];
+    if (mods and module < modules and layer < mods[module].numSiPMLayers)
+        return mods[module].numSiPMsPerLayer[layer];
     else
     {
         std::cerr << "Could not obtain the number of SiPMs per layer!" << std::endl;
@@ -401,22 +392,24 @@ Int_t SDetectorGeomPar::getNumSiPMsPerLayer(Int_t m, Int_t l) const
 /**
  * Get number of fibers in each layer
  *
- * \param m module
- * \param l layer
  * \return number of fibers
  */
-Int_t SDetectorGeomPar::getNumFibersPerLayer(Int_t m, Int_t l) const
+Int_t SDetectorGeomPar::getNumFibersPerLayer(Int_t module, Int_t layer) const
 {
-    if (mods and m < modules and l < mods[m].numFiberLayers)
-        return mods[m].numFibersPerLayer[l];
+    if (mods and module < modules and layer < mods[module].numFiberLayers)
+        return mods[module].numFibersPerLayer[layer];
     else
     {
         std::cerr << "Could not obtain the number of fibers per layer!" << std::endl;
         std::abort();
     }
 }
-//TODO should I add some checks if m, l, f are not greater than they should be (what would happen if I put layer = 40?)?
-void SDetectorGeomPar::getswSiPMIDFromAddress(Int_t& id, Int_t m, Int_t l, Int_t f, char s) const
+
+/**
+ * Get swSiPMID from address
+ *
+ */
+void SDetectorGeomPar::getswSiPMIDFromAddress(Int_t& id, Int_t module, Int_t layer, Int_t element, char side) const
 {
     id = 0;
 
@@ -427,7 +420,7 @@ void SDetectorGeomPar::getswSiPMIDFromAddress(Int_t& id, Int_t m, Int_t l, Int_t
         nBottomBoardSiPMs += mods[i].numSiPMsPerLayer.GetSum();
     }
 
-    for (Int_t i = 0; i < m; ++i) // loop over all SiPMs in the bottom boards of the modules smaller than address(module)
+    for (Int_t i = 0; i < module; ++i) // loop over all SiPMs in the bottom boards of the modules smaller than address(module)
     {
         for (Int_t sl = 0; sl < mods[i].numSiPMLayers; ++sl)
         {
@@ -435,21 +428,25 @@ void SDetectorGeomPar::getswSiPMIDFromAddress(Int_t& id, Int_t m, Int_t l, Int_t
         }
     }
 
-    for (Int_t sl = 0 ; sl < l ; ++sl)
+    for (Int_t sl = 0 ; sl < layer ; ++sl)
     {
-        id += mods[m].numSiPMsPerLayer[sl];
+        id += mods[module].numSiPMsPerLayer[sl];
     }
 
-    id += f;
+    id += element;
 
-    if (s == 'r') id += nBottomBoardSiPMs;
+    if (side == 'r') id += nBottomBoardSiPMs;
 }
 
-void SDetectorGeomPar::getswFiberIDFromAddress(Int_t& id, Int_t m, Int_t l, Int_t f) const
+/**
+ * Get swFiberID from address
+ *
+ */
+void SDetectorGeomPar::getswFiberIDFromAddress(Int_t& id, Int_t module, Int_t layer, Int_t fiber) const
 {
     id = 0;
 
-    for (Int_t i = 0; i < m; ++i) // loop over all fibers in modules smaller than address(module)
+    for (Int_t i = 0; i < module; ++i) // loop over all fibers in modules smaller than address(module)
     {
         for (Int_t fl = 0; fl < mods[i].numFiberLayers; ++fl)
         {
@@ -458,16 +455,22 @@ void SDetectorGeomPar::getswFiberIDFromAddress(Int_t& id, Int_t m, Int_t l, Int_
     }
 
 
-    for (Int_t fl = 0 ; fl < l ; ++fl)
+    for (Int_t fl = 0 ; fl < layer ; ++fl)
     {
-        id += mods[m].numFibersPerLayer[fl];
+        id += mods[module].numFibersPerLayer[fl];
     }
 
-    id += f;
+    id += fiber;
 }
 
-void SDetectorGeomPar::getAddressFromswSiPMID(Int_t id, Int_t& m, Int_t& l, Int_t& f, char& s) const
+/**
+ * Get address from swSiPMID
+ *
+ */
+bool SDetectorGeomPar::getAddressFromswSiPMID(Int_t id, Int_t& module, Int_t& layer, Int_t& element, char& side) const
 {
+    bool result = false;
+
     Int_t sipmOffset = 0; // all SiPMs in the bottom boards of the modules smaller than address(module) plus all SiPMs in all bottom boards if the swSiPMID is on a top board
     Int_t bottomSiPMs = 0;
 
@@ -476,12 +479,12 @@ void SDetectorGeomPar::getAddressFromswSiPMID(Int_t id, Int_t& m, Int_t& l, Int_
         bottomSiPMs += mods[i].numSiPMsPerLayer.GetSum();
     }
 
-    if (id > bottomSiPMs)
+    if (id >= bottomSiPMs)
     {
         sipmOffset += bottomSiPMs;
-        s = 'r';
+        side = 'r';
     } else {
-        s = 'l';
+        side = 'l';
     }
 
     for (Int_t i = 0; i < modules; ++i)
@@ -489,26 +492,35 @@ void SDetectorGeomPar::getAddressFromswSiPMID(Int_t id, Int_t& m, Int_t& l, Int_
         Int_t nSiPMsInModule = mods[i].numSiPMsPerLayer.GetSum();
         if (id < nSiPMsInModule + sipmOffset)
         {
-            m = i;
+            module = i;
             Int_t totalSiPMs = 0; // SiPMs scanned so far
             for (Int_t sl = 0; sl < mods[i].numFiberLayers; ++sl)
             {
                 if (id - sipmOffset < totalSiPMs + mods[i].numSiPMsPerLayer[sl])
                 {
-                    l = sl;
-                    f = id - sipmOffset - totalSiPMs;
+                    layer = sl;
+                    element = id - sipmOffset - totalSiPMs;
+                    result = true;
                     break;
                 }
                 totalSiPMs += mods[i].numSiPMsPerLayer[sl];
             }
+            result = true;
             break;
         }
         sipmOffset += nSiPMsInModule;
     }
+    return result;
 }
 
-void SDetectorGeomPar::getAddressFromswFiberID(Int_t id, Int_t& m, Int_t& l, Int_t& f) const
+/**
+ * Get address from swFiberID
+ *
+ */
+bool SDetectorGeomPar::getAddressFromswFiberID(Int_t id, Int_t& module, Int_t& layer, Int_t& fiber) const
 {
+    bool result = false;
+
     Int_t fiberOffset = 0; // all fibers in the modules smaller than address(module)
 
     for (Int_t i = 0; i < modules; ++i)
@@ -516,24 +528,31 @@ void SDetectorGeomPar::getAddressFromswFiberID(Int_t id, Int_t& m, Int_t& l, Int
         Int_t nFibersInModule = mods[i].numFibersPerLayer.GetSum();
         if (id < nFibersInModule + fiberOffset)
         {
-            m = i;
+            module = i;
             Int_t totalFibers = 0; // fibers scanned so far
             for (Int_t fl = 0; fl < mods[i].numFiberLayers; ++fl)
             {
                 if (id - fiberOffset < totalFibers + mods[i].numFibersPerLayer[fl])
                 {
-                    l = fl;
-                    f = id - fiberOffset - totalFibers;
+                    layer = fl;
+                    fiber = id - fiberOffset - totalFibers;
+                    result = true;
                     break;
                 }
                 totalFibers += mods[i].numFibersPerLayer[fl];
             }
+            result = true;
             break;
         }
         fiberOffset += nFibersInModule;
     }
+    return result;
 }
 
+/**
+ * Get local SiPM position from swSiPMID
+ *
+ */
 TVector3 SDetectorGeomPar::getLocalSiPMPosition (Int_t id) const
 {
     TVector3 localPosition;
@@ -551,6 +570,10 @@ TVector3 SDetectorGeomPar::getLocalSiPMPosition (Int_t id) const
     return localPosition;
 }
 
+/**
+ * Get local fiber position from swFiberID
+ *
+ */
 TVector3 SDetectorGeomPar::getLocalFiberPosition(Int_t id) const
 {
     TVector3 localPosition;
@@ -568,67 +591,81 @@ TVector3 SDetectorGeomPar::getLocalFiberPosition(Int_t id) const
     return localPosition;
 }
 
+/**
+ * Get global SiPM position from swSiPMID
+ *
+ */
 TVector3 SDetectorGeomPar::getGlobalSiPMPosition(Int_t id) const
 {
     // SiPM address
-    Int_t m;
-    Int_t l;
-    Int_t f; //TODO rename? it's not a fiber but a sipm (in SFibersLookup there is something like element)
-    char s;
+    Int_t module;
+    Int_t layer;
+    Int_t element;
+    char side;
 
-    getAddressFromswSiPMID(id, m, l, f, s);
+    getAddressFromswSiPMID(id, module, layer, element, side);
 
     TVector3 localPosition = getLocalSiPMPosition(id);
 
-    if (s == 'l')
+    if (side == 'l')
     {
-        localPosition.RotateZ(mods[m].bottomBoardZRotationAngle);
-        return localPosition + mods[m].bottomBoardPosition;
+        localPosition.RotateZ(mods[module].bottomBoardZRotationAngle);
+        return localPosition + mods[module].bottomBoardPosition;
     } else {
-        localPosition.RotateZ(mods[m].topBoardZRotationAngle);
-        return localPosition + mods[m].topBoardPosition;
+        localPosition.RotateZ(mods[module].topBoardZRotationAngle);
+        return localPosition + mods[module].topBoardPosition;
     }
 }
 
-TVector3 SDetectorGeomPar::getGlobalSiPMPosition(Int_t m, Int_t l, Int_t f, char s) const
+/**
+ * Get global SiPM position from address
+ *
+ */
+TVector3 SDetectorGeomPar::getGlobalSiPMPosition(Int_t module, Int_t layer, Int_t element, char side) const
 {
     Int_t id;
 
-    getswSiPMIDFromAddress(id, m, l, f, s);
+    getswSiPMIDFromAddress(id, module, layer, element, side);
 
     TVector3 localPosition = getLocalSiPMPosition(id);
 
-    if (s == 'l')
+    if (side == 'l')
     {
-        localPosition.RotateZ(mods[m].bottomBoardZRotationAngle);
-        return localPosition + mods[m].bottomBoardPosition;
+        localPosition.RotateZ(mods[module].bottomBoardZRotationAngle);
+        return localPosition + mods[module].bottomBoardPosition;
     } else {
-        localPosition.RotateZ(mods[m].topBoardZRotationAngle);
-        return localPosition + mods[m].topBoardPosition;
+        localPosition.RotateZ(mods[module].topBoardZRotationAngle);
+        return localPosition + mods[module].topBoardPosition;
     }
 }
-
+/**
+ * Get global fiber position from swFiberID
+ *
+ */
 TVector3 SDetectorGeomPar::getGlobalFiberPosition(Int_t id) const
 {
     // fiber address
-    Int_t m;
-    Int_t l;
-    Int_t f;
+    Int_t module;
+    Int_t layer;
+    Int_t fiber;
 
-    getAddressFromswFiberID(id, m, l, f);
+    getAddressFromswFiberID(id, module, layer, fiber);
 
     TVector3 localPosition = getLocalFiberPosition(id);
 
-    return localPosition + mods[m].modulePosition;
+    return localPosition + mods[module].modulePosition;
 }
-
-TVector3 SDetectorGeomPar::getGlobalFiberPosition(Int_t m, Int_t l, Int_t f) const
+/**
+ * Get global fiber position from address
+ *
+ */
+TVector3 SDetectorGeomPar::getGlobalFiberPosition(Int_t module, Int_t layer, Int_t fiber) const
 {
     Int_t id;
 
-    getswFiberIDFromAddress(id, m, l, f);
+    getswFiberIDFromAddress(id, module, layer, fiber);
 
     TVector3 localPosition = getLocalFiberPosition(id);
 
-    return localPosition + mods[m].modulePosition;
+    return localPosition + mods[module].modulePosition;
 }

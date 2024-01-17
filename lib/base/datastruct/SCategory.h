@@ -51,6 +51,7 @@ public:
         
         // fibers
         CatFibersRaw = 20, ///< fibers stack raw data
+        CatFibersRawClus, ///< fibers stack raw cluster data (4to1 coupling)
         CatFibersCal,      ///< fibers cal data
         CatFibersHit,      ///< fibers hit
         CatFibersClus,     ///< fibers cluster

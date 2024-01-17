@@ -27,7 +27,8 @@
 #include "SFibersHitFinder.h"
 #include "SFibersHitFinderPar.h"
 #include "SFibersUnpacker.h"
-#include "SFibersIdentification.h"
+// #include "SFibersIdentification.h"
+#include "SFibersRawClusterFinder.h"
 #include "SFibersTP4to1Unpacker.h"
 // #include "STP4to1Extractor.h"
 #include "SPar.h" // for SPar
@@ -92,7 +93,8 @@ bool SFibersDetector::initTasks()
         
         addTask(new SFibersUnpacker(), 0);
         addTask(new SSiPMClusterFinder(), 1);
-        addTask(new SFibersIdentification(), 2);
+//         addTask(new SFibersIdentification(), 2);
+        addTask(new SFibersRawClusterFinder(), 2);
         addTask(new SFibersCalibrator(), 3);
         addTask(new SFibersHitFinder(), 4);
         addTask(new SFibersClusterFinder(), 5);
@@ -170,6 +172,8 @@ bool SFibersDetector::initCategories()
             return false;
         if (!dm->registerCategory(SCategory::CatFibersHit, "SFibersHitSim", 3, sizes, true))
             return false;
+        if (!dm->registerCategory(SCategory::CatSiPMHit, "SSiPMHit", 1, sizes_SiPM, true))
+            return false;
     }
     else
     {
@@ -178,6 +182,8 @@ bool SFibersDetector::initCategories()
         if (!dm->registerCategory(SCategory::CatSiPMClus, "SSiPMCluster", 1, size_SiPM_cluster, false))
             return false;
         if (!dm->registerCategory(SCategory::CatFibersRaw, "SFibersRaw", 3, sizes, false))
+            return false;
+        if (!dm->registerCategory(SCategory::CatFibersRawClus, "SFibersRawCluster", 3, sizes, false))
             return false;
         if (!dm->registerCategory(SCategory::CatFibersCal, "SFibersCal", 3, sizes, false))
             return false;

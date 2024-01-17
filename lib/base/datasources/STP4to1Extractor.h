@@ -32,7 +32,8 @@
 class SUnpacker;
 class SCategory;
 class SSiPMsLookupTable;
-class SFibersIdentification;
+// class SFibersIdentification;
+class SFibersRawClusterFinder;
 struct SiPMHit
 {
     Long64_t time=-100;

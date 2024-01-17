@@ -14,6 +14,7 @@
 // clang-format off
 
 #pragma link C++ class SFibersRaw+;
+#pragma link C++ class SFibersRawCluster+;
 #pragma link C++ class SSiPMHit+;
 #pragma link C++ class SFibersCal+;
 #pragma link C++ class SFibersCalSim+;
