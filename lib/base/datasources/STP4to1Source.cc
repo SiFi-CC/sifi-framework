@@ -126,7 +126,7 @@ bool STP4to1Source::close()
 
 bool STP4to1Source::readCurrentEvent()
 {
-    const double deltaT = 10; // 10 ns window
+    const double deltaT = 15; // 10 ns window
     const double ps_to_ns = 1E3;
     std::vector<std::shared_ptr<TP4to1Hit>> hits;
     
@@ -137,12 +137,13 @@ bool STP4to1Source::readCurrentEvent()
         if((entries_offset + entries_counter) >= nentries) state = DONE;
         hit_cache = std::make_shared<TP4to1Hit>();
 
-        t->SetBranchAddress("time",&(hit_cache->time));
+        Long64_t t_tmp = 0;
+        t->SetBranchAddress("time",&t_tmp);
         t->SetBranchAddress("channelID",&(hit_cache->channelID));
         t->SetBranchAddress("energy",&(hit_cache->energy));
         t->GetEntry(entries_offset + entries_counter);
 //         entries_counter++;
-        hit_cache->time /= ps_to_ns;
+        hit_cache->time = ((Double_t)t_tmp)/ps_to_ns;
         hit_cache->channelID -= 131072*2; //offset related to port on TOFPET PCI card
 
         state = READING;
@@ -161,11 +162,12 @@ bool STP4to1Source::readCurrentEvent()
             }
             auto hit_current = std::make_shared<TP4to1Hit>();
             
-            t->SetBranchAddress("time",&(hit_current->time));
+            Long64_t t_tmp = 0;
+            t->SetBranchAddress("time",&(t_tmp));
             t->SetBranchAddress("channelID",&(hit_current->channelID));
             t->SetBranchAddress("energy",&(hit_current->energy));
             t->GetEntry(entries_offset + entries_counter);
-            hit_current->time /= ps_to_ns;
+            hit_current->time = ((Double_t)t_tmp)/ps_to_ns;
             hit_current->channelID -= 131072*2; //offset related to port on TOFPET PCI card
             double current_time = hit_current->time;
 

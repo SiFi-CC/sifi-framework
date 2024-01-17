@@ -32,13 +32,13 @@ class SCategory;
 
 struct TP4to1Hit
 {
-    Long64_t time=-100;
+    Double_t time=-100;
     Float_t energy=-100;
     UInt_t channelID=0;
 
     void print() const
     {
-        printf("TOFPET 4to1: time = %lld, energy = %f, hwSiPMID = %i\n", time, energy, channelID);
+        printf("TOFPET 4to1: time = %f, energy = %f, hwSiPMID = %i\n", time, energy, channelID);
     }
 };
 

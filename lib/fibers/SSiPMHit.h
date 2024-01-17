@@ -34,8 +34,7 @@ protected:
     Int_t swSiPMID{-1}; ///< SIPM ID
 
     Float_t qdc{0.};  ///< SiPM qdc value
-    Long64_t time{0}; ///< SiPM time value
-//     Float_t time{0.};
+    Double_t time{0}; ///< SiPM time value
     
     Int_t hitID{-1}; ///< hit ID
 
@@ -100,15 +99,14 @@ public:
     void setQDC(Float_t q) { qdc = q; }
     /// Set Time value
     /// \param t time
-    void setTime(Long64_t t) { time = t; }
+    void setTime(Double_t t) { time = t; }
 
     /// Get QDC value
     /// \return qdc
     Float_t getQDC() const { return qdc; }
     /// Get Time value
     /// \return time
-    Long64_t getTime() const { return time; }
-//     Float_t getTime() const { return time; }
+    Double_t getTime() const { return time; }
 
 
     virtual void print() const;
