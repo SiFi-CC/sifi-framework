@@ -12,7 +12,6 @@
 #include "SSiPMHit.h"
 
 #include <cstdio>
-
 /**
  * \class SSiPMHit
 \ingroup lib_fibers
@@ -42,3 +41,5 @@ void SSiPMHit::print() const
 {
     printf("SSiPMHit: ID=%i module=%d layer=%d element=%d swSiPMID=%d  side=%c QDC=%f  Time=%lld\n", hitID, module, layer, element, swSiPMID, side, qdc, time);
 }
+
+

@@ -51,7 +51,7 @@ struct fibAddressC
 
 struct identifiedFiberDataC
 {
-    UInt_t mod=-100;
+    int mod=-100;
     UInt_t lay=-100;
     UInt_t fi=-100;
     char   side;
@@ -59,6 +59,8 @@ struct identifiedFiberDataC
     float energyL=-100;
     Long64_t timeR=-100;
     float energyR=-100;
+    int topClusID=-100;
+    int botClusID=-100;
     //add event or subevent ID?
     
     void print()
@@ -69,11 +71,11 @@ struct identifiedFiberDataC
 
 enum fiberClusterHitTypeC
 {
-    uniqueClusterUniqueFiberC = 3, 
-    uniqueClusterMultipleFiberC = 4, 
-    topUniqueClusterC = 5, //unique only on the top side
-    bottomUniqueClusterC = 6, // unique only on the bottom side
-    ambiguousClusterC = 7
+    uniqueClusterUniqueFiberC = 1, 
+    uniqueClusterMultipleFiberC = 2, 
+    topUniqueClusterC = 3, //unique only on the top side
+    bottomUniqueClusterC = 4, // unique only on the bottom side
+    ambiguousClusterC = 5
 };
 
 /**
@@ -105,6 +107,7 @@ protected:
     SCategory* catFibersRawClus{nullptr};     ///< category containing raw fiber clusters data
     SMultiFibersLookupTable* fibLookup{nullptr};
     SCalContainer<6>* pTOFPETCalPar;
+    SCalContainer<6>* pSiPMTOFPETCalPar;
 };
 #endif /* SFIBERSRAWCLUSTERFINDER_H */
 

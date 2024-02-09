@@ -15,6 +15,7 @@
 #include "STP4to1Source.h"
 #include "SSiPMHit.h"
 #include "SiFi.h"
+#include "SCalContainer.h"
 
 #include <TObject.h> // for TObject
 
@@ -45,6 +46,45 @@ bool SFibersTP4to1Unpacker::init()
     
     return true;
 }
+
+
+float alignQDC(SSiPMHit *sipmData, float qdc){
+    SCalContainer<6>* pSiPMCalPar;
+    // get TP calibrator parameters
+    pSiPMCalPar = dynamic_cast<SCalContainer<6>*>(pm()->getCalContainer("FibersTOFPETCalibratorPar"));
+
+    if (!pSiPMCalPar)
+    {
+        std::cerr << "Parameter container 'SiPMsTOFPETCalibratorPar' was not obtained!" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    
+//     float SFibersRawClusterFinder::alignQDC(identifiedFiberDataC address, float qdc)
+// {
+    int mod,lay,el;
+    char side;
+    sipmData->getAddress(mod,lay,el,side);
+    SFibersChannel chan;
+    chan.m = mod;
+    chan.l = lay;
+    chan.s = el;
+    chan.side = side;
+    
+    auto _cpar = pSiPMCalPar->getPar(&chan);
+    auto&& cpar = *_cpar;
+    
+    if(cpar[0]==-100)
+    {
+        std::cout<<" Error: cpar[0]=-100.0" << std::endl;
+        return -100;
+    }
+    else 
+    {
+        return qdc*511./cpar[0]; 
+    }       
+    
+}
+
 
 bool SFibersTP4to1Unpacker::execute(ulong /*event*/, ulong seq_number, uint16_t /*subevent*/,
                                  void* buffer, size_t /*length*/)
@@ -77,6 +117,8 @@ bool SFibersTP4to1Unpacker::execute(ulong /*event*/, ulong seq_number, uint16_t 
         pHit->setChannel(lc->s);
         pHit->setAddress(lc->m, lc->l, lc->element, lc->side);
         pHit->setQDC(hit->energy);
+        
+        pHit->setAlignedQDC(alignQDC(pHit, hit->energy));
         pHit->setTime(hit->time);
 //         pHit->setID(i);
         pHit->setID(seq_number);

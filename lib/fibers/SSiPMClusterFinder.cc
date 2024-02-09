@@ -16,6 +16,8 @@
 #include "SLocator.h"
 #include "SPar.h"
 #include "SiFi.h"
+// #include "SCalContainer.h"
+// #include "SFibersLookup.h"
 
 #include <RtypesCore.h>
 #include <TObject.h>
@@ -181,6 +183,7 @@ bool SSiPMClusterFinder::execute()
         
         Long64_t time = pHit_in_clus->getTime();
         float charge = 0;
+        float alignedCharge = 0;
         TVector3 position(0, 0, 0);
         TVector3 errors(0, 0, 0);
         
@@ -194,6 +197,7 @@ bool SSiPMClusterFinder::execute()
             }
             
             charge += pHit_in_clus->getQDC(); // charge is determined as sum of all hits charges
+            alignedCharge += pHit_in_clus->getAlignedQDC(); // aligned charge is determined as sum of all aligned hits charges
             
             position = position + pHit_in_clus->getQDC() * TVector3(e, 0, l); // position calculated with COG
         }
@@ -202,6 +206,7 @@ bool SSiPMClusterFinder::execute()
 
         clusters[c]->setTime(time);
         clusters[c]->setQDC(charge);
+        clusters[c]->setAlignedQDC(alignedCharge);
         clusters[c]->setPoint(position);
         clusters[c]->setErrors(errors); // at the moment position uncertainty is not calculated so we set it to 0,0,0
         
@@ -216,6 +221,46 @@ bool SSiPMClusterFinder::execute()
 
     return true;
 }
+
+
+
+// // float alignQDC(SSiPMHit *sipmData, float qdc);
+// float alignQDC(SSiPMHit *sipmData, float qdc){
+//     SCalContainer<6>* pSiPMCalPar;
+//     // get TP calibrator parameters
+//     pSiPMCalPar = dynamic_cast<SCalContainer<6>*>(pm()->getCalContainer("FibersTOFPETCalibratorPar"));
+// 
+//     if (!pSiPMCalPar)
+//     {
+//         std::cerr << "Parameter container 'SiPMsTOFPETCalibratorPar' was not obtained!" << std::endl;
+//         exit(EXIT_FAILURE);
+//     }
+//     
+// //     float SFibersRawClusterFinder::alignQDC(identifiedFiberDataC address, float qdc)
+// // {
+//     int mod,lay,el;
+//     char *side;
+//     sipmData->getAddress(mod,lay,el,*side);
+//     SFibersChannel chan;
+//     chan.m = mod;
+//     chan.l = lay;
+//     chan.s = el;
+//     chan.side = side[0];
+//     
+//     auto _cpar = pSiPMCalPar->getPar(&chan);
+//     auto&& cpar = *_cpar;
+//     
+//     if(cpar[0]==-100)
+//     {
+//         std::cout<<" Error: cpar[0]=-100.0" << std::endl;
+//         return -100;
+//     }
+//     else 
+//     {
+//         return qdc*511./cpar[0]; 
+//     }       
+//     
+// }
 
 void SSiPMClusterFinder::print()
 {

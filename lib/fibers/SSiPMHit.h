@@ -34,7 +34,11 @@ protected:
     Int_t swSiPMID{-1}; ///< SIPM ID
 
     Float_t qdc{0.};  ///< SiPM qdc value
+
     Double_t time{0}; ///< SiPM time value
+    Float_t aligned_qdc{0.};  ///< SiPM gain-aligned qdc value
+    //Long64_t time{0}; ///< SiPM time value
+//     Float_t time{0.};
     
     Int_t hitID{-1}; ///< hit ID
 
@@ -94,9 +98,14 @@ public:
         s = side;
     }
 
+
+    
     /// Set QDC value
     /// \param q qdc
     void setQDC(Float_t q) { qdc = q; }
+    /// Set aligned QDC value
+    /// \param q aligned_qdc
+    void setAlignedQDC(Float_t q) { aligned_qdc = q; }
     /// Set Time value
     /// \param t time
     void setTime(Double_t t) { time = t; }
@@ -104,6 +113,9 @@ public:
     /// Get QDC value
     /// \return qdc
     Float_t getQDC() const { return qdc; }
+    /// Get alined QDC value
+    /// \return aligned_qdc
+    Float_t getAlignedQDC() const { return aligned_qdc; }
     /// Get Time value
     /// \return time
     Double_t getTime() const { return time; }

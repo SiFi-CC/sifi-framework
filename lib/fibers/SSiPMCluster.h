@@ -35,6 +35,7 @@ protected:
     TVector3 errors; ///< cluster position errors
     Long64_t time{-1};    ///< first hit time within cluster
     Float_t qdc{-1};
+    Float_t aligned_qdc{-1};
     
     std::vector<Int_t> hits; ///< list of hits belonging to the cluster
     
@@ -136,6 +137,10 @@ public:
     void setQDC(float c) { qdc = c; };
     
     float getQDC() { return qdc; };
+    
+    void setAlignedQDC(float ac) { aligned_qdc = ac; };
+    
+    float getAlignedQDC() { return aligned_qdc; };
     
     /// Printing details of the object.
     void print() const;
