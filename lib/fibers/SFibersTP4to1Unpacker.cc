@@ -51,7 +51,7 @@ bool SFibersTP4to1Unpacker::init()
 float alignQDC(SSiPMHit *sipmData, float qdc){
     SCalContainer<6>* pSiPMCalPar;
     // get TP calibrator parameters
-    pSiPMCalPar = dynamic_cast<SCalContainer<6>*>(pm()->getCalContainer("FibersTOFPETCalibratorPar"));
+    pSiPMCalPar = dynamic_cast<SCalContainer<6>*>(pm()->getCalContainer("SiPMsTOFPETCalibratorPar")); //TODO check if correct (previously getCalContainer("FibersTOFPETCalibratorPar") )
 
     if (!pSiPMCalPar)
     {

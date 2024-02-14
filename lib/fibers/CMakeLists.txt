@@ -20,6 +20,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersDDCalibratorPar.cc
         SFibersTOFPETCalibratorPar.cc
         SSiPMsTOFPETCalibratorPar.cc
+        SFiberToSiPMPar.cc
         SFibersRaw.cc
         SFibersRawCluster.cc
         SSiPMHit.cc
@@ -60,6 +61,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersDDCalibratorPar.h
         SFibersTOFPETCalibratorPar.h
         SSiPMsTOFPETCalibratorPar.h
+        SFiberToSiPMPar.h
         SFibersRaw.h
         SFibersRawCluster.h
         SSiPMHit.h

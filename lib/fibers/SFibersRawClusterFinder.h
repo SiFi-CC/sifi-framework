@@ -108,6 +108,7 @@ protected:
     SMultiFibersLookupTable* fibLookup{nullptr};
     SCalContainer<6>* pTOFPETCalPar;
     SCalContainer<6>* pSiPMTOFPETCalPar;
+//     SCalContainer<6>* pFiberToSiPMPar;
 };
 #endif /* SFIBERSRAWCLUSTERFINDER_H */
 
