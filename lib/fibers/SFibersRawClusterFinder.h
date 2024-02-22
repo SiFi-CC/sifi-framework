@@ -49,27 +49,27 @@ struct fibAddressC
     };
 };
 
-struct identifiedFiberDataC
+struct identifiedFiberDataC // change to identifiedFiberData (remove C) when SFibersIdentification class is removed from the code
 {
     int mod=-100;
     UInt_t lay=-100;
     UInt_t fi=-100;
     char   side;
-    Long64_t timeL=-100;    //for TOFPET time must be Long64_t!
-    float energyL=-100;
-    Long64_t timeR=-100;
-    float energyR=-100;
+    Double_t timeL=-100;
+    float QDCL=-100;
+    Double_t timeR=-100;
+    float QDCR=-100;
     int topClusID=-100;
     int botClusID=-100;
     //add event or subevent ID?
     
     void print()
     {
-        printf("identifiedFiberData: address: %i, %i, %i, left: %lld, %f, right: %lld, %f \n", mod, lay, fi, timeL, energyL, timeR, energyR);
+        printf("identifiedFiberData: address: %i, %i, %i, left: %f, %f, right: %f, %f \n", mod, lay, fi, timeL, QDCL, timeR, QDCR);
     }
 };
 
-enum fiberClusterHitTypeC
+enum fiberClusterHitTypeC // change to fiberClusterHitType (remove C, also in the labels in the enum) when SFibersIdentification class is removed from the code
 {
     uniqueClusterUniqueFiberC = 1, 
     uniqueClusterMultipleFiberC = 2, 
@@ -106,7 +106,7 @@ protected:
     SCategory* catFibersRaw{nullptr};     ///< category containing raw fibers data
     SCategory* catFibersRawClus{nullptr};     ///< category containing raw fiber clusters data
     SMultiFibersLookupTable* fibLookup{nullptr};
-    SCalContainer<6>* pTOFPETCalPar;
+//     SCalContainer<6>* pTOFPETCalPar;
     SCalContainer<6>* pSiPMTOFPETCalPar;
 //     SCalContainer<6>* pFiberToSiPMPar;
 };

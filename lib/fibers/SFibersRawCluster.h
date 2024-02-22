@@ -34,10 +34,10 @@ protected:
     Int_t fiber{-1};  ///< address - fiber
 
     Float_t qdc_l{0.};  ///< qdc value
-    Long64_t time_l{0}; ///< time value
+    Double_t time_l{0}; ///< time value
 
     Float_t qdc_r{0.};  ///< qdc value
-    Long64_t time_r{0}; ///< time value
+    Double_t time_r{0}; ///< time value
 
     std::vector<Int_t> sipm_clusters; ///< clusters: 0 - top, 1 - bottom
     Int_t fiberClusterLabel; ///< label of fiber cluster: 
@@ -118,7 +118,7 @@ public:
 //         time_r = tr;
 //     }
     
-    void setTime(Long64_t tl, Long64_t tr)
+    void setTime(Double_t tl, Double_t tr)
     {
         time_l = tl;
         time_r = tr;
@@ -129,14 +129,14 @@ public:
     /// Set Time value
     /// \param t time
 //     void setTimeL(Float_t t) { time_l = t; }
-    void setTimeL(Long64_t t) { time_l = t; }
+    void setTimeL(Double_t t) { time_l = t; }
     /// Set QDC value
     /// \param q qdc
     void setQDCR(Float_t q) { qdc_r = q; }
     /// Set Time value
     /// \param t time
 //     void setTimeR(Float_t t) { time_r = t; }
-    void setTimeR(Long64_t t) { time_r = t; }
+    void setTimeR(Double_t t) { time_r = t; }
     /// Set fiber label value
     /// \param lab label
     void setFiberClusterLabel(Int_t lab) { fiberClusterLabel = lab; }

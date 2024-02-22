@@ -31,6 +31,7 @@
 #include <memory> 
 #include <utility>
 #include <vector>
+#include <numeric>
 
 /**
  * \class SSiPMClusterFinder
@@ -80,8 +81,8 @@ bool checkIfNeighbours(SSiPMHit* hit_1, SSiPMHit* hit_2)
         return false;
     }
     
-    if(abs(lay_1 - lay_2) < 2 &&    // if two hits have neighbouring element and layer numbers they are neighbours
-       abs(ele_1 - ele_2) < 2)
+    if( (abs(lay_1 - lay_2) < 2) &&    // if two hits have neighbouring element and layer numbers they are neighbours
+       (abs(ele_1 - ele_2) < 2) )
     {
         return true;
     }
@@ -93,76 +94,78 @@ bool checkIfNeighbours(SSiPMHit* hit_1, SSiPMHit* hit_2)
 bool SSiPMClusterFinder::execute()
 {
     int nhits = catSiPMsHit->getEntries(); // number of hits in current event
-    bool hit_assigned = false; // flag indicating whether hit was already assigned to cluster
     int nclus = 0;
-
-//     for (int i = 0; i < nhits; ++i) // loop over all hits in current event
-//     {
-//         SSiPMHit* pHit = dynamic_cast<SSiPMHit*>(catSiPMsHit->getObject(i)); // getting a hit 
-//         pHit->print();
-//     }
-        
-    std::vector<SSiPMCluster*> clusters; // auxiliary array for created clusters
-    
+    bool clusterIncremented = 0;
     SLocator loc(1);
+    std::vector<SSiPMCluster*> clusters;
+    std::vector<SSiPMHit*> sipmHits;
+    std::vector<int> isAssigned;
+    int nAssignedHits = 0;
+//     std::cout << "nhits" << nhits << std::endl;
+    for (int i = 0; i < nhits; ++i){ // loop over all hits in current event
+        SSiPMHit* pHit = dynamic_cast<SSiPMHit*>(catSiPMsHit->getObject(i)); // getting a hit
+        sipmHits.push_back(pHit);
+        isAssigned.push_back(0);
+    }
+
+    SSiPMCluster *pClus = new SSiPMCluster(); 
+    pClus->addHit(sipmHits[0]->getID()); // adding first hit to the first cluster
+    isAssigned[0] = 1;
+    clusters.push_back(pClus);
+    nAssignedHits++;
     
-    for (int i = 0; i < nhits; ++i) // loop over all hits in current event
-    {
-        hit_assigned = false;
-        SSiPMHit* pHit = dynamic_cast<SSiPMHit*>(catSiPMsHit->getObject(i)); // getting a hit 
-        
-        int sid = 0;
-        pHit->getChannel(sid);
-        if(sid == 800)
-        {
-            hit_assigned = true;
-            continue;
-        }
-        
-        if(clusters.size() == 0) // if there are no clusters yet, create the first one
-        {
-            SSiPMCluster *pClus = new SSiPMCluster(); 
-            pClus->addHit(pHit->getID()); // adding first hit to the first cluster
-            clusters.push_back(pClus);
-    
-            hit_assigned = true;
-        }
-        else // if there are some clusters already 
-        {
-            nclus = clusters.size();
-            for(int c = 0; c < nclus; ++c) // iterate over clusters
-            {
-                if(hit_assigned)
-                    break;
-                
-                std::vector<Int_t> hits = clusters[c]->getHitsArray(); // get list of hits within a cluster
-                int nhit_in_clus = hits.size();
-                
-                for(int h = 0; h < nhit_in_clus; ++h) // iterate over hits
-                {
-                    if(hit_assigned)
+    while(nAssignedHits < nhits){
+        clusterIncremented = 0;
+        if(nAssignedHits == nhits) break;
+        std::vector<Int_t> hits = clusters[clusters.size()-1]->getHitsArray(); // get list of hits within a cluster
+        int nhit_in_clus = hits.size();
+//         std::cout << "clusters.size(): " << clusters.size() << std::endl;
+        for(int i=0; i< nhits; i++){
+            for(int j=0; j<nhit_in_clus; j++){ 
+                SSiPMHit* pHit_in_clus = dynamic_cast<SSiPMHit*>(catSiPMsHit->getObject(hits[j]));
+//                 std::cout << "current pHit_in_clus ID\t" << pHit_in_clus->getID() << " QDC:\t" << pHit_in_clus->getQDC() << std::endl;
+//                 std::cout << "current sipm\t" << sipmHits[i]->getID() << " QDC:\t" << sipmHits[i]->getQDC() << std::endl;
+                if(isAssigned[i] == 0 && checkIfNeighbours(sipmHits[i], pHit_in_clus)){
+                        clusters[clusters.size()-1]->addHit(sipmHits[i]->getID()); // if yes, then this hit should belong to that cluster
+//                         std::cout << "nAssignedHits incremented - found a neighbour of ID: " << sipmHits[i]->getID() << std::endl;
+                        isAssigned[i] = 1;
+                        nAssignedHits++;
+                        clusterIncremented = 1;
                         break;
-
-                    SSiPMHit* pHit_in_clus = dynamic_cast<SSiPMHit*>(catSiPMsHit->getObject(hits[h]));
-
-                    if(checkIfNeighbours(pHit, pHit_in_clus)) // check if current hit is a neighbour of any of the hits in the cluster 
-                    {
-                        clusters[c]->addHit(pHit->getID()); // if yes, then this hit should belong to that cluster
-                        hit_assigned = true;
-                    }
                 }
             }
+//             std::cout << std::endl;
         }
-        if(!hit_assigned)
-        {
-           SSiPMCluster *pClus = new SSiPMCluster(); 
-           pClus->addHit(pHit->getID());
-           clusters.push_back(pClus);
-    
-          hit_assigned = true;
-          }
+        if(clusterIncremented==0){
+            SSiPMCluster *pClus = new SSiPMCluster(); 
+            std::vector<int>::iterator it;
+            it = std::find( isAssigned.begin(), isAssigned.end(), 0 );
+            if ( it != isAssigned.end() ){ // found unassigned SiPM
+                int location = std::distance( isAssigned.begin(), it );
+//                 std::cout << "Found unassigned SiPM at location " << location;
+                pClus->addHit(sipmHits[location]->getID());
+//                 std::cout << " SiPM ID:" << sipmHits[location]->getID() << std::endl;
+                clusters.push_back(pClus);
+                isAssigned[location] = 1;
+                nAssignedHits++;
+            }
+//             else {// 1 not found
+//                 std::cout << "\n\n0 not found. no unassigned hits left" << std::endl;
+//                 //break;
+//             }
+            
+        }
     }
-    
+
+//     //print Clusters and SiPMs content (debug only)
+//     for(int m=0; m<sipmHits.size(); m++){
+//         sipmHits[m]->print();
+//     }
+//     
+//     for(int l=0;l<clusters.size(); l++){
+//         clusters[l]->print();
+//     }
+
     // at this point clusters only contain lists of SiPM hits
     // below other cluster characteristics are determined and assigned
     
@@ -181,7 +184,9 @@ bool SSiPMClusterFinder::execute()
         pHit_in_clus->getAddress(m, l, e, s);
         clusters[c]->setAddress(m, s); // setting cluster address (location)
         
-        Long64_t time = pHit_in_clus->getTime();
+//         Long64_t time = pHit_in_clus->getTime();
+        Double_t time = pHit_in_clus->getTime();
+
         float charge = 0;
         float alignedCharge = 0;
         TVector3 position(0, 0, 0);
@@ -195,7 +200,8 @@ bool SSiPMClusterFinder::execute()
             {
                 time = pHit_in_clus->getTime();
             }
-            
+//             std::cout << "SiPMClusterFinder: " /*<< std::setprecision(15)*/<< time << std::endl;
+
             charge += pHit_in_clus->getQDC(); // charge is determined as sum of all hits charges
             alignedCharge += pHit_in_clus->getAlignedQDC(); // aligned charge is determined as sum of all aligned hits charges
             
@@ -205,6 +211,7 @@ bool SSiPMClusterFinder::execute()
         position = 1./charge * position;
 
         clusters[c]->setTime(time);
+//         std::cout << "clusters[c]->setTime(time) " /*<< std::setprecision(15)*/<< clusters[c]->getTime() << std::endl;
         clusters[c]->setQDC(charge);
         clusters[c]->setAlignedQDC(alignedCharge);
         clusters[c]->setPoint(position);
@@ -221,46 +228,6 @@ bool SSiPMClusterFinder::execute()
 
     return true;
 }
-
-
-
-// // float alignQDC(SSiPMHit *sipmData, float qdc);
-// float alignQDC(SSiPMHit *sipmData, float qdc){
-//     SCalContainer<6>* pSiPMCalPar;
-//     // get TP calibrator parameters
-//     pSiPMCalPar = dynamic_cast<SCalContainer<6>*>(pm()->getCalContainer("FibersTOFPETCalibratorPar"));
-// 
-//     if (!pSiPMCalPar)
-//     {
-//         std::cerr << "Parameter container 'SiPMsTOFPETCalibratorPar' was not obtained!" << std::endl;
-//         exit(EXIT_FAILURE);
-//     }
-//     
-// //     float SFibersRawClusterFinder::alignQDC(identifiedFiberDataC address, float qdc)
-// // {
-//     int mod,lay,el;
-//     char *side;
-//     sipmData->getAddress(mod,lay,el,*side);
-//     SFibersChannel chan;
-//     chan.m = mod;
-//     chan.l = lay;
-//     chan.s = el;
-//     chan.side = side[0];
-//     
-//     auto _cpar = pSiPMCalPar->getPar(&chan);
-//     auto&& cpar = *_cpar;
-//     
-//     if(cpar[0]==-100)
-//     {
-//         std::cout<<" Error: cpar[0]=-100.0" << std::endl;
-//         return -100;
-//     }
-//     else 
-//     {
-//         return qdc*511./cpar[0]; 
-//     }       
-//     
-// }
 
 void SSiPMClusterFinder::print()
 {

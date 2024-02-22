@@ -39,7 +39,7 @@ void SSiPMHit::Clear(Option_t* /*opt*/)
  */
 void SSiPMHit::print() const
 {
-    printf("SSiPMHit: ID=%i module=%d layer=%d element=%d swSiPMID=%d  side=%c QDC=%f  Time=%lld\n", hitID, module, layer, element, swSiPMID, side, qdc, time);
+    printf("SSiPMHit: ID=%i module=%d layer=%d element=%d swSiPMID=%d  side=%c QDC=%f alignedQDC=%f  Time=%f\n", hitID, module, layer, element, swSiPMID, side, qdc, aligned_qdc, time);
 }
 
 

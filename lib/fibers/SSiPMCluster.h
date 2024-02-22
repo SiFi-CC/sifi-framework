@@ -33,7 +33,8 @@ protected:
     
     TVector3 point;  ///< cluster position
     TVector3 errors; ///< cluster position errors
-    Long64_t time{-1};    ///< first hit time within cluster
+//     Long64_t time{-1};    ///< first hit time within cluster
+    Double_t time{-1};    ///< first hit time within cluster
     Float_t qdc{-1};
     Float_t aligned_qdc{-1};
     
@@ -130,9 +131,9 @@ public:
         return errors;
     }
     
-    void setTime(Long64_t t) { time = t; };
+    void setTime(Double_t t) { time = t; };
     
-    Long64_t getTime() { return time; };
+    Double_t getTime() { return time; };
     
     void setQDC(float c) { qdc = c; };
     

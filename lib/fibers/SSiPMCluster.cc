@@ -31,7 +31,7 @@ void SSiPMCluster::Clear(Option_t* opt)
 void SSiPMCluster::print() const
 {
     
-    printf("SiPM CLUSTER: clusterID = %d, num of hits = %ld, time = %lld, QDC = %f, x,y,z = (%f, %f, %f)\n", clusterID, hits.size(), time, qdc, point.x(), point.y(), point.z());
+    printf("SiPM CLUSTER: clusterID = %d, num of hits = %ld, time = %f, QDC = %f,  alignedQDC = %f, x,y,z = (%f, %f, %f)\n", clusterID, hits.size(), time, qdc, aligned_qdc, point.x(), point.y(), point.z());
     printf("SiPM HITS: ");
     
     for(auto & h : hits)

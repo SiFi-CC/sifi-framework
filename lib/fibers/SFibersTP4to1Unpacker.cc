@@ -75,7 +75,7 @@ float alignQDC(SSiPMHit *sipmData, float qdc){
     
     if(cpar[0]==-100)
     {
-        std::cout<<" Error: cpar[0]=-100.0" << std::endl;
+        //std::cout<<" Error: cpar[0]=-100.0" << std::endl;
         return -100;
     }
     else 
