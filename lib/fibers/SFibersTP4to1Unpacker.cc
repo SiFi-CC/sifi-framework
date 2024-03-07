@@ -20,6 +20,7 @@
 #include <TObject.h> // for TObject
 
 #include <iostream>
+#include <cmath>
 #include <string> // for allocator
 
 /**
@@ -73,16 +74,16 @@ float alignQDC(SSiPMHit *sipmData, float qdc){
     auto _cpar = pSiPMCalPar->getPar(&chan);
     auto&& cpar = *_cpar;
     
-    if(cpar[0]==-100)
+    if(cpar[0]==-100 || qdc<0)
     {
         //std::cout<<" Error: cpar[0]=-100.0" << std::endl;
         return -100;
     }
-    else 
+    else if(!std::isnan(qdc))
     {
         return qdc*511./cpar[0]; 
     }       
-    
+    else return -100;
 }
 
 
@@ -114,14 +115,26 @@ bool SFibersTP4to1Unpacker::execute(ulong /*event*/, ulong seq_number, uint16_t 
     } 
     else
     {
-        pHit->setChannel(lc->s);
-        pHit->setAddress(lc->m, lc->l, lc->element, lc->side);
-        pHit->setQDC(hit->energy);
-        
-        pHit->setAlignedQDC(alignQDC(pHit, hit->energy));
-        pHit->setTime(hit->time);
-//         pHit->setID(i);
-        pHit->setID(seq_number);
+        if(lc->s==800){
+            pHit->setChannel(lc->s);
+            pHit->setAddress(lc->m, lc->l, lc->element, lc->side);
+            pHit->setQDC(-100);
+//             std::cout << lc->s << " " << lc->m << " " <<  lc->l << " " <<  lc->element << " " <<  lc->side <<  " hit->energy" << hit->energy << std::endl;
+            pHit->setAlignedQDC(-100);
+            pHit->setTime(-100);
+//             pHit->setID(i);
+            pHit->setID(seq_number);
+        }
+        else{
+            pHit->setChannel(lc->s);
+            pHit->setAddress(lc->m, lc->l, lc->element, lc->side);
+            pHit->setQDC(hit->energy);
+            pHit->setAlignedQDC(alignQDC(pHit, hit->energy));
+            pHit->setTime(hit->time);
+    //         pHit->setID(i);
+            pHit->setID(seq_number);
+        }
+
     }
 
     return true;

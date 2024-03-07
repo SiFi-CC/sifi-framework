@@ -36,18 +36,18 @@
 class SSiPMsLookupTable;
 class SLocator;
 
-struct fibAddressC
-{
-    int    mod=-100;
-    UInt_t lay=-100;
-    UInt_t fi=-100;
-    char   side;
-    
-    void print()
-    {
-        printf("fibAddressC: mod = %i, lay = %i, fib = %i, side = %c \n", mod, lay, fi, side);
-    };
-};
+// struct fibAddressC
+// {
+//     int    mod=-100;
+//     UInt_t lay=-100;
+//     UInt_t fi=-100;
+//     char   side;
+//     
+//     void print()
+//     {
+//         printf("fibAddressC: mod = %i, lay = %i, fib = %i, side = %c \n", mod, lay, fi, side);
+//     };
+// };
 
 struct identifiedFiberDataC // change to identifiedFiberData (remove C) when SFibersIdentification class is removed from the code
 {

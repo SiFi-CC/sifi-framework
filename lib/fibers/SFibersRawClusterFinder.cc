@@ -189,7 +189,8 @@ std::vector<float> getFirstFiber(std::vector<identifiedFiberDataC> fibersInPairO
             qdc_sum += qavg;
             ffi+=fibersInPairOfClusters[i].fi*qavg;
         }
-        else std::cerr << "In SFibersRawClusterFinder module != 0. Check all involved fiber addresses. If using absorber, this function needs to be edited" << std::endl;
+        
+        //else std::cerr << "In SFibersRawClusterFinder module != 0. Check all involved fiber addresses. If using absorber, this function needs to be edited" << std::endl;
     }
     flay = min_layer;
     ffi = ffi/qdc_sum;
@@ -309,18 +310,18 @@ bool SFibersRawClusterFinder::execute()
     {
         if(ClustersBottom[m].size() == 0 || ClustersTop[m].size() == 0) return true;
         
-        std::unique_ptr<int[]> FiberBottom(new int[ClustersBottom[mod].size()]);
-        std::unique_ptr<int[]> FiberTop(new int[ClustersTop[mod].size()]);
-        
-        for(int k=0; k<ClustersBottom[mod].size(); ++k)
-        {
-            FiberBottom[k]=0;
-        }
-        
-        for(int l=0; l<ClustersTop[mod].size(); ++l)
-        {
-            FiberTop[l]=0;
-        }
+//         std::unique_ptr<int[]> FiberBottom(new int[ClustersBottom[mod].size()]);
+//         std::unique_ptr<int[]> FiberTop(new int[ClustersTop[mod].size()]);
+//         
+//         for(int k=0; k<ClustersBottom[mod].size(); ++k)
+//         {
+//             FiberBottom[k]=0;
+//         }
+//         
+//         for(int l=0; l<ClustersTop[mod].size(); ++l)
+//         {
+//             FiberTop[l]=0;
+//         }
         
         for(int k=0; k<ClustersBottom[mod].size(); ++k)
         {
@@ -357,9 +358,11 @@ bool SFibersRawClusterFinder::execute()
                     fr->setClusters(id_t, id_b);
                     
                     fibersRaw.push_back(fr);
+//                     fr->Clear();
                 }
                 
                 fib.clear();
+                
             }
         }
     }
@@ -494,6 +497,7 @@ bool SFibersRawClusterFinder::execute()
                     frc->setFiberMultInCluster(clusterPairs[i][2]);
                     frc->setNFibersClusters(1);
                     fibersRawCluster.push_back(frc);
+//                     frc->Clear();
                 }
                 else {
                 //check if neighbours
@@ -515,6 +519,7 @@ bool SFibersRawClusterFinder::execute()
                     frc->setFiberMultInCluster(clusterPairs[i][2]);
                     frc->setNFibersClusters(foundFiberClusters[i]); //if this is needed, replace the if condition below with "fibersRawCluster.push_back(frc);"
                     fibersRawCluster.push_back(frc);
+//                     frc->Clear();
                 }
                 else if(foundFiberClusters[i] > 1){
                     frc->setAddress(1,0,0);
@@ -526,6 +531,7 @@ bool SFibersRawClusterFinder::execute()
                     frc->setFiberMultInCluster(-1);
                     frc->setNFibersClusters(foundFiberClusters[i]);
                     fibersRawCluster.push_back(frc);
+//                     frc->Clear();
                 }
                 else std::cerr << "Error in float SFibersRawClusterFinder: foundFiberClusters[i] < 0" << std::endl;
                 
@@ -546,6 +552,7 @@ bool SFibersRawClusterFinder::execute()
                 frc->setFiberMultInCluster(-1);
                 frc->setNFibersClusters(-1);
                 fibersRawCluster.push_back(frc);
+//                 frc->Clear();
             }
             else if(topIter == 1 && botIter == 2)  {
 //                 std::cout << "label: semi-unique TOP cluster pair(topITER, botITER) = "     << topIter << " " << botIter << std::endl;
@@ -560,6 +567,7 @@ bool SFibersRawClusterFinder::execute()
                 frc->setFiberMultInCluster(-1);
                 frc->setNFibersClusters(-1);
                 fibersRawCluster.push_back(frc);
+//                 frc->Clear();
             }
             else {
 //                 std::cout << "label: ambiguous cluster pair: (topITER, botITER) = " << topIter << " " << botIter << std::endl;
@@ -574,6 +582,7 @@ bool SFibersRawClusterFinder::execute()
                 frc->setFiberMultInCluster(-1);
                 frc->setNFibersClusters(-1);
                 fibersRawCluster.push_back(frc);
+//                 frc->Clear();
             }
             topIter = 0;
             botIter = 0;
@@ -677,7 +686,9 @@ identifiedFiberDataC convertAddressC(std::vector<std::string> v)
     
     return f;
 }
-bool SFibersRawClusterFinder::finalize() { return true; }
+bool SFibersRawClusterFinder::finalize() { 
+    return true; 
+}
 
 std::vector<identifiedFiberDataC> SFibersRawClusterFinder::CommonFibers(SSiPMCluster* TopCluster, SSiPMCluster* BottomCluster)
 {
@@ -695,6 +706,7 @@ std::vector<identifiedFiberDataC> SFibersRawClusterFinder::CommonFibers(SSiPMClu
     {
         pHit=(SSiPMHit *)catSiPMsHit->getObject(hits[k]);
         pHit->getChannel(ChannelID);
+        if(ChannelID == 800) continue;
         SMultiFibersChannel* lc = dynamic_cast<SMultiFibersChannel*>(fibLookup->getAddress(0x1000, ChannelID));
         vec = lc->vecFiberAssociations;
         AddressesTop.insert(AddressesTop.end(),vec.begin(),vec.end());
@@ -705,6 +717,7 @@ std::vector<identifiedFiberDataC> SFibersRawClusterFinder::CommonFibers(SSiPMClu
     {
         pHit=(SSiPMHit *)catSiPMsHit->getObject(hits[k]);
         pHit->getChannel(ChannelID);
+        if(ChannelID == 800) continue;
         SMultiFibersChannel* lc = dynamic_cast<SMultiFibersChannel*>(fibLookup->getAddress(0x1000, ChannelID));
         vec = lc->vecFiberAssociations;
         AddressesBottom.insert(AddressesBottom.end(),vec.begin(),vec.end());
