@@ -34,6 +34,7 @@ int main(int argc, char** argv)
     int events_offset = 0;
     int events = 1000000;
     int save_samples = 0;
+    int trigger_only = 0;
 
     std::string output("test.root");
     std::string params_file("params.txt");
@@ -41,6 +42,7 @@ int main(int argc, char** argv)
     while (1)
     {
         static struct option long_options[] = {{"ss", no_argument, &save_samples, 1},
+                                               {"trigger", no_argument, &trigger_only, 1},
                                                {"events_offset", required_argument, 0, 'i'},
                                                {"events", required_argument, 0, 'e'},
                                                {"output", required_argument, 0, 'o'},
@@ -71,8 +73,7 @@ int main(int argc, char** argv)
                 break;
         }
     }
-
-
+    
     while (optind < argc)
     {
         std::string inpstr(argv[optind]);
@@ -113,6 +114,8 @@ int main(int argc, char** argv)
     // output files
     sifi()->setOutputFileName(output);
     sifi()->book();
+    
+    sifi()->setTiggeredOnly(trigger_only);
 
     // how many events to proceed
     int ev_limit = 0;

@@ -93,6 +93,9 @@ bool checkIfNeighbours(SSiPMHit* hit_1, SSiPMHit* hit_2)
 
 bool SSiPMClusterFinder::execute()
 {
+    
+    int triggered_only = sifi()->isTriggeredOnly();
+    
     int nhits = catSiPMsHit->getEntries(); // number of hits in current event
     int nclus = 0;
     bool clusterIncremented = 0;
@@ -108,6 +111,24 @@ bool SSiPMClusterFinder::execute()
         isAssigned.push_back(0);
     }
 
+    if(triggered_only)
+    {
+        const int trigger_ch = 801;
+        bool found_trigger = false;
+        int ch = 0;
+        for(auto i : sipmHits)
+        {
+            i->getChannel(ch);
+            if(ch == trigger_ch)
+            {
+                found_trigger = true;
+            }
+        }
+        
+        if(!found_trigger)
+            return true;
+    }
+    
     std::unique_ptr<SSiPMCluster> pClus = std::make_unique<SSiPMCluster>(); 
     pClus->addHit(sipmHits[0]->getID()); // adding first hit to the first cluster
     isAssigned[0] = 1;

@@ -67,6 +67,8 @@ protected:
     bool sim;                                        ///< Simulation run
     bool branches_set;                               ///< Has branches set
     bool disable_assertations{false};                ///< disable runtime assertations
+    int triggered_only{0};                           ///< flag indicating that only events containing trigger hit will be processed further after SiPMHit
+                                                     ///< Default 0 - all events included. 1 - analyze only triggered events
 
 private:
     // constructor
@@ -149,6 +151,10 @@ public:
     /// Return status of runtime assertation. See disableAssertations() for details.
     /// \return status of runtime assertations
     bool assertationsDisabled() { return disable_assertations; }
+    
+    void setTiggeredOnly(int flag) { triggered_only = flag; };
+    
+    int isTriggeredOnly() const { return triggered_only; };
 
 private:
     SIFI_NO_EXPORT void initBranches();
