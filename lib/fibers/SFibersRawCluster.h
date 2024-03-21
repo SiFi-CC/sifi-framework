@@ -151,13 +151,13 @@ public:
     Float_t getQDCL() const { return qdc_l; }
     /// Get Time value
     /// \return time
-    Long64_t getTimeL() const { return time_l; }
+    Double_t getTimeL() const { return time_l; }
     /// Get QDC value
     /// \return qdc
     Float_t getQDCR() const { return qdc_r; }
     /// Get Time value
     /// \return time
-    Long64_t getTimeR() const { return time_r; }
+    Double_t getTimeR() const { return time_r; }
     /// Get fiber label value
     /// \return label
     Int_t getFiberClusterLabel() const { return fiberClusterLabel; }

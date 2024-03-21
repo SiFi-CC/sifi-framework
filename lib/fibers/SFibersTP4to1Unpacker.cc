@@ -115,7 +115,7 @@ bool SFibersTP4to1Unpacker::execute(ulong /*event*/, ulong seq_number, uint16_t 
     } 
     else
     {
-        if(lc->s==800){
+        if(lc->s==800 || lc->s==801){
             pHit->setChannel(lc->s);
             pHit->setAddress(lc->m, lc->l, lc->element, lc->side);
             pHit->setQDC(-100);

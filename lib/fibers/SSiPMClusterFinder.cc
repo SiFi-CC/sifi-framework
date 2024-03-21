@@ -97,7 +97,7 @@ bool SSiPMClusterFinder::execute()
     int nclus = 0;
     bool clusterIncremented = 0;
     SLocator loc(1);
-    std::vector<SSiPMCluster*> clusters;
+    std::vector<std::unique_ptr<SSiPMCluster>> clusters;
     std::vector<SSiPMHit*> sipmHits;
     std::vector<int> isAssigned;
     int nAssignedHits = 0;
@@ -108,10 +108,10 @@ bool SSiPMClusterFinder::execute()
         isAssigned.push_back(0);
     }
 
-    SSiPMCluster *pClus = new SSiPMCluster(); 
+    std::unique_ptr<SSiPMCluster> pClus = std::make_unique<SSiPMCluster>(); 
     pClus->addHit(sipmHits[0]->getID()); // adding first hit to the first cluster
     isAssigned[0] = 1;
-    clusters.push_back(pClus);
+    clusters.push_back(std::move(pClus));
     nAssignedHits++;
     
     while(nAssignedHits < nhits){
@@ -137,7 +137,7 @@ bool SSiPMClusterFinder::execute()
 //             std::cout << std::endl;
         }
         if(clusterIncremented==0){
-            SSiPMCluster *pClus = new SSiPMCluster(); 
+            std::unique_ptr<SSiPMCluster> pClus = std::make_unique<SSiPMCluster>(); 
             std::vector<int>::iterator it;
             it = std::find( isAssigned.begin(), isAssigned.end(), 0 );
             if ( it != isAssigned.end() ){ // found unassigned SiPM
@@ -145,7 +145,7 @@ bool SSiPMClusterFinder::execute()
 //                 std::cout << "Found unassigned SiPM at location " << location;
                 pClus->addHit(sipmHits[location]->getID());
 //                 std::cout << " SiPM ID:" << sipmHits[location]->getID() << std::endl;
-                clusters.push_back(pClus);
+                clusters.push_back(std::move(pClus));
                 isAssigned[location] = 1;
                 nAssignedHits++;
             }
