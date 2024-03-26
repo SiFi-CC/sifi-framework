@@ -50,7 +50,7 @@ public:
     void addTask(STask* task, int step);
     void initTasks();
     void reinitTasks();
-    void runTasks();
+    bool runTasks();
     void finalizeTasks();
 };
 

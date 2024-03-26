@@ -126,7 +126,7 @@ bool SSiPMClusterFinder::execute()
         }
         
         if(!found_trigger)
-            return true;
+            return false;
     }
     
     std::unique_ptr<SSiPMCluster> pClus = std::make_unique<SSiPMCluster>(); 

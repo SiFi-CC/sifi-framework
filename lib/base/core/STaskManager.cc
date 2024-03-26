@@ -106,7 +106,7 @@ void STaskManager::reinitTasks()
  *
  * Start with step 0 until the last step.
  */
-void STaskManager::runTasks()
+bool STaskManager::runTasks()
 {
     for (const auto& t : tasks)
     {
@@ -114,10 +114,12 @@ void STaskManager::runTasks()
 
         if (!res)
         {
-            std::cerr << "Task failed!" << std::endl;
-            std::exit(EXIT_FAILURE);
+//             std::cerr << "Task failed!" << std::endl;
+//             std::exit(EXIT_FAILURE);
+            return false;
         }
     }
+    return true;
 }
 
 /**

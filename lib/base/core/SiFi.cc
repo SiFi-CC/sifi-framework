@@ -452,8 +452,10 @@ void SiFi::loop(long entries, bool show_progress_bar)
 
         if (show_progress_bar) ++pb;
 
-        tm->runTasks();
-        fill();
+        if(tm->runTasks())
+        {
+            fill();
+        }
     }
     pb.finish();
     printf("*** SiFi finished after %lu events\n", i);
