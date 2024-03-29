@@ -37,7 +37,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersClusterFinder.cc
         SFibersClusterFinderPar.cc
         SFibersCluster.cc
-        SFibersIdentification.cc
+        #SFibersIdentification.cc
         SFibersRawClusterFinder.cc
         SSiPMCluster.cc
         #        SSiPMLookup.cc
@@ -78,7 +78,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersClusterFinder.h
         SFibersClusterFinderPar.h
         SFibersCluster.h
-        SFibersIdentification.h
+        #SFibersIdentification.h
         SFibersRawClusterFinder.h
         SSiPMCluster.h
         #        SSiPMLookup.h

@@ -49,7 +49,7 @@ class SLocator;
 //     };
 // };
 
-struct identifiedFiberDataC // change to identifiedFiberData (remove C) when SFibersIdentification class is removed from the code
+struct identifiedFiberData // change to identifiedFiberData (remove C) when SFibersIdentification class is removed from the code
 {
     int mod=-100;
     UInt_t lay=-100;
@@ -69,13 +69,13 @@ struct identifiedFiberDataC // change to identifiedFiberData (remove C) when SFi
     }
 };
 
-enum fiberClusterHitTypeC // change to fiberClusterHitType (remove C, also in the labels in the enum) when SFibersIdentification class is removed from the code
+enum fiberClusterHitType // change to fiberClusterHitType (remove C, also in the labels in the enum) when SFibersIdentification class is removed from the code
 {
-    uniqueClusterUniqueFiberC = 1, 
-    uniqueClusterMultipleFiberC = 2, 
-    topUniqueClusterC = 3, //unique only on the top side
-    bottomUniqueClusterC = 4, // unique only on the bottom side
-    ambiguousClusterC = 5
+    uniqueClusterUniqueFiber = 1, 
+    uniqueClusterMultipleFiber = 2, 
+    topUniqueCluster = 3, //unique only on the top side
+    bottomUniqueCluster = 4, // unique only on the bottom side
+    ambiguousCluster = 5
 };
 
 /**
@@ -94,10 +94,10 @@ public:
 private:
 
     const int n_fibers_per_SiPM = 4;
-    std::vector <identifiedFiberDataC> getFibersFromCluster(SSiPMCluster *cluster);
-    std::vector <identifiedFiberDataC> CommonFibers(SSiPMCluster* TopCluster, SSiPMCluster* BottomCluster);
+    std::vector <identifiedFiberData> getFibersFromCluster(SSiPMCluster *cluster);
+    std::vector <identifiedFiberData> CommonFibers(SSiPMCluster* TopCluster, SSiPMCluster* BottomCluster);
     float correctNLC(float qdc);
-    float alignQDC(identifiedFiberDataC address, float qdc);
+    float alignQDC(identifiedFiberData address, float qdc);
     
     
 protected:
