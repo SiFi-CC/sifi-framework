@@ -22,6 +22,8 @@
 #include "SiFi.h"
 #include "SSiPMHit.h"
 #include "SFibersLookup.h"
+#include "SCalContainer.h"
+#include "SEventNumber.h"
 
 #include <RtypesCore.h> // for Float_t
 #include <TObject.h>    // for TObject
@@ -31,6 +33,7 @@
 #include <iostream>
 #include <math.h>
 #include <vector> // for vector
+
 
 /**
  * \class SSimImporter
@@ -52,6 +55,7 @@ SSimImporter::SSimImporter() : SUnpacker() {}
  * \sa STask::init()
  * \return success
  */
+
 bool SSimImporter::init()
 {
     SUnpacker::init();
@@ -60,6 +64,13 @@ bool SSimImporter::init()
     if (!catSiPMHit)
     {
         std::cerr << "No CatSiPMHit category" << std::endl;
+        return false;
+    }
+    
+    catEventNumber = sifi()->buildCategory(SCategory::CatEventNumber);
+    if (!catEventNumber)
+    {
+        std::cerr << "No CatEventNumber category" << std::endl;
         return false;
     }
 
@@ -76,12 +87,34 @@ bool SSimImporter::init()
 bool SSimImporter::execute(ulong /*event*/, ulong /*seq_number*/, uint16_t /*subevent*/,
                                     void* buffer, size_t /*length*/)
 {
+    return true;
+}
+
+bool SSimImporter::execute_withEntryID(ulong /*event*/, ulong /*seq_number*/, uint16_t /*subevent*/,
+                                    void* buffer, size_t /*length*/, long entryID)
+{
     std::vector<SiPMData>* vSiPMData = static_cast<std::vector<SiPMData>*>(buffer);
     if (!vSiPMData) return false;
-
+    
+    Int_t eID = entryID;
     Int_t nHits = vSiPMData->size();
     SiPMData currentHit;
 
+    SLocator en_loc(3);
+    SEventNumber* pEventNumber = dynamic_cast<SEventNumber*>(catEventNumber->getObject(en_loc));
+    if (!pEventNumber)
+    {
+        pEventNumber = reinterpret_cast<SEventNumber*>(catEventNumber->getSlot(en_loc));
+        new (pEventNumber) SEventNumber;
+        if (!pEventNumber)
+        {
+            std::cerr << "Error in SSimImporter.cc: no pEventNumber category!" << std::endl;
+        }
+    }
+    pEventNumber->setEventNumber(eID);
+//     std::cout << "eventID: " << eID << std::endl;
+
+    
     for (Int_t i = 0; i < nHits; ++i)
     {
         currentHit = vSiPMData->at(i);
@@ -98,12 +131,12 @@ bool SSimImporter::execute(ulong /*event*/, ulong /*seq_number*/, uint16_t /*sub
             }
         }
 
+
         Int_t id = currentHit.fSiPMId;
         Int_t module;
         Int_t layer;
         Int_t element;
         char side;
-
         if(pDetGeomPar->getAddressFromswSiPMID(id, module, layer, element, side) == false)
         {
             fprintf(stderr, "Error in SSimImporter.cc: swSiPMID %d missing. Check params.txt.\n", currentHit.fSiPMId);
@@ -112,10 +145,13 @@ bool SSimImporter::execute(ulong /*event*/, ulong /*seq_number*/, uint16_t /*sub
         {
             pHit->setChannel(id);
             pHit->setAddress(module, layer, element, side);
-            pHit->setQDC(currentHit.fSiPMQDC);
-            pHit->setTime(currentHit.fSiPMTriggerTime);
+            pHit->setQDC(currentHit.fSiPMPhotonCount);
+//             pHit->setAlignedQDC(alignQDC(pHit, currentHit.fSiPMPhotonCount));
+            pHit->setAlignedQDC(currentHit.fSiPMPhotonCount); //no alignment in simulation => QDC=alignedQDC
+            pHit->setTime(currentHit.fSiPMTimeStamp);
             pHit->setID(i);
         }
     }
+//     std::cout << std::endl;
     return true;
 }

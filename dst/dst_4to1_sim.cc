@@ -4,6 +4,7 @@
 #include "SDetectorManager.h"
 #include "SFibersDetector.h"
 #include "SFibersLookup.h"
+#include "SMultiFibersLookup.h"
 #include "SLookup.h" // for SLookupTable
 #include "SParAsciiSource.h"
 #include "_SSiFiCCDetResImporter.h"
@@ -94,17 +95,19 @@ int main(int argc, char** argv)
     // initialize detectors
     SDetectorManager* detm = SDetectorManager::instance();
 
-    detm->addDetector(new SFibersDetector("Fibers"));
-
+    detm->addDetector(new SFibersDetector("Fibers", 1, 7, 55));
+    detm->initTasks();
+    detm->initParameterContainers();
     detm->initCategories();
 //     sifi()->buildCategory(SCategory::CatFibersCal, true);
 
-    detm->initParameterContainers();
+
 //     detm->initTasks(); //creates SFibersCluster and SFibersHitSim
 
 //     pm()->addLookupContainer("TPLookupTable", std::make_unique<SSiPMsLookupTable>("TPLookupTable", 0x1000, 0x1fff, 20000));
     pm()->addLookupContainer("FibersDDLookupTable", std::make_unique<SFibersLookupTable>("FibersDDLookupTable", 0x1000, 0x1fff, 32));
-
+    pm()->addLookupContainer("4to1SiPMtoFibersLookupTable", std::make_unique<SMultiFibersLookupTable>("4to1SiPMtoFibersLookupTable", 0x1000, 0x1fff, 20000));
+    
     // initialize tasks
     STaskManager* tm = STaskManager::instance();
     tm->initTasks();

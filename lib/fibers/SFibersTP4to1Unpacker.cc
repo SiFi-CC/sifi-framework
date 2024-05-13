@@ -74,16 +74,16 @@ float alignQDC(SSiPMHit *sipmData, float qdc){
     auto _cpar = pSiPMCalPar->getPar(&chan);
     auto&& cpar = *_cpar;
     
-    if(cpar[0]==-100 || qdc<0)
+    if(cpar[0]==-100 || qdc<0 || std::isnan(qdc) || qdc>500)
     {
         //std::cout<<" Error: cpar[0]=-100.0" << std::endl;
         return -100;
     }
-    else if(!std::isnan(qdc))
+    else
     {
+//         std::cout << "alignment worked" << std::endl;
         return qdc*511./cpar[0]; 
     }       
-    else return -100;
 }
 
 
@@ -111,7 +111,7 @@ bool SFibersTP4to1Unpacker::execute(ulong /*event*/, ulong seq_number, uint16_t 
     SSiPMsChannel* lc = dynamic_cast<SSiPMsChannel*>(pLookUp->getAddress(0x1000,hit->channelID));
     if(!lc)
     {
-        fprintf(stderr, "STP4to1Extractor TOFPET2 absolute Ch%d missing. Check params.txt.\n", hit->channelID);
+        fprintf(stderr, "SFibersTP4to1Unpacker TOFPET2 absolute Ch%d missing. Check params.txt.\n", hit->channelID);
     } 
     else
     {
@@ -128,7 +128,13 @@ bool SFibersTP4to1Unpacker::execute(ulong /*event*/, ulong seq_number, uint16_t 
         else{
             pHit->setChannel(lc->s);
             pHit->setAddress(lc->m, lc->l, lc->element, lc->side);
-            pHit->setQDC(hit->energy);
+            if(hit->energy<0 || std::isnan(hit->energy) || hit->energy>500){
+                pHit->setQDC(-100);
+            }
+            else {
+               pHit->setQDC(hit->energy); 
+            }
+            
             pHit->setAlignedQDC(alignQDC(pHit, hit->energy));
             pHit->setTime(hit->time);
     //         pHit->setID(i);

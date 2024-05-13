@@ -24,6 +24,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersRaw.cc
         SFibersRawCluster.cc
         SSiPMHit.cc
+        SEventNumber.cc
         SFibersCalibrator.cc
         SFibersCalibratorPar.cc
         SFibersCal.cc
@@ -65,6 +66,7 @@ SIFI_GENERATE_LIBRARY(
         SFibersRaw.h
         SFibersRawCluster.h
         SSiPMHit.h
+        SEventNumber.h
         SFibersCalibrator.h
         SFibersCalibratorPar.h
         SFibersCal.h

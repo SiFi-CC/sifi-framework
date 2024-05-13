@@ -29,6 +29,7 @@ class SIFI_EXPORT SSimImporter : public SUnpacker
 protected:
     // members
     SCategory* catSiPMHit{nullptr}; ///< raw SiPM hit category
+    SCategory* catEventNumber{nullptr}; ///< event number category
     SDetectorGeomPar* pDetGeomPar{nullptr}; ///< detector geometry
 
 public:
@@ -41,6 +42,8 @@ public:
 
     virtual bool execute(ulong event, ulong seq_number, uint16_t subevent, void* buffer,
                          size_t length) override;
+    bool execute_withEntryID(ulong event, ulong seq_number, uint16_t subevent, void* buffer,
+                         size_t length, long entryID);
 };
 
 #endif /* SSIMSIMPORTER_H */

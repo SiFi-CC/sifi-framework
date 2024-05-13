@@ -120,7 +120,6 @@ std::vector<int> createFiberClusters(std::vector<std::vector<identifiedFiberData
             for(int j=0; j<unassignedFibers.size(); j++){
                 isUnassigned.push_back(1);
             }
-            int allFib_size = unassignedFibers.size();
             int clusterID = 0;
             int fibInClusterCounter = 0;
             int prev_fibInClusterCounter = -1;
@@ -562,17 +561,18 @@ bool SFibersRawClusterFinder::execute()
             }
             else {
 //                 std::cout << "label: ambiguous cluster pair: (topITER, botITER) = " << topIter << " " << botIter << std::endl;
-                fibClusType=ambiguousCluster;
-                std::unique_ptr<SFibersRawCluster> frc = std::make_unique<SFibersRawCluster>();
-                frc->setAddress(1,0,0);
-                frc->setQDCL(-100);
-                frc->setTimeL(-100);
-                frc->setQDCR(-100);
-                frc->setTimeR(-100);
-                frc->setFiberClusterLabel(fibClusType);
-                frc->setFiberMultInCluster(-1);
-                frc->setNFibersClusters(-1);
-                fibersRawCluster.push_back(std::move(frc));
+                return false;
+//                 fibClusType=ambiguousCluster;
+//                 std::unique_ptr<SFibersRawCluster> frc = std::make_unique<SFibersRawCluster>();
+//                 frc->setAddress(1,0,0);
+//                 frc->setQDCL(-100);
+//                 frc->setTimeL(-100);
+//                 frc->setQDCR(-100);
+//                 frc->setTimeR(-100);
+//                 frc->setFiberClusterLabel(fibClusType);
+//                 frc->setFiberMultInCluster(-1);
+//                 frc->setNFibersClusters(-1);
+//                 fibersRawCluster.push_back(std::move(frc));
             }
             topIter = 0;
             botIter = 0;

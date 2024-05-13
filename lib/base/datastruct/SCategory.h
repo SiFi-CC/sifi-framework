@@ -59,6 +59,7 @@ public:
                            // tracks
                            // Limit
         CatSiPMClus,       ///< SiPM clusters
+        CatEventNumber,    ///< Event number from simulation tree
         CatLimitDoNotUse,  ///< holds size of the category list
         CatNone,           ///< Clear category list in SLoop
     };

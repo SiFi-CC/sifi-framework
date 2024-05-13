@@ -9,22 +9,35 @@
  * For the list of contributors see $SiFiSYS/README/CREDITS.             *
  *************************************************************************/
 
-#ifdef __CLING__
+#include "SEventNumber.h"
 
-// clang-format off
+#include <cstdio>
+/**
+ * \class SEventNumber
+\ingroup lib_fibers
 
-#pragma link C++ class SFibersRaw+;
-#pragma link C++ class SFibersRawCluster+;
-#pragma link C++ class SSiPMHit+;
-#pragma link C++ class SEventNumber+;
-#pragma link C++ class SFibersCal+;
-#pragma link C++ class SFibersCalSim+;
-#pragma link C++ class SFibersHit+;
-#pragma link C++ class SFibersHitSim+;
-#pragma link C++ class SFibersCluster+;
-#pragma link C++ class SSiPMCluster+;
-#pragma link C++ class SDetectorGeomPar+;
+A container for Fibers Stack Raw data
 
-// clang-format on
+*/
 
-#endif
+/**
+ * Clear object
+ * Parameter options are ignored, for ROOT compatibility.
+ *
+ * \param opt options
+ */
+void SEventNumber::Clear(Option_t* /*opt*/)
+{
+    eventNumber = -1;
+}
+
+/**
+ * Print category
+ */
+void SEventNumber::print() const
+{
+    printf("SEventNumber: eventNumber=%i ", eventNumber);
+}
+
+
+

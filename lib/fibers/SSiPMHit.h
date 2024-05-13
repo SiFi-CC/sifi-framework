@@ -99,7 +99,7 @@ public:
     }
 
 
-    
+
     /// Set QDC value
     /// \param q qdc
     void setQDC(Float_t q) { qdc = q; }

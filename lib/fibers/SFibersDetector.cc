@@ -79,20 +79,11 @@ SFibersDetector::SFibersDetector(const std::string& name, size_t m, size_t l, si
  */
 bool SFibersDetector::initTasks()
 {
-    if (isSimulation())
-    {
-        //         addTask(new SFibersDigitizer(), 0); FIXME collides with DR Importer
-        addTask(new SFibersHitFinder(), 2);
-        addTask(new SFibersClusterFinder(), 3);
-    }
-    else
-    {
-//         addTask(new SFibersUnpacker(), 0);
-//         addTask(new SSiPMClusterFinder(), 1);
-//         addTask(new SFibersCalibrator(), 1);
+//     if (isSimulation())
+//     {
+//         addTask(new SFibersDigitizer(), 0); FIXME collides with DR Importer
 //         addTask(new SFibersHitFinder(), 2);
 //         addTask(new SFibersClusterFinder(), 3);
-        
         addTask(new SFibersUnpacker(), 0);
         addTask(new SSiPMClusterFinder(), 1);
 //         addTask(new SFibersIdentification(), 2);
@@ -100,7 +91,23 @@ bool SFibersDetector::initTasks()
         addTask(new SFibersCalibrator(), 3);
         addTask(new SFibersHitFinder(), 4);
         addTask(new SFibersClusterFinder(), 5);
-    }
+//     }
+//     else
+//     {
+//         addTask(new SFibersUnpacker(), 0);
+//         addTask(new SSiPMClusterFinder(), 1);
+//         addTask(new SFibersCalibrator(), 1);
+//         addTask(new SFibersHitFinder(), 2);
+//         addTask(new SFibersClusterFinder(), 3);
+        
+//         addTask(new SFibersUnpacker(), 0);
+//         addTask(new SSiPMClusterFinder(), 1);
+// //         addTask(new SFibersIdentification(), 2);
+//         addTask(new SFibersRawClusterFinder(), 2);
+//         addTask(new SFibersCalibrator(), 3);
+//         addTask(new SFibersHitFinder(), 4);
+//         addTask(new SFibersClusterFinder(), 5);
+//     }
 
     return true;
 }
@@ -120,6 +127,18 @@ bool SFibersDetector::initContainers()
     if (isSimulation())
     {
         pm()->addParContainer("FibersDigitizerPar", std::make_unique<SFibersDigitizerPar>());
+        pm()->addParContainer("FibersDDUnpackerPar", std::make_unique<SFibersDDUnpackerPar>());
+        pm()->addCalContainer("FibersDDCalibratorPar",
+                              std::make_unique<SFibersDDCalibratorPar>("FibersDDCalibratorPar"));
+        pm()->addCalContainer("FibersTOFPETCalibratorPar",
+                              std::make_unique<SFibersTOFPETCalibratorPar>("FibersTOFPETCalibratorPar"));
+        pm()->addCalContainer("SiPMsTOFPETCalibratorPar",
+                              std::make_unique<SSiPMsTOFPETCalibratorPar>("SiPMsTOFPETCalibratorPar"));
+        pm()->addCalContainer("FiberToSiPMPar",
+                              std::make_unique<SFiberToSiPMPar>("FiberToSiPMPar"));
+        pm()->addCalContainer("FibersCalibratorPar",
+                              std::make_unique<SFibersCalibratorPar>("FibersCalibratorPar"));
+
     }
     else
     {
@@ -179,6 +198,18 @@ bool SFibersDetector::initCategories()
         if (!dm->registerCategory(SCategory::CatFibersHit, "SFibersHitSim", 3, sizes, true))
             return false;
         if (!dm->registerCategory(SCategory::CatSiPMHit, "SSiPMHit", 1, sizes_SiPM, true))
+            return false;
+        if (!dm->registerCategory(SCategory::CatSiPMClus, "SSiPMCluster", 1, size_SiPM_cluster, true))
+            return false;
+        if (!dm->registerCategory(SCategory::CatFibersRaw, "SFibersRaw", 3, sizes, true))
+            return false;
+        if (!dm->registerCategory(SCategory::CatFibersRawClus, "SFibersRawCluster", 3, sizes, true))
+            return false;
+        if (!dm->registerCategory(SCategory::CatFibersCal, "SFibersCal", 3, sizes, true))
+            return false;
+        if (!dm->registerCategory(SCategory::CatFibersHit, "SFibersHit", 3, sizes, true))
+            return false;
+        if (!dm->registerCategory(SCategory::CatEventNumber, "SEventNumber", 3, sizes, true))
             return false;
     }
     else

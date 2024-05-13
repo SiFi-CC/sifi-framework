@@ -222,17 +222,34 @@ bool SSiPMClusterFinder::execute()
                 time = pHit_in_clus->getTime();
             }
 //             std::cout << "SiPMClusterFinder: " /*<< std::setprecision(15)*/<< time << std::endl;
-
+            if(pHit_in_clus->getQDC() == -100){
+                charge = -100;
+                position.SetXYZ(0,0,0);
+                break;
+            }
+            else {
             charge += pHit_in_clus->getQDC(); // charge is determined as sum of all hits charges
-            alignedCharge += pHit_in_clus->getAlignedQDC(); // aligned charge is determined as sum of all aligned hits charges
-            
             position = position + pHit_in_clus->getQDC() * TVector3(e, 0, l); // position calculated with COG
+            }
+            
+            if(pHit_in_clus->getAlignedQDC() == -100){
+                alignedCharge = -100;
+                break;
+            }
+            else {
+            alignedCharge += pHit_in_clus->getAlignedQDC(); // aligned charge is determined as sum of all aligned hits charges
+            }
+            
         }
-        
+        if(charge == -100) return false;
         position = 1./charge * position;
 
         clusters[c]->setTime(time);
 //         std::cout << "clusters[c]->setTime(time) " /*<< std::setprecision(15)*/<< clusters[c]->getTime() << std::endl;
+//         if(charge == -100)
+//          {
+//             std::cout << charge << " " << alignedCharge << " "<< position[0] << " "<< position[1] << " " << position[2]<< std::endl;
+//         }
         clusters[c]->setQDC(charge);
         clusters[c]->setAlignedQDC(alignedCharge);
         clusters[c]->setPoint(position);

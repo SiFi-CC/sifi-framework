@@ -98,7 +98,7 @@ bool SSimSource::readCurrentEvent()
     {
         if (!unpackers[subevent]) abort();
         SSimImporter* unp = dynamic_cast<SSimImporter*>(unpackers[subevent]);
-        if (unp) unp->execute(0, 0, subevent, vSiPMData, 1);
+        if (unp) unp->execute_withEntryID(0, 0, subevent, vSiPMData, 1, ce);
     }
     else //TODO implement
     {
