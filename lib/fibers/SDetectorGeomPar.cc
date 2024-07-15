@@ -413,7 +413,7 @@ void SDetectorGeomPar::getswSiPMIDFromAddress(Int_t& id, Int_t module, Int_t lay
 {
     id = 0;
 
-    Int_t nBottomBoardSiPMs = 0; // all SiPMs in all bottom boards
+    Int_t nBottomBoardSiPMs = 0; // all SiPMs in all bottom boards - this is an offset
 
     for (Int_t i = 0; i < modules; ++i)
     {

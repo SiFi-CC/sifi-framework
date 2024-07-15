@@ -54,7 +54,7 @@ struct identifiedFiberData // change to identifiedFiberData (remove C) when SFib
     int mod=-100;
     UInt_t lay=-100;
     UInt_t fi=-100;
-    char   side;
+//     char   side;
     Double_t timeL=-100;
     float QDCL=-100;
     Double_t timeR=-100;

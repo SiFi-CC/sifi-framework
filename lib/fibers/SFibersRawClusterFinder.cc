@@ -279,12 +279,15 @@ bool SFibersRawClusterFinder::execute()
             ClustersTop[mod].push_back(pCluster);
             pCluster->getID(tcID);
             topClusterAlignedQDCs.insert({tcID, pCluster->getAlignedQDC()});
+//             std::cout << "r" << std::endl;
         }
-        else {
+        else if (side=='l'){
             ClustersBottom[mod].push_back(pCluster);
             pCluster->getID(bcID);
             botClusterAlignedQDCs.insert({bcID, pCluster->getAlignedQDC()});
+//             std::cout << "l" << std::endl;
         }
+//         else std::cout << "HERE!!!!!!!!!!!" << std::endl;
     }
     
     size_t nSiPMHit = catSiPMsHit->getEntries();
@@ -450,7 +453,7 @@ bool SFibersRawClusterFinder::execute()
                     f.mod = mod;
                     f.lay = lay;
                     f.fi = fi;
-                    f.side = side;
+//                     f.side = side;
                     f.timeL = timel;
                     f.timeR = timer;
                     f.QDCL = qdcl;
@@ -484,10 +487,10 @@ bool SFibersRawClusterFinder::execute()
                     fibClusType=uniqueClusterUniqueFiber; // in this case, simply fill the SFibersRawCluster with SFibersRaw contents (no clusters created, only single-fiber-events)
                     std::unique_ptr<SFibersRawCluster> frc = std::make_unique<SFibersRawCluster>();
                     frc->setAddress(fibersInClusterPairs[i][0].mod, fibersInClusterPairs[i][0].lay, fibersInClusterPairs[i][0].fi);
-                    fibersInClusterPairs[i][0].side = 'l';
+//                     fibersInClusterPairs[i][0].side = 'l';
                     frc->setQDCL(fibersInClusterPairs[i][0].QDCL);
                     frc->setTimeL(fibersInClusterPairs[i][0].timeL);
-                    fibersInClusterPairs[i][0].side = 'r';
+//                     fibersInClusterPairs[i][0].side = 'r';
                     frc->setQDCR(fibersInClusterPairs[i][0].QDCR);
                     frc->setTimeR(fibersInClusterPairs[i][0].timeR);
                     frc->setFiberClusterLabel(fibClusType);
@@ -505,10 +508,10 @@ bool SFibersRawClusterFinder::execute()
                 if(foundFiberClusters[i] == 1){
                     fibClusterData = getClusterPosition(fibersInClusterPairs[i], topClusterAlignedQDCs[fibersInClusterPairs[i][0].topClusID], botClusterAlignedQDCs[fibersInClusterPairs[i][0].botClusID]);
                     frc->setAddress(fibClusterData.mod, fibClusterData.lay, fibClusterData.fi);
-                    fibClusterData.side = 'l';
+//                     fibClusterData.side = 'l';
                     frc->setQDCL(fibClusterData.QDCL);
                     frc->setTimeL(fibersInClusterPairs[i][0].timeL);
-                    fibClusterData.side = 'r';
+//                     fibClusterData.side = 'r';
                     frc->setQDCR(fibClusterData.QDCR);
                     frc->setTimeR(fibersInClusterPairs[i][0].timeR);
                     frc->setFiberClusterLabel(fibClusType);
@@ -542,10 +545,10 @@ bool SFibersRawClusterFinder::execute()
                 if(foundFiberClusters[i] == 1){
                     fibClusterData = getClusterPosition(fibersInClusterPairs[i], topClusterAlignedQDCs[fibersInClusterPairs[i][0].topClusID], botClusterAlignedQDCs[fibersInClusterPairs[i][0].botClusID]);
                     frc->setAddress(fibClusterData.mod, fibClusterData.lay, fibClusterData.fi);
-                    fibClusterData.side = 'l';
+//                     fibClusterData.side = 'l';
                     frc->setQDCL(fibClusterData.QDCL);
                     frc->setTimeL(fibersInClusterPairs[i][0].timeL);
-                    fibClusterData.side = 'r';
+//                     fibClusterData.side = 'r';
                     frc->setQDCR(fibClusterData.QDCR);
                     frc->setTimeR(fibersInClusterPairs[i][0].timeR);
                     frc->setFiberClusterLabel(fibClusType);
@@ -707,7 +710,7 @@ identifiedFiberData convertAddressC(std::vector<std::string> v)
     f.mod = stoi(v[0]);
     f.lay = stoi(v[1]);
     f.fi = stoi(v[2]);
-    f.side = v[3][0];
+//     f.side = v[3][0];
     
     return f;
 }
