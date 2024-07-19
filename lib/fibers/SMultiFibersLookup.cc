@@ -68,8 +68,8 @@ void tokenize(std::string str, std::vector<std::string> &token_v, char delimiter
 uint SMultiFibersChannel::read(const char* buffer)
 {
     std::string strBuffer = std::string(buffer);
-    std::replace( strBuffer.begin(), strBuffer.end(), ')', '\0');
-//     strBuffer.erase(std::remove(strBuffer.begin(), strBuffer.end(), ')'), strBuffer.end());
+//     std::replace( strBuffer.begin(), strBuffer.end(), ')', '\0');
+    strBuffer.erase(std::remove(strBuffer.begin(), strBuffer.end(), ')'), strBuffer.end());
     std::vector<std::string> segment;
     tokenize(strBuffer, segment, '(');
     for(int i=0; i < segment.size(); ++i) {

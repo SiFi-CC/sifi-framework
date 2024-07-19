@@ -93,7 +93,6 @@ bool checkIfNeighbours(SSiPMHit* hit_1, SSiPMHit* hit_2)
 
 bool SSiPMClusterFinder::execute()
 {
-    
     int triggered_only = sifi()->isTriggeredOnly();
     
     int nhits = catSiPMsHit->getEntries(); // number of hits in current event
@@ -110,7 +109,7 @@ bool SSiPMClusterFinder::execute()
         sipmHits.push_back(pHit);
         isAssigned.push_back(0);
     }
-
+    
     if(triggered_only)
     {
         const int trigger_ch = 801;
@@ -144,6 +143,15 @@ bool SSiPMClusterFinder::execute()
         for(int i=0; i< nhits; i++){
             for(int j=0; j<nhit_in_clus; j++){ 
                 SSiPMHit* pHit_in_clus = dynamic_cast<SSiPMHit*>(catSiPMsHit->getObject(hits[j]));
+                int swID = 0;
+                pHit_in_clus->getChannel(swID);
+                if(swID == 801)
+                {
+                    nAssignedHits++;
+                    isAssigned[i] = 1;
+                    clusterIncremented = 1;
+                    break;
+                }
 //                 std::cout << "current pHit_in_clus ID\t" << pHit_in_clus->getID() << " QDC:\t" << pHit_in_clus->getQDC() << std::endl;
 //                 std::cout << "current sipm\t" << sipmHits[i]->getID() << " QDC:\t" << sipmHits[i]->getQDC() << std::endl;
                 if(isAssigned[i] == 0 && checkIfNeighbours(sipmHits[i], pHit_in_clus)){
@@ -157,18 +165,28 @@ bool SSiPMClusterFinder::execute()
             }
 //             std::cout << std::endl;
         }
-        if(clusterIncremented==0){
+        if(clusterIncremented==0){            
             std::unique_ptr<SSiPMCluster> pClus = std::make_unique<SSiPMCluster>(); 
             std::vector<int>::iterator it;
             it = std::find( isAssigned.begin(), isAssigned.end(), 0 );
             if ( it != isAssigned.end() ){ // found unassigned SiPM
                 int location = std::distance( isAssigned.begin(), it );
 //                 std::cout << "Found unassigned SiPM at location " << location;
-                pClus->addHit(sipmHits[location]->getID());
-//                 std::cout << " SiPM ID:" << sipmHits[location]->getID() << std::endl;
-                clusters.push_back(std::move(pClus));
-                isAssigned[location] = 1;
-                nAssignedHits++;
+                int swID = 0;
+                sipmHits[location]->getChannel(swID);
+                if(swID != 801)
+                {
+                    pClus->addHit(sipmHits[location]->getID());
+//                      std::cout << " SiPM ID:" << sipmHits[location]->getID() << std::endl;
+                    clusters.push_back(std::move(pClus));
+                    isAssigned[location] = 1;
+                    nAssignedHits++;
+                }
+                else
+                {
+                    isAssigned[location] = 1;
+                    nAssignedHits++;
+                }
             }
 //             else {// 1 not found
 //                 std::cout << "\n\n0 not found. no unassigned hits left" << std::endl;
@@ -261,8 +279,8 @@ bool SSiPMClusterFinder::execute()
         SSiPMCluster *pClus = reinterpret_cast<SSiPMCluster*>(catSiPMsCluster->getSlot(loc));
         pClus = new (pClus) SSiPMCluster(*clusters[c]);
     }
-    
-//     print();
+
+//      print();
 
     return true;
 }
