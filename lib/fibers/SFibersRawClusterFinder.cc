@@ -269,7 +269,7 @@ bool SFibersRawClusterFinder::execute()
     std::map<int,float> botClusterAlignedQDCs; //int: clusterID, float: sum of aligned qdcs of contributing SiPMs
     std::vector<int> sipmsCoupledToFiber;
     
-    // take clusters from the SSiPMCluster category, sort them into two groups: top and bottom; fill topClusterAlignedQDCs and botClusterAlignedQDCs
+    // Take clusters from the SSiPMCluster category, sort them into two groups: top and bottom; fill topClusterAlignedQDCs and botClusterAlignedQDCs
     for (uint j = 0; j < nClus; ++j) 
     {
         pCluster = (SSiPMCluster *)catSiPMsCluster->getObject(j);
@@ -279,15 +279,12 @@ bool SFibersRawClusterFinder::execute()
             ClustersTop[mod].push_back(pCluster);
             pCluster->getID(tcID);
             topClusterAlignedQDCs.insert({tcID, pCluster->getAlignedQDC()});
-//             std::cout << "r" << std::endl;
         }
         else if (side=='l'){
             ClustersBottom[mod].push_back(pCluster);
             pCluster->getID(bcID);
             botClusterAlignedQDCs.insert({bcID, pCluster->getAlignedQDC()});
-//             std::cout << "l" << std::endl;
         }
-//         else std::cout << "HERE!!!!!!!!!!!" << std::endl;
     }
     
     size_t nSiPMHit = catSiPMsHit->getEntries();
@@ -296,7 +293,8 @@ bool SFibersRawClusterFinder::execute()
     char s_side = ' ';
     SSiPMHit* pHit = nullptr;
     
-    for (uint j = 0; j < nSiPMHit; ++j){ // Take SiPMs from the SSiPMHit category, sort them into two groups: top and bottom
+    // Take SiPMs from the SSiPMHit category, sort them into two groups: top and bottom
+    for (uint j = 0; j < nSiPMHit; ++j){
         pHit = (SSiPMHit *)catSiPMsHit->getObject(j);
         pHit->getAddress(s_mod, s_lay, s_el, s_side);
         if(s_side=='r')
