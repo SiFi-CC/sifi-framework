@@ -92,5 +92,8 @@ SIFI_GENERATE_LIBRARY(
         SiFi
         Geant
         dabc::DabcHadaq
-        SiPMR::SiPMRLib
 )
+
+if (BUILD_SIFIDETRES_SUPPORT)
+    target_link_libraries(Fibers SiPMR::SiPMRLib)
+endif()
