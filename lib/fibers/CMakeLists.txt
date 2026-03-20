@@ -95,5 +95,5 @@ SIFI_GENERATE_LIBRARY(
 )
 
 if (BUILD_SIFIDETRES_SUPPORT)
-    target_link_libraries(Fibers SiPMR::SiPMRLib)
+    target_link_libraries(Fibers PRIVATE SiPMR::SiPMRLib)
 endif()

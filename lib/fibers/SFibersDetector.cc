@@ -87,10 +87,10 @@ bool SFibersDetector::initTasks()
         addTask(new SFibersUnpacker(), 0);
         addTask(new SSiPMClusterFinder(), 1);
 //         addTask(new SFibersIdentification(), 2);
-        addTask(new SFibersRawClusterFinder(), 2);
-        addTask(new SFibersCalibrator(), 3);
-        addTask(new SFibersHitFinder(), 4);
-        addTask(new SFibersClusterFinder(), 5);
+        // addTask(new SFibersRawClusterFinder(), 2);
+        // addTask(new SFibersCalibrator(), 3);
+        // addTask(new SFibersHitFinder(), 4);
+        // addTask(new SFibersClusterFinder(), 5);
 //     }
 //     else
 //     {
