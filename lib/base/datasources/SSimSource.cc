@@ -1,6 +1,10 @@
 #include "SSimSource.h"
 #include "SUnpacker.h"
-#include "SSimImporter.h"
+
+#include <cstdlib>
+#include <iostream>
+
+#include <TTree.h>
 
 SSimSource::SSimSource() : SRootSource("Events"), subevent(0)
 {
@@ -91,61 +95,74 @@ bool SSimSource::readCurrentEvent()
 {
     if (unpackers.size() == 0) return false;
 
-    long ce = getCurrentEvent();
+    Long64_t ce = getCurrentEvent();
     chain->GetEntry(ce);
+
+    // Reconstruct the original global ROOT entry when reading through a TChain.
+    Long64_t inputEntry = ce;
+    const int treeNumber = chain->GetTreeNumber();
+    TTree* currentTree = chain->GetTree();
+    const Long64_t* offsets = chain->GetTreeOffset();
+    if (currentTree && offsets && treeNumber >= 0)
+    {
+        const Long64_t localReadEntry = currentTree->GetReadEntry();
+        if (localReadEntry >= 0) inputEntry = offsets[treeNumber] + localReadEntry;
+    }
 
     if (subevent == 0x0000)
     {
         if (!unpackers[subevent]) abort();
-        SSimImporter* unp = dynamic_cast<SSimImporter*>(unpackers[subevent]);
-        if (unp) unp->execute_withEntryID(0, 0, subevent, vSiPMData, 1, ce);
+        unpackers[subevent]->execute_withEntryID(0, 0, subevent, vSiPMData, 1, inputEntry);
     }
-    else //TODO implement
+    else // TODO implement
     {
-//         for (const auto& u : unpackers)
-//         {
-//             SSimImporter* unp = dynamic_cast<SSimImporter*>(u.second);
-//             for (auto& c : counts)
-//             {
-//                 int fiber_id = c.first % sipm_fold;
-//                 std::map<int, TVector3>::iterator iter;
-//
-//                 if ((iter = fPxPosScin->find(fiber_id)) != fPxPosScin->end())
-//                 {
-//                     tree.pos = iter->second;
-//                     tree.type = SFibersCalSim::InteractionType::SCINT;
-//                 }
-//                 else
-//                 {
-//                     std::cerr << "POSITION: Corresponding fiber_id not found: " << fiber_id
-//                               << " for SiPmID: " << c.first << " with SiPmID fold: " << sipm_fold
-//                               << std::endl;
-//                     continue;
-//                 }
-//
-//                 std::map<int, double>::iterator iter_e;
-//
-//                 if ((iter_e = fPxEnScin->find(fiber_id)) != fPxEnScin->end())
-//                 {
-//                     tree.energy_dep = iter_e->second;
-//                 }
-//                 else
-//                 {
-//                     std::cerr << "ENERGY: Corresponding fiber_id not found: " << fiber_id
-//                               << " for SiPmID: " << c.first << " with SiPmID fold: " << sipm_fold
-//                               << std::endl;
-//                     continue;
-//                 }
-//
-//                 tree.address = sipm_map[fiber_id];
-//                 if (c.first >= sipm_fold) tree.address.s = 'r';
-//                 tree.data.counts = c.second;
-//                 tree.data.time = times[c.first];
-//
-//                 if (unp) unp->execute(0, 0, subevent, vSiPMData, 1);
-//                 tree.kine.clear();
-//             }
-//         }
+        //         for (const auto& u : unpackers)
+        //         {
+        //             SSimImporter* unp = dynamic_cast<SSimImporter*>(u.second);
+        //             for (auto& c : counts)
+        //             {
+        //                 int fiber_id = c.first % sipm_fold;
+        //                 std::map<int, TVector3>::iterator iter;
+        //
+        //                 if ((iter = fPxPosScin->find(fiber_id)) != fPxPosScin->end())
+        //                 {
+        //                     tree.pos = iter->second;
+        //                     tree.type = SFibersCalSim::InteractionType::SCINT;
+        //                 }
+        //                 else
+        //                 {
+        //                     std::cerr << "POSITION: Corresponding fiber_id not found: " <<
+        //                     fiber_id
+        //                               << " for SiPmID: " << c.first << " with SiPmID fold: " <<
+        //                               sipm_fold
+        //                               << std::endl;
+        //                     continue;
+        //                 }
+        //
+        //                 std::map<int, double>::iterator iter_e;
+        //
+        //                 if ((iter_e = fPxEnScin->find(fiber_id)) != fPxEnScin->end())
+        //                 {
+        //                     tree.energy_dep = iter_e->second;
+        //                 }
+        //                 else
+        //                 {
+        //                     std::cerr << "ENERGY: Corresponding fiber_id not found: " << fiber_id
+        //                               << " for SiPmID: " << c.first << " with SiPmID fold: " <<
+        //                               sipm_fold
+        //                               << std::endl;
+        //                     continue;
+        //                 }
+        //
+        //                 tree.address = sipm_map[fiber_id];
+        //                 if (c.first >= sipm_fold) tree.address.s = 'r';
+        //                 tree.data.counts = c.second;
+        //                 tree.data.time = times[c.first];
+        //
+        //                 if (unp) unp->execute(0, 0, subevent, vSiPMData, 1);
+        //                 tree.kine.clear();
+        //             }
+        //         }
     }
     return true;
 }
