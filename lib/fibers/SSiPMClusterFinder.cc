@@ -96,6 +96,8 @@ bool SSiPMClusterFinder::execute()
     int triggered_only = sifi()->isTriggeredOnly();
     
     int nhits = catSiPMsHit->getEntries(); // number of hits in current event
+    if (nhits <= 0)
+        return true;
     int nclus = 0;
     bool clusterIncremented = 0;
     SLocator loc(1);
