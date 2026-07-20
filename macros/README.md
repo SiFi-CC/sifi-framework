@@ -235,8 +235,8 @@ Save and close. If `.rootrc` file doesn't exist create it first in your home dir
 `gainAlignmentSiPM(TString path = "/scratch3/gccb/data/GSI2025/results/sifi_efficiency_run1224.root")`
 This macro fits the SiPM QDC spectras and might need some hand tweaking to find the best fits for all of them.
 It's output is:
-    `outfile.open("/scratch3/gccb/data/GSI2025/root/analysis/efficiency_run_511keV_fitting.txt");`
-    `outfile << "m\tl\tel\t\tside mean \t e_mean \t sigma \t e_sigma\n";`
+-    `outfile.open("/scratch3/gccb/data/GSI2025/root/analysis/efficiency_run_511keV_fitting.txt");`
+-    `outfile << "m\tl\tel\t\tside mean \t e_mean \t sigma \t e_sigma\n";`
 When *hand-tweaking* one needs to modify this .txt file with better parameters. Then:
 
 # gainAlignmentSiPMFromExistig.C
