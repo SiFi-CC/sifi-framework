@@ -231,6 +231,30 @@ Rint.Logon: $(ROOTLOGON)
 ```
 Save and close. If `.rootrc` file doesn't exist create it first in your home directory.
 
+# gainAlignmentSiPM.C
+`gainAlignmentSiPM(TString path = "/scratch3/gccb/data/GSI2025/results/sifi_efficiency_run1224.root")`
+This macro fits the SiPM QDC spectras and might need some hand tweaking to find the best fits for all of them.
+It's output is:
+    `outfile.open("/scratch3/gccb/data/GSI2025/root/analysis/efficiency_run_511keV_fitting.txt");`
+    `outfile << "m\tl\tel\t\tside mean \t e_mean \t sigma \t e_sigma\n";`
+When *hand-tweaking* one needs to modify this .txt file with better parameters. Then:
+
+# gainAlignmentSiPMFromExistig.C
+`int gainAlignmentSiPM(TString path)`
+This macro takes the path to the file "/scratch3/gccb/data/GSI2025/results/sifi_efficiency_run####.root" as an argument. 
+This macro checks if the file created by initial `gainAlignmentSiPM.C` (sifi_efficiency_run####_HISTOS.root) and uses it to refit charge histograms with tweaked paramaters quicker. 
+This macro creates a new version of params files. 
+
+# gainAlignmentSiPM_redraw.C`
+`void FitHistogramsDisplayAutoPeak()`
+This macro reads the QDC histograms and fits them once again using the hand tweaked parameters. It is a controll-check macro. 
+Now, when it's confirmed that alignments is correct i.e. the 511 keV peaks are fitted correctly, one can update the final `params.txt` file
+with found parameters. Simply copy the columns (text selection options in kate, vscode...):
+[SiPMsTOFPETCalibratorPar]
+0       0       0        l      10.1917 0.00462195      0.635104        0.00386232      0       0
+
+At this point the run *TOFPET trees* can be processed with updated *params.txt* file.
+
 # params.txt
 This is examplary file containing parameters for sifi_dst. It contains parameters for unpackers, calibrators, lookup tables and detector geometry. Modify this file according to your needs. 
 
