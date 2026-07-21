@@ -255,6 +255,9 @@ with found parameters. Simply copy the columns (text selection options in kate, 
 
 At this point the run *TOFPET trees* can be processed with updated *params.txt* file.
 
+# `CodedMaskGrid.C`
+This macro uses the inormation available on [wiki][https://bragg.if.uj.edu.pl/gccbwiki/images/8/85/OW_20240118_HIT_1DMaskGeometry.pdf] to create a TH2I grid of coded mask.
+
 # params.txt
 This is examplary file containing parameters for sifi_dst. It contains parameters for unpackers, calibrators, lookup tables and detector geometry. Modify this file according to your needs. 
 
