@@ -36,6 +36,10 @@
 #include "SPar.h" // for SPar
 #include "SiFi.h"
 #include "SDetectorGeomPar.h"
+#include "SPixelDetectorGeomPar.h"
+#include "SNeedlesHitFinder.h"
+#include "SNeedlesFloodmapPos.h"
+#include "SNeedlesHitFinderNeedlePar.h"
 
 #include <memory> // for make_unique, allocator
 
@@ -86,6 +90,7 @@ bool SFibersDetector::initTasks()
 //         addTask(new SFibersClusterFinder(), 3);
         addTask(new SFibersUnpacker(), 0);
         addTask(new SSiPMClusterFinder(), 1);
+        addTask(new SNeedlesHitFinder(), 2);
 //         addTask(new SFibersIdentification(), 2);
         // addTask(new SFibersRawClusterFinder(), 2);
         // addTask(new SFibersCalibrator(), 3);
@@ -124,6 +129,8 @@ bool SFibersDetector::initContainers()
 
     pm()->addParContainer("DetectorGeomPar", std::make_unique<SDetectorGeomPar>());
 
+    pm()->addParContainer("PixelDetectorGeomPar", std::make_unique<SPixelDetectorGeomPar>());
+
     if (isSimulation())
     {
         pm()->addParContainer("FibersDigitizerPar", std::make_unique<SFibersDigitizerPar>());
@@ -160,6 +167,13 @@ bool SFibersDetector::initContainers()
     pm()->addParContainer("FibersHitFinderPar", std::make_unique<SFibersHitFinderPar>());
 
     pm()->addParContainer("FibersClusterFinderPar", std::make_unique<SFibersClusterFinderPar>());
+
+    pm()->addCalContainer("NeedlesHitFinderNeedlePar", std::make_unique<SNeedlesFloodmapPos>("NeedlesHitFinderNeedlePar"));
+
+    pm()->addCalContainer("NeedlesFloodmapPos", std::make_unique<SNeedlesFloodmapPos>("NeedlesFloodmapPos"));
+
+    pm()->addLookupContainer("9to1SiPMtoFibersLookupTable",
+                             std::make_unique<SMultiFibersLookupTable>("9to1SiPMtoFibersLookupTable", 0x1000, 0x1fff, 20000));
 
     return true;
 }

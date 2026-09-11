@@ -60,7 +60,8 @@ bool STP4to1Source::open()
         return false;
     }
     entries_counter = 0;
-    t = (TTree*)input_file->Get("events");
+    // t = (TTree*)input_file->Get("events");
+    t = (TTree*)input_file->Get("data");
     nentries=t->GetEntries();
     std::cout << "nentries " << nentries << std::endl;
 /*

@@ -247,7 +247,7 @@ bool SSiPMClusterFinder::execute()
             }
             else {
             charge += pHit_in_clus->getQDC(); // charge is determined as sum of all hits charges
-            position = position + pHit_in_clus->getQDC() * TVector3(e, 0, l); // position calculated with COG
+            position = position + pHit_in_clus->getQDC() * TVector3(e, l, 0); // position calculated with COG: in case of pixel detector, the SiPMs are on the XY plane
             }
             
             if(pHit_in_clus->getAlignedQDC() == -100){
