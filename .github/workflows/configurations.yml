@@ -116,7 +116,8 @@ jobs:
           root-config --version
           root-config --cflags
           root-config --features
-          export CXXFLAGS="${CXXFLAGS} -include cstdint -pthread"
+          export CFLAGS="${CFLAGS} -DOPENSSL_API_1_1 -DOPENSSL_API_COMPAT=0x10100000L"
+          export CXXFLAGS="${CXXFLAGS} -include cstdint -pthread -DOPENSSL_API_1_1 -DOPENSSL_API_COMPAT=0x10100000L"
           export LDFLAGS="${LDFLAGS} -pthread"
           EXTRA_CMAKE_ARGS=""
           if [[ "${{ matrix.compiler-name }}" == Clang* ]]; then
@@ -130,8 +131,10 @@ jobs:
             -DCMAKE_PREFIX_PATH="${CONDA_PREFIX}" \
             -DCMAKE_C_COMPILER="${{ matrix.cc }}" \
             -DCMAKE_CXX_COMPILER="${{ matrix.cxx }}" \
+            -DCMAKE_C_FLAGS="${CFLAGS}" \
+            -DCMAKE_C_FLAGS_RELEASE="-O3 -DNDEBUG -DOPENSSL_API_1_1 -DOPENSSL_API_COMPAT=0x10100000L" \
             -DCMAKE_CXX_FLAGS="${CXXFLAGS}" \
-            -DCMAKE_CXX_FLAGS_RELEASE="-O3 -DNDEBUG -include cstdint -pthread" \
+            -DCMAKE_CXX_FLAGS_RELEASE="-O3 -DNDEBUG -include cstdint -pthread -DOPENSSL_API_1_1 -DOPENSSL_API_COMPAT=0x10100000L" \
             -DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}" \
             -DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS}" \
             -DCMAKE_CXX_STANDARD_LIBRARIES="-lpthread" \
