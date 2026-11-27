@@ -42,7 +42,7 @@ jobs:
               cxx: "x86_64-conda-linux-gnu-clang++"
             }
         cmake-version: [ "3.28.*", "4.*" ]
-        root-version: [ "6.28.06", "6.32.*" ]
+        root-version: [ "6.28.*", "6.32.*" ]
 
     steps:
       - name: Print env
