@@ -11,56 +11,38 @@ concurrency:
 
 jobs:
   build:
-    name: "${{ matrix.compiler.name }} (CMake: ${{ matrix.cmake-version || 'latest' }}, ROOT: ${{ matrix.root-version.name }})"
+    name: "${{ matrix.compiler.name }} (CMake: ${{ matrix.cmake-version }}, ROOT: ${{ matrix.root-version }})"
     runs-on: ubuntu-24.04
+
+    defaults:
+      run:
+        shell: bash -el {0}
 
     strategy:
       fail-fast: false
       matrix:
         build_type: [ Release ]
         compiler:
-          - { name: "GCC-13",   cc: "gcc-13",   cxx: "g++-13",     package: g++-13 }
-          - { name: "GCC-14",   cc: "gcc-14",   cxx: "g++-14",     package: g++-14 }
-          - { name: "Clang-14", cc: "clang-14", cxx: "clang++-14", package: clang-14 }
-          - { name: "Clang-16", cc: "clang-16", cxx: "clang++-16", package: clang-16 }
-          - { name: "Clang-18", cc: "clang-18", cxx: "clang++-18", package: clang-18 }
-        cmake-version: [ "", "3.28.3" ]
-        root-version:
           - {
-              name: "6.22.08",
-              url: "http://gccb.if.uj.edu.pl/code/root-cpp17_6.22.08_amd64.deb",
-              legacy_libs: true,
-              cxx_flags: "--std=c++17 -include cstdint",
-              cmake_args: "-DCMAKE_CXX_STANDARD=17"
+              name: "GCC-13",
+              pkg: "gcc_linux-64=13.* gxx_linux-64=13.*",
+              cc: "x86_64-conda-linux-gnu-gcc",
+              cxx: "x86_64-conda-linux-gnu-g++"
             }
           - {
-              name: "6.24.00",
-              url: "http://gccb.if.uj.edu.pl/code/root-cpp17_6.24.00_amd64.deb",
-              legacy_libs: true,
-              cxx_flags: "-include cstdint",
-              cmake_args: ""
+              name: "GCC-14",
+              pkg: "gcc_linux-64=14.* gxx_linux-64=14.*",
+              cc: "x86_64-conda-linux-gnu-gcc",
+              cxx: "x86_64-conda-linux-gnu-g++"
             }
           - {
-              name: "6.28.06",
-              url: "https://root.cern/download/root_v6.28.06.Linux-ubuntu22-x86_64-gcc11.4.tar.gz",
-              legacy_libs: true,
-              cxx_flags: "-include cstdint",
-              cmake_args: ""
+              name: "Clang-18",
+              pkg: "clang_linux-64=18.* clangxx_linux-64=18.* gxx_linux-64=13.*",
+              cc: "x86_64-conda-linux-gnu-clang",
+              cxx: "x86_64-conda-linux-gnu-clang++"
             }
-          - {
-              name: "6.30.12",
-              url: "https://root.cern/download/root_v6.30.12.Linux-ubuntu24.04-x86_64-gcc13.3.tar.gz",
-              legacy_libs: false,
-              cxx_flags: "-include cstdint",
-              cmake_args: ""
-            }
-          - {
-              name: "6.38.06",
-              url: "https://root.cern/download/root_v6.38.06.Linux-ubuntu24.04-x86_64-gcc13.3.tar.gz",
-              legacy_libs: false,
-              cxx_flags: "-include cstdint",
-              cmake_args: ""
-            }
+        cmake-version: [ "3.28.*", "4.*" ]
+        root-version: [ "6.28.06", "6.32.*" ]
 
     steps:
       - name: Print env
@@ -68,85 +50,58 @@ jobs:
           echo github.event.action: ${{ github.event.action }}
           echo github.event_name: ${{ github.event_name }}
 
-      - name: Install common dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y g++ ${{ matrix.compiler.package }}
-          sudo apt-get install -y \
-            cmake libgtest-dev lcov rapidjson-dev libcurl4-openssl-dev \
-            python3-numpy libtbb-dev libxxhash0 libxxhash-dev liblz4-dev libzstd-dev \
-            libxpm-dev libxft-dev libxext-dev libx11-dev libxmu-dev \
-            libssl-dev libgsl-dev libpcre2-dev libfftw3-dev libxml2-dev \
-            libgl1 libglu1-mesa libgif7 libjpeg-turbo8 libtiff6
-
-          if [[ "${{ matrix.root-version.legacy_libs }}" == "true" ]]; then
-            PCRE3_DEB=$(curl -s http://archive.ubuntu.com/ubuntu/pool/main/p/pcre3/ | grep -oE 'libpcre3_[^"]+_amd64\.deb' | sort -V | tail -n1)
-            wget --tries=4 --waitretry=5 --retry-connrefused -q "http://archive.ubuntu.com/ubuntu/pool/main/p/pcre3/${PCRE3_DEB}"
-            sudo dpkg -i "${PCRE3_DEB}"
-            if [[ ! -e /usr/lib/x86_64-linux-gnu/libtiff.so.5 && -e /usr/lib/x86_64-linux-gnu/libtiff.so.6 ]]; then
-              sudo ln -s /usr/lib/x86_64-linux-gnu/libtiff.so.6 /usr/lib/x86_64-linux-gnu/libtiff.so.5
-            fi
-          fi
-
-          sleep $((RANDOM % 10))
-          ROOT_FILE=$(basename "${{ matrix.root-version.url }}")
-          wget --tries=4 --waitretry=5 --retry-connrefused -q "${{ matrix.root-version.url }}"
-          if [[ "${ROOT_FILE}" == *.deb ]]; then
-            sudo dpkg -i "${ROOT_FILE}"
-          else
-            sudo mkdir -p /opt/root
-            sudo tar -xzf "${ROOT_FILE}" -C /opt/root --strip-components=1
-          fi
-
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      - name: Setup CMake
-        uses: jwlawson/actions-setup-cmake@v2
+      - name: Setup Micromamba environment
+        uses: mamba-org/setup-micromamba@v2
         with:
-          cmake-version: ${{ matrix.cmake-version }}
+          environment-name: sifi-ci
+          cache-downloads: true
+          create-args: >-
+            -c conda-forge
+            root_base=${{ matrix.root-version }}
+            cmake=${{ matrix.cmake-version }}
+            ${{ matrix.compiler.pkg }}
+            make
+            gtest
+            rapidjson
+            libcurl
+            gsl
+            tbb-devel
+            xxhash
+            numpy
+            lcov
 
       - name: Configure
-        shell: bash
         run: |
-          . /etc/profile
-          if [[ -f /opt/root/bin/thisroot.sh ]]; then
-            source /opt/root/bin/thisroot.sh
-          fi
           root-config --version
           root-config --cflags
           root-config --features
+          export CXXFLAGS="${CXXFLAGS} -include cstdint"
           EXTRA_CMAKE_ARGS=""
-          if [[ "${{ matrix.compiler.cc }}" == clang* ]]; then
-            EXTRA_CMAKE_ARGS="-DDABC_cpp_LIBRARY=$(g++ -print-file-name=libstdc++.so)"
+          if [[ "${{ matrix.compiler.name }}" == Clang* ]]; then
+            EXTRA_CMAKE_ARGS="-DDABC_cpp_LIBRARY=$(x86_64-conda-linux-gnu-g++ -print-file-name=libstdc++.so)"
           fi
           cmake \
             -S . \
             -B build \
             -DENABLE_TESTING=On \
             -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
-            -DCMAKE_C_COMPILER=${{ matrix.compiler.cc }} \
-            -DCMAKE_CXX_COMPILER=${{ matrix.compiler.cxx }} \
-            -DCMAKE_CXX_FLAGS="${{ matrix.root-version.cxx_flags }}" \
+            -DCMAKE_PREFIX_PATH="${CONDA_PREFIX}" \
+            -DCMAKE_C_COMPILER="${{ matrix.compiler.cc }}" \
+            -DCMAKE_CXX_COMPILER="${{ matrix.compiler.cxx }}" \
+            -DCMAKE_CXX_FLAGS="${CXXFLAGS}" \
             -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
             -DCMAKE_INSTALL_PREFIX:PATH=instdir \
-            ${EXTRA_CMAKE_ARGS} \
-            ${{ matrix.root-version.cmake_args }}
+            ${EXTRA_CMAKE_ARGS}
 
       - name: Build
-        shell: bash
         run: |
-          if [[ -f /opt/root/bin/thisroot.sh ]]; then
-            source /opt/root/bin/thisroot.sh
-          fi
           cmake --build build --config ${{ matrix.build_type }} -j $(nproc) || cmake --build build --config ${{ matrix.build_type }} -j 1
 
       - name: Test
-        shell: bash
         run: |
-          if [[ -f /opt/root/bin/thisroot.sh ]]; then
-            source /opt/root/bin/thisroot.sh
-          fi
           ctest --test-dir build --output-on-failure
