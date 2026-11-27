@@ -1,5 +1,5 @@
 # This is a basic workflow to help you get started with Actions
-name: Compiler Checks (Ubuntu 24.04)
+name: Compiler Checks
 
 # Controls when the action will run. Triggers the workflow on push
 on:
@@ -14,52 +14,46 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
-    name: "${{ matrix.compiler.name }} (CMake: ${{ matrix.cmake-version }}, ROOT: ${{ matrix.root-version.name }})"
-    runs-on: ${{ matrix.os-version }}
+    name: "${{ matrix.compiler.name }} (${{ matrix.compiler.os }}, CMake: ${{ matrix.cmake-version }}, ROOT: ${{ matrix.root-version.name }})"
+    runs-on: ${{ matrix.compiler.os }}
 
     strategy:
       fail-fast: false
       matrix:
-        os-version: [ ubuntu-24.04 ]
         build_type: [ Release ]
         compiler:
-        - {
-            name: "GCC-9",
-            os: ubuntu-latest,
-            cc: "gcc-9",
-            cxx: "g++-9",
-            package: g++-9,
-          }
-        - {
-            name: "GCC-10",
-            os: ubuntu-latest,
-            cc: "gcc-10",
-            cxx: "g++-10",
-            package: g++-10,
-          }
-        - {
-            name: "Clang-11",
-            os: ubuntu-latest,
-            cc: "clang-11",
-            cxx: "clang++-11",
-            package: clang-11,
-          }
-        - {
-            name: "Clang-12",
-            os: ubuntu-latest,
-            cc: "clang-12",
-            cxx: "clang++-12",
-            package: clang-12,
-          }
+          # --- GCC ---
+          - { name: "GCC-9",  os: ubuntu-24.04, cc: "gcc-9",  cxx: "g++-9",  package: g++-9 }
+          - { name: "GCC-10", os: ubuntu-24.04, cc: "gcc-10", cxx: "g++-10", package: g++-10 }
+          - { name: "GCC-11", os: ubuntu-24.04, cc: "gcc-11", cxx: "g++-11", package: g++-11 }
+          - { name: "GCC-12", os: ubuntu-24.04, cc: "gcc-12", cxx: "g++-12", package: g++-12 }
+          - { name: "GCC-13", os: ubuntu-24.04, cc: "gcc-13", cxx: "g++-13", package: g++-13 }
+          - { name: "GCC-14", os: ubuntu-24.04, cc: "gcc-14", cxx: "g++-14", package: g++-14 }
+          - { name: "GCC-15", os: ubuntu-26.04, cc: "gcc-15", cxx: "g++-15", package: g++-15 }
+          - { name: "GCC-16", os: ubuntu-26.04, cc: "gcc-16", cxx: "g++-16", package: g++-16 }
+
+          # --- Clang ---
+          - { name: "Clang-11", os: ubuntu-24.04, cc: "clang-11", cxx: "clang++-11", package: clang-11 }
+          - { name: "Clang-12", os: ubuntu-22.04, cc: "clang-12", cxx: "clang++-12", package: clang-12 }
+          - { name: "Clang-13", os: ubuntu-22.04, cc: "clang-13", cxx: "clang++-13", package: clang-13 }
+          - { name: "Clang-14", os: ubuntu-24.04, cc: "clang-14", cxx: "clang++-14", package: clang-14 }
+          - { name: "Clang-15", os: ubuntu-24.04, cc: "clang-15", cxx: "clang++-15", package: clang-15 }
+          - { name: "Clang-16", os: ubuntu-24.04, cc: "clang-16", cxx: "clang++-16", package: clang-16 }
+          - { name: "Clang-17", os: ubuntu-24.04, cc: "clang-17", cxx: "clang++-17", package: clang-17 }
+          - { name: "Clang-18", os: ubuntu-24.04, cc: "clang-18", cxx: "clang++-18", package: clang-18 }
+          - { name: "Clang-19", os: ubuntu-26.04, cc: "clang-19", cxx: "clang++-19", package: clang-19 }
+          - { name: "Clang-20", os: ubuntu-26.04, cc: "clang-20", cxx: "clang++-20", package: clang-20 }
+          - { name: "Clang-21", os: ubuntu-26.04, cc: "clang-21", cxx: "clang++-21", package: clang-21 }
+          - { name: "Clang-22", os: ubuntu-26.04, cc: "clang-22", cxx: "clang++-22", package: clang-22 }
         cmake-version: [ "", "3.16" ]
         root-version:
-        - {
-            name: 6.22.08,
-            cmake_args: "-DCMAKE_CXX_FLAGS='--std=c++17' -DCMAKE_CXX_STANDARD=17"
-          }
-        - {
-            name: 6.24.00,
-          }
+          - {
+              name: 6.22.08,
+              cmake_args: "-DCMAKE_CXX_FLAGS='--std=c++17' -DCMAKE_CXX_STANDARD=17"
+            }
+          - {
+              name: 6.24.00,
+            }
 
     steps:
       - name: Print env
@@ -99,6 +93,8 @@ jobs:
             -S . \
             -B build \
             -DENABLE_TESTING=On \
+            -DCMAKE_C_COMPILER=${{ matrix.compiler.cc }} \
+            -DCMAKE_CXX_COMPILER=${{ matrix.compiler.cxx }} \
             -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
             -DCMAKE_INSTALL_PREFIX:PATH=instdir \
             ${{ matrix.root-version.cmake_args }}
