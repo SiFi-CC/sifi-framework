@@ -11,8 +11,8 @@ concurrency:
 
 jobs:
   build:
-    name: "${{ matrix.compiler-name }} (CMake: ${{ matrix.cmake-version }}, ROOT: ${{ matrix.root-version }})"
-    runs-on: ubuntu-24.04
+    name: "${{ matrix.compiler-name }} (${{ matrix.os }}, CMake: ${{ matrix.cmake-version }}, ROOT: ${{ matrix.root-version }})"
+    runs-on: ${{ matrix.os }}
 
     defaults:
       run:
@@ -23,7 +23,9 @@ jobs:
       matrix:
         include:
           # ROOT 6.28.* (LTS floor — conda-forge caps GCC at 12.*)
-          - root-version: "6.28.*"
+          - os: "ubuntu-24.04"
+            root-version: "6.28.*"
+            cxx-std: "17"
             cmake-version: "3.28.*"
             compiler-name: "GCC-12"
             pkg: "gcc_linux-64=12.* gxx_linux-64=12.*"
@@ -31,7 +33,9 @@ jobs:
             cxx: "x86_64-conda-linux-gnu-g++"
             build-type: "Release"
 
-          - root-version: "6.28.*"
+          - os: "ubuntu-24.04"
+            root-version: "6.28.*"
+            cxx-std: "17"
             cmake-version: "4.*"
             compiler-name: "GCC-12"
             pkg: "gcc_linux-64=12.* gxx_linux-64=12.*"
@@ -39,16 +43,10 @@ jobs:
             cxx: "x86_64-conda-linux-gnu-g++"
             build-type: "Release"
 
-          - root-version: "6.28.*"
-            cmake-version: "4.*"
-            compiler-name: "Clang-18"
-            pkg: "clang_linux-64=18.* clangxx_linux-64=18.* gxx_linux-64=12.*"
-            cc: "x86_64-conda-linux-gnu-clang"
-            cxx: "x86_64-conda-linux-gnu-clang++"
-            build-type: "Release"
-
-          # ROOT 6.34.* (Latest C++17-default ROOT series on conda-forge — requires GCC >= 13)
-          - root-version: "6.34.*"
+          # ROOT 6.36.* (Latest C++17-default ROOT series on conda-forge)
+          - os: "ubuntu-24.04"
+            root-version: "6.36.*"
+            cxx-std: "17"
             cmake-version: "4.*"
             compiler-name: "GCC-13"
             pkg: "gcc_linux-64=13.* gxx_linux-64=13.*"
@@ -56,7 +54,9 @@ jobs:
             cxx: "x86_64-conda-linux-gnu-g++"
             build-type: "Release"
 
-          - root-version: "6.34.*"
+          - os: "ubuntu-26.04"
+            root-version: "6.36.*"
+            cxx-std: "17"
             cmake-version: "3.28.*"
             compiler-name: "GCC-14"
             pkg: "gcc_linux-64=14.* gxx_linux-64=14.*"
@@ -64,20 +64,35 @@ jobs:
             cxx: "x86_64-conda-linux-gnu-g++"
             build-type: "Release"
 
-          - root-version: "6.34.*"
+          - os: "ubuntu-26.04"
+            root-version: "6.36.*"
+            cxx-std: "17"
             cmake-version: "4.*"
-            compiler-name: "GCC-14"
-            pkg: "gcc_linux-64=14.* gxx_linux-64=14.*"
+            compiler-name: "GCC-15"
+            pkg: "gcc_linux-64=15.* gxx_linux-64=15.*"
             cc: "x86_64-conda-linux-gnu-gcc"
             cxx: "x86_64-conda-linux-gnu-g++"
             build-type: "Release"
 
-          - root-version: "6.34.*"
+          # ROOT 6.38.* / 6.40.* (C++20-default ROOT + bleeding-edge GCC 15/16 on Ubuntu 26.04)
+          - os: "ubuntu-26.04"
+            root-version: "6.38.*"
+            cxx-std: "20"
             cmake-version: "4.*"
-            compiler-name: "Clang-18"
-            pkg: "clang_linux-64=18.* clangxx_linux-64=18.* gxx_linux-64=13.*"
-            cc: "x86_64-conda-linux-gnu-clang"
-            cxx: "x86_64-conda-linux-gnu-clang++"
+            compiler-name: "GCC-15"
+            pkg: "gcc_linux-64=15.* gxx_linux-64=15.*"
+            cc: "x86_64-conda-linux-gnu-gcc"
+            cxx: "x86_64-conda-linux-gnu-g++"
+            build-type: "Release"
+
+          - os: "ubuntu-26.04"
+            root-version: "6.40.*"
+            cxx-std: "20"
+            cmake-version: "4.*"
+            compiler-name: "GCC-16"
+            pkg: "gcc_linux-64=16.* gxx_linux-64=16.*"
+            cc: "x86_64-conda-linux-gnu-gcc"
+            cxx: "x86_64-conda-linux-gnu-g++"
             build-type: "Release"
 
     steps:
@@ -118,13 +133,9 @@ jobs:
           root-config --features
           mkdir -p build/compat_inc/bits
           printf '#include <getopt.h>\n' > build/compat_inc/bits/getopt_core.h
-          export CFLAGS="${CFLAGS} -DOPENSSL_API_1_1 -DOPENSSL_API_COMPAT=0x10100000L"
+          export CFLAGS="${CFLAGS} -std=gnu17 -DOPENSSL_API_1_1 -DOPENSSL_API_COMPAT=0x10100000L"
           export CXXFLAGS="${CXXFLAGS} -I${PWD}/build/compat_inc -include cstdint -pthread -DOPENSSL_API_1_1 -DOPENSSL_API_COMPAT=0x10100000L"
           export LDFLAGS="${LDFLAGS} -pthread"
-          EXTRA_CMAKE_ARGS=""
-          if [[ "${{ matrix.compiler-name }}" == Clang* ]]; then
-            EXTRA_CMAKE_ARGS="-DDABC_cpp_LIBRARY=$(x86_64-conda-linux-gnu-g++ -print-file-name=libstdc++.so)"
-          fi
           cmake \
             -S . \
             -B build \
@@ -133,16 +144,16 @@ jobs:
             -DCMAKE_PREFIX_PATH="${CONDA_PREFIX}" \
             -DCMAKE_C_COMPILER="${{ matrix.cc }}" \
             -DCMAKE_CXX_COMPILER="${{ matrix.cxx }}" \
+            -DCMAKE_CXX_STANDARD="${{ matrix.cxx-std }}" \
             -DCMAKE_C_FLAGS="${CFLAGS}" \
-            -DCMAKE_C_FLAGS_RELEASE="-O3 -DNDEBUG -DOPENSSL_API_1_1 -DOPENSSL_API_COMPAT=0x10100000L" \
+            -DCMAKE_C_FLAGS_RELEASE="-O3 -DNDEBUG -std=gnu17 -DOPENSSL_API_1_1 -DOPENSSL_API_COMPAT=0x10100000L" \
             -DCMAKE_CXX_FLAGS="${CXXFLAGS}" \
             -DCMAKE_CXX_FLAGS_RELEASE="-O3 -DNDEBUG -I${PWD}/build/compat_inc -include cstdint -pthread -DOPENSSL_API_1_1 -DOPENSSL_API_COMPAT=0x10100000L" \
             -DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}" \
             -DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS}" \
             -DCMAKE_CXX_STANDARD_LIBRARIES="-lpthread" \
             -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} \
-            -DCMAKE_INSTALL_PREFIX:PATH=instdir \
-            ${EXTRA_CMAKE_ARGS}
+            -DCMAKE_INSTALL_PREFIX:PATH=instdir
 
       - name: Build
         run: |
