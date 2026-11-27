@@ -29,24 +29,35 @@ jobs:
           - {
               name: "6.22.08",
               url: "http://gccb.if.uj.edu.pl/code/root-cpp17_6.22.08_amd64.deb",
+              legacy_libs: true,
               cxx_flags: "--std=c++17 -include cstdint",
               cmake_args: "-DCMAKE_CXX_STANDARD=17"
             }
           - {
               name: "6.24.00",
               url: "http://gccb.if.uj.edu.pl/code/root-cpp17_6.24.00_amd64.deb",
+              legacy_libs: true,
+              cxx_flags: "-include cstdint",
+              cmake_args: ""
+            }
+          - {
+              name: "6.28.06",
+              url: "https://root.cern/download/root_v6.28.06.Linux-ubuntu22-x86_64-gcc11.4.tar.gz",
+              legacy_libs: true,
               cxx_flags: "-include cstdint",
               cmake_args: ""
             }
           - {
               name: "6.30.12",
               url: "https://root.cern/download/root_v6.30.12.Linux-ubuntu24.04-x86_64-gcc13.3.tar.gz",
+              legacy_libs: false,
               cxx_flags: "-include cstdint",
               cmake_args: ""
             }
           - {
               name: "6.38.06",
               url: "https://root.cern/download/root_v6.38.06.Linux-ubuntu24.04-x86_64-gcc13.3.tar.gz",
+              legacy_libs: false,
               cxx_flags: "-include cstdint",
               cmake_args: ""
             }
@@ -67,6 +78,17 @@ jobs:
             libxpm-dev libxft-dev libxext-dev libx11-dev libxmu-dev \
             libssl-dev libgsl-dev libpcre2-dev libfftw3-dev libxml2-dev \
             libgl1 libglu1-mesa libgif7 libjpeg-turbo8 libtiff6
+
+          if [[ "${{ matrix.root-version.legacy_libs }}" == "true" ]]; then
+            PCRE3_DEB=$(curl -s http://archive.ubuntu.com/ubuntu/pool/main/p/pcre3/ | grep -oE 'libpcre3_[^"]+_amd64\.deb' | sort -V | tail -n1)
+            wget --tries=4 --waitretry=5 --retry-connrefused -q "http://archive.ubuntu.com/ubuntu/pool/main/p/pcre3/${PCRE3_DEB}"
+            sudo dpkg -i "${PCRE3_DEB}"
+            if [[ ! -e /usr/lib/x86_64-linux-gnu/libtiff.so.5 && -e /usr/lib/x86_64-linux-gnu/libtiff.so.6 ]]; then
+              sudo ln -s /usr/lib/x86_64-linux-gnu/libtiff.so.6 /usr/lib/x86_64-linux-gnu/libtiff.so.5
+            fi
+          fi
+
+          sleep $((RANDOM % 10))
           ROOT_FILE=$(basename "${{ matrix.root-version.url }}")
           wget --tries=4 --waitretry=5 --retry-connrefused -q "${{ matrix.root-version.url }}"
           if [[ "${ROOT_FILE}" == *.deb ]]; then
