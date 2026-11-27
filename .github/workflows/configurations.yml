@@ -90,29 +90,6 @@ jobs:
             build-type: "Release"
             experimental: false
 
-          # --- Bleeding-Edge Tier (C++20 ROOT 6.38 / 6.40 + GCC 15 / 16 on Ubuntu 26.04) ---
-          - os: "ubuntu-26.04"
-            root-version: "6.38.*"
-            cxx-std: "20"
-            cmake-version: "4.*"
-            compiler-name: "GCC-15"
-            pkg: "gcc_linux-64=15.* gxx_linux-64=15.*"
-            cc: "x86_64-conda-linux-gnu-gcc"
-            cxx: "x86_64-conda-linux-gnu-g++"
-            build-type: "Release"
-            experimental: true
-
-          - os: "ubuntu-26.04"
-            root-version: "6.40.*"
-            cxx-std: "20"
-            cmake-version: "4.*"
-            compiler-name: "GCC-16"
-            pkg: "gcc_linux-64=16.* gxx_linux-64=16.*"
-            cc: "x86_64-conda-linux-gnu-gcc"
-            cxx: "x86_64-conda-linux-gnu-g++"
-            build-type: "Release"
-            experimental: true
-
     steps:
       - name: Print env
         run: |
