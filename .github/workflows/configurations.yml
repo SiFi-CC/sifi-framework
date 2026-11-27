@@ -47,15 +47,7 @@ jobs:
             cxx: "x86_64-conda-linux-gnu-clang++"
             build-type: "Release"
 
-          # ROOT 6.34.* (Latest C++17-default ROOT series on conda-forge)
-          - root-version: "6.34.*"
-            cmake-version: "4.*"
-            compiler-name: "GCC-12"
-            pkg: "gcc_linux-64=12.* gxx_linux-64=12.*"
-            cc: "x86_64-conda-linux-gnu-gcc"
-            cxx: "x86_64-conda-linux-gnu-g++"
-            build-type: "Release"
-
+          # ROOT 6.34.* (Latest C++17-default ROOT series on conda-forge — requires GCC >= 13)
           - root-version: "6.34.*"
             cmake-version: "4.*"
             compiler-name: "GCC-13"
@@ -124,7 +116,8 @@ jobs:
           root-config --version
           root-config --cflags
           root-config --features
-          export CXXFLAGS="${CXXFLAGS} -include cstdint"
+          export CXXFLAGS="${CXXFLAGS} -include cstdint -pthread"
+          export LDFLAGS="${LDFLAGS} -pthread"
           EXTRA_CMAKE_ARGS=""
           if [[ "${{ matrix.compiler-name }}" == Clang* ]]; then
             EXTRA_CMAKE_ARGS="-DDABC_cpp_LIBRARY=$(x86_64-conda-linux-gnu-g++ -print-file-name=libstdc++.so)"
@@ -138,6 +131,10 @@ jobs:
             -DCMAKE_C_COMPILER="${{ matrix.cc }}" \
             -DCMAKE_CXX_COMPILER="${{ matrix.cxx }}" \
             -DCMAKE_CXX_FLAGS="${CXXFLAGS}" \
+            -DCMAKE_CXX_FLAGS_RELEASE="-O3 -DNDEBUG -include cstdint -pthread" \
+            -DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}" \
+            -DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS}" \
+            -DCMAKE_CXX_STANDARD_LIBRARIES="-lpthread" \
             -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} \
             -DCMAKE_INSTALL_PREFIX:PATH=instdir \
             ${EXTRA_CMAKE_ARGS}
