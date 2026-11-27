@@ -165,7 +165,10 @@ bool SCBSource::readCurrentEvent()
             hit_cache->q_lg = q_lg;
             hit_cache->q_hg = q_hg;
             
-            SFibersChannel* lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000,hit_cache->ch));
+            // getAddress() returns the concrete SFibersChannel stored in the lookup
+            // table, so a static_cast is sufficient here. dynamic_cast was used
+            // before, which requires RTTI and silently yields nullptr on mismatch.
+            auto* lc = static_cast<SFibersChannel*>(pLookUp->getAddress(0x1000, hit_cache->ch));
                 loc[0] = lc->m; // mod;
                 loc[1] = lc->l; // lay;
                 loc[2] = lc->s; // fib;
@@ -229,7 +232,9 @@ bool SCBSource::readCurrentEvent()
                 hit_current->tstamp_us = hit_cache->tstamp_us;
                 hit_current->trgID = hit_cache->trgID;
                 
-                SFibersChannel* lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000,hit_current->ch));
+                // See the comment in the init loop: static_cast is enough because
+                // the lookup table stores SFibersChannel objects.
+                auto* lc = static_cast<SFibersChannel*>(pLookUp->getAddress(0x1000, hit_current->ch));
 
                 loc[0] = lc->m; // mod;
                 loc[1] = lc->l; // lay;
@@ -287,7 +292,9 @@ bool SCBSource::readCurrentEvent()
                 hit_current->ch = ch;
                 hit_current->q_lg = q_lg;
                 hit_current->q_hg = q_hg;
-                SFibersChannel* lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000,hit_current->ch));
+                // See the comment in the init loop: static_cast is enough because
+                // the lookup table stores SFibersChannel objects.
+                auto* lc = static_cast<SFibersChannel*>(pLookUp->getAddress(0x1000, hit_current->ch));
                 loc[0] = lc->m; // mod;
                 loc[1] = lc->l; // lay;
                 loc[2] = lc->s; // fib;

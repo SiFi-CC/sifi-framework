@@ -13,12 +13,14 @@
 
 #include "sifi_export.h"
 
-#include "SUnpacker.h"
 #include "SFibersLookup.h"
+#include "SUnpacker.h"
 
 #include <cstddef>     // for size_t
 #include <cstdint>     // for uint16_t
 #include <sys/types.h> // for ulong
+
+#include <RtypesCore.h> // for Long64_t
 
 class SCategory;
 class SFibersGeomPar;
@@ -28,8 +30,8 @@ class SIFI_EXPORT SSimImporter : public SUnpacker
 {
 protected:
     // members
-    SCategory* catSiPMHit{nullptr}; ///< raw SiPM hit category
-    SCategory* catEventNumber{nullptr}; ///< event number category
+    SCategory* catSiPMHit{nullptr};         ///< raw SiPM hit category
+    SCategory* catEventNumber{nullptr};     ///< event number category
     SDetectorGeomPar* pDetGeomPar{nullptr}; ///< detector geometry
 
 public:
@@ -43,7 +45,7 @@ public:
     virtual bool execute(ulong event, ulong seq_number, uint16_t subevent, void* buffer,
                          size_t length) override;
     bool execute_withEntryID(ulong event, ulong seq_number, uint16_t subevent, void* buffer,
-                         size_t length, long entryID);
+                             size_t length, Long64_t entryID) override;
 };
 
 #endif /* SSIMSIMPORTER_H */

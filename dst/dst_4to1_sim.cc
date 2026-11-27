@@ -20,6 +20,7 @@
 #include <bits/getopt_core.h> // for optarg, optind
 #include <cstdint>            // for uint16_t
 #include <cstdlib>            // for atoi
+#include <fstream>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -30,6 +31,7 @@ int main(int argc, char** argv)
 {
     int events = -1;
     int save_samples = 0;
+    int no_tasks = 0;
 
     std::string output("test.root");
     std::string params_file("params.txt");
@@ -39,6 +41,7 @@ int main(int argc, char** argv)
     while (1)
     {
         static struct option long_options[] = {{"ss", no_argument, &save_samples, 1},
+                                               {"no_tasks", no_argument, &no_tasks, 1},
                                                {"events", required_argument, 0, 'e'},
                                                {"output", required_argument, 0, 'o'},
                                                {"params_file", required_argument, 0, 'p'},
@@ -66,6 +69,14 @@ int main(int argc, char** argv)
         }
     }
 
+    if (no_tasks)
+    {
+        // In no-tasks mode we want to be able to run minimal I/O even if some
+        // parameter containers are not present in the params file. The framework
+        // asserts on missing containers by default, so relax that here.
+        sifi()->disableAssertations();
+    }
+
     SSimImporter* unp = new SSimImporter;
 
     SSimSource* source1 = new SSimSource();
@@ -77,6 +88,17 @@ int main(int argc, char** argv)
         ++optind;
     }
     sifi()->addSource(source1);
+
+    {
+        // Fail early with a clear message instead of letting the parameter source
+        // fail later with a less obvious error.
+        std::ifstream params_stream(params_file);
+        if (!params_stream.good())
+        {
+            std::cerr << "Source file " << params_file << " could not be opened!" << std::endl;
+            return 1;
+        }
+    }
 
     // output files
     sifi()->setOutputFileName(output);
@@ -96,8 +118,14 @@ int main(int argc, char** argv)
     SDetectorManager* detm = SDetectorManager::instance();
 
     detm->addDetector(new SFibersDetector("Fibers", 1, 7, 55));
-    detm->initTasks();
-    detm->initParameterContainers();
+    // --no_tasks skips task and parameter-container initialisation so the program
+    // can be used purely to convert simulation input into a SiFi tree. Categories
+    // are still initialised because the importer writes into them.
+    if (!no_tasks)
+    {
+        detm->initTasks();
+        detm->initParameterContainers();
+    }
     detm->initCategories();
 //     sifi()->buildCategory(SCategory::CatFibersCal, true);
 
@@ -110,13 +138,13 @@ int main(int argc, char** argv)
     
     // initialize tasks
     STaskManager* tm = STaskManager::instance();
-    tm->initTasks();
+    if (!no_tasks) tm->initTasks();
 
     sifi()->setTree(new TTree());
 
     sifi()->loop(ev_limit);
 
-    tm->finalizeTasks();
+    if (!no_tasks) tm->finalizeTasks();
 
     sifi()->save();
 

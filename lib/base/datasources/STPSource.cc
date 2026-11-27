@@ -146,7 +146,9 @@ bool STPSource::readCurrentEvent()
         hit_cache->time /= ps_to_ns;
         entries_counter++;
         if(entries_counter == nentries) state = DONE;
-        SFibersChannel* lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000,hit_cache->channelID));
+        // The lookup table stores SFibersChannel objects, so a static_cast is
+        // sufficient; dynamic_cast would need RTTI and return nullptr on mismatch.
+        auto* lc = static_cast<SFibersChannel*>(pLookUp->getAddress(0x1000, hit_cache->channelID));
         loc[0] = lc->m; // mod;
         loc[1] = lc->l; // lay;
         loc[2] = lc->s; // fib;
@@ -192,7 +194,8 @@ bool STPSource::readCurrentEvent()
             
             t->GetEntry(entries_counter);
             hit_current->time /= ps_to_ns;
-            SFibersChannel* lc = dynamic_cast<SFibersChannel*>(pLookUp->getAddress(0x1000,hit_current->channelID));
+            // See the comment above: static_cast is enough for lookup results.
+            auto* lc = static_cast<SFibersChannel*>(pLookUp->getAddress(0x1000, hit_current->channelID));
             loc[0] = lc->m; // mod;
             loc[1] = lc->l; // lay;
             loc[2] = lc->s; // fib;

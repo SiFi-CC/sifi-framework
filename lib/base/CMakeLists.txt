@@ -7,8 +7,16 @@ if(BUILD_SIFIDETRES_SUPPORT)
     set(SSIM_H "datasources/SSimSource.h")
     #set(IMPORTER_SIFIDETRES_CC "importers/SSiFiCCDetResImporter.cc")
     #set(IMPORTER_SIFIDETRES_H "importers/SSiFiCCDetResImporter.h")
-    set(IMPORTER_SIFISIM_CC "importers/SSimImporter.cc")
-    set(IMPORTER_SIFISIM_H "importers/SSimImporter.h")
+    # SSimImporter is implemented in the Fibers library. Keep the header
+    # available for compilation, but do not expose it via the libSiFi ROOT
+    # dictionary to avoid hard runtime dependencies on Fibers.
+    #
+    # Rationale: SSimImporter needs SFibersLookup / SDetectorGeomPar, which live in
+    # Fibers. Building it into libSiFi would make libSiFi depend on libFibers, while
+    # libFibers already depends on libSiFi - a circular dependency. Compiling it as
+    # part of Fibers instead keeps the dependency direction one-way.
+    set(IMPORTER_SIFISIM_CC "")
+    set(IMPORTER_SIFISIM_H "")
 endif()
 
 SIFI_GENERATE_LIBRARY(
@@ -55,7 +63,9 @@ SIFI_GENERATE_LIBRARY(
         datasources/SDDUnpacker.cc
 
         #${IMPORTER_SIFIDETRES_CC}
-        ${IMPORTER_SIFISIM_CC}
+        # NOTE: SSimImporter is implemented in the Fibers library (see
+        # lib/fibers/CMakeLists.txt) to avoid depending on Fibers from SiFi.
+        # Adding it here would create a SiFi <-> Fibers dependency cycle.
 
         datastruct/SCategory.cc
         datastruct/SCategoryHeader.cc

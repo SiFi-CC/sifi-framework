@@ -11,7 +11,7 @@
  *************************************************************************/
 
 #include "SKSSource.h"
-#include "SFibersDDUnpacker.h"
+#include "SDDUnpacker.h"
 #include "SUnpacker.h"
 
 #include <RtypesCore.h> // for Int_t
@@ -86,7 +86,11 @@ bool SKSSource::open()
             printf("Forced unpacker %#x not initalized\n", subevent);
             abort();
         }
-        auto ddUnp = dynamic_cast<SFibersDDUnpacker*>(unpackers[subevent]);
+        // setDataLen() is declared on the base SDDUnpacker, so cast to that
+        // instead of the Fibers-specific SFibersDDUnpacker. This keeps the base
+        // library free of a dependency on Fibers and still works for any
+        // SDDUnpacker subclass.
+        auto* ddUnp = dynamic_cast<SDDUnpacker*>(unpackers[subevent]);
         if (ddUnp) ddUnp->setDataLen(samples);
     }
     else
@@ -100,7 +104,8 @@ bool SKSSource::open()
                 printf("Unpacker %#x not initalized\n", iter->first);
                 abort();
             }
-            auto ddUnp = dynamic_cast<SFibersDDUnpacker*>(iter->second);
+            // See the comment above: use the base SDDUnpacker type.
+            auto* ddUnp = dynamic_cast<SDDUnpacker*>(iter->second);
             if (ddUnp) ddUnp->setDataLen(samples);
         }
     }

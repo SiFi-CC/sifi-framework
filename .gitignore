@@ -1,0 +1,91 @@
+# ---------------------------------------------------------------------------
+# Build directories
+# ---------------------------------------------------------------------------
+build/
+build-*/
+cmake-build-*/
+_deps/
+Testing/
+
+# ---------------------------------------------------------------------------
+# CMake / build system generated files
+# ---------------------------------------------------------------------------
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
+install_manifest.txt
+compile_commands.json
+Makefile
+*.cmake.tmp
+
+# Generated from *.in templates
+/Doxyfile
+/SiFiConfig.h
+/sifi_export.h
+/python/setup.py
+
+# ---------------------------------------------------------------------------
+# Compiled objects, libraries and ROOT dictionaries
+# ---------------------------------------------------------------------------
+*.o
+*.o.d
+*.obj
+*.lo
+*.la
+*.a
+*.so
+*.so.*
+*.dylib
+*.dll
+*.mod
+*.gch
+*.pch
+*.pcm
+*.rootmap
+*.gcda
+*.gcno
+*.gcov
+
+# ---------------------------------------------------------------------------
+# Doxygen output
+# ---------------------------------------------------------------------------
+doc/html/
+doc/latex/
+doc/xml/
+
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# ---------------------------------------------------------------------------
+# Editors / IDEs
+# ---------------------------------------------------------------------------
+.vscode/
+.idea/
+.history/
+*.swp
+*.swo
+*~
+*.orig
+*.rej
+*.bak
+
+# ---------------------------------------------------------------------------
+# Local scratch: analysis scripts, plots and test output
+# ---------------------------------------------------------------------------
+/analyse_*.py
+/analysis_*.py
+/plot_*.py
+/*.png
+/*.pdf
+/*.eps
+/*.root
+/params.txt

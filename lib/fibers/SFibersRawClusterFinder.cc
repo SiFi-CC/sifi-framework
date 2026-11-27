@@ -247,15 +247,24 @@ std::vector<int> getSiPMsFromFiber(int m, int l, int f){
 
 bool SFibersRawClusterFinder::execute()
 { 
-    const int N_MODULES = 1; //TODO to musi być brane z pliku params!
     SLocator loc(3);
-    
-    std::vector<SSiPMCluster*> ClustersTop[N_MODULES];
-    std::vector<SSiPMCluster*> ClustersBottom[N_MODULES];
-    std::vector<SSiPMHit*> SiPMsTop[N_MODULES];
-    std::vector<SSiPMHit*> SiPMsBottom[N_MODULES];
+
+    // Per-module storage. These used to be fixed-size arrays of N_MODULES = 1,
+    // which silently dropped every cluster/hit belonging to module >= 1. They are
+    // now grown on demand from the module index found in the data, so the finder
+    // works for any number of modules without having to know the geometry here.
+    std::vector<std::vector<SSiPMCluster*>> ClustersTop;
+    std::vector<std::vector<SSiPMCluster*>> ClustersBottom;
+    std::vector<std::vector<SSiPMHit*>> SiPMsTop;
+    std::vector<std::vector<SSiPMHit*>> SiPMsBottom;
     std::vector<std::unique_ptr<SFibersRaw>> fibersRaw;
     std::vector<std::unique_ptr<SFibersRawCluster>> fibersRawCluster;
+
+    // Grow v so that index idx is valid. Called before every indexed access.
+    auto ensure_size = [](auto& v, size_t idx) {
+        if (v.size() <= idx)
+            v.resize(idx + 1);
+    };
     
     size_t nClus = catSiPMsCluster->getEntries();
     if(nClus < 2) return true;
@@ -274,6 +283,14 @@ bool SFibersRawClusterFinder::execute()
     {
         pCluster = (SSiPMCluster *)catSiPMsCluster->getObject(j);
         pCluster->getAddress(mod, side);
+
+        // A negative module means the cluster has no valid address (e.g. the
+        // geometry lookup failed). Skip it instead of indexing with a negative
+        // value, which would be undefined behaviour.
+        if (mod < 0)
+            continue;
+        ensure_size(ClustersTop, static_cast<size_t>(mod));
+        ensure_size(ClustersBottom, static_cast<size_t>(mod));
 
         if(side=='r'){
             ClustersTop[mod].push_back(pCluster);
@@ -297,6 +314,12 @@ bool SFibersRawClusterFinder::execute()
     for (uint j = 0; j < nSiPMHit; ++j){
         pHit = (SSiPMHit *)catSiPMsHit->getObject(j);
         pHit->getAddress(s_mod, s_lay, s_el, s_side);
+
+        // Same as for clusters: drop hits without a valid module.
+        if (s_mod < 0)
+            continue;
+        ensure_size(SiPMsTop, static_cast<size_t>(s_mod));
+        ensure_size(SiPMsBottom, static_cast<size_t>(s_mod));
         if(s_side=='r')
             SiPMsTop[s_mod].push_back(pHit);
         else 
@@ -304,9 +327,17 @@ bool SFibersRawClusterFinder::execute()
     }
 
     //Fill the fibersRaw vector: find common fibers for each top-bottom cluster pair
-    for(int m = 0; m < N_MODULES; ++m)  
+    // The module count is now derived from the data instead of a compile-time
+    // constant. Modules that only have clusters on one side (or none at all) are
+    // skipped rather than aborting the whole event, so a partially instrumented
+    // module cannot discard the good modules' results.
+    const size_t N_MODULES = std::max(ClustersTop.size(), ClustersBottom.size());
+    for(size_t m = 0; m < N_MODULES; ++m)  
     {
-        if(ClustersBottom[m].size() == 0 || ClustersTop[m].size() == 0) return true;
+        if (m >= ClustersBottom.size() || m >= ClustersTop.size())
+            continue;
+        if (ClustersBottom[m].empty() || ClustersTop[m].empty())
+            continue;
         
 //         std::unique_ptr<int[]> FiberBottom(new int[ClustersBottom[mod].size()]);
 //         std::unique_ptr<int[]> FiberTop(new int[ClustersTop[mod].size()]);
@@ -321,13 +352,13 @@ bool SFibersRawClusterFinder::execute()
 //             FiberTop[l]=0;
 //         }
         
-        for(int k=0; k<ClustersBottom[mod].size(); ++k)
+        for(size_t k = 0; k < ClustersBottom[m].size(); ++k)
         {
 
-            for(int l=0; l<ClustersTop[mod].size(); ++l)
+            for(size_t l = 0; l < ClustersTop[m].size(); ++l)
             {
-                std::vector<identifiedFiberData> fib = CommonFibers(ClustersTop[mod][l],ClustersBottom[mod][k]);
-                for(int f=0; f<fib.size(); ++f)
+                std::vector<identifiedFiberData> fib = CommonFibers(ClustersTop[m][l], ClustersBottom[m][k]);
+                for(size_t f = 0; f < fib.size(); ++f)
                 {
                     std::unique_ptr<SFibersRaw> fr = std::make_unique<SFibersRaw>();
                     fr->setAddress(fib[f].mod, fib[f].lay, fib[f].fi);
@@ -336,23 +367,60 @@ bool SFibersRawClusterFinder::execute()
                     sipmsCoupledToFiber = getSiPMsFromFiber(fib[f].mod, fib[f].lay, fib[f].fi); 
 //                     std::cout << sipmsCoupledToFiber[0] << " " <<sipmsCoupledToFiber[1] << " " <<sipmsCoupledToFiber[2] << " " <<sipmsCoupledToFiber[3] << " " <<sipmsCoupledToFiber[4] << " " <<sipmsCoupledToFiber[5] << std::endl;
                     
-                    for(int i = 0; i< SiPMsBottom[s_mod].size(); i++){
-                        SiPMsBottom[s_mod][i]->getAddress(s_mod, s_lay, s_el, s_side);
-                        if(s_mod == sipmsCoupledToFiber[0] && s_lay == sipmsCoupledToFiber[1] && s_el == sipmsCoupledToFiber[2]) {
-                            fr->setQDCL(SiPMsBottom[s_mod][i]->getAlignedQDC());
+                    // getSiPMsFromFiber() returns the six SiPMs coupled to a fiber as
+                    // (bottomMod, bottomLay, bottomEl, topMod, topLay, topEl). The lookup
+                    // can come back short when the fiber is not fully described in the
+                    // lookup table, so check the size before indexing. Previously this
+                    // was an unguarded access to elements 0..2 only, which both risked
+                    // reading past the end and ignored the top-side SiPMs entirely.
+                    if (sipmsCoupledToFiber.size() >= 6)
+                    {
+                        const int bottomMod = sipmsCoupledToFiber[0];
+                        const int bottomLay = sipmsCoupledToFiber[1];
+                        const int bottomEl = sipmsCoupledToFiber[2];
+                        const int topMod = sipmsCoupledToFiber[3];
+                        const int topLay = sipmsCoupledToFiber[4];
+                        const int topEl = sipmsCoupledToFiber[5];
+
+                        // Look up the actual hit for the bottom SiPM and use its aligned
+                        // QDC. The module index is bounds-checked because the lookup table
+                        // may reference a module that produced no hits in this event.
+                        if (bottomMod >= 0 && static_cast<size_t>(bottomMod) < SiPMsBottom.size())
+                        {
+                            for (auto* hit : SiPMsBottom[bottomMod])
+                            {
+                                Int_t hit_mod = 0, hit_lay = 0, hit_el = 0;
+                                char hit_side = ' ';
+                                hit->getAddress(hit_mod, hit_lay, hit_el, hit_side);
+                                if (hit_mod == bottomMod && hit_lay == bottomLay && hit_el == bottomEl)
+                                {
+                                    fr->setQDCL(hit->getAlignedQDC());
+                                    break;
+                                }
+                            }
+                        }
+
+                        // Same for the top SiPM.
+                        if (topMod >= 0 && static_cast<size_t>(topMod) < SiPMsTop.size())
+                        {
+                            for (auto* hit : SiPMsTop[topMod])
+                            {
+                                Int_t hit_mod = 0, hit_lay = 0, hit_el = 0;
+                                char hit_side = ' ';
+                                hit->getAddress(hit_mod, hit_lay, hit_el, hit_side);
+                                if (hit_mod == topMod && hit_lay == topLay && hit_el == topEl)
+                                {
+                                    fr->setQDCR(hit->getAlignedQDC());
+                                    break;
+                                }
+                            }
                         }
                     }
-                    for(int i = 0; i< SiPMsTop[s_mod].size(); i++){
-                        SiPMsTop[s_mod][i]->getAddress(s_mod, s_lay, s_el, s_side);
-                        if(s_mod == sipmsCoupledToFiber[3] && s_lay == sipmsCoupledToFiber[4] && s_el == sipmsCoupledToFiber[5]) {
-                            fr->setQDCR(SiPMsTop[s_mod][i]->getAlignedQDC());
-                        }
-                    }
-                    fr->setTimeL(ClustersBottom[mod][k]->getTime());
-                    fr->setTimeR(ClustersTop[mod][l]->getTime());
+                    fr->setTimeL(ClustersBottom[m][k]->getTime());
+                    fr->setTimeR(ClustersTop[m][l]->getTime());
                     Int_t id_t, id_b;
-                    ClustersTop[mod][l]->getID(id_t);
-                    ClustersBottom[mod][k]->getID(id_b);
+                    ClustersTop[m][l]->getID(id_t);
+                    ClustersBottom[m][k]->getID(id_b);
                     fr->setClusters(id_t, id_b);
                     
                     fibersRaw.push_back(std::move(fr));
