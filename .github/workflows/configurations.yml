@@ -100,6 +100,7 @@ jobs:
             -c conda-forge
             root_base=${{ matrix.root-version }}
             cmake=${{ matrix.cmake-version }}
+            "sysroot_linux-64>=2.28"
             ${{ matrix.pkg }}
             make
             gtest
@@ -148,4 +149,5 @@ jobs:
 
       - name: Test
         run: |
+          export LD_LIBRARY_PATH="${PWD}/build/_deps/dabc-build/lib:${CONDA_PREFIX}/lib:${LD_LIBRARY_PATH}"
           ctest --test-dir build --output-on-failure
