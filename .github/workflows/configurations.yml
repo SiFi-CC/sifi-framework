@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   build:
-    name: "${{ matrix.compiler.name }} (CMake: ${{ matrix.cmake-version }}, ROOT: ${{ matrix.root-version }})"
+    name: "${{ matrix.compiler-name }} (CMake: ${{ matrix.cmake-version }}, ROOT: ${{ matrix.root-version }})"
     runs-on: ubuntu-24.04
 
     defaults:
@@ -21,28 +21,72 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        build_type: [ Release ]
-        compiler:
-          - {
-              name: "GCC-13",
-              pkg: "gcc_linux-64=13.* gxx_linux-64=13.*",
-              cc: "x86_64-conda-linux-gnu-gcc",
-              cxx: "x86_64-conda-linux-gnu-g++"
-            }
-          - {
-              name: "GCC-14",
-              pkg: "gcc_linux-64=14.* gxx_linux-64=14.*",
-              cc: "x86_64-conda-linux-gnu-gcc",
-              cxx: "x86_64-conda-linux-gnu-g++"
-            }
-          - {
-              name: "Clang-18",
-              pkg: "clang_linux-64=18.* clangxx_linux-64=18.* gxx_linux-64=13.*",
-              cc: "x86_64-conda-linux-gnu-clang",
-              cxx: "x86_64-conda-linux-gnu-clang++"
-            }
-        cmake-version: [ "3.28.*", "4.*" ]
-        root-version: [ "6.28.*", "6.32.*" ]
+        include:
+          # ROOT 6.28.* (LTS floor — conda-forge caps GCC at 12.*)
+          - root-version: "6.28.*"
+            cmake-version: "3.28.*"
+            compiler-name: "GCC-12"
+            pkg: "gcc_linux-64=12.* gxx_linux-64=12.*"
+            cc: "x86_64-conda-linux-gnu-gcc"
+            cxx: "x86_64-conda-linux-gnu-g++"
+            build-type: "Release"
+
+          - root-version: "6.28.*"
+            cmake-version: "4.*"
+            compiler-name: "GCC-12"
+            pkg: "gcc_linux-64=12.* gxx_linux-64=12.*"
+            cc: "x86_64-conda-linux-gnu-gcc"
+            cxx: "x86_64-conda-linux-gnu-g++"
+            build-type: "Release"
+
+          - root-version: "6.28.*"
+            cmake-version: "4.*"
+            compiler-name: "Clang-18"
+            pkg: "clang_linux-64=18.* clangxx_linux-64=18.* gxx_linux-64=12.*"
+            cc: "x86_64-conda-linux-gnu-clang"
+            cxx: "x86_64-conda-linux-gnu-clang++"
+            build-type: "Release"
+
+          # ROOT 6.34.* (Latest C++17-default ROOT series on conda-forge)
+          - root-version: "6.34.*"
+            cmake-version: "4.*"
+            compiler-name: "GCC-12"
+            pkg: "gcc_linux-64=12.* gxx_linux-64=12.*"
+            cc: "x86_64-conda-linux-gnu-gcc"
+            cxx: "x86_64-conda-linux-gnu-g++"
+            build-type: "Release"
+
+          - root-version: "6.34.*"
+            cmake-version: "4.*"
+            compiler-name: "GCC-13"
+            pkg: "gcc_linux-64=13.* gxx_linux-64=13.*"
+            cc: "x86_64-conda-linux-gnu-gcc"
+            cxx: "x86_64-conda-linux-gnu-g++"
+            build-type: "Release"
+
+          - root-version: "6.34.*"
+            cmake-version: "3.28.*"
+            compiler-name: "GCC-14"
+            pkg: "gcc_linux-64=14.* gxx_linux-64=14.*"
+            cc: "x86_64-conda-linux-gnu-gcc"
+            cxx: "x86_64-conda-linux-gnu-g++"
+            build-type: "Release"
+
+          - root-version: "6.34.*"
+            cmake-version: "4.*"
+            compiler-name: "GCC-14"
+            pkg: "gcc_linux-64=14.* gxx_linux-64=14.*"
+            cc: "x86_64-conda-linux-gnu-gcc"
+            cxx: "x86_64-conda-linux-gnu-g++"
+            build-type: "Release"
+
+          - root-version: "6.34.*"
+            cmake-version: "4.*"
+            compiler-name: "Clang-18"
+            pkg: "clang_linux-64=18.* clangxx_linux-64=18.* gxx_linux-64=13.*"
+            cc: "x86_64-conda-linux-gnu-clang"
+            cxx: "x86_64-conda-linux-gnu-clang++"
+            build-type: "Release"
 
     steps:
       - name: Print env
@@ -64,7 +108,7 @@ jobs:
             -c conda-forge
             root_base=${{ matrix.root-version }}
             cmake=${{ matrix.cmake-version }}
-            ${{ matrix.compiler.pkg }}
+            ${{ matrix.pkg }}
             make
             gtest
             rapidjson
@@ -82,7 +126,7 @@ jobs:
           root-config --features
           export CXXFLAGS="${CXXFLAGS} -include cstdint"
           EXTRA_CMAKE_ARGS=""
-          if [[ "${{ matrix.compiler.name }}" == Clang* ]]; then
+          if [[ "${{ matrix.compiler-name }}" == Clang* ]]; then
             EXTRA_CMAKE_ARGS="-DDABC_cpp_LIBRARY=$(x86_64-conda-linux-gnu-g++ -print-file-name=libstdc++.so)"
           fi
           cmake \
@@ -91,16 +135,16 @@ jobs:
             -DENABLE_TESTING=On \
             -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
             -DCMAKE_PREFIX_PATH="${CONDA_PREFIX}" \
-            -DCMAKE_C_COMPILER="${{ matrix.compiler.cc }}" \
-            -DCMAKE_CXX_COMPILER="${{ matrix.compiler.cxx }}" \
+            -DCMAKE_C_COMPILER="${{ matrix.cc }}" \
+            -DCMAKE_CXX_COMPILER="${{ matrix.cxx }}" \
             -DCMAKE_CXX_FLAGS="${CXXFLAGS}" \
-            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} \
             -DCMAKE_INSTALL_PREFIX:PATH=instdir \
             ${EXTRA_CMAKE_ARGS}
 
       - name: Build
         run: |
-          cmake --build build --config ${{ matrix.build_type }} -j $(nproc) || cmake --build build --config ${{ matrix.build_type }} -j 1
+          cmake --build build --config ${{ matrix.build-type }} -j $(nproc) || cmake --build build --config ${{ matrix.build-type }} -j 1
 
       - name: Test
         run: |
