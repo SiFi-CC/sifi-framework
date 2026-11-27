@@ -1,321 +1,161 @@
-#----------------------------------------------------------------------------
-# Setup the project
-cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
-project(SiFi
-    VERSION 0.3.0
-    LANGUAGES CXX
-)
+name: Compiler Checks
 
-list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
-list(APPEND CMAKE_MODULE_PATH
-    ${CMAKE_SOURCE_DIR}/Modules
-    ${CMAKE_SOURCE_DIR}
-    $ENV{ROOTSYS}
-)
+on:
+  push:
+  pull_request:
+  release:
 
-include(GNUInstallDirs)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
-# options
-set(BUILTIN_CPR AUTO CACHE STRING "Use built-in cpr")
-set_property(CACHE BUILTIN_CPR PROPERTY STRINGS AUTO ON OFF)
+jobs:
+  build:
+    name: "${{ matrix.compiler-name }} (${{ matrix.os }}, CMake: ${{ matrix.cmake-version }}, ROOT: ${{ matrix.root-version }})"
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
 
-set(BUILTIN_TABULATE AUTO CACHE STRING "Use built-in tabulate")
-set_property(CACHE BUILTIN_TABULATE PROPERTY STRINGS AUTO ON OFF)
+    defaults:
+      run:
+        shell: bash -el {0}
 
-set(BUILTIN_MAGICENUM AUTO CACHE STRING "Use built-in magic_enum")
-set_property(CACHE BUILTIN_MAGICENUM PROPERTY STRINGS AUTO ON OFF)
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # --- Required C++17 Matrix (Ubuntu 24.04 & 26.04) ---
+          - os: "ubuntu-24.04"
+            root-version: "6.28.*"
+            cxx-std: "17"
+            cmake-version: "3.28.*"
+            compiler-name: "GCC-12"
+            pkg: "gcc_linux-64=12.* gxx_linux-64=12.*"
+            cc: "x86_64-conda-linux-gnu-gcc"
+            cxx: "x86_64-conda-linux-gnu-g++"
+            build-type: "Release"
+            experimental: false
 
-# =================================================================================================
-# fetch external content
-include(FetchContent) # requires >= cmake-3.11
+          - os: "ubuntu-24.04"
+            root-version: "6.28.*"
+            cxx-std: "17"
+            cmake-version: "4.*"
+            compiler-name: "GCC-12"
+            pkg: "gcc_linux-64=12.* gxx_linux-64=12.*"
+            cc: "x86_64-conda-linux-gnu-gcc"
+            cxx: "x86_64-conda-linux-gnu-g++"
+            build-type: "Release"
+            experimental: false
 
-#-------------------------------------------------------------------------------
-# cmake-scripts
-FetchContent_Declare(cmake-scripts
-    GIT_REPOSITORY https://github.com/StableCoder/cmake-scripts.git
-    GIT_TAG        774a07ece3945b4f72e3ddc11646ab7cc9a349e2 # from main after sanitizer updates
-)
+          - os: "ubuntu-24.04"
+            root-version: "6.34.*"
+            cxx-std: "17"
+            cmake-version: "4.*"
+            compiler-name: "GCC-13"
+            pkg: "gcc_linux-64=13.* gxx_linux-64=13.*"
+            cc: "x86_64-conda-linux-gnu-gcc"
+            cxx: "x86_64-conda-linux-gnu-g++"
+            build-type: "Release"
+            experimental: false
 
-FetchContent_MakeAvailable(cmake-scripts)
-list(APPEND CMAKE_MODULE_PATH
-    ${cmake-scripts_SOURCE_DIR}
-)
-include(c++-standards)
-include(code-coverage)
-include(sanitizers)
-include(doxygen)
-include(formatting)
-include(tools)
+          - os: "ubuntu-24.04"
+            root-version: "6.36.*"
+            cxx-std: "17"
+            cmake-version: "4.*"
+            compiler-name: "GCC-14"
+            pkg: "gcc_linux-64=14.* gxx_linux-64=14.*"
+            cc: "x86_64-conda-linux-gnu-gcc"
+            cxx: "x86_64-conda-linux-gnu-g++"
+            build-type: "Release"
+            experimental: false
 
-#-------------------------------------------------------------------------------
-# cpr
-SET (REQUIRED_CPR_VERSION 1.6.2)
+          - os: "ubuntu-26.04"
+            root-version: "6.36.*"
+            cxx-std: "17"
+            cmake-version: "3.28.*"
+            compiler-name: "GCC-14"
+            pkg: "gcc_linux-64=14.* gxx_linux-64=14.*"
+            cc: "x86_64-conda-linux-gnu-gcc"
+            cxx: "x86_64-conda-linux-gnu-g++"
+            build-type: "Release"
+            experimental: false
 
-FetchContent_Declare(cpr
-    GIT_REPOSITORY https://github.com/whoshuu/cpr
-    GIT_TAG        ${REQUIRED_CPR_VERSION}
-)
-
-if(BUILTIN_CPR STREQUAL "AUTO")
-    find_package(cpr ${REQUIRED_CPR_VERSION} QUIET)
-    if (NOT cpr_FOUND)
-        SET(USE_BUILTIN_CPR TRUE)
-    endif()
-elseif(BUILTIN_CPR)     # a true value (such as ON) was used
-    SET(USE_BUILTIN_CPR TRUE)
-else()                  # a false value (such as OFF) was used
-    find_package(cpr ${REQUIRED_CPR_VERSION} REQUIRED)
-endif()
-
-if (USE_BUILTIN_CPR)
-    set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Build shared CPR")
-    set(CPR_FORCE_USE_SYSTEM_CURL ON)
-    set(CPR_USE_SYSTEM_GTEST ON)
-    # based on https://stackoverflow.com/questions/65527126/disable-install-for-fetchcontent
-    #FetchContent_MakeAvailable(cpr EXCLUDE_FROM_ALL)
-    FetchContent_GetProperties(cpr)
-    if(NOT cpr_POPULATED)
-        FetchContent_Populate(cpr)
-        add_subdirectory(${cpr_SOURCE_DIR} ${cpr_BINARY_DIR} EXCLUDE_FROM_ALL)
-    endif()
-else()
-    message(STATUS "Uses system-provided cpr")
-endif()
-
-#-------------------------------------------------------------------------------
-# tabulate
-SET (REQUIRED_TABULATE_VERSION 1.4)
-
-FetchContent_Declare(tabulate
-    GIT_REPOSITORY https://github.com/p-ranav/tabulate
-    GIT_TAG        v${REQUIRED_TABULATE_VERSION}
-)
-
-if(BUILTIN_TABULATE STREQUAL "AUTO")
-    find_package(tabulate ${REQUIRED_TABULATE_VERSION} QUIET)
-    if (NOT tabulate_FOUND)
-        SET(USE_BUILTIN_TABULATE TRUE)
-    endif()
-elseif(BUILTIN_TABULATE)     # a true value (such as ON) was used
-    SET(USE_BUILTIN_TABULATE TRUE)
-else()                  # a false value (such as OFF) was used
-    find_package(tabulate ${REQUIRED_TABULATE_VERSION} REQUIRED)
-endif()
-
-if (USE_BUILTIN_TABULATE)
-    #FetchContent_MakeAvailable(tabulate)
-    FetchContent_GetProperties(tabulate)
-    if(NOT tabulate_POPULATED)
-        FetchContent_Populate(tabulate)
-        add_subdirectory(${tabulate_SOURCE_DIR} ${tabulate_BINARY_DIR} EXCLUDE_FROM_ALL)
-    endif()
-else()
-    message(STATUS "Uses system-provided tabulate")
-endif()
+          - os: "ubuntu-26.04"
+            root-version: "6.36.*"
+            cxx-std: "17"
+            cmake-version: "4.*"
+            compiler-name: "GCC-15"
+            pkg: "gcc_linux-64=15.* gxx_linux-64=15.*"
+            cc: "x86_64-conda-linux-gnu-gcc"
+            cxx: "x86_64-conda-linux-gnu-g++"
+            build-type: "Release"
+            experimental: false
 
 
-# magic-enum
-SET (REQUIRED_MAGICENUM_VERSION 0.7.3)
+    steps:
+      - name: Print env
+        run: |
+          echo github.event.action: ${{ github.event.action }}
+          echo github.event_name: ${{ github.event_name }}
 
-FetchContent_Declare(magic_enum
-    GIT_REPOSITORY https://github.com/Neargye/magic_enum
-    GIT_TAG        v${REQUIRED_MAGICENUM_VERSION}
-)
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
-if(BUILTIN_MAGICENUM STREQUAL "AUTO")
-    find_package(magic_enum ${REQUIRED_MAGICENUM_VERSION} QUIET)
-    if (NOT magic_enum_FOUND)
-        SET(USE_BUILTIN_MAGICENUM TRUE)
-    endif()
-elseif(BUILTIN_MAGICENUM)     # a true value (such as ON) was used
-    SET(USE_BUILTIN_MAGICENUM TRUE)
-else()                  # a false value (such as OFF) was used
-    find_package(magic_enum ${REQUIRED_MAGICENUM_VERSION} REQUIRED)
-endif()
+      - name: Setup Micromamba environment
+        uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-name: sifi-ci
+          cache-downloads: true
+          create-args: >-
+            -c conda-forge
+            root_base=${{ matrix.root-version }}
+            cmake=${{ matrix.cmake-version }}
+            ${{ matrix.pkg }}
+            make
+            gtest
+            rapidjson
+            libcurl
+            gsl
+            tbb-devel
+            xxhash
+            numpy
+            lcov
 
-if (USE_BUILTIN_MAGICENUM)
-    #FetchContent_MakeAvailable(magic_enum)
-    FetchContent_GetProperties(magic_enum)
-    if(NOT magic_enum_POPULATED)
-        FetchContent_Populate(magic_enum)
-        add_subdirectory(${magic_enum_SOURCE_DIR} ${magic_enum_BINARY_DIR} EXCLUDE_FROM_ALL)
-    endif()
-else()
-    message(STATUS "Uses system-provided magic_enum")
-endif()
+      - name: Configure
+        run: |
+          root-config --version
+          root-config --cflags
+          root-config --features
+          mkdir -p build/compat_inc/bits
+          printf '#include <getopt.h>\n' > build/compat_inc/bits/getopt_core.h
+          export CFLAGS="${CFLAGS} -std=gnu17 -DOPENSSL_API_1_1 -DOPENSSL_API_COMPAT=0x10100000L"
+          export CXXFLAGS="${CXXFLAGS} -I${PWD}/build/compat_inc -include cstdint -pthread -DOPENSSL_API_1_1 -DOPENSSL_API_COMPAT=0x10100000L"
+          export LDFLAGS="${LDFLAGS} -pthread"
+          cmake \
+            -S . \
+            -B build \
+            -DENABLE_TESTING=On \
+            -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+            -DCMAKE_PREFIX_PATH="${CONDA_PREFIX}" \
+            -DCMAKE_C_COMPILER="${{ matrix.cc }}" \
+            -DCMAKE_CXX_COMPILER="${{ matrix.cxx }}" \
+            -DCMAKE_CXX_STANDARD="${{ matrix.cxx-std }}" \
+            -DCMAKE_C_FLAGS="${CFLAGS}" \
+            -DCMAKE_C_FLAGS_RELEASE="-O3 -DNDEBUG -std=gnu17 -DOPENSSL_API_1_1 -DOPENSSL_API_COMPAT=0x10100000L" \
+            -DCMAKE_CXX_FLAGS="${CXXFLAGS}" \
+            -DCMAKE_CXX_FLAGS_RELEASE="-O3 -DNDEBUG -I${PWD}/build/compat_inc -include cstdint -pthread -DOPENSSL_API_1_1 -DOPENSSL_API_COMPAT=0x10100000L" \
+            -DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}" \
+            -DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS}" \
+            -DCMAKE_CXX_STANDARD_LIBRARIES="-lpthread" \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} \
+            -DCMAKE_INSTALL_PREFIX:PATH=instdir
 
-#-------------------------------------------------------------------------------
-# dabc
-set(DABC_LEGACY_INSTALL ON)
-FetchContent_Declare(DABC
-    GIT_REPOSITORY https://github.com/rlalik/dabc
-    GIT_TAG        modern_cmake
-)
-FetchContent_MakeAvailable(DABC)
+      - name: Build
+        run: |
+          cmake --build build --config ${{ matrix.build-type }} -j $(nproc) || cmake --build build --config ${{ matrix.build-type }} -j 1
 
-# =================================================================================================
-
-
-#-------------------------------------------------------------------------------
-##### Symbols export control
-# Export the package for use from the build-tree
-# (this registers the build-tree with a global CMake-registry)
-export(PACKAGE ${PROJECT_NAME})
-
-##### set paths
-set(_RPATH "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}")
-set(CMAKE_INSTALL_CMAKEDIR ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
-
-# use, i.e. don't skip the full RPATH for the build tree
-# SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
-
-# when building, don't use the install RPATH already
-# (but later on when installing)
-# SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-
-# the RPATH to be used when installing
-#SET(CMAKE_INSTALL_RPATH ${_RPATH})
-SET(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_LIBDIR})
-
-# don't add the automatically determined parts of the RPATH
-# which point to directories outside the build tree to the install RPATH
-SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
-
-set(CMAKE_CXX_FLAGS -std=c++17)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
-
-#----------------------------------------------------------------------------
-# Find Geant4 package, activating all available UI and Vis drivers by default
-# You can set WITH_GEANT4_UIVIS to OFF via the command line or ccmake/cmake-gui
-# to build a batch mode only executable
-#
-# option(WITH_GEANT4_UIVIS "Build example with Geant4 UI and Vis drivers" OFF)
-# if(WITH_GEANT4_UIVIS)
-#   find_package(Geant4 QUIET ui_all vis_all)
-# else()
-#   find_package(Geant4 QUIET)
-# endif()
-
-
-
-clang_format(format ${ALL_SOURCES})
-include_what_you_use("-Xiwyu;any;-Xiwyu;iwyu;-Xiwyu;args")
-
-option(ROOT_DOC_XREF "Root Cross-reference in doc" OFF)
-
-if (ROOT_DOC_XREF)
-    set(TAGFILES ${CMAKE_BINARY_DIR}/ROOT.tag=https://root.cern/doc/master/)
-else()
-    unset(TAGFILES)
-endif()
-
-build_docs(ADD_TO_DOC DOXYFILE_PATH ${CMAKE_SOURCE_DIR}/Doxyfile.in PROCESS_DOXYFILE)
-
-if (ROOT_XREF)
-    add_custom_target(
-        ROOT_tag
-        COMMAND curl https://root.cern.ch/doc/master/ROOT.tag -o ROOT.tag -C -
-        BYPRODUCTS ROOT.tag
-    )
-    add_dependencies(doc ROOT_tag)
-endif()
-
-if (CODE_COVERAGE)
-    add_code_coverage()
-    add_code_coverage_all_targets()
-endif()
-
-# Root
-find_package(ROOT 6.20 CONFIG REQUIRED COMPONENTS Core Tree)
-if (NOT ${ROOT_FOUND})
-    message(FATAL_ERROR "ROOT not found.")
-endif()
-include(${ROOT_USE_FILE})
-
-
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-
-#-------------------------------------------------------------------------------
-##### HELPER file
-include(helpers)
-
-
-option(BUILD_SIFIDETRES_SUPPORT "Build SiFi Detector Response" OFF)
-if (BUILD_SIFIDETRES_SUPPORT)
-    find_package(CCDetectorResponse)
-endif()
-
-
-#----------------------------------------------------------------------------
-include_directories(${CMAKE_BINARY_DIR} ${dabc_BINARY_DIR}/include)
-
-add_subdirectory(lib)
-# add_subdirectory(geometry)
-# add_subdirectory(simulation)
-# add_subdirectory(event_display)
-# add_subdirectory(analysis)
-add_subdirectory(dst)
-#add_subdirectory(particle_filter)
-
-configure_file(SiFiConfig.h.in SiFiConfig.h)
-
-option(BUILD_PYTHON_WRAPPER "Build python wrapper" OFF)
-if(BUILD_PYTHON_WRAPPER)
-    add_subdirectory(python)
-endif()
-
-uninstall_target()
-
-include(GenerateExportHeader)
-generate_export_header(SiFi)
-
-# keep all targets here
-set(PROJECT_TARGETS SiFi Fibers Geant SiFiTools)
-
-include(CMakePackageConfigHelpers)
-configure_package_config_file(Config.cmake.in ${CMAKE_PROJECT_NAME}Config.cmake
-    INSTALL_DESTINATION ${CMAKE_INSTALL_CMAKEDIR}
-    PATH_VARS CMAKE_INSTALL_INCLUDEDIR CMAKE_INSTALL_LIBDIR CMAKE_INSTALL_BINDIR)
-
-write_basic_package_version_file(${CMAKE_PROJECT_NAME}ConfigVersion.cmake
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY SameMajorVersion)
-
-install(FILES
-        ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}Config.cmake
-        ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}ConfigVersion.cmake
-    DESTINATION ${CMAKE_INSTALL_CMAKEDIR}
-)
-install(FILES
-        ${CMAKE_BINARY_DIR}/sifi_export.h
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}${LOCAL_SIFI_TREE}
-)
-
-# Add all targets to the build-tree export set
-export(TARGETS ${PROJECT_TARGETS} cpr DabcBase DabcHadaq DabcMbs
-    FILE ${CMAKE_PROJECT_NAME}Targets.cmake
-    NAMESPACE SIFI::)
-
-# Register package in user's package registry
-export(PACKAGE SIFI)
-
-option(ENABLE_TESTING "Build tests" OFF)
-
-if(ENABLE_TESTING)
-    enable_testing()
-    add_subdirectory(tests)
-endif()
-
-install(EXPORT ${CMAKE_PROJECT_NAME}Targets
-    DESTINATION ${CMAKE_INSTALL_CMAKEDIR}
-    COMPONENT Development
-)
-
-message("")
-message("Add to your profile")
-message("export SIFIDIR=${CMAKE_INSTALL_PREFIX}")
-message("export PATH=${SIFIDIR}/bin:\$\{PATH\}")
-message("")
+      - name: Test
+        run: |
+          export LD_LIBRARY_PATH="${PWD}/build/_deps/dabc-build/lib:${CONDA_PREFIX}/lib:${LD_LIBRARY_PATH}"
+          ctest --test-dir build --output-on-failure
